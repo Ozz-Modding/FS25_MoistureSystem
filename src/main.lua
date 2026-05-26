@@ -666,7 +666,9 @@ function MoistureSystem:onStartMission()
     end
 
     if g_currentMission.dryingSystem then
+        g_currentMission.dryingSystem.missionStarted = true
         g_currentMission.dryingSystem:registerActivatables()
+        g_currentMission.dryingSystem:subscribe()
     end
 
 
