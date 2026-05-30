@@ -72,15 +72,14 @@ function MSBalerExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
     -- Get all affected cells in work area
     local affectedCells = tracker:getAffectedGridCells(sx, sz, wx, wz, hx, hz)
     
-    -- Try to get moisture from any tracked pile in affected cells
     local moisture = nil
     local totalVolume = 0
     local weightedMoistureSum = 0
-    
+    local weightedQualitySum = 0
+
     for _, cell in ipairs(affectedCells) do
-        local properties = tracker:getPilePropertiesAtPosition(cell.gridX, cell.gridZ, fillType)
-        if properties and properties.moisture then
-            -- Get actual volume in this cell
+        local cellProps = tracker:getPilePropertiesAtPosition(cell.gridX, cell.gridZ, fillType)
+        if cellProps and cellProps.moisture then
             local checkRadius = GroundPropertyTracker.GRID_SIZE / 2
             local cellVolume = DensityMapHeightUtil.getFillLevelAtArea(
                 fillType,
@@ -89,17 +88,18 @@ function MSBalerExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
                 cell.gridX - checkRadius, cell.gridZ + checkRadius
             )
             if cellVolume > 0 then
-                weightedMoistureSum = weightedMoistureSum + (properties.moisture * cellVolume)
+                weightedMoistureSum = weightedMoistureSum + (cellProps.moisture * cellVolume)
+                weightedQualitySum = weightedQualitySum + ((cellProps.quality or 100) * cellVolume)
                 totalVolume = totalVolume + cellVolume
             end
         end
     end
     
+    local sourceQuality
     if totalVolume > 0 then
-        -- Use volume-weighted average from tracked cells
         moisture = weightedMoistureSum / totalVolume
+        sourceQuality = weightedQualitySum / totalVolume
     else
-        -- No pile tracked in any cell, use field moisture as fallback
         local centerX = (sx + wx + hx) / 3
         local centerZ = (sz + wz + hz) / 3
         moisture = moistureSystem:getMoistureAtPosition(centerX, centerZ)
@@ -120,20 +120,19 @@ function MSBalerExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
         end
     end
 
-    -- Get current fill level before adding (need to subtract what was just added)
     local currentLiters = self:getFillUnitFillLevel(targetFillUnitIndex) - pickedUpLiters
+    local currentInfo = moistureSystem:getObjectInfo(self.uniqueId, fillType)
+    if not sourceQuality then
+        sourceQuality = moistureSystem:deriveQuality(fillType, moisture)
+    end
 
-    -- Get existing moisture for this fillType
-    local currentMoisture = moistureSystem:getObjectMoisture(self.uniqueId, fillType)
-
-    if currentMoisture == nil or currentLiters <= 0 then
-        -- First pickup or empty tank - use pile moisture
-        moistureSystem:setObjectMoisture(self.uniqueId, fillType, moisture)
+    if currentInfo == nil or currentLiters <= 0 then
+        moistureSystem:setObjectInfo(self.uniqueId, fillType, { moisture = moisture, quality = sourceQuality })
     else
-        -- Volume-weighted average
         local totalLiters = currentLiters + pickedUpLiters
-        local averageMoisture = (currentLiters * currentMoisture + pickedUpLiters * moisture) / totalLiters
-        moistureSystem:setObjectMoisture(self.uniqueId, fillType, averageMoisture)
+        local avgMoisture = (currentLiters * currentInfo.moisture + pickedUpLiters * moisture) / totalLiters
+        local avgQuality = (currentLiters * (currentInfo.quality or 100) + pickedUpLiters * sourceQuality) / totalLiters
+        moistureSystem:setObjectInfo(self.uniqueId, fillType, { moisture = avgMoisture, quality = avgQuality })
     end
 
     -- Cleanup pile tracking data for all cells in work area (reuse affectedCells from above)

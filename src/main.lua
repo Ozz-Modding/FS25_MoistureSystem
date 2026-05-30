@@ -6,6 +6,7 @@ MoistureSystem.SaveKey = "MoistureSystem"
 function MoistureSystem:loadMap()
     g_currentMission.MoistureSystem = self
     self.didLoadFromXML = false
+    self.dryingInfoShown = false
     self.midHeight = 0
     self.currentMoisturePercent = 0
     self.timeSinceLastUpdate = 0
@@ -23,6 +24,9 @@ function MoistureSystem:loadMap()
         baleRotEnabled = true,
         baleRotRate = 1.0,
         baleExposureDecayRate = 1.0,
+        qualityDecayMultiplier = 1.0,
+        dryingSpeed = 0.01,
+        sellDryingChargeRate = 1.0,
         showFieldMoisture = false,
         moistureMeterReporting = MoistureSettings.METER_REPORTING_BLINKING
     }
@@ -31,9 +35,13 @@ function MoistureSystem:loadMap()
 
     g_currentMission.baleRottingSystem = BaleRottingSystem.new()
 
-    self.objectMoisture = {}
+    g_currentMission.dryingSystem = DryingSystem.new()
+
+    self.objectInfo = {}
     self.objectMoistureTimestamps = {}
     self.pendingObjectRequests = {}
+
+    self.QUALITY_DECAY_RATE = 0.167
 
     -- Initialize LRU cache for getMoistureAtPosition
     self.moistureCache = {}
@@ -78,6 +86,9 @@ function MoistureSystem:loadGUI()
     local gradesFrame = MoistureGuiGrades.new(g_i18n)
     g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiGrades.xml", "MoistureGuiGrades", gradesFrame, true)
 
+    local pricesFrame = MoistureGuiPrices.new(g_i18n)
+    g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiPrices.xml", "MoistureGuiPrices", pricesFrame, true)
+
     local calendarFrame = MoistureGuiCalendar.new(g_i18n)
     g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiCalendar.xml", "MoistureGuiCalendar", calendarFrame, true)
 
@@ -96,10 +107,11 @@ function MoistureSystem:update(dt)
         self.timeSinceLastUpdate = 0
     end
 
-    -- Update bale rotting system
     if g_currentMission.baleRottingSystem then
         g_currentMission.baleRottingSystem:update(dt)
     end
+
+    SellingStationExtension.update()
 
     -- Sync to clients periodically (batched)
     self.timeSinceLastSync = self.timeSinceLastSync + dt
@@ -299,13 +311,7 @@ function MoistureSystem.periodToMonth(period)
     return period
 end
 
----
--- Get moisture level for an object/vehicle's specific fillType
--- @param uniqueId: The uniqueId of the object
--- @param fillType: FillType index
--- @return moisture level (0-1 scale) or nil if not set
----
-function MoistureSystem:getObjectMoisture(uniqueId, fillType)
+function MoistureSystem:getObjectInfo(uniqueId, fillType)
     if uniqueId == nil or fillType == nil then
         return nil
     end
@@ -319,12 +325,28 @@ function MoistureSystem:getObjectMoisture(uniqueId, fillType)
         return nil
     end
 
-    local objectData = self.objectMoisture[uniqueId]
+    local objectData = self.objectInfo[uniqueId]
     if objectData == nil then
         return nil
     end
 
     return objectData[fillTypeName]
+end
+
+function MoistureSystem:getObjectMoisture(uniqueId, fillType)
+    local info = self:getObjectInfo(uniqueId, fillType)
+    if info == nil then
+        return nil
+    end
+    return info.moisture
+end
+
+function MoistureSystem:getObjectQuality(uniqueId, fillType)
+    local info = self:getObjectInfo(uniqueId, fillType)
+    if info == nil then
+        return nil
+    end
+    return info.quality
 end
 
 ---
@@ -373,13 +395,7 @@ function MoistureSystem:hasFillType(uniqueId, fillType)
     return false
 end
 
----
--- Set moisture level for an object/vehicle's specific fillType
--- @param uniqueId: The uniqueId of the object
--- @param fillType: FillType index
--- @param moisture: The moisture level (0-1 scale) or nil to clear
----
-function MoistureSystem:setObjectMoisture(uniqueId, fillType, moisture)
+function MoistureSystem:setObjectInfo(uniqueId, fillType, info)
     if not g_currentMission:getIsServer() then
         return
     end
@@ -397,34 +413,100 @@ function MoistureSystem:setObjectMoisture(uniqueId, fillType, moisture)
         return
     end
 
-    -- Update local data first
-    if self.objectMoisture[uniqueId] == nil then
-        self.objectMoisture[uniqueId] = {}
+    if self.objectInfo[uniqueId] == nil then
+        self.objectInfo[uniqueId] = {}
     end
-    self.objectMoisture[uniqueId][fillTypeName] = self:hasFillType(uniqueId, fillType) and moisture or nil
+    self.objectInfo[uniqueId][fillTypeName] = self:hasFillType(uniqueId, fillType) and info or nil
 
-    -- Check all other stored fill types and clear any that are now empty
-    if self.objectMoisture[uniqueId] then
-        for storedFillTypeName, storedMoisture in pairs(self.objectMoisture[uniqueId]) do
-            if storedFillTypeName ~= fillTypeName and storedMoisture ~= nil then
+    if self.objectInfo[uniqueId] then
+        for storedFillTypeName, storedInfo in pairs(self.objectInfo[uniqueId]) do
+            if storedFillTypeName ~= fillTypeName and storedInfo ~= nil then
                 local storedFillType = g_fillTypeManager:getFillTypeIndexByName(storedFillTypeName)
                 if storedFillType and not self:hasFillType(uniqueId, storedFillType) then
-                    self.objectMoisture[uniqueId][storedFillTypeName] = nil
+                    self.objectInfo[uniqueId][storedFillTypeName] = nil
                 end
             end
         end
     end
 end
 
----
--- Transfer moisture from source to target with volume-weighted averaging
--- @param sourceId: uniqueId of source object
--- @param targetId: uniqueId of target object
--- @param sourceLiters: Amount being transferred from source
--- @param targetCurrentLiters: Current amount in target before transfer
--- @param fillType: FillType index being transferred
----
-function MoistureSystem:transferObjectMoisture(sourceId, targetId, sourceLiters, targetCurrentLiters, fillType)
+function MoistureSystem:setObjectMoisture(uniqueId, fillType, moisture)
+    if moisture == nil then
+        self:setObjectInfo(uniqueId, fillType, nil)
+        return
+    end
+
+    local existing = self:getObjectInfo(uniqueId, fillType)
+    if existing then
+        existing.moisture = moisture
+        self:setObjectInfo(uniqueId, fillType, existing)
+    else
+        local quality = self:deriveQuality(fillType, moisture)
+        self:setObjectInfo(uniqueId, fillType, { moisture = moisture, quality = quality })
+    end
+end
+
+function MoistureSystem:initializeQualityFromMoisture()
+    for _, fillTypes in pairs(self.objectInfo) do
+        for fillTypeName, info in pairs(fillTypes) do
+            if info.quality == nil and info.moisture then
+                local fillTypeIndex = g_fillTypeManager:getFillTypeIndexByName(fillTypeName)
+                if fillTypeIndex then
+                    info.quality = self:deriveQuality(fillTypeIndex, info.moisture)
+                end
+            end
+        end
+    end
+
+    if g_currentMission.groundPropertyTracker then
+        local allStorages = {
+            g_currentMission.groundPropertyTracker.gridPiles,
+            g_currentMission.groundPropertyTracker.grassPiles,
+            g_currentMission.groundPropertyTracker.hayPiles,
+            g_currentMission.groundPropertyTracker.strawPiles
+        }
+        for _, storage in ipairs(allStorages) do
+            for _, pile in pairs(storage) do
+                if pile.properties.quality == nil and pile.properties.moisture then
+                    pile.properties.quality = self:deriveQuality(pile.fillType, pile.properties.moisture)
+                end
+            end
+        end
+    end
+end
+
+function MoistureSystem:deriveQuality(fillType, moisture)
+    if CropValueMap.Data == nil then
+        return 100
+    end
+    local grade, multiplier = CropValueMap.getGrade(fillType, moisture)
+    if multiplier then
+        if grade == CropValueMap.Grades.A then
+            return 100
+        end
+        return math.floor(multiplier * 100) - 1
+    end
+
+    local baseFillType = self:getBaseCropFillType(fillType)
+    if baseFillType and baseFillType ~= fillType then
+        grade, multiplier = CropValueMap.getGrade(baseFillType, moisture)
+        if multiplier then
+            if grade == CropValueMap.Grades.A then
+                return 100
+            end
+            return math.floor(multiplier * 100) - 1
+        end
+    end
+
+    return 100
+end
+
+function MoistureSystem:getBaseCropFillType(fillType)
+    if self.swathFillTypes == nil then return nil end
+    return self.swathFillTypes[fillType]
+end
+
+function MoistureSystem:transferObjectInfo(sourceId, targetId, sourceLiters, targetCurrentLiters, fillType)
     if sourceId == nil or targetId == nil or sourceLiters <= 0 or fillType == nil then
         return
     end
@@ -433,30 +515,48 @@ function MoistureSystem:transferObjectMoisture(sourceId, targetId, sourceLiters,
         return
     end
 
-    local sourceMoisture = self:getObjectMoisture(sourceId, fillType)
-    local targetMoisture = self:getObjectMoisture(targetId, fillType)
+    local sourceInfo = self:getObjectInfo(sourceId, fillType)
+    local targetInfo = self:getObjectInfo(targetId, fillType)
 
-    -- If neither source nor target have moisture, use current field moisture
+    local sourceMoisture = sourceInfo and sourceInfo.moisture or nil
+    local sourceQuality = sourceInfo and sourceInfo.quality or nil
+
+    local targetMoisture = targetInfo and targetInfo.moisture or nil
+    local targetQuality = targetInfo and targetInfo.quality or nil
+
     if sourceMoisture == nil and targetMoisture == nil then
         sourceMoisture = self.currentMoisturePercent
+        sourceQuality = self:deriveQuality(fillType, sourceMoisture)
     elseif sourceMoisture == nil then
-        -- Do nothing, target moisture will remain the same
         return
     end
 
-    if targetMoisture == nil or targetCurrentLiters <= 0 then
-        self:setObjectMoisture(targetId, fillType, sourceMoisture)
-    else
-        -- Volume-weighted average
-        local totalLiters = targetCurrentLiters + sourceLiters
-        local weightedMoisture = (targetCurrentLiters * targetMoisture) + (sourceLiters * sourceMoisture)
-        self:setObjectMoisture(targetId, fillType, weightedMoisture / totalLiters)
+    if sourceQuality == nil then
+        sourceQuality = self:deriveQuality(fillType, sourceMoisture)
     end
 
-    -- Clean up source moisture tracking if source no longer has this fillType
-    if not self:hasFillType(sourceId, fillType) then
-        self:setObjectMoisture(sourceId, fillType, nil)
+    if targetMoisture == nil or targetCurrentLiters <= 0 then
+        self:setObjectInfo(targetId, fillType, { moisture = sourceMoisture, quality = sourceQuality })
+    else
+        if targetQuality == nil then
+            targetQuality = self:deriveQuality(fillType, targetMoisture)
+        end
+        local totalLiters = targetCurrentLiters + sourceLiters
+        local weightedMoisture = (targetCurrentLiters * targetMoisture) + (sourceLiters * sourceMoisture)
+        local weightedQuality = (targetCurrentLiters * targetQuality) + (sourceLiters * sourceQuality)
+        self:setObjectInfo(targetId, fillType, {
+            moisture = weightedMoisture / totalLiters,
+            quality = weightedQuality / totalLiters
+        })
     end
+
+    if not self:hasFillType(sourceId, fillType) then
+        self:setObjectInfo(sourceId, fillType, nil)
+    end
+end
+
+function MoistureSystem:transferObjectMoisture(sourceId, targetId, sourceLiters, targetCurrentLiters, fillType)
+    self:transferObjectInfo(sourceId, targetId, sourceLiters, targetCurrentLiters, fillType)
 end
 
 ---
@@ -518,12 +618,23 @@ function MoistureSystem:shouldTrackFillType(fillType)
         return true
     end
 
-    -- Track straw
     if self:isStrawFillType(fillType) then
         return true
     end
 
-    return CropValueMap.Data ~= nil and CropValueMap.Data[fillType] ~= nil
+    if CropValueMap.Data ~= nil and CropValueMap.Data[fillType] ~= nil then
+        return true
+    end
+
+    if self:isSwathFillType(fillType) then
+        return true
+    end
+
+    return false
+end
+
+function MoistureSystem:isSwathFillType(fillType)
+    return self.swathFillTypes ~= nil and self.swathFillTypes[fillType] ~= nil
 end
 
 ---
@@ -535,11 +646,45 @@ function MoistureSystem:getDefaultMoisture()
     return self.currentMoisturePercent
 end
 
+function MoistureSystem:initializeSwathFillTypes()
+    self.swathFillTypes = {}
+    local converter = g_fruitTypeManager:getConverterDataByName("COMBINE_MOWER")
+    if converter == nil then return end
+
+    for fruitTypeIndex, conversion in pairs(converter) do
+        local fruitType = g_fruitTypeManager:getFruitTypeByIndex(fruitTypeIndex)
+        if fruitType and fruitType.fillType then
+            self.swathFillTypes[conversion.fillTypeIndex] = fruitType.fillType.index
+        end
+    end
+end
+
 function MoistureSystem:onStartMission()
     CropValueMap.initialize()
+    CropValueMap.initializeQualityBands()
     local ms = g_currentMission.MoistureSystem
+    ms:initializeSwathFillTypes()
     ms:setHeights()
     ms.missionStarted = true
+
+    if g_currentMission:getIsServer() then
+        g_messageCenter:subscribe(MessageType.HOUR_CHANGED, MoistureSystem.onHourChanged, ms)
+        ms:initializeQualityFromMoisture()
+    end
+
+    if g_currentMission.dryingSystem then
+        g_currentMission.dryingSystem.missionStarted = true
+        g_currentMission.dryingSystem:registerActivatables()
+        g_currentMission.dryingSystem:subscribe()
+    end
+
+
+    if not ms.dryingInfoShown and g_dedicatedServer == nil then
+        ms.dryingInfoShown = true
+        Timer.createOneshot(100, function()
+            InfoDialog.show(g_i18n:getText("ms_info_dryingUpdate"))
+        end)
+    end
 
     if g_currentMission:getIsServer() then
         -- Initialize mod on new game
@@ -558,6 +703,34 @@ function MoistureSystem:onStartMission()
 
         -- Convert rotting bales in storage to live storage (after rotting data is loaded)
         MSPlaceableObjectStorageExtension.convertRottingBalesToLiveStorage()
+    end
+end
+
+function MoistureSystem:onHourChanged()
+    if not g_currentMission:getIsServer() then return end
+
+    local decayMultiplier = self.settings.qualityDecayMultiplier or 1.0
+
+    for _, fillTypes in pairs(self.objectInfo) do
+        for fillTypeName, info in pairs(fillTypes) do
+            local fillTypeIndex = g_fillTypeManager:getFillTypeIndexByName(fillTypeName)
+            if fillTypeIndex and info.moisture and info.quality then
+                local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
+                if idealMax and info.moisture > idealMax then
+                    local overshoot = info.moisture - idealMax
+                    local degradation = self.QUALITY_DECAY_RATE * overshoot * 100 * decayMultiplier
+                    info.quality = math.max(0, info.quality - degradation)
+                end
+            end
+        end
+    end
+
+    if g_currentMission.groundPropertyTracker then
+        g_currentMission.groundPropertyTracker:degradeQuality(self.QUALITY_DECAY_RATE, decayMultiplier)
+    end
+
+    if g_currentMission.dryingSystem then
+        g_currentMission.dryingSystem:onHourChanged()
     end
 end
 
@@ -615,6 +788,22 @@ function MoistureSystem:loadFromXMLFile()
             self.settings.baleExposureDecayRate = baleExposureDecayRate
         end
 
+        local qualityDecayMultiplier = getXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#qualityDecayMultiplier")
+        if qualityDecayMultiplier then
+            self.settings.qualityDecayMultiplier = qualityDecayMultiplier
+        end
+
+
+        local dryingSpeed = getXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#dryingSpeed")
+        if dryingSpeed then
+            self.settings.dryingSpeed = dryingSpeed
+        end
+
+        local sellDryingChargeRate = getXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#sellDryingChargeRate")
+        if sellDryingChargeRate then
+            self.settings.sellDryingChargeRate = sellDryingChargeRate
+        end
+
         local showFieldMoisture = getXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#showFieldMoisture")
         if showFieldMoisture ~= nil then
             self.settings.showFieldMoisture = showFieldMoisture
@@ -625,6 +814,11 @@ function MoistureSystem:loadFromXMLFile()
             self.settings.moistureMeterReporting = moistureMeterReporting
         end
 
+        local dryingInfoShown = getXMLBool(xmlFile, MoistureSystem.SaveKey .. "#dryingInfoShown")
+        if dryingInfoShown ~= nil then
+            self.dryingInfoShown = dryingInfoShown
+        end
+
         if g_currentMission.groundPropertyTracker then
             g_currentMission.groundPropertyTracker:loadFromXMLFile(xmlFile, MoistureSystem.SaveKey)
         end
@@ -633,7 +827,11 @@ function MoistureSystem:loadFromXMLFile()
             g_currentMission.baleRottingSystem:loadFromXMLFile(xmlFile, MoistureSystem.SaveKey)
         end
 
-        -- Load object moisture data
+        if g_currentMission.dryingSystem then
+            g_currentMission.dryingSystem:loadFromXMLFile(xmlFile, MoistureSystem.SaveKey)
+        end
+
+        -- Load object info data (moisture + quality)
         local i = 0
         while true do
             local objectKey = string.format("%s.objectMoisture.object(%d)", MoistureSystem.SaveKey, i)
@@ -644,7 +842,6 @@ function MoistureSystem:loadFromXMLFile()
             local uniqueId = getXMLString(xmlFile, objectKey .. "#uniqueId")
 
             if uniqueId then
-                -- Load all fillTypes for this object
                 local j = 0
                 while true do
                     local fillTypeKey = string.format("%s.fillType(%d)", objectKey, j)
@@ -657,10 +854,11 @@ function MoistureSystem:loadFromXMLFile()
                     local moisture = getXMLFloat(xmlFile, fillTypeKey .. "#moisture")
 
                     if fillTypeName and moisture then
-                        if self.objectMoisture[uniqueId] == nil then
-                            self.objectMoisture[uniqueId] = {}
+                        if self.objectInfo[uniqueId] == nil then
+                            self.objectInfo[uniqueId] = {}
                         end
-                        self.objectMoisture[uniqueId][fillTypeName] = moisture
+                        local quality = getXMLFloat(xmlFile, fillTypeKey .. "#quality")
+                        self.objectInfo[uniqueId][fillTypeName] = { moisture = moisture, quality = quality }
                     end
 
                     j = j + 1
@@ -717,6 +915,7 @@ function MoistureSystem:saveToXmlFile()
 
     -- Save current moisture level
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. "#currentMoisturePercent", ms.currentMoisturePercent)
+    setXMLBool(xmlFile, MoistureSystem.SaveKey .. "#dryingInfoShown", ms.dryingInfoShown)
 
     -- Save settings
     setXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#environment", ms.settings.environment)
@@ -729,6 +928,9 @@ function MoistureSystem:saveToXmlFile()
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#baleRotEnabled", ms.settings.baleRotEnabled)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#baleRotRate", ms.settings.baleRotRate)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#baleExposureDecayRate", ms.settings.baleExposureDecayRate)
+    setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#qualityDecayMultiplier", ms.settings.qualityDecayMultiplier)
+    setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#dryingSpeed", ms.settings.dryingSpeed)
+    setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#sellDryingChargeRate", ms.settings.sellDryingChargeRate)
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#showFieldMoisture", ms.settings.showFieldMoisture)
     setXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureMeterReporting", ms.settings.moistureMeterReporting)
 
@@ -738,6 +940,10 @@ function MoistureSystem:saveToXmlFile()
 
     if g_currentMission.baleRottingSystem then
         g_currentMission.baleRottingSystem:saveToXMLFile(xmlFile, MoistureSystem.SaveKey)
+    end
+
+    if g_currentMission.dryingSystem then
+        g_currentMission.dryingSystem:saveToXMLFile(xmlFile, MoistureSystem.SaveKey)
     end
 
     -- Save storage bale uniqueId mappings (can't save in storage XML due to schema restrictions)
@@ -768,19 +974,19 @@ function MoistureSystem:saveToXmlFile()
         end
     end
 
-    -- Save object moisture data
+    -- Save object info data (moisture + quality)
     local i = 0
-    for uniqueId, fillTypes in pairs(ms.objectMoisture) do
+    for uniqueId, fillTypes in pairs(ms.objectInfo) do
         local objectKey = string.format("%s.objectMoisture.object(%d)", MoistureSystem.SaveKey, i)
         setXMLString(xmlFile, objectKey .. "#uniqueId", uniqueId)
 
-        -- Save all fillTypes for this object
         local j = 0
-        for fillTypeName, moisture in pairs(fillTypes) do
+        for fillTypeName, info in pairs(fillTypes) do
             local fillTypeKey = string.format("%s.fillType(%d)", objectKey, j)
 
             setXMLString(xmlFile, fillTypeKey .. "#name", fillTypeName)
-            setXMLFloat(xmlFile, fillTypeKey .. "#moisture", moisture)
+            setXMLFloat(xmlFile, fillTypeKey .. "#moisture", info.moisture)
+            setXMLFloat(xmlFile, fillTypeKey .. "#quality", info.quality)
 
             j = j + 1
         end
@@ -839,6 +1045,9 @@ function MoistureSystem:writeInitialClientState(streamId, connection)
     streamWriteBool(streamId, self.settings.baleRotEnabled)
     streamWriteFloat32(streamId, self.settings.baleRotRate)
     streamWriteFloat32(streamId, self.settings.baleExposureDecayRate)
+    streamWriteFloat32(streamId, self.settings.qualityDecayMultiplier)
+    streamWriteFloat32(streamId, self.settings.dryingSpeed)
+    streamWriteFloat32(streamId, self.settings.sellDryingChargeRate)
     streamWriteBool(streamId, self.settings.showFieldMoisture)
     streamWriteInt32(streamId, self.settings.moistureMeterReporting)
 end
@@ -860,6 +1069,9 @@ function MoistureSystem:readInitialClientState(streamId, connection)
     self.settings.baleRotEnabled = streamReadBool(streamId)
     self.settings.baleRotRate = streamReadFloat32(streamId)
     self.settings.baleExposureDecayRate = streamReadFloat32(streamId)
+    self.settings.qualityDecayMultiplier = streamReadFloat32(streamId)
+    self.settings.dryingSpeed = streamReadFloat32(streamId)
+    self.settings.sellDryingChargeRate = streamReadFloat32(streamId)
     self.settings.showFieldMoisture = streamReadBool(streamId)
     self.settings.moistureMeterReporting = streamReadInt32(streamId)
 
@@ -882,6 +1094,7 @@ local function addPlayerActionEvents(self, superFunc, ...)
         MoistureSystem.ShowMoistureGUI, false, true, false,
         true)
     g_inputBinding:setActionEventTextVisibility(id, false)
+
 end
 
 

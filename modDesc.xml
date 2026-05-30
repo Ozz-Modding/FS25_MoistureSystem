@@ -11,31 +11,35 @@
     <description>
         <en><![CDATA[Moisture System
 
-Transform your farming experience with a sophisticated moisture simulation system that brings realism and strategic depth to Farming Simulator 25. This comprehensive mod introduces dynamic moisture mechanics that fundamentally change how you approach crop management, harvest timing, and storage decisions.
+Transform your farming experience with a sophisticated moisture and quality simulation system that brings realism and strategic depth to Farming Simulator 25. This comprehensive mod introduces dynamic moisture mechanics and crop quality tracking that fundamentally change how you approach crop management, harvest timing, and storage decisions.
 
 Experience authentic environmental interactions where moisture levels fluctuate naturally across your farm based on terrain elevation, prevailing weather patterns (rainfall, snowfall, temperature fluctuations), and day/night cycles. Fields at lower elevations stay wetter while higher ground dries faster, so consider moisture levels when planning which crops to plant where and when to harvest. Every farming decision gains new weight as you balance optimal timing against changing conditions.
 
-Advanced Crop Quality System: Your harvested yields are no longer uniform commodities. Each load receives a quality grade from A (premium) through D (poor) based on its moisture content at harvest, with direct economic consequences at the point of sale. Every crop species has been carefully calibrated with unique optimal moisture windows that reflect real-world agricultural standards. Master these ranges and time your operations precisely to maximize profitability. Access comprehensive grade tables and seasonal moisture projections through the integrated in-game interface (Shift+M).
+Advanced Crop Quality System: Each harvested load receives a quality rating (0-100) based on its moisture content at harvest. Quality determines your sell price and degrades over time when crops are stored above their ideal moisture level. Sell wet crops and you'll incur drying charges on top of reduced prices. Use the silo drying system to reduce moisture and halt quality loss before selling. Each crop species has unique optimal moisture windows and quality-to-price bands calibrated to real-world agricultural standards. Access quality tables, price grades, and seasonal moisture projections through the in-game menu (Shift+M).
 
 Features:
 - Terrain-aware field moisture simulation with monthly variation patterns across three distinct environment profiles (Dry/Wet/Normal)
+- Crop quality system: quality set at harvest, degrades hourly when stored above ideal moisture, drives sell price per crop-specific grade bands
+- Silo drying: walk up to any silo and activate drying to reduce moisture over time. Costs scale with volume and are cheaper than selling wet.
+- Drying charges at point of sale for crops above ideal moisture, shown as a separate finance entry
 - Sophisticated grass management system featuring progressive tedding mechanics, weather-responsive drying rates, and automatic hay conversion at optimal moisture thresholds. Multiple tedding passes accelerates drying if you need it.
 - Ground rot: Grass and straw piles left exposed accumulate rain exposure over time, triggering progressive volume loss as organic material deteriorates. Timing your collection and baling operations becomes critical. Hay will revert to grass if it gets too wet.
 - Bale rotting: Unprotected bales track cumulative rain exposure with initial tolerance periods, escalating decay rates based on exposure history, and limited recovery during dry spells. Strategic use of wrapping and shelter infrastructure protects your investment.
 - Purchase the moisture meter hand tool in the store for precise field and pile readings on demand (You can display this in the HUD if preferred).
 
-Extensive customization options allow you to calibrate moisture dynamics, tedding efficiency, decay parameters, and interface preferences to match your preferred gameplay experience. Whether you seek hardcore realism or a gentler introduction to moisture management, the system adapts to your vision.
+Extensive customization options allow you to calibrate moisture dynamics, quality decay rates, drying speed, tedding efficiency, and decay parameters to match your preferred gameplay experience. Whether you seek hardcore realism or a gentler introduction to moisture management, the system adapts to your vision.
 
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
 
-1.0.0.4 [WIP]:
+1.0.0.4:
+- Introduces drying in in silos. Crop price is now determined by quality, not moisture level as it was previously. Quality is initially determined by moisture level. Dry crops to avoid quality degradation over time. Selling crop with excess moisture will cause you to incur drying charges.
+- Added support for MacDon pack. Previously crop harvested with this equipment would not track moisture levels.
 - Added assurance on moisture grid lookup
 - Add support for beans, buckwheat and millet crops, thanks to merittu
 - Added Ukrainian translation thanks to sava4903-coder
 - Add Turkish translation thanks to Cyber-Syntax
-
 
 1.0.0.3:
 - Add safety check to prevent errors when using SIM Dashboard and using a harvester.
@@ -54,24 +58,38 @@ Changelog:
         </en>
         <de><![CDATA[Feuchtigkeitssystem
 
-Transformieren Sie Ihr Farmerlebnis mit einem ausgefeilten Feuchtigkeitssimulationssystem, das Realismus und strategische Tiefe zu Farming Simulator 25 bringt. Dieses umfassende Mod führt dynamische Feuchtigkeitsmechaniken ein, die grundlegend ändern, wie Sie die Bewirtschaftung von Kulturen, Erntezeitpunkt und Lagerbeschaffenheit angehen.
+Transformieren Sie Ihr Farmerlebnis mit einem ausgefeilten Feuchtigkeits- und Qualitätssimulationssystem, das Realismus und strategische Tiefe zu Farming Simulator 25 bringt. Dieses umfassende Mod führt dynamische Feuchtigkeitsmechaniken und Erntequalitätsverfolgung ein, die grundlegend ändern, wie Sie die Bewirtschaftung von Kulturen, Erntezeitpunkt und Lagerbeschaffenheit angehen.
 
 Erleben Sie authentische Umweltinteraktionen, bei denen die Feuchtigkeitsstufen auf Ihrem Hof natürlich schwanken, basierend auf der Geländeerhebung, vorherrschenden Wettermuster (Niederschlag, Schneefall, Temperaturschwankungen) und Tag-Nacht-Zyklen. Felder in niedrigeren Höhenlagen bleiben feuchter, während höher gelegenes Land schneller austrocknet. Berücksichtigen Sie Feuchtigkeitswerte bei der Planung, welche Kulturen wo gepflanzt und wann geerntet werden sollen. Jede Entscheidung in der Landwirtschaft gewinnt neues Gewicht, während Sie das optimale Timing gegen die sich ändernden Bedingungen abwägen.
 
-Fortgeschrittenes Kulturqualitätssystem: Ihre geernteten Erträge sind keine einheitlichen Rohstoffe mehr. Jede Ladung erhält basierend auf ihrem Feuchtigkeitsgehalt bei der Ernte eine Qualitätsbenotung von A (Premium) bis D (schlecht), mit direkten wirtschaftlichen Konsequenzen zum Zeitpunkt des Verkaufs. Jede Kulturart wurde sorgfältig mit einzigartigen optimalen Feuchtigkeitsfenstern kalibriert, die realen landwirtschaftlichen Standards entsprechen. Meistern Sie diese Bereiche und timen Sie Ihre Operationen präzise, um die Rentabilität zu maximieren. Greifen Sie auf umfassende Noten-Tabellen und saisonale Feuchtigkeitsprognosen über die integrierte In-Game-Schnittstelle (Shift+M) zu.
+Fortgeschrittenes Kulturqualitätssystem: Jede geerntete Ladung erhält eine Qualitätsbewertung (0-100) basierend auf dem Feuchtigkeitsgehalt bei der Ernte. Die Qualität bestimmt Ihren Verkaufspreis und verschlechtert sich mit der Zeit, wenn Kulturen über ihrem idealen Feuchtigkeitsgehalt gelagert werden. Verkaufen Sie feuchtes Getreide und es fallen zusätzliche Trocknungsgebühren an. Nutzen Sie das Silo-Trocknungssystem, um die Feuchtigkeit zu reduzieren und den Qualitätsverlust vor dem Verkauf zu stoppen. Jede Kulturart verfügt über einzigartige optimale Feuchtigkeitsfenster und kulturspezifische Qualitäts-Preis-Stufen. Greifen Sie auf Qualitätstabellen, Preisstufen und saisonale Feuchtigkeitsprognosen über das In-Game-Menü (Shift+M) zu.
 
 Funktionen:
 - Geländebewusste Feldfeuchtesimulation mit monatlichen Variationsmustern über drei unterschiedliche Umgebungsprofile (Trocken/Nass/Normal)
+- Qualitätssystem: Qualität wird bei der Ernte festgelegt, verschlechtert sich stündlich bei Lagerung über idealer Feuchtigkeit, bestimmt den Verkaufspreis über kulturspezifische Preisstufen
+- Silo-Trocknung: Gehen Sie zu einem Silo und aktivieren Sie die Trocknung, um die Feuchtigkeit über Zeit zu reduzieren. Kosten skalieren mit dem Volumen und sind günstiger als feuchter Verkauf.
+- Trocknungsgebühren beim Verkauf für Kulturen über idealer Feuchtigkeit, als separater Finanzposten angezeigt
 - Ausgefeiltes Grasverwaltungssystem mit progressiver Wendelmechanik, wettereaktiven Trocknungsraten und automatischer Heuumwandlung bei optimalen Feuchtigkeitsschwellwerten. Mehrfaches Wenden beschleunigt das Trocknen, wenn Sie dies benötigen.
 - Bodenverrottung: Gras- und Strohhaufen, die freigelegt bleiben, sammeln im Laufe der Zeit Regenerosion an und lösen fortschreitenden Volumenverlust aus, während organisches Material verfällt. Das richtige Timing von Sammel- und Ballenpressoperationen wird kritisch. Heu wird zu Gras, wenn es zu nass wird.
 - Ballenverrottung: Ungeschützte Ballen verfolgen kumulative Regennässung mit anfänglichen Toleranzperioden, steigende Verfallsraten basierend auf Expositionshistorie und begrenzte Erholung während trockener Phasen. Strategische Verwendung von Wickelfolie und Schutzinfrastruktur schützt Ihre Investition.
 - Kaufen Sie das mobile Feuchtemessgerät im Store für präzise Feld- und Haufen-Messungen auf Abruf (Sie können dies bei Bedarf im HUD anzeigen).
 
-Umfangreiche Anpassungsoptionen ermöglichen es Ihnen, die Feuchtigkeitsdynamik, Wendeleffizienz, Verfallsparameter und Schnittstelleneinstellungen an Ihr bevorzugtes Spielerlebnis anzupassen. Ob Sie hartwöchige Realismus oder eine sanftere Einführung in die Feuchtigkeitsverwaltung bevorzugen – das System passt sich Ihrer Vision an.
+Umfangreiche Anpassungsoptionen ermöglichen es Ihnen, die Feuchtigkeitsdynamik, Qualitätsverfallsraten, Trocknungsgeschwindigkeit, Wendeleffizienz und Verfallsparameter an Ihr bevorzugtes Spielerlebnis anzupassen. Ob Sie harten Realismus oder eine sanftere Einführung in die Feuchtigkeitsverwaltung bevorzugen – das System passt sich Ihrer Vision an.
 
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Änderungsprotokoll:
+
+1.0.0.4:
+- Einführung der Silo-Trocknung. Der Erntepreis wird nun durch die Qualität bestimmt, nicht mehr durch den Feuchtigkeitsgehalt. Die Qualität wird anfangs durch den Feuchtigkeitsgehalt bestimmt. Trocknen Sie Ihre Ernte, um Qualitätsverlust über Zeit zu vermeiden. Der Verkauf von Ernte mit überschüssiger Feuchtigkeit verursacht Trocknungsgebühren.
+- Unterstützung für das MacDon-Pack hinzugefügt. Zuvor wurde die Feuchtigkeit bei der Ernte mit diesem Equipment nicht erfasst.
+- Absicherung bei der Feuchtigkeits-Gitterabfrage hinzugefügt
+- Unterstützung für Bohnen, Buchweizen und Hirse hinzugefügt, dank merittu
+- Ukrainische Übersetzung hinzugefügt, dank sava4903-coder
+- Türkische Übersetzung hinzugefügt, dank Cyber-Syntax
+
+1.0.0.3:
+- Sicherheitsprüfung hinzugefügt, um Fehler bei Verwendung von SIM Dashboard mit einem Mähdrescher zu vermeiden.
 
 1.0.0.2:
 - Überarbeitung der Ereignisse im Multiplayer zur Reduzierung des Netzwerkverkehrs und daraus resultierender Probleme.
@@ -87,24 +105,38 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
         </de>
         <fr><![CDATA[Système D'Humidité
 
-Transformez votre expérience agricole avec un système de simulation d'humidité sophistiqué qui apporte du réalisme et de la profondeur stratégique à Farming Simulator 25. Ce mod complet introduit une mécanique d'humidité dynamique qui change fondamentalement votre approche de la gestion des cultures, du timing de récolte et des décisions de stockage.
+Transformez votre expérience agricole avec un système sophistiqué de simulation d'humidité et de qualité qui apporte du réalisme et de la profondeur stratégique à Farming Simulator 25. Ce mod complet introduit des mécaniques dynamiques d'humidité et de suivi de qualité des cultures qui changent fondamentalement votre approche de la gestion des cultures, du timing de récolte et des décisions de stockage.
 
 Découvrez des interactions environnementales authentiques où les niveaux d'humidité fluctuent naturellement sur votre ferme en fonction de l'élévation du terrain, des conditions météorologiques (pluie, neige, variations de température) et des cycles jour/nuit. Les champs en basse altitude restent plus humides tandis que les terres élevées sèchent plus rapidement. Tenez compte des niveaux d'humidité lorsque vous planifiez où planter vos cultures et quand les récolter. Chaque décision agricole prend du poids supplémentaire en équilibrant le timing optimal par rapport aux conditions changeantes.
 
-Système avancé de qualité des cultures : Vos rendements récoltés ne sont plus des produits uniformes. Chaque chargement reçoit une note de qualité de A (premium) à D (faible) en fonction de sa teneur en humidité au moment de la récolte, avec des conséquences économiques directes au moment de la vente. Chaque espèce de culture a été soigneusement calibrée avec des fenêtres d'humidité optimales uniques qui reflètent les normes agricoles réelles. Maîtrisez ces plages et chronométrez vos opérations précisément pour maximiser la rentabilité. Accédez aux tables de notes complètes et aux projections d'humidité saisonnières via l'interface intégrée du jeu (Maj+M).
+Système avancé de qualité des cultures : Chaque chargement récolté reçoit une note de qualité (0-100) basée sur sa teneur en humidité à la récolte. La qualité détermine votre prix de vente et se dégrade avec le temps lorsque les cultures sont stockées au-dessus de leur niveau d'humidité idéal. Vendez des cultures humides et vous encourrez des frais de séchage en plus des prix réduits. Utilisez le système de séchage en silo pour réduire l'humidité et stopper la perte de qualité avant la vente. Chaque espèce de culture possède des fenêtres d'humidité optimales uniques et des bandes qualité-prix spécifiques. Accédez aux tables de qualité, aux grades de prix et aux projections d'humidité saisonnières via le menu en jeu (Maj+M).
 
 Caractéristiques :
 - Simulation d'humidité des champs sensible au terrain avec modèles de variation mensuelle sur trois profils environnementaux distincts (Sec/Humide/Normal)
+- Système de qualité : la qualité est définie à la récolte, se dégrade chaque heure lorsque stockée au-dessus de l'humidité idéale, détermine le prix de vente selon des bandes de prix spécifiques par culture
+- Séchage en silo : approchez-vous d'un silo et activez le séchage pour réduire l'humidité au fil du temps. Les coûts varient selon le volume et sont moins chers que la vente humide.
+- Frais de séchage au point de vente pour les cultures au-dessus de l'humidité idéale, affichés comme une entrée financière séparée
 - Système de gestion des herbes sophistiqué avec mécanique de fanage progressive, taux de séchage réactifs aux intempéries et conversion automatique en foin aux seuils d'humidité optimaux. Plusieurs passages de fanage accélèrent le séchage si vous en avez besoin.
 - Pourriture au sol : Les tas d'herbe et de paille laissés à découvert accumulent l'exposition à la pluie au fil du temps, déclenchant une perte de volume progressive à mesure que la matière organique se détériore. Synchroniser la collecte et les opérations de mise en balles devient critique. Le foin redevient de l'herbe s'il devient trop humide.
 - Pourriture des balles : Les balles non protégées suivent l'exposition cumulative à la pluie avec les périodes de tolérance initiales, les taux de dégradation croissants en fonction de l'historique d'exposition, et une récupération limitée pendant les périodes sèches. L'utilisation stratégique de l'enrubannage et des infrastructures d'abri protège votre investissement.
 - Achetez l'outil de mesure d'humidité à main dans le magasin pour des lectures précises des champs et des tas sur demande (Vous pouvez l'afficher dans l'HUD si vous préférez).
 
-Les options de personnalisation étendues vous permettent de calibrer la dynamique d'humidité, l'efficacité du fanage, les paramètres de dégradation et les préférences d'interface pour correspondre à votre expérience de jeu préférée. Que vous cherchiez un réalisme hardcore ou une introduction plus douce à la gestion de l'humidité, le système s'adapte à votre vision.
+Les options de personnalisation étendues vous permettent de calibrer la dynamique d'humidité, les taux de dégradation de qualité, la vitesse de séchage, l'efficacité du fanage et les paramètres de dégradation pour correspondre à votre expérience de jeu préférée. Que vous cherchiez un réalisme hardcore ou une introduction plus douce à la gestion de l'humidité, le système s'adapte à votre vision.
 
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Journal des modifications :
+
+1.0.0.4 :
+- Introduction du séchage en silo. Le prix de vente est désormais déterminé par la qualité, et non plus par le taux d'humidité. La qualité est initialement déterminée par le taux d'humidité. Séchez vos récoltes pour éviter la dégradation de qualité au fil du temps. Vendre des récoltes avec un excès d'humidité entraînera des frais de séchage.
+- Ajout du support pour le pack MacDon. Auparavant, les récoltes effectuées avec cet équipement ne suivaient pas les niveaux d'humidité.
+- Ajout d'une assurance sur la recherche de grille d'humidité
+- Ajout du support pour les haricots, le sarrasin et le millet, grâce à merittu
+- Ajout de la traduction ukrainienne grâce à sava4903-coder
+- Ajout de la traduction turque grâce à Cyber-Syntax
+
+1.0.0.3 :
+- Ajout d'une vérification de sécurité pour éviter les erreurs lors de l'utilisation de SIM Dashboard avec une moissonneuse.
 
 1.0.0.2 :
 - Refonte des événements en multijoueur pour réduire le trafic réseau et les problèmes associés.
@@ -135,14 +167,18 @@ Journal des modifications :
         <sourceFile filename="src/extensions/MowerExtension.lua"/>
         <sourceFile filename="src/extensions/TedderExtension.lua"/>
         <sourceFile filename="src/extensions/WindrowerExtension.lua"/>
+        <sourceFile filename="src/extensions/I18NExtension.lua"/>
         <sourceFile filename="src/extensions/SellingStationExtension.lua"/>
         <sourceFile filename="src/extensions/LoadingStationExtension.lua"/>
         <sourceFile filename="src/gui/CropGradeTableRenderer.lua"/>
+        <sourceFile filename="src/gui/QualityPriceTableRenderer.lua"/>
         <sourceFile filename="src/gui/MoistureGuiGrades.lua"/>
+        <sourceFile filename="src/gui/MoistureGuiPrices.lua"/>
         <sourceFile filename="src/gui/MoistureGuiCalendar.lua"/>
         <sourceFile filename="src/gui/MoistureGui.lua"/>
         <sourceFile filename="src/GroundPropertyTracker.lua"/>
         <sourceFile filename="src/BaleRottingSystem.lua"/>
+        <sourceFile filename="src/DryingSystem.lua"/>
         <sourceFile filename="src/events/InitialClientStateEvent.lua"/>
         <sourceFile filename="src/events/MoistureSettingsEvent.lua"/>
         <sourceFile filename="src/events/MoistureUpdateEvent.lua"/>
@@ -152,6 +188,7 @@ Journal des modifications :
         <sourceFile filename="src/events/ObjectMoistureResponseEvent.lua"/>
         <sourceFile filename="src/events/BaleRottingRequestEvent.lua"/>
         <sourceFile filename="src/events/BaleRottingResponseEvent.lua"/>
+        <sourceFile filename="src/events/DryingToggleEvent.lua"/>
         <sourceFile filename="src/MoistureSettings.lua"/>
         <sourceFile filename="src/handTools/MoistureMeterTool.lua"/>
         <sourceFile filename="src/main.lua"/>
@@ -161,11 +198,15 @@ Journal des modifications :
 
     <actions>
         <action name="MOISTURE_MENU" category="SYSTEM" axisType="HALF" ignoreComboMask="false" />
+        <action name="MOISTURE_START_DRYING" category="SYSTEM" axisType="HALF" ignoreComboMask="false" />
     </actions>
 
     <inputBinding>
         <actionBinding action="MOISTURE_MENU">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_m" />
+        </actionBinding>
+        <actionBinding action="MOISTURE_START_DRYING">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_n" index="1" />
         </actionBinding>
     </inputBinding>
     
@@ -196,6 +237,17 @@ Journal des modifications :
                 </paragraph>
                 <paragraph>
                     <text text="$l10n_help_moisture_grading_3"/>
+                </paragraph>
+            </page>
+            <page title="$l10n_help_moisture_drying_title" iconSliceId="helpline.icon_store">
+                <paragraph>
+                    <text text="$l10n_help_moisture_drying_1"/>
+                </paragraph>
+                <paragraph>
+                    <text text="$l10n_help_moisture_drying_2"/>
+                </paragraph>
+                <paragraph>
+                    <text text="$l10n_help_moisture_drying_3"/>
                 </paragraph>
             </page>
             <page title="$l10n_help_moisture_grass_title" iconSliceId="helpline.crops_grass">

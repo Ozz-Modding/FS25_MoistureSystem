@@ -29,7 +29,7 @@ function ObjectMoistureRequestEvent:run(connection)
     if object == nil or object.uniqueId == nil then return end
 
     local ms = g_currentMission.MoistureSystem
-    local data = ms.objectMoisture[object.uniqueId]
+    local data = ms.objectInfo[object.uniqueId]
 
     connection:sendEvent(ObjectMoistureResponseEvent.new(self.objectId, data))
 end

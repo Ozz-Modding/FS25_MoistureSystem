@@ -181,3 +181,8 @@ For bug reports, feature requests, or questions:
 - Visit the [GitHub Issues page](https://github.com/sprkem/FS25_MoistureSystem/issues)
 - Check the discussion forums
 
+## Discord
+
+[![Discord](https://img.shields.io/discord/1415966930799693847?logo=discord)](https://discord.gg/eGyACAan)
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M41K5NPV)

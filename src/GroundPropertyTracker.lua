@@ -366,12 +366,14 @@ function GroundPropertyTracker:markAreaMowed(sx, sz, wx, wz, hx, hz)
     end
 end
 
--- Add pending windrower drop with volume-weighted moisture accumulation
-function GroundPropertyTracker:addWindrowerDrop(sx, sz, wx, wz, hx, hz, fillType, volume, moisture)
+-- Add pending windrower drop with volume-weighted moisture/quality accumulation
+function GroundPropertyTracker:addWindrowerDrop(sx, sz, wx, wz, hx, hz, fillType, volume, moisture, quality)
     if not self.isServer then return end
 
     local moistureSystem = g_currentMission.MoistureSystem
     if not moistureSystem:shouldTrackFillType(fillType) then return end
+
+    quality = quality or moistureSystem:deriveQuality(fillType, moisture)
 
     local affectedCells, totalOverlapArea = self:getAffectedGridCells(sx, sz, wx, wz, hx, hz)
     if #affectedCells == 0 or totalOverlapArea == 0 then return end
@@ -384,20 +386,19 @@ function GroundPropertyTracker:addWindrowerDrop(sx, sz, wx, wz, hx, hz, fillType
         local key = self:getGridKey(cell.gridX, cell.gridZ, fillType)
 
         if self.windrowerPendingDrops[key] then
-            -- Accumulate with volume-weighted averaging
             local pending = self.windrowerPendingDrops[key]
             pending.volume = pending.volume + volumeForCell
             pending.moistureSum = pending.moistureSum + (moisture * volumeForCell)
-            -- Reset cycle counter to ensure full delay after last drop
+            pending.qualitySum = pending.qualitySum + (quality * volumeForCell)
             pending.cyclesRemaining = GroundPropertyTracker.WINDROWER_PROCESSING_CYCLES
         else
-            -- Create new pending drop
             self.windrowerPendingDrops[key] = {
                 gridX = cell.gridX,
                 gridZ = cell.gridZ,
                 fillType = fillType,
                 volume = volumeForCell,
                 moistureSum = moisture * volumeForCell,
+                qualitySum = quality * volumeForCell,
                 cyclesRemaining = GroundPropertyTracker.WINDROWER_PROCESSING_CYCLES
             }
         end
@@ -810,10 +811,9 @@ function GroundPropertyTracker:processWindrowerPendingDrops()
         pending.cyclesRemaining = pending.cyclesRemaining - 1
 
         if pending.cyclesRemaining <= 0 then
-            -- Calculate volume-weighted average moisture
             local avgMoisture = pending.moistureSum / pending.volume
+            local avgQuality = pending.qualitySum / pending.volume
 
-            -- Query actual density map volume after delay
             local existingVolume = DensityMapHeightUtil.getFillLevelAtArea(
                 pending.fillType,
                 pending.gridX - checkRadius, pending.gridZ - checkRadius,
@@ -822,25 +822,24 @@ function GroundPropertyTracker:processWindrowerPendingDrops()
             )
 
             if existingVolume > 0 then
-                -- Create or update pile with proper moisture
                 local storage = self:getStorageForFillType(pending.fillType)
                 local pile = storage[key]
 
-                local finalMoisture
+                local finalMoisture, finalQuality
                 if pile then
-                    -- Volume-weighted merge with existing pile
                     local totalVolume = existingVolume + pending.volume
                     local existingMoisture = pile.properties.moisture or avgMoisture
+                    local existingQuality = pile.properties.quality or avgQuality
                     finalMoisture = (existingMoisture * existingVolume + avgMoisture * pending.volume) / totalVolume
+                    finalQuality = (existingQuality * existingVolume + avgQuality * pending.volume) / totalVolume
                 else
-                    -- New pile
                     finalMoisture = avgMoisture
+                    finalQuality = avgQuality
                 end
 
-                self:queuePileUpdate(key, { moisture = finalMoisture }, pending.fillType, pending.gridX, pending.gridZ)
+                self:queuePileUpdate(key, { moisture = finalMoisture, quality = finalQuality }, pending.fillType, pending.gridX, pending.gridZ)
             end
 
-            -- Remove from pending
             self.windrowerPendingDrops[key] = nil
         end
     end
@@ -1078,9 +1077,8 @@ function GroundPropertyTracker:getPilePropertiesAtPosition(x, z, fillType)
             g_client:getServerConnection():sendEvent(PilePropertyRequestEvent.new(gridX, gridZ, fillType))
         end
 
-        -- Return cached data (may be stale but avoids HUD flicker)
         if cached ~= nil and cached.moisture ~= nil then
-            return { moisture = cached.moisture }
+            return { moisture = cached.moisture, quality = cached.quality }
         end
         return nil
     end
@@ -1249,6 +1247,25 @@ function GroundPropertyTracker:convertGridCells(fromSize, toSize)
     end
 end
 
+function GroundPropertyTracker:degradeQuality(decayRate, decayMultiplier)
+    if not self.isServer then return end
+
+    local allStorages = { self.gridPiles, self.grassPiles, self.hayPiles, self.strawPiles }
+
+    for _, storage in ipairs(allStorages) do
+        for _, pile in pairs(storage) do
+            if pile.properties.moisture and pile.properties.quality then
+                local _, idealMax = CropValueMap.getIdealRange(pile.fillType)
+                if idealMax and pile.properties.moisture > idealMax then
+                    local overshoot = pile.properties.moisture - idealMax
+                    local degradation = decayRate * overshoot * 100 * decayMultiplier
+                    pile.properties.quality = math.max(0, pile.properties.quality - degradation)
+                end
+            end
+        end
+    end
+end
+
 -- Save tracked piles to XML
 function GroundPropertyTracker:saveToXMLFile(xmlFile, key)
     if not self.isServer then return end
@@ -1301,10 +1318,13 @@ function GroundPropertyTracker:saveToXMLFile(xmlFile, key)
             local location = string.format("%d,%d", math.floor(pile.gridX), math.floor(pile.gridZ))
             setXMLString(xmlFile, pileKey .. "#l", location)
 
-            -- Save moisture with 3 decimal precision
             if pile.properties.moisture then
                 local roundedMoisture = math.floor(pile.properties.moisture * 1000 + 0.5) / 1000
                 setXMLString(xmlFile, pileKey .. "#m", string.format("%.3f", roundedMoisture))
+            end
+
+            if pile.properties.quality then
+                setXMLFloat(xmlFile, pileKey .. "#q", pile.properties.quality)
             end
         end
 
@@ -1385,9 +1405,9 @@ function GroundPropertyTracker:loadFromXMLFile(xmlFile, key)
                         break
                     end
 
-                    -- Parse combined location
                     local location = getXMLString(xmlFile, pileKey .. "#l")
                     local moisture = getXMLFloat(xmlFile, pileKey .. "#m")
+                    local quality = getXMLFloat(xmlFile, pileKey .. "#q")
 
                     if location then
                         local gridX, gridZ = location:match("([^,]+),([^,]+)")
@@ -1405,6 +1425,7 @@ function GroundPropertyTracker:loadFromXMLFile(xmlFile, key)
 
                             if moisture then
                                 pile.properties.moisture = moisture
+                                pile.properties.quality = quality
                             end
 
                             local gridKey = self:getGridKey(gridX, gridZ, fillType)
@@ -1436,7 +1457,6 @@ end
 -- @param connection: Network connection
 ---
 function GroundPropertyTracker:writeInitialClientState(streamId, connection)
-    -- Helper function to write piles from a storage table
     local function writePiles(storage)
         local count = 0
         for _ in pairs(storage) do
@@ -1449,6 +1469,7 @@ function GroundPropertyTracker:writeInitialClientState(streamId, connection)
             streamWriteFloat32(streamId, pile.gridX)
             streamWriteFloat32(streamId, pile.gridZ)
             streamWriteFloat32(streamId, pile.properties.moisture or 0)
+            streamWriteFloat32(streamId, pile.properties.quality or 100)
         end
     end
 
@@ -1465,22 +1486,22 @@ end
 -- @param connection: Network connection
 ---
 function GroundPropertyTracker:readInitialClientState(streamId, connection)
-    -- Helper function to read piles into a storage table
     local function readPiles(storage)
         local count = streamReadInt32(streamId)
 
-        for i = 1, count do
+        for _ = 1, count do
             local fillType = streamReadInt32(streamId)
             local gridX = streamReadFloat32(streamId)
             local gridZ = streamReadFloat32(streamId)
             local moisture = streamReadFloat32(streamId)
+            local quality = streamReadFloat32(streamId)
 
             local pile = {
                 fillType = fillType,
                 fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillType),
                 gridX = gridX,
                 gridZ = gridZ,
-                properties = { moisture = moisture }
+                properties = { moisture = moisture, quality = quality }
             }
 
             local gridKey = self:getGridKey(gridX, gridZ, fillType)

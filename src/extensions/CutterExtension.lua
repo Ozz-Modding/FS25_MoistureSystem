@@ -23,51 +23,64 @@ function MSCutterExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
         return result
     end
 
-    -- Check if we actually harvested something
-    local lastArea = spec.workAreaParameters.lastArea or 0
-    local lastLiters = spec.workAreaParameters.lastLiters or 0
-
-    if lastArea <= 0 and lastLiters <= 0 then
-        return result
-    end
-
-    -- Get the combine vehicle
     local combineVehicle = spec.workAreaParameters.combineVehicle
     if combineVehicle == nil then
         return result
     end
 
-    -- Calculate total liters harvested
-    local fruitType = spec.workAreaParameters.lastFruitType
-    if fruitType == nil then
-        return result
+    if spec.useWindrow then
+        local lastLiters = spec.workAreaParameters.lastLiters or 0
+        if lastLiters <= 0 then
+            return result
+        end
+
+        local moisture, quality = MSCutterExtension.getMoistureAtWorkArea(self, spec)
+        if moisture == nil then
+            return result
+        end
+
+        local outputFillType = spec.workAreaParameters.lastOutputFillType or spec.currentOutputFillType
+        if outputFillType == nil then
+            return result
+        end
+
+        MSCutterExtension.updateCombineMoisture(combineVehicle, lastLiters, moisture, outputFillType, quality)
+    else
+        -- Normal harvest: cutting standing crop
+        local lastArea = spec.workAreaParameters.lastArea or 0
+        local lastLiters = spec.workAreaParameters.lastLiters or 0
+
+        if lastArea <= 0 and lastLiters <= 0 then
+            return result
+        end
+
+        local fruitType = spec.workAreaParameters.lastFruitType
+        if fruitType == nil then
+            return result
+        end
+
+        local liters = g_fruitTypeManager:getFruitTypeAreaLiters(
+            fruitType,
+            spec.workAreaParameters.lastMultiplierArea,
+            false
+        ) + lastLiters
+
+        if liters <= 0 then
+            return result
+        end
+
+        local moisture = MSCutterExtension.getMoistureAtWorkArea(self, spec)
+        if moisture == nil then
+            return result
+        end
+
+        local fillType = g_fruitTypeManager:getFruitTypeByIndex(fruitType).fillType.index
+        if fillType == nil then
+            return result
+        end
+
+        MSCutterExtension.updateCombineMoisture(combineVehicle, liters, moisture, fillType)
     end
-
-    local liters = g_fruitTypeManager:getFruitTypeAreaLiters(
-        fruitType,
-        spec.workAreaParameters.lastMultiplierArea,
-        false
-    ) + lastLiters
-
-    if liters <= 0 then
-        return result
-    end
-
-    -- Determine moisture at harvest location
-    local moisture = MSCutterExtension.getMoistureAtWorkArea(self, spec)
-
-    if moisture == nil then
-        return result
-    end
-
-    -- Get fillType for the harvested crop
-    local fillType = g_fruitTypeManager:getFruitTypeByIndex(fruitType).fillType.index
-    if fillType == nil then
-        return result
-    end
-
-    -- Update combine's rolling moisture average
-    MSCutterExtension.updateCombineMoisture(combineVehicle, liters, moisture, fillType)
 
     return result
 end
@@ -81,58 +94,36 @@ end
 function MSCutterExtension.getMoistureAtWorkArea(cutter, spec)
     local moistureSystem = g_currentMission.MoistureSystem
 
-    -- Check if picking up windrows
+    local workArea = cutter:getWorkAreaByIndex(1)
+    if workArea == nil then
+        return nil, nil
+    end
+
+    local sx, _, sz = getWorldTranslation(workArea.start)
+    local wx, _, wz = getWorldTranslation(workArea.width)
+    local hx, _, hz = getWorldTranslation(workArea.height)
+    local centerX = (sx + wx + hx) / 3
+    local centerZ = (sz + wz + hz) / 3
+
     if spec.useWindrow then
-        -- For windrow pickup, check if we have tracked piles
         local tracker = g_currentMission.groundPropertyTracker
         if tracker == nil then
-            return nil
+            return nil, nil
         end
 
-        -- Get first work area to determine location
-        local workArea = cutter:getWorkAreaByIndex(1)
-        if workArea == nil then
-            return nil
-        end
-
-        -- Calculate center of work area
-        local sx, _, sz = getWorldTranslation(workArea.start)
-        local wx, _, wz = getWorldTranslation(workArea.width)
-        local hx, _, hz = getWorldTranslation(workArea.height)
-
-        local centerX = (sx + wx + hx) / 3
-        local centerZ = (sz + wz + hz) / 3
-
-        -- Try to get moisture from tracked pile
         local fillType = spec.currentInputFillType
         if fillType == nil then
-            return nil
+            return nil, nil
         end
 
         local properties = tracker:getPilePropertiesAtPosition(centerX, centerZ, fillType)
         if properties and properties.moisture then
-            return properties.moisture
+            return properties.moisture, properties.quality
         end
 
-        -- Fall back to field moisture if no pile tracked
-        return moistureSystem:getMoistureAtPosition(centerX, centerZ)
+        return moistureSystem:getMoistureAtPosition(centerX, centerZ), nil
     else
-        -- For field harvest, get moisture from field location
-        -- Get first work area to determine location
-        local workArea = cutter:getWorkAreaByIndex(1)
-        if workArea == nil then
-            return nil
-        end
-
-        -- Calculate center of work area
-        local sx, _, sz = getWorldTranslation(workArea.start)
-        local wx, _, wz = getWorldTranslation(workArea.width)
-        local hx, _, hz = getWorldTranslation(workArea.height)
-
-        local centerX = (sx + wx + hx) / 3
-        local centerZ = (sz + wz + hz) / 3
-
-        return moistureSystem:getMoistureAtPosition(centerX, centerZ)
+        return moistureSystem:getMoistureAtPosition(centerX, centerZ), nil
     end
 end
 
@@ -143,7 +134,7 @@ end
 -- @param newMoisture: Moisture level of picked up crop (0-1 scale)
 -- @param fillType: FillType index being harvested
 ---
-function MSCutterExtension.updateCombineMoisture(combineVehicle, newLiters, newMoisture, fillType)
+function MSCutterExtension.updateCombineMoisture(combineVehicle, newLiters, newMoisture, fillType, newQuality)
     local moistureSystem = g_currentMission.MoistureSystem
     if moistureSystem == nil then
         return
@@ -158,7 +149,6 @@ function MSCutterExtension.updateCombineMoisture(combineVehicle, newLiters, newM
         return
     end
 
-    -- Get current fill level (before adding new crop)
     local spec = combineVehicle.spec_combine
     if spec == nil then
         return
@@ -166,18 +156,16 @@ function MSCutterExtension.updateCombineMoisture(combineVehicle, newLiters, newM
 
     local totalFillLevel = combineVehicle:getFillUnitFillLevel(spec.fillUnitIndex)
     local currentLiters = totalFillLevel - newLiters
-    local currentMoisture = moistureSystem:getObjectMoisture(uniqueId, fillType)
+    local currentInfo = moistureSystem:getObjectInfo(uniqueId, fillType)
+    newQuality = newQuality or moistureSystem:deriveQuality(fillType, newMoisture)
 
-    if currentMoisture == nil or currentLiters <= 0.001 then
-        -- First harvest or empty tank - use source moisture directly
-        moistureSystem:setObjectMoisture(uniqueId, fillType, newMoisture)
+    if currentInfo == nil or currentLiters <= 0.001 then
+        moistureSystem:setObjectInfo(uniqueId, fillType, { moisture = newMoisture, quality = newQuality })
     else
-        -- Volume-weighted average
         local totalLiters = totalFillLevel
-        local moistureLiters = currentLiters * currentMoisture + newLiters * newMoisture
-        local averageMoisture = moistureLiters / totalLiters
-
-        moistureSystem:setObjectMoisture(uniqueId, fillType, averageMoisture)
+        local avgMoisture = (currentLiters * currentInfo.moisture + newLiters * newMoisture) / totalLiters
+        local avgQuality = (currentLiters * (currentInfo.quality or 100) + newLiters * newQuality) / totalLiters
+        moistureSystem:setObjectInfo(uniqueId, fillType, { moisture = avgMoisture, quality = avgQuality })
     end
 end
 
@@ -218,9 +206,9 @@ function MSCutterExtension.resetCombineMoisture(combineVehicle, fillType)
     end
 
     if fillType == nil then
-        moistureSystem.objectMoisture[uniqueId] = nil
+        moistureSystem.objectInfo[uniqueId] = nil
     else
-        moistureSystem:setObjectMoisture(uniqueId, fillType, nil)
+        moistureSystem:setObjectInfo(uniqueId, fillType, nil)
     end
 end
 

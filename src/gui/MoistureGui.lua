@@ -22,6 +22,7 @@ function MoistureGui:onGuiSetupFinished()
     self.clickBackCallback = self:makeSelfCallback(self.onButtonBack)
 
     self.pageGrades:initialize()
+    self.pagePrices:initialize()
     self.pageCalendar:initialize()
 
     self:setupPages()
@@ -30,8 +31,9 @@ end
 
 function MoistureGui:setupPages()
     local pages = {
-        {self.pageGrades, 'gui.icon_ingameMenu_prices'},
-        {self.pageCalendar, 'gui.icon_ingameMenu_calendar'}
+        { self.pageGrades, 'gui.icon_ingameMenu_finances' },
+        { self.pagePrices, 'gui.icon_ingameMenu_prices' },
+        { self.pageCalendar, 'gui.icon_ingameMenu_calendar' }
     }
 
     for idx, thisPage in ipairs(pages) do

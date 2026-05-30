@@ -1,7 +1,3 @@
----
--- MoistureSystem - Grades Frame
---
-
 MoistureGuiGrades = {}
 
 local MoistureGuiGrades_mt = Class(MoistureGuiGrades, TabbedMenuFrameElement)
@@ -14,7 +10,6 @@ function MoistureGuiGrades.new(l18n)
 end
 
 function MoistureGuiGrades:initialize()
-    -- Initialize frame content here
 end
 
 function MoistureGuiGrades:onGuiSetupFinished()
@@ -36,12 +31,9 @@ end
 function MoistureGuiGrades:updateTable()
     local tableData = {}
 
-    -- Build table data from CropValueMap
     for fillTypeIndex, ranges in pairs(CropValueMap.Data) do
-        -- local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillTypeIndex)
         local fillTypeTitle = g_fillTypeManager:getFillTypeByIndex(fillTypeIndex).title
 
-        -- Collect ranges for each grade (up to 2 ranges per grade)
         local gradeData = {
             [CropValueMap.Grades.A] = {},
             [CropValueMap.Grades.B] = {},
@@ -52,11 +44,16 @@ function MoistureGuiGrades:updateTable()
         for _, range in ipairs(ranges) do
             local lowerPercent = math.floor(range.lower * 100)
             local upperPercent = math.floor(range.upper * 100)
-            local multiplierPercent = math.floor(range.multiplier * 100)
+            local qualityValue
+            if range.grade == CropValueMap.Grades.A then
+                qualityValue = 100
+            else
+                qualityValue = math.floor(range.multiplier * 100) - 1
+            end
 
             local rangeText
             if #gradeData[range.grade] == 0 then
-                rangeText = string.format("%d-%d%% (%d%%)", lowerPercent, upperPercent, multiplierPercent)
+                rangeText = string.format("%d-%d%% \u{2192} Q%d", lowerPercent, upperPercent, qualityValue)
             else
                 rangeText = string.format("%d-%d%%", lowerPercent, upperPercent)
             end
@@ -77,7 +74,6 @@ function MoistureGuiGrades:updateTable()
         })
     end
 
-    -- Sort by name
     table.sort(tableData, function(a, b) return a.name < b.name end)
 
     self.cropGradeRenderer:setData(tableData)

@@ -4,12 +4,12 @@
         <!-- Page header with icon and title -->
         <GuiElement profile="fs25_menuHeaderPanel">
             <Bitmap profile="fs25_menuHeaderIconBg">
-                <Bitmap profile="fs25_menuHeaderIcon" imageSliceId="gui.icon_ingameMenu_prices" />
+                <Bitmap profile="fs25_menuHeaderIcon" imageSliceId="gui.icon_ingameMenu_finances" />
             </Bitmap>
-            <Text profile="fs25_menuHeaderTitle" text="$l10n_moistureSystem_gui_moistureToQuality" />
+            <Text profile="fs25_menuHeaderTitle" text="$l10n_moistureSystem_gui_qualityToPrice" />
         </GuiElement>
 
-        <Text profile="msDescriptiveText" text="$l10n_moistureSystem_gui_moistureToQualityDesc" position="20px -50px" width="1400px" />
+        <Text profile="msDescriptiveText" text="$l10n_moistureSystem_gui_qualityToPriceDesc" position="20px -50px" width="1400px" />
 
         <!-- Table Headers -->
         <GuiElement profile="fs25_statisticsHeaderBox" position="20px -100px">
@@ -21,23 +21,19 @@
         </GuiElement>
 
         <!-- Table Content -->
-        <SmoothList id="cropGradeTable" profile="msTable" position="0px -140px" size="1100px 700px">
+        <SmoothList id="qualityPriceTable" profile="msTable" position="0px -140px" size="1100px 700px">
             <ListItem profile="msListItem">
                 <Text profile="msRowCellLeft" name="cropName" position="20px 0px" size="300px 20px" />
-                <Text profile="msRowCellLeft" name="gradeA1" position="320px 8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeA2" position="320px -8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeB1" position="520px 8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeB2" position="520px -8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeC1" position="720px 8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeC2" position="720px -8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeD1" position="920px 8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeD2" position="920px -8px" size="200px 15px" />
+                <Text profile="msRowCellLeft" name="gradeA" position="320px 0px" size="200px 20px" />
+                <Text profile="msRowCellLeft" name="gradeB" position="520px 0px" size="200px 20px" />
+                <Text profile="msRowCellLeft" name="gradeC" position="720px 0px" size="200px 20px" />
+                <Text profile="msRowCellLeft" name="gradeD" position="920px 0px" size="200px 20px" />
             </ListItem>
         </SmoothList>
 
         <!-- Scrollbar -->
         <ThreePartBitmap profile="msGroupsSliderBox" position="1140px -140px" size="6px 700px">
-            <Slider profile="fs25_listSlider" dataElementId="cropGradeTable" />
+            <Slider profile="fs25_listSlider" dataElementId="qualityPriceTable" />
         </ThreePartBitmap>
     </GuiElement>
 </GUI>

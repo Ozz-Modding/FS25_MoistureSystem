@@ -1,7 +1,3 @@
----
--- Crop Grade Table Renderer
---
-
 CropGradeTableRenderer = {}
 CropGradeTableRenderer_mt = Class(CropGradeTableRenderer)
 
@@ -43,5 +39,4 @@ function CropGradeTableRenderer:populateCellForItemInSection(list, section, inde
 end
 
 function CropGradeTableRenderer:onListSelectionChanged(list, section, index)
-    -- No action needed on selection
 end

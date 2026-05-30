@@ -30,12 +30,17 @@ function MSDischargeableExtension:dischargeToGround(superFunc, dischargeNode, em
         return dischargedLiters, minDropReached, hasMinDropFillLevel
     end
 
-    -- Get moisture from vehicle's fillType if available
+    -- Get moisture and quality from vehicle's fillType if available
     local moistureSystem = g_currentMission.MoistureSystem
     local moisture = nil
+    local quality = nil
 
     if moistureSystem and self.uniqueId then
-        moisture = moistureSystem:getObjectMoisture(self.uniqueId, fillType)
+        local info = moistureSystem:getObjectInfo(self.uniqueId, fillType)
+        if info then
+            moisture = info.moisture
+            quality = info.quality
+        end
     end
 
     -- If no moisture data, use field moisture as fallback
@@ -56,6 +61,8 @@ function MSDischargeableExtension:dischargeToGround(superFunc, dischargeNode, em
         if moisture == nil then
             moisture = moistureSystem.currentMoisturePercent
         end
+
+        quality = moistureSystem:deriveQuality(fillType, moisture)
     end
 
     -- Get discharge area coordinates
@@ -92,7 +99,7 @@ function MSDischargeableExtension:dischargeToGround(superFunc, dischargeNode, em
     local corner3X = centerX - halfWidth
     local corner3Z = centerZ + halfLength
 
-    -- Track the pile with moisture
+    -- Track the pile with moisture and quality
     -- Use absolute value since dischargedLiters is negative
     tracker:addPile(
         corner1X, corner1Z,
@@ -100,7 +107,7 @@ function MSDischargeableExtension:dischargeToGround(superFunc, dischargeNode, em
         corner3X, corner3Z,
         fillType,
         math.abs(dischargedLiters),
-        { moisture = moisture }
+        { moisture = moisture, quality = quality }
     )
 
     -- Clean up moisture tracking if vehicle is now empty of this fillType

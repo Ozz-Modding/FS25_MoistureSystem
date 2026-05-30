@@ -13,6 +13,9 @@ MoistureSettings.menuItems = {
     'baleRotEnabled',
     'baleRotRate',
     'baleExposureDecayRate',
+    'qualityDecayMultiplier',
+    'dryingSpeed',
+    'sellDryingChargeRate',
     'showFieldMoisture',
     'moistureMeterReporting'
 }
@@ -110,6 +113,30 @@ MoistureSettings.SETTINGS.moistureMeterReporting = {
         g_i18n:getText("setting_moisture_moistureMeterReporting_blinking"),
         g_i18n:getText("setting_moisture_moistureMeterReporting_notification")
     }
+}
+
+MoistureSettings.SETTINGS.qualityDecayMultiplier = {
+    ['default'] = 2,
+    ['serverOnly'] = true,
+    ['permission'] = 'moistureSettings',
+    ['values'] = { 0.5, 1.0, 1.5, 2.0 },
+    ['strings'] = { "0.5x", "1x", "1.5x", "2x" }
+}
+
+MoistureSettings.SETTINGS.dryingSpeed = {
+    ['default'] = 2,
+    ['serverOnly'] = true,
+    ['permission'] = 'moistureSettings',
+    ['values'] = { 0.005, 0.01, 0.02, 0.03 },
+    ['strings'] = { "0.5%", "1%", "2%", "3%" }
+}
+
+MoistureSettings.SETTINGS.sellDryingChargeRate = {
+    ['default'] = 2,
+    ['serverOnly'] = true,
+    ['permission'] = 'moistureSettings',
+    ['values'] = { 0.5, 1.0, 2.0, 4.0 },
+    ['strings'] = { "0.5x", "1x", "2x", "4x" }
 }
 
 function MoistureSettings.getStateIndex(id, value)

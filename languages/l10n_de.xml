@@ -23,6 +23,12 @@
 		<text name="setting_moisture_baleRotRate_tooltip" text="Multiplikator für die Verlustrate des Ballenvolumens. Höhere Werte bedeuten schnellere Fäule."/>
 		<text name="setting_moisture_baleExposureDecayRate" text="Ballen-Trocknungsrate"/>
 		<text name="setting_moisture_baleExposureDecayRate_tooltip" text="Wie schnell Ballen nach Regenende trocknen. Niedriger = langsamere Trocknung."/>
+		<text name="setting_moisture_qualityDecayMultiplier" text="Qualitätsverfallsrate"/>
+		<text name="setting_moisture_qualityDecayMultiplier_tooltip" text="Wie schnell die Erntequalität abnimmt, wenn sie über der idealen Feuchtigkeit gelagert wird. Höher = schnellerer Verfall."/>
+		<text name="setting_moisture_dryingSpeed" text="Silotrocknungsgeschwindigkeit"/>
+		<text name="setting_moisture_dryingSpeed_tooltip" text="Feuchtigkeitsprozent, das pro Stunde durch Silotrocknung entfernt wird."/>
+		<text name="setting_moisture_sellDryingChargeRate" text="Verkaufstrocknungsgebühr"/>
+		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Trocknungsgebühren-Multiplikator beim Verkauf feuchter Ernten. Höher = teurer."/>
 		<text name="setting_moisture_showFieldMoisture" text="Feldfeuchtigkeit anzeigen"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Zeigt den aktuellen Feuchtigkeitsgrad an Ihrer Position im Feldinfo-HUD an."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Feuchtigkeitsmesser-Bericht"/>
@@ -37,12 +43,28 @@
 		<!-- Multiplayer Permission -->
 		<text name="permission_moisture_moistureSettings" text="Feuchtigkeitseinstellungen ändern"/>
 
+		<!-- Finanzen -->
+		<text name="ms_ui_dryingCharge" text="Trocknungsgebühren"/>
+		<text name="finance_dryingCharge" text="Trocknungsgebühren"/>
+
+		<!-- Trocknungssystem -->
+		<text name="ms_action_startDrying" text="Trocknung starten"/>
+		<text name="ms_action_stopDrying" text="Trocknung stoppen"/>
+		<text name="ms_drying_started" text="Silotrocknung gestartet"/>
+		<text name="ms_drying_stopped" text="Silotrocknung gestoppt"/>
+		<text name="ms_drying_complete" text="Trocknung abgeschlossen - alle Ernten auf idealer Feuchtigkeit"/>
+
+		<!-- Info-Dialog -->
+		<text name="ms_info_dryingUpdate" text="Das Feuchtigkeitssystem enthält jetzt Getreidetrocknung. Geerntete Feldfrüchte haben einen Qualitätswert und einen Feuchtigkeitsgehalt. Sie müssen Getreide in einer Lagerhalle oder einem Silo trocknen, um Qualitätsverluste zu vermeiden. Beim Verkauf von Erntegut mit zu hoher Feuchtigkeit können Trocknungsgebühren anfallen. Weitere Informationen finden Sie im Hilfemenü. Diese Nachricht wird einmal pro Spielstand angezeigt und in einem zukünftigen Update entfernt."/>
+
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Feuchtigkeitsmenü öffnen"/>
+		<text name="input_MOISTURE_START_DRYING" text="Silo-Trocknung umschalten"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Feldfeuchtigkeit"/>
 		<text name="moistureSystem_moisture" text="Feuchtigkeit"/>
+		<text name="moistureSystem_quality" text="Qualität"/>
 		<text name="moistureSystem_range" text="Erwarteter Bereich"/>
 		<text name="moistureSystem_rainExposure" text="Regenexposition"/>
 		<text name="moistureSystem_baleStatus" text="Status"/>
@@ -55,6 +77,10 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Erntegütewerte"/>
 		<text name="moistureSystem_gui_description" text="Die unten stehenden Daten zeigen die Feuchtigkeitsbewertung für jede unterstützte Ernte. Der Feuchtigkeitsbereich für die Güteklasse wird angezeigt, und der Preismultiplikator für diese Klasse wird in Klammern angezeigt."/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Feuchtigkeit zu Qualität"/>
+		<text name="moistureSystem_gui_moistureToQualityDesc" text="Zeigt den Qualitätswert, der bei der Ernte basierend auf dem Feuchtigkeitsniveau zugewiesen wird. Ernten Sie im idealen Bereich (Klasse A) für maximale Qualität. Qualität verschlechtert sich stündlich bei Lagerung über idealer Feuchtigkeit."/>
+		<text name="moistureSystem_gui_qualityToPrice" text="Qualität zu Preis"/>
+		<text name="moistureSystem_gui_qualityToPriceDesc" text="Zeigt den Verkaufspreis-Multiplikator basierend auf der Erntequalität. Qualitätsbereiche variieren je Ernte - einige sind widerstandsfähiger gegen Qualitätsverlust als andere."/>
 		<text name="moistureSystem_gui_cropName" text="Erntename"/>
 		<text name="moistureSystem_gui_gradeA" text="Klasse A"/>
 		<text name="moistureSystem_gui_gradeB" text="Klasse B"/>
@@ -77,8 +103,8 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Übersicht"/>
-		<text name="help_moisture_overview_1" text="Die Feuchtigkeitssystem-Mod führt dynamische Feuchtigkeitsniveaus ein, die Ernten, Gras und Ballen auf Ihrem gesamten Hof beeinflussen. Die Feuchtigkeit variiert basierend auf Geländehöhe, Wetterbedingungen und Tageszeit."/>
-		<text name="help_moisture_overview_2" text="Dies schafft ein realistischeres Landwirtschaftserlebnis, bei dem Erntezeit und Lagerverwaltung wichtig sind. Verwenden Sie das Feuchtigkeitsmenü (Shift+M), um detaillierte Erntegütetabellen und Feuchtigkeitskalender anzuzeigen."/>
+		<text name="help_moisture_overview_1" text="Die Feuchtigkeitssystem-Mod führt dynamische Feuchtigkeitsniveaus und Erntequalitätsverfolgung ein, die Ernten, Gras und Ballen auf Ihrem gesamten Hof beeinflussen. Die Feuchtigkeit variiert basierend auf Geländehöhe, Wetterbedingungen und Tageszeit. Qualität wird bei der Ernte bestimmt und verschlechtert sich über die Zeit, wenn Ernten zu feucht gelagert werden."/>
+		<text name="help_moisture_overview_2" text="Dies schafft ein realistischeres Landwirtschaftserlebnis, bei dem Erntezeit, Trocknung und Lagerverwaltung wichtig sind. Verwenden Sie das Feuchtigkeitsmenü (Shift+M), um Qualität-zu-Preis-Tabellen, Feuchtigkeit-zu-Qualität-Diagramme und Feuchtigkeitskalender anzuzeigen."/>
 
 		<!-- Field Moisture Page -->
 		<text name="help_moisture_field_title" text="Feldfeuchtigkeit"/>
@@ -87,9 +113,15 @@
 
 		<!-- Crop Grading Page -->
 		<text name="help_moisture_grading_title" text="Erntequalität &amp; Bewertung"/>
-		<text name="help_moisture_grading_1" text="Geerntete Ernten werden von A bis D basierend auf ihrem Feuchtigkeitsgehalt bewertet. Klasse A ist optimale Feuchtigkeit mit vollem Preis, Klasse B ist gute Feuchtigkeit mit leicht reduziertem Preis, Klasse C ist akzeptable Feuchtigkeit mit mäßig reduziertem Preis, und Klasse D ist schlechte Feuchtigkeit mit erheblich reduziertem Preis."/>
-		<text name="help_moisture_grading_2" text="Jede Erntesorte hat ihren eigenen idealen Feuchtigkeitsbereich. Ernten Sie zur richtigen Zeit, um Ihre Gewinne zu maximieren! Die Feuchtigkeit vom Feld wird auf Ihr geerntetes Material übertragen und über Fahrzeuge, Bodenhaufen und Lager verfolgt."/>
-		<text name="help_moisture_grading_3" text="Sehen Sie sich die detaillierten Klassenbereiche für alle unterstützten Ernten im Feuchtigkeitsmenü (Shift+M) an. Ernten umfassen Weizen, Gerste, Hafer, Mais, Raps, Sonnenblume, Sojabohnen und viele mehr."/>
+		<text name="help_moisture_grading_1" text="Geerntete Ernten erhalten einen Qualitätswert (0-100) basierend auf ihrem Feuchtigkeitsgehalt bei der Ernte. Qualität bestimmt Ihren Verkaufspreis durch erntespezifische Klassenbänder (A bis D). Jede Ernte hat unterschiedliche Qualitätsschwellen — einige sind widerstandsfähiger gegen niedrige Qualität als andere."/>
+		<text name="help_moisture_grading_2" text="Qualität verschlechtert sich stündlich, wenn Ernten über ihrer idealen Feuchtigkeit gelagert werden. Je weiter über dem Idealwert, desto schneller sinkt die Qualität. Einmal verlorene Qualität kann nicht wiederhergestellt werden — aber Sie können den Verfall durch Trocknung auf die ideale Feuchtigkeit stoppen."/>
+		<text name="help_moisture_grading_3" text="Sehen Sie sich Feuchtigkeit-zu-Qualität- und Qualität-zu-Preis-Tabellen im Feuchtigkeitsmenü (Shift+M) an. Jede Ernte hat einen einzigartigen idealen Feuchtigkeitsbereich und einzigartige Preisbänder basierend auf dem Qualitätsniveau."/>
+
+		<!-- Trocknung & Verkauf Seite -->
+		<text name="help_moisture_drying_title" text="Trocknung &amp; Verkauf"/>
+		<text name="help_moisture_drying_1" text="Ernten, die über ihrer idealen Feuchtigkeit gelagert werden, verlieren stündlich an Qualität. Um dies zu verhindern, verwenden Sie Silotrocknung: Gehen Sie zu Fuß zu einem Silo und aktivieren Sie die Trocknung. Der Trockner läuft stündlich und reduziert die Feuchtigkeit, bis alle Ernten ihr ideales Niveau erreichen, dann stoppt er automatisch."/>
+		<text name="help_moisture_drying_2" text="Trocknung kostet Geld basierend auf Volumen und entfernter Feuchtigkeit, ist aber deutlich günstiger als die Trocknungsgebühren beim direkten Verkauf feuchter Ernten. Größere Mengen brauchen länger zum Trocknen (die Rate verlangsamt sich bei mehr Material)."/>
+		<text name="help_moisture_drying_3" text="Beim Verkauf von Ernten über idealer Feuchtigkeit an einer Verkaufsstation wird eine separate 'Trocknungsgebühren'-Gebühr zusätzlich zum qualitätsbasierten reduzierten Preis erhoben. Trocknen Sie Ihre Ernten vor dem Verkauf, um diese Gebühren vollständig zu vermeiden."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Gras Heuen &amp; Heu"/>
@@ -116,7 +148,7 @@
 		<!-- Settings Page -->
 		<text name="help_moisture_settings_title" text="Konfiguration"/>
 		<text name="help_moisture_settings_1" text="Wählen Sie aus drei Klimavoreinstellungen in den Spieleinstellungen: Trocken (niedrigere Feuchtigkeitsniveaus), Normal (ausgewogen, Standard) oder Feucht (höhere Feuchtigkeitsniveaus). Jede Voreinstellung beeinflusst monatliche Feuchtigkeitsbereiche während des ganzen Jahres."/>
-		<text name="help_moisture_settings_2" text="Feineinstellung des Verhaltens mit anpassbaren Einstellungen: Feuchtigkeitsverlust-/Gewinn-Multiplikatoren steuern Trocknungs- und Befeuchtungsgeschwindigkeit, Feuchtigkeitsreduzierung durch Heuen passt die Trocknung pro Durchgang an, und Ballenfäule-Einstellungen steuern, ob/wie schnell Ballen sich verschlechtern."/>
-		<text name="help_moisture_settings_3" text="Weitere Einstellungen umfassen Ballen-Schonfrist (Regentoleranz vor Fäule), Ballen-Trocknungsrate (Erholungsgeschwindigkeit), Feldfeuchtigkeitsanzeige umschalten und Feuchtigkeitsmesser-Berichtsstil. Im Mehrspielermodus steuert der Host/Admin diese Einstellungen."/>
+		<text name="help_moisture_settings_2" text="Feineinstellung des Verhaltens mit anpassbaren Einstellungen: Feuchtigkeitsverlust-/Gewinn-Multiplikatoren steuern Trocknungs- und Befeuchtungsgeschwindigkeit, Feuchtigkeitsreduzierung durch Heuen passt die Trocknung pro Durchgang an, Qualitätsverfallsrate steuert wie schnell die Qualität abnimmt, und Trocknungsgeschwindigkeit steuert die Silotrocknungsrate."/>
+		<text name="help_moisture_settings_3" text="Weitere Einstellungen umfassen Verkaufstrocknungsgebühr (Kosten beim Verkauf feuchter Ernten), Ballenfäule-Einstellungen, Feldfeuchtigkeitsanzeige umschalten und Feuchtigkeitsmesser-Berichtsstil. Im Mehrspielermodus steuert der Host/Admin diese Einstellungen."/>
 	</texts>
 </l10n>

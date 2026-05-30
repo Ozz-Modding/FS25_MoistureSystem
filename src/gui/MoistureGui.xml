@@ -3,6 +3,7 @@
   <Bitmap profile="fs25_fullScreenBackground" id="background" />
   <Paging profile="uiInGameMenuPaging" onPageChange="onPageChange" onPageUpdate="onPageUpdate" id="pagingElement">
     <FrameReference ref="MoistureGuiGrades" name="MoistureGuiGrades" id="pageGrades"/>
+    <FrameReference ref="MoistureGuiPrices" name="MoistureGuiPrices" id="pagePrices"/>
     <FrameReference ref="MoistureGuiCalendar" name="MoistureGuiCalendar" id="pageCalendar"/>
   </Paging>
   <Bitmap profile="fs25_tabListContainer" id="header">

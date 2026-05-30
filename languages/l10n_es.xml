@@ -23,6 +23,12 @@
 		<text name="setting_moisture_baleRotRate_tooltip" text="Multiplicador de la velocidad de pérdida de volumen de pacas. Valores más altos significan pudrición más rápida."/>
 		<text name="setting_moisture_baleExposureDecayRate" text="Velocidad de Secado de Pacas"/>
 		<text name="setting_moisture_baleExposureDecayRate_tooltip" text="Qué tan rápido se secan las pacas después de que para la lluvia. Menor = secado más lento."/>
+		<text name="setting_moisture_qualityDecayMultiplier" text="Tasa de Degradación de Calidad"/>
+		<text name="setting_moisture_qualityDecayMultiplier_tooltip" text="Qué tan rápido se degrada la calidad del cultivo cuando se almacena por encima de la humedad ideal. Mayor = degradación más rápida."/>
+		<text name="setting_moisture_dryingSpeed" text="Velocidad de Secado del Silo"/>
+		<text name="setting_moisture_dryingSpeed_tooltip" text="Porcentaje de humedad eliminado por hora mediante el secado en silo."/>
+		<text name="setting_moisture_sellDryingChargeRate" text="Cargo por Secado en Venta"/>
+		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Multiplicador del cargo por secado aplicado al vender cultivos húmedos. Mayor = más caro."/>
 		<text name="setting_moisture_showFieldMoisture" text="Mostrar Humedad del Campo"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Muestra el nivel de humedad actual en tu posición en el HUD de información del campo."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Reporte del Medidor de Humedad"/>
@@ -37,12 +43,28 @@
 		<!-- Multiplayer Permission -->
 		<text name="permission_moisture_moistureSettings" text="Cambiar Configuración de Humedad"/>
 
+		<!-- Finanzas -->
+		<text name="ms_ui_dryingCharge" text="Cargos por Secado"/>
+		<text name="finance_dryingCharge" text="Cargos por Secado"/>
+
+		<!-- Sistema de Secado -->
+		<text name="ms_action_startDrying" text="Iniciar Secado"/>
+		<text name="ms_action_stopDrying" text="Detener Secado"/>
+		<text name="ms_drying_started" text="Secado en silo iniciado"/>
+		<text name="ms_drying_stopped" text="Secado en silo detenido"/>
+		<text name="ms_drying_complete" text="Secado completo - todos los cultivos en humedad ideal"/>
+
+		<!-- Diálogo informativo -->
+		<text name="ms_info_dryingUpdate" text="El sistema de humedad ahora incluye el secado de grano. Los cultivos cosechados tienen un valor de calidad y un nivel de humedad. Debes secar el grano en un granero o silo para evitar la pérdida de calidad. Vender cultivos con exceso de humedad puede generar cargos por secado. Consulta el menú de ayuda para más información. Este mensaje se muestra una vez por partida guardada y se eliminará en una futura actualización."/>
+
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Abrir Menú de Humedad"/>
+		<text name="input_MOISTURE_START_DRYING" text="Alternar secado en silo"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Humedad del Campo"/>
 		<text name="moistureSystem_moisture" text="Humedad"/>
+		<text name="moistureSystem_quality" text="Calidad"/>
 		<text name="moistureSystem_range" text="Rango Esperado"/>
 		<text name="moistureSystem_rainExposure" text="Exposición a la Lluvia"/>
 		<text name="moistureSystem_baleStatus" text="Estado"/>
@@ -55,6 +77,10 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Valores de Grado de Cultivos"/>
 		<text name="moistureSystem_gui_description" text="Los datos a continuación muestran la clasificación de humedad para cada cultivo compatible. Se muestra el rango de humedad para el grado, y el multiplicador de precio para ese grado se muestra entre paréntesis."/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Humedad a Calidad"/>
+		<text name="moistureSystem_gui_moistureToQualityDesc" text="Muestra el valor de calidad asignado en la cosecha según el nivel de humedad. Cosecha dentro del rango ideal (Grado A) para máxima calidad. La calidad se degrada cada hora cuando se almacena por encima de la humedad ideal."/>
+		<text name="moistureSystem_gui_qualityToPrice" text="Calidad a Precio"/>
+		<text name="moistureSystem_gui_qualityToPriceDesc" text="Muestra el multiplicador de precio de venta basado en la calidad del cultivo. Los rangos de calidad varían por cultivo - algunos son más resistentes a la pérdida de calidad que otros."/>
 		<text name="moistureSystem_gui_cropName" text="Nombre del Cultivo"/>
 		<text name="moistureSystem_gui_gradeA" text="Grado A"/>
 		<text name="moistureSystem_gui_gradeB" text="Grado B"/>
@@ -77,8 +103,8 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Descripción General"/>
-		<text name="help_moisture_overview_1" text="El mod Sistema de Humedad introduce niveles de humedad dinámicos que afectan a los cultivos, el pasto y las pacas en toda tu granja. La humedad varía según la elevación del terreno, las condiciones climáticas y la hora del día."/>
-		<text name="help_moisture_overview_2" text="Esto crea una experiencia agrícola más realista donde el momento de la cosecha y la gestión del almacenamiento importan. Usa el Menú de Humedad (Shift+M) para ver tablas detalladas de grados de cultivos y calendarios de humedad."/>
+		<text name="help_moisture_overview_1" text="El mod Sistema de Humedad introduce niveles de humedad dinámicos y seguimiento de calidad de cultivos que afectan a los cultivos, el pasto y las pacas en toda tu granja. La humedad varía según la elevación del terreno, las condiciones climáticas y la hora del día. La calidad se determina en la cosecha y se degrada con el tiempo si los cultivos se almacenan demasiado húmedos."/>
+		<text name="help_moisture_overview_2" text="Esto crea una experiencia agrícola más realista donde el momento de la cosecha, el secado y la gestión del almacenamiento importan. Usa el Menú de Humedad (Shift+M) para ver tablas de calidad-a-precio, gráficos de humedad-a-calidad y calendarios de humedad."/>
 
 		<!-- Field Moisture Page -->
 		<text name="help_moisture_field_title" text="Humedad del Campo"/>
@@ -87,9 +113,15 @@
 
 		<!-- Crop Grading Page -->
 		<text name="help_moisture_grading_title" text="Calidad y Clasificación de Cultivos"/>
-		<text name="help_moisture_grading_1" text="Los cultivos cosechados se clasifican de A a D según su contenido de humedad. El Grado A es humedad óptima con precio completo, el Grado B es buena humedad con precio ligeramente reducido, el Grado C es humedad aceptable con precio moderadamente reducido, y el Grado D es humedad deficiente con precio significativamente reducido."/>
-		<text name="help_moisture_grading_2" text="Cada tipo de cultivo tiene su propio rango de humedad ideal. ¡Cosecha en el momento adecuado para maximizar tus ganancias! La humedad del campo se transfiere a tu material cosechado y se rastrea a través de vehículos, montones en el suelo y almacenamiento."/>
-		<text name="help_moisture_grading_3" text="Consulta los rangos de grados detallados para todos los cultivos compatibles en el Menú de Humedad (Shift+M). Los cultivos incluyen trigo, cebada, avena, maíz, colza, girasol, soja y muchos más."/>
+		<text name="help_moisture_grading_1" text="Los cultivos cosechados reciben una puntuación de calidad (0-100) basada en su contenido de humedad en la cosecha. La calidad determina tu precio de venta a través de bandas de grado por cultivo (A a D). Cada cultivo tiene diferentes umbrales de calidad — algunos son más resistentes a la baja calidad que otros."/>
+		<text name="help_moisture_grading_2" text="La calidad se degrada cada hora cuando los cultivos se almacenan por encima de su nivel de humedad ideal. Cuanto más por encima del ideal, más rápido cae la calidad. Una vez perdida la calidad, no se puede recuperar — pero puedes detener la degradación secando los cultivos a su humedad ideal."/>
+		<text name="help_moisture_grading_3" text="Consulta las tablas de humedad-a-calidad y calidad-a-precio en el Menú de Humedad (Shift+M). Cada cultivo tiene un rango de humedad ideal único y bandas de precio únicas basadas en el nivel de calidad."/>
+
+		<!-- Secado y Venta -->
+		<text name="help_moisture_drying_title" text="Secado &amp; Venta"/>
+		<text name="help_moisture_drying_1" text="Los cultivos almacenados por encima de su nivel de humedad ideal pierden calidad cada hora. Para evitar esto, usa el secado en silo: acércate a cualquier silo a pie y activa el secado. El secador funciona cada hora, reduciendo la humedad hasta que todos los cultivos alcancen su nivel ideal, luego se detiene automáticamente."/>
+		<text name="help_moisture_drying_2" text="El secado cuesta dinero basado en el volumen y la humedad eliminada, pero es significativamente más barato que los cargos por secado incurridos al vender cultivos húmedos directamente. Los volúmenes más grandes tardan más en secarse (la tasa disminuye con más material)."/>
+		<text name="help_moisture_drying_3" text="Al vender cultivos por encima de la humedad ideal en un punto de venta, se te cobrará un cargo separado de 'Cargos por Secado' además del precio reducido basado en la calidad. Seca tus cultivos antes de vender para evitar estos cargos por completo."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Henificación y Heno"/>
@@ -116,7 +148,7 @@
 		<!-- Settings Page -->
 		<text name="help_moisture_settings_title" text="Configuración"/>
 		<text name="help_moisture_settings_1" text="Elige entre tres preajustes climáticos en la configuración del juego: Seco (niveles de humedad más bajos), Normal (equilibrado, predeterminado) o Húmedo (niveles de humedad más altos). Cada preajuste afecta los rangos de humedad mensuales a lo largo del año."/>
-		<text name="help_moisture_settings_2" text="Ajusta finamente el comportamiento con configuraciones ajustables: Los Multiplicadores de Pérdida/Ganancia de Humedad controlan la velocidad de secado y humedecimiento, la Reducción de Humedad por Henificación ajusta el secado por pasada, y la configuración de Pudrición de Pacas controla si/qué tan rápido se deterioran las pacas."/>
-		<text name="help_moisture_settings_3" text="Otras configuraciones incluyen el Período de Tolerancia de Pacas (tolerancia a la lluvia antes de la pudrición), Velocidad de Secado de Pacas (velocidad de recuperación), activación de Visualización de Humedad del Campo y estilo de Reporte del Medidor de Humedad. En multijugador, el anfitrión/administrador controla estas configuraciones."/>
+		<text name="help_moisture_settings_2" text="Ajusta finamente el comportamiento con configuraciones ajustables: Los Multiplicadores de Pérdida/Ganancia de Humedad controlan la velocidad de secado y humedecimiento, la Reducción de Humedad por Henificación ajusta el secado por pasada, la Tasa de Degradación de Calidad controla qué tan rápido se degrada la calidad, y la Velocidad de Secado controla la tasa de secado en silo."/>
+		<text name="help_moisture_settings_3" text="Otras configuraciones incluyen el Cargo por Secado en Venta (costo al vender cultivos húmedos), configuraciones de Pudrición de Pacas, activación de Visualización de Humedad del Campo y estilo de Reporte del Medidor de Humedad. En multijugador, el anfitrión/administrador controla estas configuraciones."/>
 	</texts>
 </l10n>

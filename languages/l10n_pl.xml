@@ -23,6 +23,12 @@
 		<text name="setting_moisture_baleRotRate_tooltip" text="Współczynnik uwzględniający tempo utraty objętości beli. Wyższe wartości oznaczają szybszy proces gnicia."/>
 		<text name="setting_moisture_baleExposureDecayRate" text="Współczynnik wysychania bel"/>
 		<text name="setting_moisture_baleExposureDecayRate_tooltip" text="Jak szybko bele wysychają po ustaniu deszczu. Im niższa wartość, tym wolniejsze wysychanie."/>
+		<text name="setting_moisture_qualityDecayMultiplier" text="Tempo spadku jakości"/>
+		<text name="setting_moisture_qualityDecayMultiplier_tooltip" text="Jak szybko jakość plonów spada przy przechowywaniu powyżej idealnej wilgotności. Wyższa wartość = szybszy spadek."/>
+		<text name="setting_moisture_dryingSpeed" text="Prędkość suszenia w silosie"/>
+		<text name="setting_moisture_dryingSpeed_tooltip" text="Procent wilgotności usuwany na godzinę przez suszenie w silosie."/>
+		<text name="setting_moisture_sellDryingChargeRate" text="Opłata za suszenie przy sprzedaży"/>
+		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Mnożnik opłaty za suszenie przy sprzedaży mokrych plonów. Wyższa wartość = drożej."/>
 		<text name="setting_moisture_showFieldMoisture" text="Pokaż wilgotność gleby"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Wyświetl aktualny poziom wilgotności na Twojej pozycji w oknie informacyjnym."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Raporty z pomiarów wilgotności"/>
@@ -37,12 +43,28 @@
 		<!-- Multiplayer Permission -->
 		<text name="permission_moisture_moistureSettings" text="Ustawienia wilgotności"/>
 
+		<!-- Finanse -->
+		<text name="ms_ui_dryingCharge" text="Opłaty za suszenie"/>
+		<text name="finance_dryingCharge" text="Opłaty za suszenie"/>
+
+		<!-- System suszenia -->
+		<text name="ms_action_startDrying" text="Rozpocznij suszenie"/>
+		<text name="ms_action_stopDrying" text="Zatrzymaj suszenie"/>
+		<text name="ms_drying_started" text="Suszenie w silosie rozpoczęte"/>
+		<text name="ms_drying_stopped" text="Suszenie w silosie zatrzymane"/>
+		<text name="ms_drying_complete" text="Suszenie zakończone - wszystkie plony osiągnęły idealną wilgotność"/>
+
+		<!-- Dialog informacyjny -->
+		<text name="ms_info_dryingUpdate" text="System wilgotności zawiera teraz suszenie zboża. Zebrane plony mają wartość jakości i poziom wilgotności. Musisz suszyć zboże w magazynie lub silosie, aby zapobiec utracie jakości. Sprzedaż plonów z nadmierną wilgotnością może wiązać się z opłatami za suszenie. Więcej informacji znajdziesz w menu pomocy. Ta wiadomość wyświetli się raz na zapis i zostanie usunięta w przyszłej aktualizacji."/>
+
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Otwórz menu systemu wilgotności"/>
+		<text name="input_MOISTURE_START_DRYING" text="Przełącz suszenie w silosie"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Wilgotność gleby"/>
 		<text name="moistureSystem_moisture" text="Wilgotność"/>
+		<text name="moistureSystem_quality" text="Jakość"/>
 		<text name="moistureSystem_range" text="Oczekiwany zakres"/>
 		<text name="moistureSystem_rainExposure" text="Wpływ deszczu"/>
 		<text name="moistureSystem_baleStatus" text="Status"/>
@@ -55,6 +77,10 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Klasyfikacja jakości plonów"/>
 		<text name="moistureSystem_gui_description" text="Poniższe dane przedstawiają klasyfikację wilgotności dla każdej z obsługiwanych upraw. Podano zakres wilgotności dla danej klasy, a w nawiasach podano mnożnik ceny dla tej klasy."/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Wilgotność a jakość"/>
+		<text name="moistureSystem_gui_moistureToQualityDesc" text="Pokazuje wartość jakości przypisaną przy zbiorze na podstawie poziomu wilgotności. Zbieraj w idealnym zakresie (Klasa A) dla maksymalnej jakości. Jakość spada co godzinę przy przechowywaniu powyżej idealnej wilgotności."/>
+		<text name="moistureSystem_gui_qualityToPrice" text="Jakość a cena"/>
+		<text name="moistureSystem_gui_qualityToPriceDesc" text="Pokazuje mnożnik ceny sprzedaży na podstawie jakości plonu. Zakresy jakości różnią się w zależności od uprawy - niektóre są bardziej odporne na utratę jakości niż inne."/>
 		<text name="moistureSystem_gui_cropName" text="Nazwa uprawy"/>
 		<text name="moistureSystem_gui_gradeA" text="Klasa A"/>
 		<text name="moistureSystem_gui_gradeB" text="Klasa B"/>
@@ -77,8 +103,8 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Omówienie"/>
-		<text name="help_moisture_overview_1" text="Mod systemu wilgotności wprowadza dynamiczne poziomy wilgotności, które mają wpływ na uprawy, trawę i bele na całym terenie gospodarstwa. Wilgotność zmienia się w zależności od wysokości terenu, warunków pogodowych i pory dnia."/>
-		<text name="help_moisture_overview_2" text="Dzięki temu gra staje się bardziej realistyczna, a terminy zbiorów i zarządzanie magazynowaniem nabierają znaczenia. Skorzystaj z menu (domyślnie: Lewy Shift + M), aby wyświetlić szczegółowe tabele klas jakości plonów oraz kalendarz wilgotności."/>
+		<text name="help_moisture_overview_1" text="Mod systemu wilgotności wprowadza dynamiczne poziomy wilgotności i śledzenie jakości plonów, które mają wpływ na uprawy, trawę i bele na całym terenie gospodarstwa. Wilgotność zmienia się w zależności od wysokości terenu, warunków pogodowych i pory dnia. Jakość jest określana przy zbiorze i spada z czasem, jeśli plony są przechowywane zbyt wilgotne."/>
+		<text name="help_moisture_overview_2" text="Dzięki temu gra staje się bardziej realistyczna, a terminy zbiorów, suszenie i zarządzanie magazynowaniem nabierają znaczenia. Skorzystaj z menu wilgotności (Shift+M), aby wyświetlić tabele jakość-cena, wykresy wilgotność-jakość oraz kalendarz wilgotności."/>
 
 		<!-- Field Moisture Page -->
 		<text name="help_moisture_field_title" text="Wilgotność gleby"/>
@@ -87,9 +113,15 @@
 
 		<!-- Crop Grading Page -->
 		<text name="help_moisture_grading_title" text="Jakość i klasyfikacja plonów"/>
-		<text name="help_moisture_grading_1" text="Zebrane plony klasyfikuje się w skali od A do D na podstawie ich wilgotności. Klasa A oznacza optymalną wilgotność i pełną cenę, klasa B – dobrą wilgotność i nieznacznie obniżoną cenę, klasa C – zadowalającą wilgotność i umiarkowanie obniżoną cenę, a klasa D – niską wilgotność i znacznie obniżoną cenę."/>
-		<text name="help_moisture_grading_2" text="Każdy rodzaj uprawy ma swój optymalny zakres wilgotności. Zbierz plony w odpowiednim momencie, aby zmaksymalizować zyski! Wilgoć z pola przenosi się na zebrany materiał i jest przenoszona przez pojazdy na pryzmy na ziemi oraz do magazynów."/>
-		<text name="help_moisture_grading_3" text="Szczegółowe przedziały wilgotności dla wszystkich obsługiwanych upraw można sprawdzić w menu (domyślnie: Lewy Shift + M). Wśród upraw znajdują się pszenica, jęczmień, owies, kukurydza, rzepak, słonecznik, soja i wiele innych."/>
+		<text name="help_moisture_grading_1" text="Zebrane plony otrzymują ocenę jakości (0-100) na podstawie wilgotności w momencie zbioru. Jakość określa cenę sprzedaży poprzez przedziały klas dla każdej uprawy (od A do D). Każda uprawa ma inne progi jakości — niektóre są bardziej odporne na niską jakość niż inne."/>
+		<text name="help_moisture_grading_2" text="Jakość spada co godzinę, gdy plony są przechowywane powyżej idealnego poziomu wilgotności. Im bardziej powyżej ideału, tym szybciej spada jakość. Utracona jakość nie może zostać odzyskana — ale można zatrzymać degradację, susząc plony do idealnej wilgotności."/>
+		<text name="help_moisture_grading_3" text="Sprawdź tabele wilgotność-jakość i jakość-cena w menu wilgotności (Shift+M). Każda uprawa ma unikalny idealny zakres wilgotności i unikalne przedziały cenowe oparte na poziomie jakości."/>
+
+		<!-- Suszenie i sprzedaż -->
+		<text name="help_moisture_drying_title" text="Suszenie &amp; Sprzedaż"/>
+		<text name="help_moisture_drying_1" text="Plony przechowywane powyżej idealnego poziomu wilgotności tracą jakość co godzinę. Aby temu zapobiec, użyj suszenia w silosie: podejdź pieszo do dowolnego silosu i aktywuj suszenie. Suszarka działa co godzinę, obniżając wilgotność aż wszystkie plony osiągną idealny poziom, a następnie zatrzymuje się automatycznie."/>
+		<text name="help_moisture_drying_2" text="Suszenie kosztuje pieniądze w zależności od objętości i usuniętej wilgotności, ale jest znacznie tańsze niż opłaty za suszenie ponoszone przy bezpośredniej sprzedaży mokrych plonów. Większe ilości suszą się dłużej (tempo spada przy większej ilości materiału)."/>
+		<text name="help_moisture_drying_3" text="Przy sprzedaży plonów powyżej idealnej wilgotności w punkcie sprzedaży zostanie naliczona oddzielna opłata za suszenie oprócz obniżonej ceny opartej na jakości. Wysusz plony przed sprzedażą, aby całkowicie uniknąć tych opłat."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Przetrząsanie trawy i siano"/>
@@ -116,7 +148,7 @@
 		<!-- Settings Page -->
 		<text name="help_moisture_settings_title" text="Konfiguracja"/>
 		<text name="help_moisture_settings_1" text="W ustawieniach gry możesz wybrać jeden z trzech gotowych ustawień klimatycznych: &quot;Suchy&quot; (niższy poziom wilgotności), &quot;Normalny&quot; (zrównoważony, domyślny) lub &quot;Wilgotny&quot; (wyższy poziom wilgotności). Każde z tych ustawień wpływa na miesięczne wahania wilgotności w ciągu całego roku."/>
-		<text name="help_moisture_settings_2" text="Precyzyjna regulacja działania dzięki dostosowywanym ustawieniom: mnożniki utraty/przyrostu wilgotności kontrolują tempo suszenia i moknięcia, opcja redukcji wilgotności podczas przewracania pokosów reguluje stopień wysuszenia po każdym przejeździe, a ustawienia gnicia bel określają, czy i jak szybko bele ulegają rozkładowi."/>
-		<text name="help_moisture_settings_3" text="Inne ustawienia obejmują okres karencji dla bel (czas, przez jaki bele mogą być narażone na deszcz bez ryzyka zgnicia), tempo schnięcia bel, przełącznik wyświetlania wilgotności na polu oraz styl raportowania danych z miernika wilgotności. W trybie wieloosobowym ustawieniami tymi zarządza host/admin."/>
+		<text name="help_moisture_settings_2" text="Precyzyjna regulacja działania dzięki dostosowywanym ustawieniom: mnożniki utraty/przyrostu wilgotności kontrolują tempo suszenia i moknięcia, opcja redukcji wilgotności podczas przewracania pokosów reguluje stopień wysuszenia po każdym przejeździe, tempo spadku jakości kontroluje szybkość degradacji jakości, a prędkość suszenia kontroluje tempo suszenia w silosie."/>
+		<text name="help_moisture_settings_3" text="Inne ustawienia obejmują opłatę za suszenie przy sprzedaży (koszt sprzedaży mokrych plonów), ustawienia gnicia bel, przełącznik wyświetlania wilgotności na polu oraz styl raportowania danych z miernika wilgotności. W trybie wieloosobowym ustawieniami tymi zarządza host/admin."/>
 	</texts>
 </l10n>

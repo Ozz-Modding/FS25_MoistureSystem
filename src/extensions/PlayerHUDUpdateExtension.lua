@@ -42,7 +42,7 @@ function MSPlayerHUDExtension:getFillLevelInformationAppended(_, display)
     end
 
     moistureSystem:ensureObjectMoistureLoaded(self)
-    local objectData = moistureSystem.objectMoisture[self.uniqueId]
+    local objectData = moistureSystem.objectInfo[self.uniqueId]
     if objectData == nil then
         return
     end
@@ -51,9 +51,9 @@ function MSPlayerHUDExtension:getFillLevelInformationAppended(_, display)
         if data.isValid and data.fillType ~= nil and data.fillType ~= FillType.UNKNOWN then
             local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(data.fillType)
             if fillTypeName ~= nil then
-                local moisture = objectData[fillTypeName]
-                if moisture ~= nil then
-                    local moistureText = MSPlayerHUDExtension.formatMoistureInfoText(data.fillType, moisture)
+                local infoEntry = objectData[fillTypeName]
+                if infoEntry ~= nil then
+                    local moistureText = MSPlayerHUDExtension.formatMoistureInfoText(data.fillType, infoEntry.moisture, infoEntry.quality)
                     if moistureText ~= nil then
                         if data.infoText ~= nil then
                             data.infoText = moistureText .. " " .. data.infoText
@@ -78,16 +78,14 @@ FillUnit.getFillLevelInformation = Utils.appendedFunction(
 -- @param moisture: Moisture value (0-1 scale)
 -- @return Formatted string like "12.1% D" or "12.1%" for non-graded types, or nil
 ---
-function MSPlayerHUDExtension.formatMoistureInfoText(fillTypeIndex, moisture)
+function MSPlayerHUDExtension.formatMoistureInfoText(_, moisture, quality)
     if moisture == nil then
         return nil
     end
 
     local moistureText = string.format("%.1f%%", moisture * 100)
-    local grade, _ = CropValueMap.getGrade(fillTypeIndex, moisture)
-    if grade ~= nil then
-        local gradeNames = { "A", "B", "C", "D" }
-        moistureText = moistureText .. " " .. gradeNames[grade]
+    if quality ~= nil then
+        moistureText = moistureText .. " | " .. string.format("%d%%", math.floor(quality))
     end
 
     return moistureText
@@ -99,19 +97,13 @@ end
 -- @param moisture: Moisture value (0-1 scale)
 -- @return Formatted string with moisture percentage and grade if applicable
 ---
-function MSPlayerHUDExtension.formatMoistureWithGrade(fillTypeIndex, moisture)
-    local moistureText = string.format("%.1f%%", moisture * 100)
-    local isGrass = fillTypeIndex == FillType.GRASS or fillTypeIndex == FillType.GRASS_WINDROW
+function MSPlayerHUDExtension.formatMoistureText(moisture)
+    return string.format("%.1f%%", moisture * 100)
+end
 
-    if not isGrass then
-        local grade, multiplier = CropValueMap.getGrade(fillTypeIndex, moisture)
-        if grade ~= nil then
-            local gradeNames = { "A", "B", "C", "D" }
-            moistureText = moistureText .. " (Grade " .. gradeNames[grade] .. ")"
-        end
-    end
-
-    return moistureText
+function MSPlayerHUDExtension.formatQualityText(quality)
+    if quality == nil then return nil end
+    return string.format("%d%%", math.floor(quality))
 end
 
 ---
@@ -227,11 +219,16 @@ function MSPlayerHUDExtension:showFillTypeInfo()
     box:clear()
     box:setTitle(fillTypeName)
 
-    -- Show moisture level with grade if not grass
     box:addLine(
         g_i18n:getText("moistureSystem_moisture"),
-        MSPlayerHUDExtension.formatMoistureWithGrade(fillTypeIndex, moisture)
+        MSPlayerHUDExtension.formatMoistureText(moisture)
     )
+    if properties.quality then
+        box:addLine(
+            g_i18n:getText("moistureSystem_quality"),
+            MSPlayerHUDExtension.formatQualityText(properties.quality)
+        )
+    end
 
     -- Show volume if available
     if properties.volume then
@@ -278,7 +275,7 @@ function MSPlayerHUDExtension:showObjectMoistureInfo()
     end
 
     moistureSystem:ensureObjectMoistureLoaded(self.object)
-    local objectData = moistureSystem.objectMoisture[self.object.uniqueId]
+    local objectData = moistureSystem.objectInfo[self.object.uniqueId]
     if objectData == nil then
         return
     end
@@ -305,17 +302,22 @@ function MSPlayerHUDExtension:showObjectMoistureInfo()
 
     box:setTitle(title)
 
-    -- Add moisture data for each fillType stored in this object
     local hasData = false
-    for fillTypeName, moisture in pairs(objectData) do
+    for fillTypeName, infoEntry in pairs(objectData) do
         local fillTypeIndex = g_fillTypeManager:getFillTypeIndexByName(fillTypeName)
         if fillTypeIndex then
             local fillType = g_fillTypeManager:getFillTypeByIndex(fillTypeIndex)
             if fillType then
                 box:addLine(
                     fillType.title .. " " .. g_i18n:getText("moistureSystem_moisture"),
-                    MSPlayerHUDExtension.formatMoistureWithGrade(fillTypeIndex, moisture)
+                    MSPlayerHUDExtension.formatMoistureText(infoEntry.moisture)
                 )
+                if infoEntry.quality then
+                    box:addLine(
+                        fillType.title .. " " .. g_i18n:getText("moistureSystem_quality"),
+                        MSPlayerHUDExtension.formatQualityText(infoEntry.quality)
+                    )
+                end
                 hasData = true
             end
         end
@@ -339,7 +341,7 @@ function MSPlayerHUDExtension:showVehicleInfo(vehicle)
 
     local moistureSystem = g_currentMission.MoistureSystem
     moistureSystem:ensureObjectMoistureLoaded(vehicle)
-    local objectData = moistureSystem.objectMoisture[vehicle.uniqueId]
+    local objectData = moistureSystem.objectInfo[vehicle.uniqueId]
     if objectData == nil then
         return
     end
@@ -350,15 +352,21 @@ function MSPlayerHUDExtension:showVehicleInfo(vehicle)
     end
 
     -- Add moisture data for each fillType stored in this object
-    for fillTypeName, moisture in pairs(objectData) do
+    for fillTypeName, infoEntry in pairs(objectData) do
         local fillTypeIndex = g_fillTypeManager:getFillTypeIndexByName(fillTypeName)
         if fillTypeIndex then
             local fillType = g_fillTypeManager:getFillTypeByIndex(fillTypeIndex)
             if fillType then
                 box:addLine(
                     fillType.title .. " " .. g_i18n:getText("moistureSystem_moisture"),
-                    MSPlayerHUDExtension.formatMoistureWithGrade(fillTypeIndex, moisture)
+                    MSPlayerHUDExtension.formatMoistureText(infoEntry.moisture)
                 )
+                if infoEntry.quality then
+                    box:addLine(
+                        fillType.title .. " " .. g_i18n:getText("moistureSystem_quality"),
+                        MSPlayerHUDExtension.formatQualityText(infoEntry.quality)
+                    )
+                end
             end
         end
     end
@@ -382,7 +390,7 @@ function MSPlayerHUDExtension:showPalletInfo(pallet)
     end
 
     moistureSystem:ensureObjectMoistureLoaded(pallet)
-    local objectData = moistureSystem.objectMoisture[pallet.uniqueId]
+    local objectData = moistureSystem.objectInfo[pallet.uniqueId]
     if objectData == nil then
         return
     end
@@ -393,15 +401,21 @@ function MSPlayerHUDExtension:showPalletInfo(pallet)
     end
 
     -- Add moisture data for each fillType stored in this object
-    for fillTypeName, moisture in pairs(objectData) do
+    for fillTypeName, infoEntry in pairs(objectData) do
         local fillTypeIndex = g_fillTypeManager:getFillTypeIndexByName(fillTypeName)
         if fillTypeIndex then
             local fillType = g_fillTypeManager:getFillTypeByIndex(fillTypeIndex)
             if fillType then
                 box:addLine(
                     fillType.title .. " " .. g_i18n:getText("moistureSystem_moisture"),
-                    MSPlayerHUDExtension.formatMoistureWithGrade(fillTypeIndex, moisture)
+                    MSPlayerHUDExtension.formatMoistureText(infoEntry.moisture)
                 )
+                if infoEntry.quality then
+                    box:addLine(
+                        fillType.title .. " " .. g_i18n:getText("moistureSystem_quality"),
+                        MSPlayerHUDExtension.formatQualityText(infoEntry.quality)
+                    )
+                end
             end
         end
     end

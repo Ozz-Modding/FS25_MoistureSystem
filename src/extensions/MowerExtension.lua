@@ -48,11 +48,10 @@ function MSMowerExtension:processDropArea(superFunc, dropArea, dt)
         moisture = moistureSystem.currentMoisturePercent
     end
 
-    -- Track the dropped grass pile with moisture
-    -- Note: litersToDrop is the amount that was attempted to drop
-    -- The actual dropped amount was already deducted from litersToDrop by superFunc
+    local quality = moistureSystem:deriveQuality(dropArea.fillType, moisture)
     tracker:addPile(sx, sz, wx, wz, hx, hz, dropArea.fillType, dropped, {
-        moisture = moisture
+        moisture = moisture,
+        quality = quality
     })
 
     tracker:markAreaMowed(sx, sz, wx, wz, hx, hz)

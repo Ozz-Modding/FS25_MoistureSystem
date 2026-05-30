@@ -21,9 +21,14 @@
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Active la pourriture des balles pendant la pluie/neige. Les balles enrubannées et sous abri sont protégées."/>
 		<text name="setting_moisture_baleRotRate" text="Vitesse de Pourriture des Balles"/>
 		<text name="setting_moisture_baleRotRate_tooltip" text="Multiplicateur du taux de perte de volume des balles. Des valeurs plus élevées signifient une pourriture plus rapide."/>
-
 		<text name="setting_moisture_baleExposureDecayRate" text="Vitesse de Séchage des Balles"/>
 		<text name="setting_moisture_baleExposureDecayRate_tooltip" text="À quelle vitesse les balles sèchent après l'arrêt de la pluie. Plus bas = séchage plus lent."/>
+		<text name="setting_moisture_qualityDecayMultiplier" text="Taux de Dégradation de la Qualité"/>
+		<text name="setting_moisture_qualityDecayMultiplier_tooltip" text="Vitesse à laquelle la qualité des cultures se dégrade lorsqu'elles sont stockées au-dessus de l'humidité idéale. Plus élevé = dégradation plus rapide."/>
+		<text name="setting_moisture_dryingSpeed" text="Vitesse de Séchage du Silo"/>
+		<text name="setting_moisture_dryingSpeed_tooltip" text="Pourcentage d'humidité retiré par heure par le séchage en silo."/>
+		<text name="setting_moisture_sellDryingChargeRate" text="Frais de Séchage à la Vente"/>
+		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Multiplicateur des frais de séchage appliqué lors de la vente de cultures humides. Plus élevé = plus cher."/>
 		<text name="setting_moisture_showFieldMoisture" text="Afficher l'Humidité du Champ"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Affiche le niveau d'humidité actuel à votre position dans le HUD d'information du champ."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Rapport de l'Humidimètre"/>
@@ -38,12 +43,28 @@
 		<!-- Multiplayer Permission -->
 		<text name="permission_moisture_moistureSettings" text="Modifier les Paramètres d'Humidité"/>
 
+		<!-- Finances -->
+		<text name="ms_ui_dryingCharge" text="Frais de Séchage"/>
+		<text name="finance_dryingCharge" text="Frais de Séchage"/>
+
+		<!-- Système de Séchage -->
+		<text name="ms_action_startDrying" text="Démarrer le Séchage"/>
+		<text name="ms_action_stopDrying" text="Arrêter le Séchage"/>
+		<text name="ms_drying_started" text="Séchage en silo démarré"/>
+		<text name="ms_drying_stopped" text="Séchage en silo arrêté"/>
+		<text name="ms_drying_complete" text="Séchage terminé - toutes les cultures à l'humidité idéale"/>
+
+		<!-- Dialogue d'information -->
+		<text name="ms_info_dryingUpdate" text="Le système d'humidité inclut désormais le séchage des céréales. Les cultures récoltées ont une valeur de qualité et un taux d'humidité. Vous devez sécher le grain dans un hangar ou un silo pour éviter la perte de qualité. La vente de cultures trop humides peut entraîner des frais de séchage. Consultez le menu d'aide pour plus de détails. Ce message s'affiche une seule fois par sauvegarde et sera supprimé dans une future mise à jour."/>
+
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Ouvrir le Menu d'Humidité"/>
+		<text name="input_MOISTURE_START_DRYING" text="Activer/Désactiver le séchage"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Humidité du Champ"/>
 		<text name="moistureSystem_moisture" text="Humidité"/>
+		<text name="moistureSystem_quality" text="Qualité"/>
 		<text name="moistureSystem_range" text="Plage Attendue"/>
 		<text name="moistureSystem_rainExposure" text="Exposition à la Pluie"/>
 		<text name="moistureSystem_baleStatus" text="Statut"/>
@@ -56,6 +77,10 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Valeurs de Qualité des Cultures"/>
 		<text name="moistureSystem_gui_description" text="Les données ci-dessous montrent la classification d'humidité pour chaque culture prise en charge. La plage d'humidité pour la qualité est indiquée, et le multiplicateur de prix pour cette qualité est indiqué entre parenthèses."/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Humidité vers Qualité"/>
+		<text name="moistureSystem_gui_moistureToQualityDesc" text="Montre la valeur de qualité attribuée à la récolte en fonction du niveau d'humidité. Récoltez dans la plage idéale (Qualité A) pour une qualité maximale. La qualité se dégrade toutes les heures lorsque stockée au-dessus de l'humidité idéale."/>
+		<text name="moistureSystem_gui_qualityToPrice" text="Qualité vers Prix"/>
+		<text name="moistureSystem_gui_qualityToPriceDesc" text="Montre le multiplicateur de prix de vente basé sur la qualité de la culture. Les plages de qualité varient selon la culture - certaines sont plus résistantes à la perte de qualité que d'autres."/>
 		<text name="moistureSystem_gui_cropName" text="Nom de la Culture"/>
 		<text name="moistureSystem_gui_gradeA" text="Qualité A"/>
 		<text name="moistureSystem_gui_gradeB" text="Qualité B"/>
@@ -78,8 +103,8 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Aperçu"/>
-		<text name="help_moisture_overview_1" text="Le mod Système d'Humidité introduit des niveaux d'humidité dynamiques qui affectent les cultures, l'herbe et les balles dans toute votre ferme. L'humidité varie en fonction de l'élévation du terrain, des conditions météorologiques et de l'heure de la journée."/>
-		<text name="help_moisture_overview_2" text="Cela crée une expérience agricole plus réaliste où le moment de la récolte et la gestion du stockage comptent. Utilisez le Menu d'Humidité (Shift+M) pour afficher les tableaux détaillés des qualités de cultures et les calendriers d'humidité."/>
+		<text name="help_moisture_overview_1" text="Le mod Système d'Humidité introduit des niveaux d'humidité dynamiques et un suivi de la qualité des cultures qui affectent les cultures, l'herbe et les balles dans toute votre ferme. L'humidité varie en fonction de l'élévation du terrain, des conditions météorologiques et de l'heure de la journée. La qualité est déterminée à la récolte et se dégrade avec le temps si les cultures sont stockées trop humides."/>
+		<text name="help_moisture_overview_2" text="Cela crée une expérience agricole plus réaliste où le moment de la récolte, le séchage et la gestion du stockage comptent. Utilisez le Menu d'Humidité (Shift+M) pour afficher les tableaux qualité-vers-prix, les graphiques humidité-vers-qualité et les calendriers d'humidité."/>
 
 		<!-- Field Moisture Page -->
 		<text name="help_moisture_field_title" text="Humidité du Champ"/>
@@ -88,9 +113,15 @@
 
 		<!-- Crop Grading Page -->
 		<text name="help_moisture_grading_title" text="Qualité et Classification des Cultures"/>
-		<text name="help_moisture_grading_1" text="Les cultures récoltées sont classées de A à D en fonction de leur teneur en humidité. La Qualité A est l'humidité optimale avec le prix complet, la Qualité B est une bonne humidité avec un prix légèrement réduit, la Qualité C est une humidité acceptable avec un prix modérément réduit, et la Qualité D est une humidité médiocre avec un prix considérablement réduit."/>
-		<text name="help_moisture_grading_2" text="Chaque type de culture a sa propre plage d'humidité idéale. Récoltez au bon moment pour maximiser vos profits ! L'humidité du champ est transférée à votre matériel récolté et suivie à travers les véhicules, les tas au sol et le stockage."/>
-		<text name="help_moisture_grading_3" text="Consultez les plages de qualités détaillées pour toutes les cultures prises en charge dans le Menu d'Humidité (Shift+M). Les cultures comprennent le blé, l'orge, l'avoine, le maïs, le colza, le tournesol, le soja et bien d'autres."/>
+		<text name="help_moisture_grading_1" text="Les cultures récoltées reçoivent un score de qualité (0-100) basé sur leur teneur en humidité à la récolte. La qualité détermine votre prix de vente à travers des bandes de qualité par culture (A à D). Chaque culture a des seuils de qualité différents — certaines sont plus résistantes à une qualité faible que d'autres."/>
+		<text name="help_moisture_grading_2" text="La qualité se dégrade chaque heure lorsque les cultures sont stockées au-dessus de leur niveau d'humidité idéal. Plus l'humidité dépasse l'idéal, plus la qualité diminue rapidement. Une fois la qualité perdue, elle ne peut pas être récupérée — mais vous pouvez arrêter la dégradation en séchant les cultures à leur humidité idéale."/>
+		<text name="help_moisture_grading_3" text="Consultez les tableaux humidité-vers-qualité et qualité-vers-prix dans le Menu d'Humidité (Shift+M). Chaque culture a une plage d'humidité idéale unique et des bandes de prix uniques basées sur le niveau de qualité."/>
+
+		<!-- Séchage & Vente -->
+		<text name="help_moisture_drying_title" text="Séchage &amp; Vente"/>
+		<text name="help_moisture_drying_1" text="Les cultures stockées au-dessus de leur niveau d'humidité idéal perdent de la qualité chaque heure. Pour éviter cela, utilisez le séchage en silo : approchez-vous d'un silo à pied et activez le séchage. Le séchoir fonctionne toutes les heures, réduisant l'humidité jusqu'à ce que toutes les cultures atteignent leur niveau idéal, puis s'arrête automatiquement."/>
+		<text name="help_moisture_drying_2" text="Le séchage coûte de l'argent en fonction du volume et de l'humidité retirée, mais est nettement moins cher que les frais de séchage encourus lors de la vente directe de cultures humides. Les plus grands volumes prennent plus de temps à sécher (le taux ralentit avec plus de matériel)."/>
+		<text name="help_moisture_drying_3" text="Lors de la vente de cultures au-dessus de l'humidité idéale à un point de vente, des 'Frais de Séchage' séparés vous seront facturés en plus du prix réduit basé sur la qualité. Séchez vos cultures avant de vendre pour éviter entièrement ces frais."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Fanage et Foin"/>
@@ -117,7 +148,7 @@
 		<!-- Settings Page -->
 		<text name="help_moisture_settings_title" text="Configuration"/>
 		<text name="help_moisture_settings_1" text="Choisissez parmi trois préréglages climatiques dans les paramètres du jeu : Sec (niveaux d'humidité plus bas), Normal (équilibré, par défaut) ou Humide (niveaux d'humidité plus élevés). Chaque préréglage affecte les plages d'humidité mensuelles tout au long de l'année."/>
-		<text name="help_moisture_settings_2" text="Ajustez finement le comportement avec des paramètres réglables : Les Multiplicateurs de Perte/Gain d'Humidité contrôlent la vitesse de séchage et d'humidification, la Réduction d'Humidité par Fanage ajuste le séchage par passage, et les paramètres de Pourriture des Balles contrôlent si/comment les balles se détériorent rapidement."/>
-		<text name="help_moisture_settings_3" text="D'autres paramètres incluent la Période de Grâce des Balles (tolérance à la pluie avant la pourriture), la Vitesse de Séchage des Balles (vitesse de récupération), l'activation de l'Affichage de l'Humidité du Champ et le style de Rapport de l'Humidimètre. En multijoueur, l'hôte/admin contrôle ces paramètres."/>
+		<text name="help_moisture_settings_2" text="Ajustez finement le comportement avec des paramètres réglables : Les Multiplicateurs de Perte/Gain d'Humidité contrôlent la vitesse de séchage et d'humidification, la Réduction d'Humidité par Fanage ajuste le séchage par passage, le Taux de Dégradation de la Qualité contrôle la vitesse de perte de qualité, et la Vitesse de Séchage contrôle le taux de séchage en silo."/>
+		<text name="help_moisture_settings_3" text="D'autres paramètres incluent les Frais de Séchage à la Vente (coût lors de la vente de cultures humides), les paramètres de Pourriture des Balles, l'activation de l'Affichage de l'Humidité du Champ et le style de Rapport de l'Humidimètre. En multijoueur, l'hôte/admin contrôle ces paramètres."/>
 	</texts>
 </l10n>

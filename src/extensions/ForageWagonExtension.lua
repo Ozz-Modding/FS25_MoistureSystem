@@ -80,17 +80,16 @@ function MSForageWagonExtension:onEndWorkAreaProcessing(superFunc, dt, hasProces
         return result
     end
 
-    -- Get existing moisture for this fillType
-    local currentMoisture = moistureSystem:getObjectMoisture(uniqueId, fillType)
+    local currentInfo = moistureSystem:getObjectInfo(uniqueId, fillType)
+    local sourceQuality = (properties and properties.quality) or moistureSystem:deriveQuality(fillType, moisture)
 
-    if currentMoisture == nil or currentLiters <= 0 then
-        -- First pickup or empty tank - use pile moisture
-        moistureSystem:setObjectMoisture(uniqueId, fillType, moisture)
+    if currentInfo == nil or currentLiters <= 0 then
+        moistureSystem:setObjectInfo(uniqueId, fillType, { moisture = moisture, quality = sourceQuality })
     else
-        -- Volume-weighted average
         local totalLiters = currentLiters + pickupLiters
-        local averageMoisture = (currentLiters * currentMoisture + pickupLiters * moisture) / totalLiters
-        moistureSystem:setObjectMoisture(uniqueId, fillType, averageMoisture)
+        local avgMoisture = (currentLiters * currentInfo.moisture + pickupLiters * moisture) / totalLiters
+        local avgQuality = (currentLiters * (currentInfo.quality or 100) + pickupLiters * sourceQuality) / totalLiters
+        moistureSystem:setObjectInfo(uniqueId, fillType, { moisture = avgMoisture, quality = avgQuality })
     end
 
     tracker:checkPileHasContent(centerX, centerZ, fillType)

@@ -250,3 +250,52 @@ function CropValueMap.getGrade(fillType, moisture)
     end
     return nil
 end
+
+function CropValueMap.getIdealRange(fillType)
+    local ranges = CropValueMap.Data[fillType]
+    if not ranges then return nil end
+
+    for _, range in ipairs(ranges) do
+        if range.grade == CropValueMap.Grades.A then
+            return range.lower, range.upper
+        end
+    end
+    return nil
+end
+
+function CropValueMap.initializeQualityBands()
+    CropValueMap.QualityBands = {}
+
+    for fillTypeIndex, ranges in pairs(CropValueMap.Data) do
+        local multipliers = {}
+        for _, range in ipairs(ranges) do
+            if multipliers[range.grade] == nil then
+                multipliers[range.grade] = range.multiplier
+            end
+        end
+
+        local aMultiplier = multipliers[CropValueMap.Grades.A] or 1.0
+        local bMultiplier = multipliers[CropValueMap.Grades.B] or 0.90
+        local cMultiplier = multipliers[CropValueMap.Grades.C] or 0.75
+        local dMultiplier = multipliers[CropValueMap.Grades.D] or 0.55
+
+        CropValueMap.QualityBands[fillTypeIndex] = {
+            { minQuality = math.floor(bMultiplier * 100), grade = CropValueMap.Grades.A, priceMultiplier = aMultiplier },
+            { minQuality = math.floor(cMultiplier * 100), grade = CropValueMap.Grades.B, priceMultiplier = bMultiplier },
+            { minQuality = math.floor(dMultiplier * 100), grade = CropValueMap.Grades.C, priceMultiplier = cMultiplier },
+            { minQuality = 0,                             grade = CropValueMap.Grades.D, priceMultiplier = dMultiplier },
+        }
+    end
+end
+
+function CropValueMap.getQualityGrade(fillType, quality)
+    local bands = CropValueMap.QualityBands and CropValueMap.QualityBands[fillType]
+    if not bands then return nil, nil end
+
+    for _, band in ipairs(bands) do
+        if quality >= band.minQuality then
+            return band.grade, band.priceMultiplier
+        end
+    end
+    return CropValueMap.Grades.D, bands[4].priceMultiplier
+end

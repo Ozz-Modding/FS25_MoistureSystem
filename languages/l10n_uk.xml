@@ -23,6 +23,12 @@
 		<text name="setting_moisture_baleRotRate_tooltip" text="Множник швидкості втрати об'єму тюків. Більше значення = швидше гниття."/>
 		<text name="setting_moisture_baleExposureDecayRate" text="Швидкість висихання тюків"/>
 		<text name="setting_moisture_baleExposureDecayRate_tooltip" text="Як швидко тюки висихають після дощу. Менше = повільніше висихання."/>
+		<text name="setting_moisture_qualityDecayMultiplier" text="Швидкість падіння якості"/>
+		<text name="setting_moisture_qualityDecayMultiplier_tooltip" text="Як швидко падає якість культур при зберіганні вище ідеальної вологості. Більше = швидше падіння."/>
+		<text name="setting_moisture_dryingSpeed" text="Швидкість сушіння у силосі"/>
+		<text name="setting_moisture_dryingSpeed_tooltip" text="Відсоток вологості, що видаляється за годину сушінням у силосі."/>
+		<text name="setting_moisture_sellDryingChargeRate" text="Плата за сушіння при продажу"/>
+		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Множник плати за сушіння при продажу вологих культур. Більше = дорожче."/>
 		<text name="setting_moisture_showFieldMoisture" text="Показувати вологість поля"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Показує рівень вологості у HUD інформації поля."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Сповіщення вимірювача вологості"/>
@@ -37,12 +43,28 @@
 		<!-- Multiplayer Permission -->
 		<text name="permission_moisture_moistureSettings" text="Змінювати налаштування вологості"/>
 
+		<!-- Фінанси -->
+		<text name="ms_ui_dryingCharge" text="Плата за сушіння"/>
+		<text name="finance_dryingCharge" text="Плата за сушіння"/>
+
+		<!-- Система сушіння -->
+		<text name="ms_action_startDrying" text="Почати сушіння"/>
+		<text name="ms_action_stopDrying" text="Зупинити сушіння"/>
+		<text name="ms_drying_started" text="Сушіння у силосі розпочато"/>
+		<text name="ms_drying_stopped" text="Сушіння у силосі зупинено"/>
+		<text name="ms_drying_complete" text="Сушіння завершено - всі культури на ідеальній вологості"/>
+
+		<!-- Інформаційний діалог -->
+		<text name="ms_info_dryingUpdate" text="Система вологості тепер включає сушіння зерна. Зібрані культури мають значення якості та рівень вологості. Ви повинні сушити зерно в зерносховищі або силосі, щоб запобігти втраті якості. Продаж культур з надлишковою вологістю може спричинити плату за сушіння. Дивіться меню довідки для деталей. Це повідомлення показується один раз на збереження і буде видалено в майбутньому оновленні."/>
+
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Відкрити меню вологості"/>
+		<text name="input_MOISTURE_START_DRYING" text="Перемкнути сушіння в силосі"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Вологість поля"/>
 		<text name="moistureSystem_moisture" text="Вологість"/>
+		<text name="moistureSystem_quality" text="Якість"/>
 		<text name="moistureSystem_range" text="Очікуваний діапазон"/>
 		<text name="moistureSystem_rainExposure" text="Вплив дощу"/>
 		<text name="moistureSystem_baleStatus" text="Стан"/>
@@ -55,6 +77,10 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Якість культур"/>
 		<text name="moistureSystem_gui_description" text="Нижче показано класи вологості для кожної культури та множник ціни."/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Вологість до якості"/>
+		<text name="moistureSystem_gui_moistureToQualityDesc" text="Показує значення якості, присвоєне при збиранні на основі рівня вологості. Збирайте в ідеальному діапазоні (Клас A) для максимальної якості. Якість падає щогодини при зберіганні вище ідеальної вологості."/>
+		<text name="moistureSystem_gui_qualityToPrice" text="Якість до ціни"/>
+		<text name="moistureSystem_gui_qualityToPriceDesc" text="Показує множник ціни продажу на основі якості культури. Діапазони якості відрізняються для різних культур - деякі більш стійкі до втрати якості."/>
 		<text name="moistureSystem_gui_cropName" text="Культура"/>
 		<text name="moistureSystem_gui_gradeA" text="Клас A"/>
 		<text name="moistureSystem_gui_gradeB" text="Клас B"/>
@@ -77,8 +103,8 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Огляд"/>
-		<text name="help_moisture_overview_1" text="Мод додає динамічну систему вологості для культур і тюків."/>
-		<text name="help_moisture_overview_2" text="Час збору врожаю та зберігання тепер мають значення."/>
+		<text name="help_moisture_overview_1" text="Мод додає динамічну систему вологості та відстеження якості культур, що впливає на культури, траву і тюки по всьому господарству. Вологість змінюється залежно від висоти, погоди та часу доби. Якість визначається при збиранні та падає з часом, якщо культури зберігаються надто вологими."/>
+		<text name="help_moisture_overview_2" text="Це створює реалістичніший досвід фермерства, де час збору, сушіння та управління зберіганням мають значення. Використовуйте меню вологості (Shift+M) для перегляду таблиць якість-ціна, графіків вологість-якість та календарів вологості."/>
 		<!-- Field Moisture -->
 		<text name="help_moisture_field_title" text="Вологість поля"/>
 		<text name="help_moisture_field_1" text="Вологість поля змінюється залежно від висоти, погоди, температури та часу доби."/>
@@ -86,9 +112,15 @@
 
 		<!-- Grading -->
 		<text name="help_moisture_grading_title" text="Якість культур"/>
-		<text name="help_moisture_grading_1" text="Культури отримують клас A-D залежно від вологості."/>
-		<text name="help_moisture_grading_2" text="Кожна культура має власний оптимальний рівень вологості."/>
-		<text name="help_moisture_grading_3" text="Перевіряйте таблицю класів у меню вологості."/>
+		<text name="help_moisture_grading_1" text="Зібрані культури отримують оцінку якості (0-100) на основі вмісту вологи при збиранні. Якість визначає ціну продажу через діапазони класів для кожної культури (A-D). Кожна культура має різні пороги якості — деякі більш стійкі до низької якості."/>
+		<text name="help_moisture_grading_2" text="Якість падає щогодини, коли культури зберігаються вище ідеального рівня вологості. Чим більше вище ідеалу, тим швидше падає якість. Втрачену якість неможливо відновити — але можна зупинити падіння, висушивши культури до ідеальної вологості."/>
+		<text name="help_moisture_grading_3" text="Перегляньте таблиці вологість-якість та якість-ціна у меню вологості (Shift+M). Кожна культура має унікальний ідеальний діапазон вологості та унікальні цінові діапазони на основі рівня якості."/>
+
+		<!-- Сушіння та продаж -->
+		<text name="help_moisture_drying_title" text="Сушіння &amp; Продаж"/>
+		<text name="help_moisture_drying_1" text="Культури, що зберігаються вище ідеального рівня вологості, втрачають якість щогодини. Щоб запобігти цьому, використовуйте сушіння у силосі: підійдіть пішки до будь-якого силосу та активуйте сушіння. Сушарка працює щогодини, знижуючи вологість, доки всі культури не досягнуть ідеального рівня, потім зупиняється автоматично."/>
+		<text name="help_moisture_drying_2" text="Сушіння коштує грошей залежно від об'єму та видаленої вологості, але значно дешевше за плату за сушіння при прямому продажу вологих культур. Більші об'єми сушаться довше (швидкість знижується з більшою кількістю матеріалу)."/>
+		<text name="help_moisture_drying_3" text="При продажу культур вище ідеальної вологості на торговій точці з вас стягнуть окрему плату за сушіння на додаток до зниженої ціни на основі якості. Висушіть культури перед продажем, щоб повністю уникнути цих зборів."/>
 
 		<!-- Grass -->
 		<text name="help_moisture_grass_title" text="Сіно та трава"/>
@@ -115,8 +147,8 @@
 		<!-- Settings -->
 		<text name="help_moisture_settings_title" text="Налаштування"/>
 		<text name="help_moisture_settings_1" text="Оберіть кліматичний режим."/>
-		<text name="help_moisture_settings_2" text="Налаштуйте швидкість висихання та зволоження."/>
-		<text name="help_moisture_settings_3" text="Адміністратор контролює налаштування у мультиплеєрі."/>
+		<text name="help_moisture_settings_2" text="Тонке налаштування поведінки: множники втрати/набору вологості контролюють швидкість висихання та зволоження, зменшення вологості при ворушінні регулює сушіння за прохід, швидкість падіння якості контролює темп деградації якості, а швидкість сушіння контролює темп сушіння у силосі."/>
+		<text name="help_moisture_settings_3" text="Інші налаштування включають плату за сушіння при продажу (вартість продажу вологих культур), налаштування гниття тюків, перемикач відображення вологості поля та стиль сповіщень вимірювача вологості. У мультиплеєрі адміністратор контролює ці налаштування."/>
 
 	</texts>
 </l10n>

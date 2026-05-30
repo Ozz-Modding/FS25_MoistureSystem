@@ -1,79 +1,77 @@
----
--- SellingStationExtension
--- Extends SellingStation to apply moisture-based price modifiers when selling crops
----
-
 SellingStationExtension = {}
+SellingStationExtension.dryingChargeAccumulator = 0
+SellingStationExtension.dryingChargeCountdown = 0
+SellingStationExtension.dryingChargeFarmId = nil
 
----
--- Override addFillLevelFromTool to inject moisture-based price multiplier
--- This is called before sellFillType, allowing us to modify extraAttributes
--- @param superFunc: Original function
--- @param farmId: Farm ID selling the crop
--- @param deltaFillLevel: Amount being sold
--- @param fillTypeIndex: Type of crop being sold
--- @param fillInfo: Information about the fill source (may contain vehicle/position)
--- @param toolType: Type of tool (e.g., ToolType.BALE)
--- @param extraAttributes: Additional attributes (we'll inject priceScale here)
----
 function SellingStationExtension:addFillLevelFromTool(superFunc, farmId, deltaFillLevel, fillTypeIndex, fillInfo, toolType, extraAttributes)
-    -- Only apply moisture modifiers on server
     if g_currentMission:getIsServer() and deltaFillLevel > 0 then
-        local moistureMultiplier = self:getMoistureMultiplierForSale(fillTypeIndex, fillInfo)
+        local priceScale, dryingCharge = self:getQualityMultiplierForSale(fillTypeIndex, fillInfo, deltaFillLevel)
 
-        if moistureMultiplier ~= nil and moistureMultiplier ~= 1.0 then
-            -- Initialize extraAttributes if needed
+        if priceScale ~= nil and priceScale ~= 1.0 then
             if extraAttributes == nil then
                 extraAttributes = {}
             end
-            extraAttributes.priceScale = moistureMultiplier
+            extraAttributes.priceScale = priceScale
+        end
+
+        if dryingCharge and dryingCharge > 0 then
+            SellingStationExtension.dryingChargeAccumulator = SellingStationExtension.dryingChargeAccumulator + dryingCharge
+            SellingStationExtension.dryingChargeCountdown = 30
+            SellingStationExtension.dryingChargeFarmId = farmId
+            g_farmManager:getFarmById(farmId):changeBalance(-dryingCharge, MoneyType.DRYING_CHARGE)
         end
     end
 
-    -- Call original function with potentially modified extraAttributes
     return superFunc(self, farmId, deltaFillLevel, fillTypeIndex, fillInfo, toolType, extraAttributes)
 end
 
----
--- Determine moisture multiplier for a crop being sold
--- Attempts to find moisture level from multiple sources in priority order:
--- 1. Vehicle-based moisture (from fillInfo.sourceUniqueId set by DischargeableExtension)
--- 2. Ground pile moisture (from GroundPropertyTracker)
--- @param fillTypeIndex: Type of crop being sold
--- @param fillInfo: Information about the fill source (includes sourceUniqueId from dischargeNode.info)
--- @param extraAttributes: Extra attributes
--- @return multiplier (number) or nil if no moisture data available
----
-function SellingStationExtension:getMoistureMultiplierForSale(fillTypeIndex, fillInfo)
-    -- Check if CropValueMap is initialized
-    if CropValueMap == nil or CropValueMap.Data == nil then
-        return nil
+function SellingStationExtension.update()
+    if SellingStationExtension.dryingChargeCountdown > 0 then
+        SellingStationExtension.dryingChargeCountdown = SellingStationExtension.dryingChargeCountdown - 1
+        if SellingStationExtension.dryingChargeCountdown == 0 then
+            local total = SellingStationExtension.dryingChargeAccumulator
+            local farmId = SellingStationExtension.dryingChargeFarmId
+            if total > 0 and farmId then
+                g_currentMission:addMoneyChange(-total, farmId, MoneyType.DRYING_CHARGE, true)
+            end
+            SellingStationExtension.dryingChargeAccumulator = 0
+            SellingStationExtension.dryingChargeFarmId = nil
+        end
     end
-    
-    -- Get moisture level from various sources
-    local moisture = nil
-    
-    -- Try to get moisture from vehicle/trailer being unloaded (via fillInfo)
-    -- fillInfo comes from dischargeNode.info which we set in DischargeableExtension
-    if fillInfo ~= nil and fillInfo.sourceUniqueId ~= nil then
-        moisture = g_currentMission.MoistureSystem:getObjectMoisture(fillInfo.sourceUniqueId, fillTypeIndex)
-    end
-    
-    -- If no moisture data found, return 1 (no price modification)
-    if moisture == nil then
-        return 1
-    end
-    
-    -- Get grade and multiplier from CropValueMap
-    local grade, multiplier = CropValueMap.getGrade(fillTypeIndex, moisture)
-    
-    return multiplier
 end
 
--- Assign function to SellingStation
-SellingStation.getMoistureMultiplierForSale = SellingStationExtension.getMoistureMultiplierForSale
+function SellingStationExtension:getQualityMultiplierForSale(fillTypeIndex, fillInfo, deltaFillLevel)
+    if CropValueMap == nil or CropValueMap.Data == nil then
+        return nil, 0
+    end
 
--- Override SellingStation function
+    local ms = g_currentMission.MoistureSystem
+    local info = nil
+
+    if fillInfo ~= nil and fillInfo.sourceUniqueId ~= nil then
+        info = ms:getObjectInfo(fillInfo.sourceUniqueId, fillTypeIndex)
+    end
+
+    if info == nil then
+        return 1, 0
+    end
+
+    local _, priceMultiplier = CropValueMap.getQualityGrade(fillTypeIndex, info.quality or 100)
+    local priceScale = priceMultiplier or 1.0
+
+    local dryingCharge = 0
+    local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
+    if idealMax and info.moisture > idealMax then
+        local overshoot = info.moisture - idealMax
+        local chargeRate = ms.settings.sellDryingChargeRate or 1.0
+        dryingCharge = chargeRate * overshoot * deltaFillLevel
+    end
+
+    return priceScale, dryingCharge
+end
+
+SellingStation.getQualityMultiplierForSale = SellingStationExtension.getQualityMultiplierForSale
+
 SellingStation.addFillLevelFromTool = Utils.overwrittenFunction(
     SellingStation.addFillLevelFromTool,
     SellingStationExtension.addFillLevelFromTool

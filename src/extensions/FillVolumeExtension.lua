@@ -77,20 +77,17 @@ function MSFillVolumeExtension:onFillUnitFillLevelChanged(superFunc, fillUnitInd
         moisture = moistureSystem.currentMoisturePercent
     end
 
-    -- Get current fill level (before this addition)
     local currentLiters = self:getFillUnitFillLevel(fillUnitIndex) - fillLevelDelta
+    local currentInfo = moistureSystem:getObjectInfo(uniqueId, fillType)
+    local sourceQuality = (properties and properties.quality) or moistureSystem:deriveQuality(fillType, moisture)
 
-    -- Get existing moisture for this fillType
-    local currentMoisture = moistureSystem:getObjectMoisture(uniqueId, fillType)
-
-    if currentMoisture == nil or currentLiters <= 0 then
-        -- First pickup or empty - use source moisture
-        moistureSystem:setObjectMoisture(uniqueId, fillType, moisture)
+    if currentInfo == nil or currentLiters <= 0 then
+        moistureSystem:setObjectInfo(uniqueId, fillType, { moisture = moisture, quality = sourceQuality })
     else
-        -- Volume-weighted average
         local totalLiters = currentLiters + fillLevelDelta
-        local averageMoisture = (currentLiters * currentMoisture + fillLevelDelta * moisture) / totalLiters
-        moistureSystem:setObjectMoisture(uniqueId, fillType, averageMoisture)
+        local avgMoisture = (currentLiters * currentInfo.moisture + fillLevelDelta * moisture) / totalLiters
+        local avgQuality = (currentLiters * (currentInfo.quality or 100) + fillLevelDelta * sourceQuality) / totalLiters
+        moistureSystem:setObjectInfo(uniqueId, fillType, { moisture = avgMoisture, quality = avgQuality })
     end
 
     local gridX, gridZ = tracker:getGridPosition(x, z)
