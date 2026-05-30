@@ -54,6 +54,9 @@
 		<text name="ms_drying_stopped" text="Suszenie w silosie zatrzymane"/>
 		<text name="ms_drying_complete" text="Suszenie zakończone - wszystkie plony osiągnęły idealną wilgotność"/>
 
+		<!-- Dialog informacyjny -->
+		<text name="ms_info_dryingUpdate" text="System wilgotności zawiera teraz suszenie zboża. Zebrane plony mają wartość jakości i poziom wilgotności. Musisz suszyć zboże w magazynie lub silosie, aby zapobiec utracie jakości. Sprzedaż plonów z nadmierną wilgotnością może wiązać się z opłatami za suszenie. Więcej informacji znajdziesz w menu pomocy. Ta wiadomość wyświetli się raz na zapis i zostanie usunięta w przyszłej aktualizacji."/>
+
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Otwórz menu systemu wilgotności"/>
 		<text name="input_MOISTURE_START_DRYING" text="Przełącz suszenie w silosie"/>

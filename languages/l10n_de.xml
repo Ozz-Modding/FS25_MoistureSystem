@@ -54,6 +54,9 @@
 		<text name="ms_drying_stopped" text="Silotrocknung gestoppt"/>
 		<text name="ms_drying_complete" text="Trocknung abgeschlossen - alle Ernten auf idealer Feuchtigkeit"/>
 
+		<!-- Info-Dialog -->
+		<text name="ms_info_dryingUpdate" text="Das Feuchtigkeitssystem enthält jetzt Getreidetrocknung. Geerntete Feldfrüchte haben einen Qualitätswert und einen Feuchtigkeitsgehalt. Sie müssen Getreide in einer Lagerhalle oder einem Silo trocknen, um Qualitätsverluste zu vermeiden. Beim Verkauf von Erntegut mit zu hoher Feuchtigkeit können Trocknungsgebühren anfallen. Weitere Informationen finden Sie im Hilfemenü. Diese Nachricht wird einmal pro Spielstand angezeigt und in einem zukünftigen Update entfernt."/>
+
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Feuchtigkeitsmenü öffnen"/>
 		<text name="input_MOISTURE_START_DRYING" text="Silo-Trocknung umschalten"/>

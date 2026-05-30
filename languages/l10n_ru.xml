@@ -21,7 +21,6 @@
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Включить гниение тюков во время дождя/снега. Обмотанные тюки и тюки под навесом защищены."/>
 		<text name="setting_moisture_baleRotRate" text="Скорость Гниения Тюков"/>
 		<text name="setting_moisture_baleRotRate_tooltip" text="Множитель скорости потери объёма тюков. Большие значения означают более быстрое гниение."/>
-
 		<text name="setting_moisture_baleExposureDecayRate" text="Скорость Сушки Тюков"/>
 		<text name="setting_moisture_baleExposureDecayRate_tooltip" text="Как быстро тюки высыхают после прекращения дождя. Ниже = медленнее сушка."/>
 		<text name="setting_moisture_qualityDecayMultiplier" text="Скорость Падения Качества"/>
@@ -54,6 +53,9 @@
 		<text name="ms_drying_started" text="Сушка в силосе начата"/>
 		<text name="ms_drying_stopped" text="Сушка в силосе остановлена"/>
 		<text name="ms_drying_complete" text="Сушка завершена - весь урожай на идеальной влажности"/>
+
+		<!-- Информационный диалог -->
+		<text name="ms_info_dryingUpdate" text="Система влажности теперь включает сушку зерна. Собранные культуры имеют значение качества и уровень влажности. Вы должны сушить зерно в зернохранилище или силосе, чтобы предотвратить потерю качества. Продажа культур с избыточной влажностью может повлечь плату за сушку. Подробности смотрите в меню помощи. Это сообщение отображается один раз за сохранение и будет удалено в будущем обновлении."/>
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Открыть Меню Влажности"/>

@@ -54,6 +54,9 @@
 		<text name="ms_drying_stopped" text="Silo kurutma durduruldu"/>
 		<text name="ms_drying_complete" text="Kurutma tamamlandı - tüm mahsuller ideal nemde"/>
 
+		<!-- Bilgi Diyaloğu -->
+		<text name="ms_info_dryingUpdate" text="Nem sistemi artık tahıl kurutmayı içeriyor. Hasat edilen ürünlerin bir kalite değeri ve nem seviyesi vardır. Kalite kaybını önlemek için tahılı bir tahıl deposunda veya siloda kurutmalısınız. Fazla nemli ürün satışı kurutma ücreti gerektirebilir. Daha fazla bilgi için yardım menüsüne bakın. Bu mesaj kayıt başına bir kez gösterilir ve gelecek bir güncellemede kaldırılacaktır."/>
+
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Nem Menüsünü Aç"/>
 		<text name="input_MOISTURE_START_DRYING" text="Silo Kurutmayı Aç/Kapat"/>

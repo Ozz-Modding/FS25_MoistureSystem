@@ -44,7 +44,12 @@ function MoistureGuiGrades:updateTable()
         for _, range in ipairs(ranges) do
             local lowerPercent = math.floor(range.lower * 100)
             local upperPercent = math.floor(range.upper * 100)
-            local qualityValue = math.floor(range.multiplier * 100)
+            local qualityValue
+            if range.grade == CropValueMap.Grades.A then
+                qualityValue = 100
+            else
+                qualityValue = math.floor(range.multiplier * 100) - 1
+            end
 
             local rangeText
             if #gradeData[range.grade] == 0 then

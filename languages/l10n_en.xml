@@ -25,7 +25,7 @@
 		<text name="setting_moisture_baleExposureDecayRate_tooltip" text="How fast bales dry out after rain stops. Lower = slower drying."/>
 		<text name="setting_moisture_qualityDecayMultiplier" text="Quality Decay Rate"/>
 		<text name="setting_moisture_qualityDecayMultiplier_tooltip" text="How fast crop quality degrades when stored above ideal moisture. Higher = faster decay."/>
-<text name="setting_moisture_dryingSpeed" text="Silo Drying Speed"/>
+		<text name="setting_moisture_dryingSpeed" text="Silo Drying Speed"/>
 		<text name="setting_moisture_dryingSpeed_tooltip" text="Moisture percentage removed per hour by silo drying."/>
 		<text name="setting_moisture_sellDryingChargeRate" text="Sell Drying Charge"/>
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Drying charge multiplier applied when selling wet crops. Higher = more expensive."/>
@@ -53,6 +53,9 @@
 		<text name="ms_drying_started" text="Silo drying started"/>
 		<text name="ms_drying_stopped" text="Silo drying stopped"/>
 		<text name="ms_drying_complete" text="Drying complete - all crops at ideal moisture"/>
+
+		<!-- Info Dialog -->
+		<text name="ms_info_dryingUpdate" text="The Moisture System now includes grain drying. Harvested crops have a quality value and a moisture level. You must dry grain in a grain shed or silo to prevent quality loss. Selling crop with excess moisture may incur drying charges. See the in-game help menu for more details. This message will show once per save and be removed in a future update."/>
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Open Moisture Menu"/>

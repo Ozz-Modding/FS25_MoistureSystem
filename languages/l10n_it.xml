@@ -21,7 +21,6 @@
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Abilita il marciume delle balle durante pioggia/neve. Le balle avvolte e le balle sotto copertura sono protette."/>
 		<text name="setting_moisture_baleRotRate" text="Velocità Marciume Balle"/>
 		<text name="setting_moisture_baleRotRate_tooltip" text="Moltiplicatore per il tasso di perdita di volume delle balle. Valori più alti significano marciume più veloce."/>
-
 		<text name="setting_moisture_baleExposureDecayRate" text="Velocità di Asciugatura Balle"/>
 		<text name="setting_moisture_baleExposureDecayRate_tooltip" text="Quanto velocemente le balle si asciugano dopo che la pioggia si ferma. Più basso = asciugatura più lenta."/>
 		<text name="setting_moisture_qualityDecayMultiplier" text="Tasso di Degrado della Qualità"/>
@@ -54,6 +53,9 @@
 		<text name="ms_drying_started" text="Essiccazione del silo avviata"/>
 		<text name="ms_drying_stopped" text="Essiccazione del silo fermata"/>
 		<text name="ms_drying_complete" text="Essiccazione completata - tutte le colture all'umidità ideale"/>
+
+		<!-- Dialogo informativo -->
+		<text name="ms_info_dryingUpdate" text="Il sistema di umidità ora include l'essiccazione dei cereali. I raccolti hanno un valore di qualità e un livello di umidità. Devi essiccare il grano in un capannone o silo per evitare la perdita di qualità. Vendere raccolti con umidità eccessiva può comportare costi di essiccazione. Consulta il menu di aiuto per maggiori dettagli. Questo messaggio viene mostrato una sola volta per salvataggio e sarà rimosso in un aggiornamento futuro."/>
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Apri Menu Umidità"/>

@@ -21,7 +21,6 @@
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Active la pourriture des balles pendant la pluie/neige. Les balles enrubannées et sous abri sont protégées."/>
 		<text name="setting_moisture_baleRotRate" text="Vitesse de Pourriture des Balles"/>
 		<text name="setting_moisture_baleRotRate_tooltip" text="Multiplicateur du taux de perte de volume des balles. Des valeurs plus élevées signifient une pourriture plus rapide."/>
-
 		<text name="setting_moisture_baleExposureDecayRate" text="Vitesse de Séchage des Balles"/>
 		<text name="setting_moisture_baleExposureDecayRate_tooltip" text="À quelle vitesse les balles sèchent après l'arrêt de la pluie. Plus bas = séchage plus lent."/>
 		<text name="setting_moisture_qualityDecayMultiplier" text="Taux de Dégradation de la Qualité"/>
@@ -54,6 +53,9 @@
 		<text name="ms_drying_started" text="Séchage en silo démarré"/>
 		<text name="ms_drying_stopped" text="Séchage en silo arrêté"/>
 		<text name="ms_drying_complete" text="Séchage terminé - toutes les cultures à l'humidité idéale"/>
+
+		<!-- Dialogue d'information -->
+		<text name="ms_info_dryingUpdate" text="Le système d'humidité inclut désormais le séchage des céréales. Les cultures récoltées ont une valeur de qualité et un taux d'humidité. Vous devez sécher le grain dans un hangar ou un silo pour éviter la perte de qualité. La vente de cultures trop humides peut entraîner des frais de séchage. Consultez le menu d'aide pour plus de détails. Ce message s'affiche une seule fois par sauvegarde et sera supprimé dans une future mise à jour."/>
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Ouvrir le Menu d'Humidité"/>

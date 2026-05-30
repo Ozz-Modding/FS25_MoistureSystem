@@ -54,6 +54,9 @@
 		<text name="ms_drying_stopped" text="Sušení v silu zastaveno"/>
 		<text name="ms_drying_complete" text="Sušení dokončeno - všechny plodiny na ideální vlhkosti"/>
 
+		<!-- Informační dialog -->
+		<text name="ms_info_dryingUpdate" text="Systém vlhkosti nyní zahrnuje sušení obilí. Sklizené plodiny mají hodnotu kvality a úroveň vlhkosti. Musíte sušit obilí v sýpce nebo silu, abyste zabránili ztrátě kvality. Prodej plodin s nadměrnou vlhkostí může znamenat poplatky za sušení. Více informací naleznete v menu nápovědy. Tato zpráva se zobrazí jednou za uložení a bude odstraněna v budoucí aktualizaci."/>
+
 		<!-- Ovládací vazby -->
 		<text name="input_MOISTURE_MENU" text="Otevřít menu vlhkosti"/>
 		<text name="input_MOISTURE_START_DRYING" text="Přepnout sušení v silu"/>
