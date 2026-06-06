@@ -17,6 +17,18 @@ function DryingSystem.new()
 end
 
 function DryingSystem:registerActivatables()
+    -- Remove activatables whose placeables no longer exist (e.g. sold silos)
+    local toRemove = {}
+    for placeableId, _ in pairs(self.activatables) do
+        if self:getPlaceableByUniqueId(placeableId) == nil then
+            table.insert(toRemove, placeableId)
+        end
+    end
+    for _, placeableId in ipairs(toRemove) do
+        self:removeActivatable(placeableId)
+        self.activeDryers[placeableId] = nil
+    end
+
     for _, placeable in pairs(g_currentMission.placeableSystem.placeables) do
         if placeable.spec_silo and placeable.spec_silo.storages then
             self:addActivatable(placeable)

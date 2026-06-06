@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="109">
     <author>Ozz</author>
-    <version>1.0.0.4</version>
+    <version>1.0.0.5</version>
     <iconFilename>icon_MoistureSystem.dds</iconFilename>
     <title>
         <en>Moisture System</en>
@@ -32,6 +32,10 @@ Extensive customization options allow you to calibrate moisture dynamics, qualit
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
+
+1.0.0.5:
+- Harvested crop in a contract will be at the ideal moisture level to prevent drying costs being charged for contract work.
+- Deregister any sold silos to fix an error with crop drying.
 
 1.0.0.4:
 - Introduces drying in in silos. Crop price is now determined by quality, not moisture level as it was previously. Quality is initially determined by moisture level. Dry crops to avoid quality degradation over time. Selling crop with excess moisture will cause you to incur drying charges.

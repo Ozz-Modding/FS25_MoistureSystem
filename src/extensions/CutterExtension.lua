@@ -5,6 +5,30 @@
 
 MSCutterExtension = {}
 
+-- Cache the midpoint of Grade A moisture range per fillType, populated lazily
+MSCutterExtension.idealMoistureCache = {}
+
+---
+-- Returns the midpoint of the Grade A moisture range for a fillType, cached.
+-- Returns nil if the fillType has no Grade A data.
+---
+function MSCutterExtension.getIdealMoisture(fillType)
+    local cached = MSCutterExtension.idealMoistureCache[fillType]
+    if cached ~= nil then
+        return cached ~= false and cached or nil
+    end
+
+    local lower, upper = CropValueMap.getIdealRange(fillType)
+    if lower ~= nil then
+        local ideal = (lower + upper) / 2
+        MSCutterExtension.idealMoistureCache[fillType] = ideal
+        return ideal
+    end
+
+    MSCutterExtension.idealMoistureCache[fillType] = false
+    return nil
+end
+
 ---
 -- Extended to track moisture of harvested crops
 -- @param superFunc: Original function
@@ -28,6 +52,17 @@ function MSCutterExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
         return result
     end
 
+    -- Check whether we're working on a contract farmland
+    local isContract = false
+    local workArea = self:getWorkAreaByIndex(1)
+    if workArea ~= nil then
+        local cx, _, cz = getWorldTranslation(workArea.start)
+        local farmland = g_farmlandManager:getFarmlandAtWorldPosition(cx, cz)
+        if farmland ~= nil then
+            isContract = g_missionManager:getIsMissionRunningOnFarmland(farmland)
+        end
+    end
+
     if spec.useWindrow then
         local lastLiters = spec.workAreaParameters.lastLiters or 0
         if lastLiters <= 0 then
@@ -42,6 +77,14 @@ function MSCutterExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
         local outputFillType = spec.workAreaParameters.lastOutputFillType or spec.currentOutputFillType
         if outputFillType == nil then
             return result
+        end
+
+        if isContract then
+            local ideal = MSCutterExtension.getIdealMoisture(outputFillType)
+            if ideal ~= nil then
+                moisture = ideal
+                quality = nil -- let updateCombineMoisture derive quality from ideal moisture
+            end
         end
 
         MSCutterExtension.updateCombineMoisture(combineVehicle, lastLiters, moisture, outputFillType, quality)
@@ -77,6 +120,13 @@ function MSCutterExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
         local fillType = g_fruitTypeManager:getFruitTypeByIndex(fruitType).fillType.index
         if fillType == nil then
             return result
+        end
+
+        if isContract then
+            local ideal = MSCutterExtension.getIdealMoisture(fillType)
+            if ideal ~= nil then
+                moisture = ideal
+            end
         end
 
         MSCutterExtension.updateCombineMoisture(combineVehicle, liters, moisture, fillType)
