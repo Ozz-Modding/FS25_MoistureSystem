@@ -20,6 +20,8 @@ function MSPlaceableInfoTriggerExtension:updateInfo(info)
         return
     end
     
+    moistureSystem:ensureObjectMoistureLoaded(self)
+
     local objectData = moistureSystem.objectInfo[self.uniqueId]
     if objectData == nil then
         return

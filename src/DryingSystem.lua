@@ -219,6 +219,11 @@ function DryingSystem:drySilo(placeable, ms, dryingRate, sellChargeRate, complet
             end
         end
 
+        local objectId = NetworkUtil.getObjectId(placeable)
+        if objectId ~= nil then
+            g_server:broadcastEvent(ObjectMoistureResponseEvent.new(objectId, ms.objectInfo[placeable.uniqueId]))
+        end
+
         local hourlyCost = DryingSystem.SILO_COST_RATIO * sellChargeRate * effectiveDryingRate * totalLiters
         g_currentMission:addMoneyChange(-hourlyCost, farmId, MoneyType.DRYING_CHARGE, true)
         g_farmManager:getFarmById(farmId):changeBalance(-hourlyCost, MoneyType.DRYING_CHARGE)
