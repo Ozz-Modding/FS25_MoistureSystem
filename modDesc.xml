@@ -29,6 +29,8 @@ Features:
 
 Extensive customization options allow you to calibrate moisture dynamics, quality decay rates, drying speed, tedding efficiency, and decay parameters to match your preferred gameplay experience. Whether you seek hardcore realism or a gentler introduction to moisture management, the system adapts to your vision.
 
+Note: The mod is not compatible with the following mods: NonStopCrop
+
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
@@ -83,7 +85,14 @@ Umfangreiche Anpassungsoptionen ermöglichen es Ihnen, die Feuchtigkeitsdynamik,
 
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
+Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop
+
 Änderungsprotokoll:
+
+1.0.0.5:
+- Geerntetes Getreide bei einem Auftrag wird auf dem idealen Feuchtigkeitsstand sein, um zu verhindern, dass Trocknungsgebühren für Auftragsarbeiten berechnet werden.
+- Verkaufte Silos werden nun deregistriert, um einen Fehler bei der Silo-Trocknung zu beheben.
+- Multiplayer-Korrekturen für Probleme, die durch die Trocknungsänderungen in 1.0.0.4 eingeführt wurden.
 
 1.0.0.4:
 - Einführung der Silo-Trocknung. Der Erntepreis wird nun durch die Qualität bestimmt, nicht mehr durch den Feuchtigkeitsgehalt. Die Qualität wird anfangs durch den Feuchtigkeitsgehalt bestimmt. Trocknen Sie Ihre Ernte, um Qualitätsverlust über Zeit zu vermeiden. Der Verkauf von Ernte mit überschüssiger Feuchtigkeit verursacht Trocknungsgebühren.
@@ -130,7 +139,14 @@ Les options de personnalisation étendues vous permettent de calibrer la dynamiq
 
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
+Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop
+
 Journal des modifications :
+
+1.0.0.5 :
+- Les récoltes effectuées dans le cadre d'un contrat seront au niveau d'humidité idéal pour éviter que des frais de séchage soient facturés pour les travaux sous contrat.
+- Désenregistrement des silos vendus pour corriger une erreur avec le séchage des récoltes.
+- Corrections multijoueur pour les problèmes introduits par les modifications de séchage de la version 1.0.0.4.
 
 1.0.0.4 :
 - Introduction du séchage en silo. Le prix de vente est désormais déterminé par la qualité, et non plus par le taux d'humidité. La qualité est initialement déterminée par le taux d'humidité. Séchez vos récoltes pour éviter la dégradation de qualité au fil du temps. Vendre des récoltes avec un excès d'humidité entraînera des frais de séchage.
