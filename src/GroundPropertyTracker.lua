@@ -70,6 +70,12 @@ function GroundPropertyTracker.new()
     -- Key: "gridX_gridZ_fillType", Value: accumulated liters waiting for removal
     self.strawRotAccumulators = {}
 
+    -- Wet pile indices for rain-exposure update fast path.
+    -- Only piles with rainExposure > 0 or peakRainExposure > 0 are tracked.
+    -- Avoids walking every grass/straw pile every cycle when it isn't raining.
+    self.wetGrassKeys = {}
+    self.wetStrawKeys = {}
+
     -- Track pending windrower drops with volume-weighted moisture
     -- Key: getGridKey(gridX, gridZ, fillType), Value: { gridX, gridZ, fillType, volume, moistureSum, cyclesRemaining }
     self.windrowerPendingDrops = {}
@@ -127,6 +133,8 @@ function GroundPropertyTracker:delete()
     self.strawPiles = {}
     self.grassRotAccumulators = {}
     self.strawRotAccumulators = {}
+    self.wetGrassKeys = {}
+    self.wetStrawKeys = {}
 end
 
 -- Update local pile storage (server-side only)
@@ -660,114 +668,142 @@ function GroundPropertyTracker:applyMoistureToGrassPiles(moistureDelta, teddedCe
 end
 
 -- Update rain exposure and perform grass rotting
+-- Fast path: when not raining, only iterate piles already in wetGrassKeys
+-- (piles that have accumulated rain exposure or are rotting). When raining,
+-- iterate all grass piles so newly-exposed ones get added to the index.
 function GroundPropertyTracker:updateRainExposureAndProcessGrassRot(updateDelta)
     local weather = g_currentMission.environment.weather
     local isRaining = weather:getRainFallScale() > 0.1
 
-    for key, pile in pairs(self.grassPiles) do
-        if not pile.properties.rainExposure then
-            pile.properties.rainExposure = 0
+    if isRaining then
+        for key, pile in pairs(self.grassPiles) do
+            self:processGrassRainExposure(key, pile, updateDelta, true)
         end
-        if not pile.properties.peakRainExposure then
-            pile.properties.peakRainExposure = 0
-        end
-
-        if isRaining then
-            pile.properties.rainExposure = pile.properties.rainExposure + updateDelta
-            if pile.properties.rainExposure > pile.properties.peakRainExposure then
-                pile.properties.peakRainExposure = pile.properties.rainExposure
-            end
-        else
-            pile.properties.rainExposure = math.max(0,
-                pile.properties.rainExposure - (updateDelta * GroundPropertyTracker.DRYING_DECAY_RATE))
-
-            if pile.properties.rainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME and
-                pile.properties.peakRainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
-                pile.properties.peakRainExposure = pile.properties.rainExposure
-            end
-        end
-
-        local rotLevel = 0
-        if pile.properties.peakRainExposure >= GroundPropertyTracker.NORMAL_ROT_EXPOSURE_TIME then
-            rotLevel = 2
-        elseif pile.properties.peakRainExposure >= GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
-            rotLevel = 1
-        end
-
-        if rotLevel > 0 then
-            if not self.grassRotAccumulators[key] then
-                self.grassRotAccumulators[key] = 0
-            end
-
-            local baseAmount = GroundPropertyTracker.ROT_ACCUMULATION_MIN +
-                math.random() * (GroundPropertyTracker.ROT_ACCUMULATION_MAX - GroundPropertyTracker.ROT_ACCUMULATION_MIN)
-
-            local scaledAmount = baseAmount * rotLevel * (updateDelta / 1000)
-            self.grassRotAccumulators[key] = self.grassRotAccumulators[key] + scaledAmount
-
-            if self.grassRotAccumulators[key] >= GroundPropertyTracker.ROT_REMOVAL_THRESHOLD then
-                local removalAmount = GroundPropertyTracker.ROT_REMOVAL_THRESHOLD
-
-                local gridX = pile.gridX
-                local gridZ = pile.gridZ
-                local halfSize = GroundPropertyTracker.GRID_SIZE / 2
-
-                if not self:checkPileHasContent(gridX, gridZ, pile.fillType) then
-                    self.grassRotAccumulators[key] = nil
-                    continue
-                end
-
-                local sx = gridX - halfSize
-                local sz = gridZ - halfSize
-                local sy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, sx, 0, sz)
-
-                local wx = gridX + halfSize
-                local wz = gridZ - halfSize
-                local wy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, wx, 0, wz)
-
-                local hx = gridX - halfSize
-                local hz = gridZ + halfSize
-                local hy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, hx, 0, hz)
-
-                local lsx, lsy, lsz, lex, ley, lez, lineRadius = DensityMapHeightUtil.getLineByAreaDimensions(
-                    sx, sy, sz, wx, wy, wz, hx, hy, hz, true
-                )
-
-                local removed = DensityMapHeightUtil.tipToGroundAroundLine(
-                    nil,
-                    -removalAmount,
-                    pile.fillType,
-                    lsx, lsy, lsz,
-                    lex, ley, lez,
-                    2,
-                    nil,
-                    nil,
-                    false,
-                    nil
-                )
-
-                if removed ~= 0 then
-                    self.grassRotAccumulators[key] = 0
-                    self:checkPileHasContent(gridX, gridZ, pile.fillType)
-                end
-            end
-        else
-            if self.grassRotAccumulators[key] then
+    else
+        for key, _ in pairs(self.wetGrassKeys) do
+            local pile = self.grassPiles[key]
+            if pile == nil then
+                self.wetGrassKeys[key] = nil
                 self.grassRotAccumulators[key] = nil
+            else
+                self:processGrassRainExposure(key, pile, updateDelta, false)
             end
+        end
+    end
+end
+
+-- Per-pile rain exposure update + rot tick.
+-- Maintains wetGrassKeys: a pile is in the index whenever rainExposure or
+-- peakRainExposure is > 0; it's removed once both have decayed back to 0.
+function GroundPropertyTracker:processGrassRainExposure(key, pile, updateDelta, isRaining)
+    local rainExposure = pile.properties.rainExposure or 0
+    local peakRainExposure = pile.properties.peakRainExposure or 0
+
+    if isRaining then
+        rainExposure = rainExposure + updateDelta
+        if rainExposure > peakRainExposure then
+            peakRainExposure = rainExposure
+        end
+    else
+        rainExposure = math.max(0, rainExposure - (updateDelta * GroundPropertyTracker.DRYING_DECAY_RATE))
+
+        -- Once a pile crosses SLOW_ROT_EXPOSURE_TIME its peak stays elevated
+        -- forever (rot is permanent). Below that threshold, peak follows the
+        -- decaying current exposure so the pile can leave the wet set.
+        if rainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME and
+            peakRainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
+            peakRainExposure = rainExposure
+        end
+    end
+
+    pile.properties.rainExposure = rainExposure
+    pile.properties.peakRainExposure = peakRainExposure
+
+    if rainExposure > 0 or peakRainExposure > 0 then
+        self.wetGrassKeys[key] = true
+    else
+        self.wetGrassKeys[key] = nil
+    end
+
+    local rotLevel = 0
+    if peakRainExposure >= GroundPropertyTracker.NORMAL_ROT_EXPOSURE_TIME then
+        rotLevel = 2
+    elseif peakRainExposure >= GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
+        rotLevel = 1
+    end
+
+    if rotLevel > 0 then
+        if not self.grassRotAccumulators[key] then
+            self.grassRotAccumulators[key] = 0
+        end
+
+        local baseAmount = GroundPropertyTracker.ROT_ACCUMULATION_MIN +
+            math.random() * (GroundPropertyTracker.ROT_ACCUMULATION_MAX - GroundPropertyTracker.ROT_ACCUMULATION_MIN)
+
+        local scaledAmount = baseAmount * rotLevel * (updateDelta / 1000)
+        self.grassRotAccumulators[key] = self.grassRotAccumulators[key] + scaledAmount
+
+        if self.grassRotAccumulators[key] >= GroundPropertyTracker.ROT_REMOVAL_THRESHOLD then
+            local removalAmount = GroundPropertyTracker.ROT_REMOVAL_THRESHOLD
+
+            local gridX = pile.gridX
+            local gridZ = pile.gridZ
+            local halfSize = GroundPropertyTracker.GRID_SIZE / 2
+
+            if not self:checkPileHasContent(gridX, gridZ, pile.fillType) then
+                self.grassRotAccumulators[key] = nil
+                self.wetGrassKeys[key] = nil
+                return
+            end
+
+            local sx = gridX - halfSize
+            local sz = gridZ - halfSize
+            local sy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, sx, 0, sz)
+
+            local wx = gridX + halfSize
+            local wz = gridZ - halfSize
+            local wy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, wx, 0, wz)
+
+            local hx = gridX - halfSize
+            local hz = gridZ + halfSize
+            local hy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, hx, 0, hz)
+
+            local lsx, lsy, lsz, lex, ley, lez, lineRadius = DensityMapHeightUtil.getLineByAreaDimensions(
+                sx, sy, sz, wx, wy, wz, hx, hy, hz, true
+            )
+
+            local removed = DensityMapHeightUtil.tipToGroundAroundLine(
+                nil,
+                -removalAmount,
+                pile.fillType,
+                lsx, lsy, lsz,
+                lex, ley, lez,
+                2,
+                nil,
+                nil,
+                false,
+                nil
+            )
+
+            if removed ~= 0 then
+                self.grassRotAccumulators[key] = 0
+                self:checkPileHasContent(gridX, gridZ, pile.fillType)
+            end
+        end
+    else
+        if self.grassRotAccumulators[key] then
+            self.grassRotAccumulators[key] = nil
         end
     end
 end
 
 -- Decrement cooldowns and buffers
 function GroundPropertyTracker:decrementCooldownsAndBuffers()
-    local bufferMovedCount = 0
     for gridKey, counter in pairs(self.teddedGridCellsBuffer) do
         self.teddedGridCellsBuffer[gridKey] = counter - 1
         if self.teddedGridCellsBuffer[gridKey] <= 0 then
             self.teddedGridCellsBuffer[gridKey] = nil
             self.teddedGridCells[gridKey] = true
-            bufferMovedCount = bufferMovedCount + 1
         end
     end
 
@@ -789,14 +825,6 @@ function GroundPropertyTracker:decrementCooldownsAndBuffers()
         self.hayCells[gridKey] = counter - 1
         if self.hayCells[gridKey] <= 0 then
             self.hayCells[gridKey] = nil
-        end
-    end
-
-    for gridKey, counter in pairs(self.teddedGridCellsBuffer) do
-        self.teddedGridCellsBuffer[gridKey] = counter - 1
-        if self.teddedGridCellsBuffer[gridKey] <= 0 then
-            self.teddedGridCellsBuffer[gridKey] = nil
-            self.teddedGridCells[gridKey] = true
         end
     end
 end
@@ -936,103 +964,124 @@ function GroundPropertyTracker:updateStrawMoisture(moistureDelta, dt)
     self:updateRainExposureAndProcessStrawRot(updateDelta)
 end
 
--- Update rain exposure and perform straw rotting
+-- Update rain exposure and perform straw rotting (see grass version for rationale)
 function GroundPropertyTracker:updateRainExposureAndProcessStrawRot(updateDelta)
     local weather = g_currentMission.environment.weather
     local isRaining = weather:getRainFallScale() > 0.1
 
-    for key, pile in pairs(self.strawPiles) do
-        if not pile.properties.rainExposure then
-            pile.properties.rainExposure = 0
+    if isRaining then
+        for key, pile in pairs(self.strawPiles) do
+            self:processStrawRainExposure(key, pile, updateDelta, true)
         end
-        if not pile.properties.peakRainExposure then
-            pile.properties.peakRainExposure = 0
-        end
-
-        if isRaining then
-            pile.properties.rainExposure = pile.properties.rainExposure + updateDelta
-            if pile.properties.rainExposure > pile.properties.peakRainExposure then
-                pile.properties.peakRainExposure = pile.properties.rainExposure
-            end
-        else
-            pile.properties.rainExposure = math.max(0,
-                pile.properties.rainExposure - (updateDelta * GroundPropertyTracker.DRYING_DECAY_RATE))
-
-            if pile.properties.rainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME and
-                pile.properties.peakRainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
-                pile.properties.peakRainExposure = pile.properties.rainExposure
-            end
-        end
-
-        local rotLevel = 0
-        if pile.properties.peakRainExposure >= GroundPropertyTracker.NORMAL_ROT_EXPOSURE_TIME then
-            rotLevel = 2
-        elseif pile.properties.peakRainExposure >= GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
-            rotLevel = 1
-        end
-
-        if rotLevel > 0 then
-            if not self.strawRotAccumulators[key] then
-                self.strawRotAccumulators[key] = 0
-            end
-
-            local baseAmount = GroundPropertyTracker.ROT_ACCUMULATION_MIN +
-                math.random() * (GroundPropertyTracker.ROT_ACCUMULATION_MAX - GroundPropertyTracker.ROT_ACCUMULATION_MIN)
-
-            local scaledAmount = baseAmount * rotLevel * (updateDelta / 1000)
-            self.strawRotAccumulators[key] = self.strawRotAccumulators[key] + scaledAmount
-
-            if self.strawRotAccumulators[key] >= GroundPropertyTracker.ROT_REMOVAL_THRESHOLD then
-                local removalAmount = GroundPropertyTracker.ROT_REMOVAL_THRESHOLD
-
-                local gridX = pile.gridX
-                local gridZ = pile.gridZ
-                local halfSize = GroundPropertyTracker.GRID_SIZE / 2
-
-                local hasContent = self:checkPileHasContent(gridX, gridZ, pile.fillType)
-                if not hasContent then
-                    self.strawRotAccumulators[key] = nil
-                    continue
-                end
-
-                local sx = gridX - halfSize
-                local sz = gridZ - halfSize
-                local sy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, sx, 0, sz)
-
-                local wx = gridX + halfSize
-                local wz = gridZ - halfSize
-                local wy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, wx, 0, wz)
-
-                local hx = gridX - halfSize
-                local hz = gridZ + halfSize
-                local hy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, hx, 0, hz)
-
-                local lsx, lsy, lsz, lex, ley, lez, lineRadius = DensityMapHeightUtil.getLineByAreaDimensions(
-                    sx, sy, sz, wx, wy, wz, hx, hy, hz, true
-                )
-
-                local removed = DensityMapHeightUtil.tipToGroundAroundLine(
-                    nil,
-                    -removalAmount,
-                    pile.fillType,
-                    lsx, lsy, lsz,
-                    lex, ley, lez,
-                    2,
-                    nil,
-                    nil,
-                    false,
-                    nil
-                )
-
-                if removed ~= 0 then
-                    self.strawRotAccumulators[key] = 0
-                    self:checkPileHasContent(gridX, gridZ, pile.fillType)
-                end
-            end
-        else
-            if self.strawRotAccumulators[key] then
+    else
+        for key, _ in pairs(self.wetStrawKeys) do
+            local pile = self.strawPiles[key]
+            if pile == nil then
+                self.wetStrawKeys[key] = nil
                 self.strawRotAccumulators[key] = nil
+            else
+                self:processStrawRainExposure(key, pile, updateDelta, false)
             end
+        end
+    end
+end
+
+function GroundPropertyTracker:processStrawRainExposure(key, pile, updateDelta, isRaining)
+    local rainExposure = pile.properties.rainExposure or 0
+    local peakRainExposure = pile.properties.peakRainExposure or 0
+
+    if isRaining then
+        rainExposure = rainExposure + updateDelta
+        if rainExposure > peakRainExposure then
+            peakRainExposure = rainExposure
+        end
+    else
+        rainExposure = math.max(0, rainExposure - (updateDelta * GroundPropertyTracker.DRYING_DECAY_RATE))
+
+        if rainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME and
+            peakRainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
+            peakRainExposure = rainExposure
+        end
+    end
+
+    pile.properties.rainExposure = rainExposure
+    pile.properties.peakRainExposure = peakRainExposure
+
+    if rainExposure > 0 or peakRainExposure > 0 then
+        self.wetStrawKeys[key] = true
+    else
+        self.wetStrawKeys[key] = nil
+    end
+
+    local rotLevel = 0
+    if peakRainExposure >= GroundPropertyTracker.NORMAL_ROT_EXPOSURE_TIME then
+        rotLevel = 2
+    elseif peakRainExposure >= GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
+        rotLevel = 1
+    end
+
+    if rotLevel > 0 then
+        if not self.strawRotAccumulators[key] then
+            self.strawRotAccumulators[key] = 0
+        end
+
+        local baseAmount = GroundPropertyTracker.ROT_ACCUMULATION_MIN +
+            math.random() * (GroundPropertyTracker.ROT_ACCUMULATION_MAX - GroundPropertyTracker.ROT_ACCUMULATION_MIN)
+
+        local scaledAmount = baseAmount * rotLevel * (updateDelta / 1000)
+        self.strawRotAccumulators[key] = self.strawRotAccumulators[key] + scaledAmount
+
+        if self.strawRotAccumulators[key] >= GroundPropertyTracker.ROT_REMOVAL_THRESHOLD then
+            local removalAmount = GroundPropertyTracker.ROT_REMOVAL_THRESHOLD
+
+            local gridX = pile.gridX
+            local gridZ = pile.gridZ
+            local halfSize = GroundPropertyTracker.GRID_SIZE / 2
+
+            local hasContent = self:checkPileHasContent(gridX, gridZ, pile.fillType)
+            if not hasContent then
+                self.strawRotAccumulators[key] = nil
+                self.wetStrawKeys[key] = nil
+                return
+            end
+
+            local sx = gridX - halfSize
+            local sz = gridZ - halfSize
+            local sy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, sx, 0, sz)
+
+            local wx = gridX + halfSize
+            local wz = gridZ - halfSize
+            local wy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, wx, 0, wz)
+
+            local hx = gridX - halfSize
+            local hz = gridZ + halfSize
+            local hy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, hx, 0, hz)
+
+            local lsx, lsy, lsz, lex, ley, lez, lineRadius = DensityMapHeightUtil.getLineByAreaDimensions(
+                sx, sy, sz, wx, wy, wz, hx, hy, hz, true
+            )
+
+            local removed = DensityMapHeightUtil.tipToGroundAroundLine(
+                nil,
+                -removalAmount,
+                pile.fillType,
+                lsx, lsy, lsz,
+                lex, ley, lez,
+                2,
+                nil,
+                nil,
+                false,
+                nil
+            )
+
+            if removed ~= 0 then
+                self.strawRotAccumulators[key] = 0
+                self:checkPileHasContent(gridX, gridZ, pile.fillType)
+            end
+        end
+    else
+        if self.strawRotAccumulators[key] then
+            self.strawRotAccumulators[key] = nil
         end
     end
 end
@@ -1245,6 +1294,8 @@ function GroundPropertyTracker:convertGridCells(fromSize, toSize)
             end
         end
     end
+
+    self:rebuildWetPileIndex()
 end
 
 function GroundPropertyTracker:degradeQuality(decayRate, decayMultiplier)
@@ -1332,67 +1383,18 @@ function GroundPropertyTracker:saveToXMLFile(xmlFile, key)
     end
 end
 
--- Load piles from legacy format (current format with separate sections)
--- TODO: Remove this function after players have migrated to new format
-function GroundPropertyTracker:loadFromXMLFileLegacy(xmlFile, key)
-    local sections = {
-        { name = "cropPiles", storage = self.gridPiles },
-        { name = "grassPiles", storage = self.grassPiles },
-        { name = "hayPiles", storage = self.hayPiles },
-        { name = "strawPiles", storage = self.strawPiles }
-    }
-
-    for _, section in ipairs(sections) do
-        local i = 0
-        while true do
-            local pileKey = string.format("%s.%s.p(%d)", key, section.name, i)
-            if not hasXMLProperty(xmlFile, pileKey) then
-                break
-            end
-
-            local fillType = getXMLInt(xmlFile, pileKey .. "#f")
-            local gridX = getXMLInt(xmlFile, pileKey .. "#x")
-            local gridZ = getXMLInt(xmlFile, pileKey .. "#z")
-            local moisture = getXMLFloat(xmlFile, pileKey .. "#m")
-
-            if fillType and gridX and gridZ then
-                local pile = {
-                    fillType = fillType,
-                    fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillType),
-                    gridX = gridX,
-                    gridZ = gridZ,
-                    properties = {}
-                }
-
-                if moisture then
-                    pile.properties.moisture = moisture
-                end
-
-                local gridKey = self:getGridKey(gridX, gridZ, fillType)
-                local storage = self:getStorageForFillType(fillType)
-                storage[gridKey] = pile
-            end
-
-            i = i + 1
-        end
-    end
-end
-
 -- Load tracked piles from XML
 function GroundPropertyTracker:loadFromXMLFile(xmlFile, key)
     if not self.isServer then return end
 
     self.loadedGridSize = getXMLInt(xmlFile, key .. "#gridSize") or 5
 
-    -- Try new format first: piles(n) with type attribute
     local groupIndex = 0
-    local foundNewFormat = false
     while true do
         local groupKey = string.format("%s.piles(%d)", key, groupIndex)
         if not hasXMLProperty(xmlFile, groupKey) then
             break
         end
-        foundNewFormat = true
 
         local fillTypeName = getXMLString(xmlFile, groupKey .. "#type")
         if fillTypeName then
@@ -1442,13 +1444,31 @@ function GroundPropertyTracker:loadFromXMLFile(xmlFile, key)
         groupIndex = groupIndex + 1
     end
 
-    -- If new format was found, we're done
-    if foundNewFormat then
-        return
+    self:rebuildWetPileIndex()
+end
+
+-- Repopulate wetGrassKeys / wetStrawKeys from current pile state.
+-- rainExposure isn't currently persisted, so this is usually a no-op after a
+-- load — but it keeps the index correct if exposure data is ever loaded into
+-- pile.properties from elsewhere, and is cheap enough to run unconditionally.
+function GroundPropertyTracker:rebuildWetPileIndex()
+    self.wetGrassKeys = {}
+    for key, pile in pairs(self.grassPiles) do
+        local rx = pile.properties.rainExposure or 0
+        local pk = pile.properties.peakRainExposure or 0
+        if rx > 0 or pk > 0 then
+            self.wetGrassKeys[key] = true
+        end
     end
 
-    -- Fall back to legacy format (TODO: Remove after migration period)
-    self:loadFromXMLFileLegacy(xmlFile, key)
+    self.wetStrawKeys = {}
+    for key, pile in pairs(self.strawPiles) do
+        local rx = pile.properties.rainExposure or 0
+        local pk = pile.properties.peakRainExposure or 0
+        if rx > 0 or pk > 0 then
+            self.wetStrawKeys[key] = true
+        end
+    end
 end
 
 ---

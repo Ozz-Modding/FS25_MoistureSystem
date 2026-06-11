@@ -560,23 +560,35 @@ function MoistureSystem:transferObjectMoisture(sourceId, targetId, sourceLiters,
 end
 
 ---
+-- Build the fillType -> classification cache from the TEDDER converter table.
+-- Lazily called by the classification accessors so it works during savegame
+-- load (before onStartMission).
+---
+function MoistureSystem:ensureFillTypeClassification()
+    if self.fillTypeClass ~= nil then return end
+
+    local class = {}
+    local converter = g_fillTypeManager:getConverterDataByName("TEDDER")
+    if converter ~= nil then
+        for fromFillType, to in pairs(converter) do
+            local targetFillType = to.targetFillTypeIndex
+            if fromFillType ~= targetFillType then
+                class[fromFillType] = "grass"
+                class[targetFillType] = "hay"
+            end
+        end
+    end
+    self.fillTypeClass = class
+end
+
+---
 -- Check if fillType is grass or grass windrow
 -- @param fillType: The filltype index
 -- @return true if grass type
 ---
 function MoistureSystem:isGrassOnGroundFillType(fillType)
-    local converter = g_fillTypeManager:getConverterDataByName("TEDDER")
-    for fromFillType, to in pairs(converter) do
-        local targetFillType = to.targetFillTypeIndex
-        if fromFillType == targetFillType then
-            continue
-        end
-
-        if fillType == fromFillType then
-            return true
-        end
-    end
-    return false
+    self:ensureFillTypeClassification()
+    return self.fillTypeClass[fillType] == "grass"
 end
 
 ---
@@ -585,18 +597,8 @@ end
 -- @return true if hay/dry type
 ---
 function MoistureSystem:isHayFillType(fillType)
-    local converter = g_fillTypeManager:getConverterDataByName("TEDDER")
-    for fromFillType, to in pairs(converter) do
-        local targetFillType = to.targetFillTypeIndex
-        if fromFillType == targetFillType then
-            continue
-        end
-
-        if fillType == targetFillType then
-            return true
-        end
-    end
-    return false
+    self:ensureFillTypeClassification()
+    return self.fillTypeClass[fillType] == "hay"
 end
 
 ---

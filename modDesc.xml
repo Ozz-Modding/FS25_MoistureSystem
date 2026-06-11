@@ -35,6 +35,9 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
 
+1.0.0.6:
+- Miscellaneous optimisation to improve performance when a large number of ground objects persist.
+
 1.0.0.5:
 - Harvested crop in a contract will be at the ideal moisture level to prevent drying costs being charged for contract work.
 - Deregister any sold silos to fix an error with crop drying.
