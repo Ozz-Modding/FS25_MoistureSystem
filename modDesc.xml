@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="109">
     <author>Ozz</author>
-    <version>1.0.0.5</version>
+    <version>1.0.0.6</version>
     <iconFilename>icon_MoistureSystem.dds</iconFilename>
     <title>
         <en>Moisture System</en>
@@ -92,6 +92,9 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop
 
 Änderungsprotokoll:
 
+1.0.0.6:
+- Verschiedene Optimierungen zur Verbesserung der Leistung, wenn eine große Anzahl von Bodenobjekten dauerhaft bestehen bleibt.
+
 1.0.0.5:
 - Geerntetes Getreide bei einem Auftrag wird auf dem idealen Feuchtigkeitsstand sein, um zu verhindern, dass Trocknungsgebühren für Auftragsarbeiten berechnet werden.
 - Verkaufte Silos werden nun deregistriert, um einen Fehler bei der Silo-Trocknung zu beheben.
@@ -145,6 +148,9 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop
 
 Journal des modifications :
+
+1.0.0.6 :
+- Optimisations diverses pour améliorer les performances lorsqu'un grand nombre d'objets au sol persistent.
 
 1.0.0.5 :
 - Les récoltes effectuées dans le cadre d'un contrat seront au niveau d'humidité idéal pour éviter que des frais de séchage soient facturés pour les travaux sous contrat.
