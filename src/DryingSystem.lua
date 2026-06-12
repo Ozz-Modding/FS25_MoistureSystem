@@ -353,8 +353,16 @@ function DryingActivatable.new(dryingSystem, placeable)
     return self
 end
 
+function DryingActivatable:delete()
+    self.dryingSystem:removeActivatable(self.placeable.uniqueId)
+end
+
 function DryingActivatable:getIsActivatable()
     if self.placeable == nil or self.placeable.rootNode == nil then return false end
+    if not entityExists(self.placeable.rootNode) then
+        self:delete()
+        return false
+    end
     if g_localPlayer == nil or g_localPlayer.rootNode == nil then return false end
     if g_localPlayer:getCurrentVehicle() ~= nil then return false end
 
@@ -365,6 +373,7 @@ function DryingActivatable:getIsActivatable()
         if not self.dryingSystem:isDrying(self.placeable.uniqueId) and not self.dryingSystem:shedHasWetPiles(self.placeable) then return false end
     else
         local tx, _, tz = getWorldTranslation(self.placeable.rootNode)
+        if tx == nil then return false end
         if MathUtil.vector2Length(px - tx, pz - tz) > DryingSystem.ACTIVATION_DISTANCE then
             return false
         end
@@ -400,7 +409,12 @@ end
 
 function DryingActivatable:getDistance(x, _, z)
     if self.placeable == nil or self.placeable.rootNode == nil then return math.huge end
+    if not entityExists(self.placeable.rootNode) then
+        self:delete()
+        return math.huge
+    end
     local tx, _, tz = getWorldTranslation(self.placeable.rootNode)
+    if tx == nil then return math.huge end
     return MathUtil.vector2Length(x - tx, z - tz)
 end
 
