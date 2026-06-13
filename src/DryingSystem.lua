@@ -3,7 +3,7 @@ local DryingSystem_mt = Class(DryingSystem)
 
 DryingSystem.DEFAULT_DRYING_RATE = 0.01
 DryingSystem.SILO_COST_RATIO = 0.7
-DryingSystem.ACTIVATION_DISTANCE = 7
+DryingSystem.ACTIVATION_DISTANCE_BUFFER = 5
 
 local PLAYER_CONTEXT = "PLAYER"
 
@@ -12,8 +12,68 @@ function DryingSystem.new()
     self.activeDryers = {}
     self.activatables = {}
     self.shedBounds = {}
+    self.placeableRadii = {}
     self.missionStarted = false
     return self
+end
+
+function DryingSystem:getPlaceableRadius(placeable)
+    local cached = self.placeableRadii[placeable.uniqueId]
+    if cached then return cached end
+
+    local minX, maxX, minZ, maxZ = math.huge, -math.huge, math.huge, -math.huge
+    local found = false
+
+    local function expandFromParallelogramAreas(areas)
+        for _, area in ipairs(areas) do
+            local startNode = area.start or area.startNode
+            local widthNode = area.width or area.widthNode
+            local heightNode = area.height or area.heightNode
+            if startNode ~= nil and widthNode ~= nil and heightNode ~= nil then
+                local sx, _, sz = localToLocal(startNode, placeable.rootNode, 0, 0, 0)
+                local wx, _, wz = localToLocal(widthNode, placeable.rootNode, 0, 0, 0)
+                local hx, _, hz = localToLocal(heightNode, placeable.rootNode, 0, 0, 0)
+                local corners = { {sx, sz}, {wx, wz}, {hx, hz}, {wx + hx - sx, wz + hz - sz} }
+                for _, c in ipairs(corners) do
+                    minX = math.min(minX, c[1]); maxX = math.max(maxX, c[1])
+                    minZ = math.min(minZ, c[2]); maxZ = math.max(maxZ, c[2])
+                end
+                found = true
+            end
+        end
+    end
+
+    if placeable.spec_clearAreas ~= nil and placeable.spec_clearAreas.areas ~= nil then
+        expandFromParallelogramAreas(placeable.spec_clearAreas.areas)
+    end
+    if placeable.spec_leveling ~= nil and placeable.spec_leveling.levelAreas ~= nil then
+        expandFromParallelogramAreas(placeable.spec_leveling.levelAreas)
+    end
+    if placeable.spec_placement ~= nil and placeable.spec_placement.testAreas ~= nil then
+        for _, area in ipairs(placeable.spec_placement.testAreas) do
+            if area.size ~= nil then
+                local halfX = (area.size.x or 5) * 0.5
+                local halfZ = (area.size.z or 5) * 0.5
+                local cx = area.center ~= nil and area.center.x or 0
+                local cz = area.center ~= nil and area.center.z or 0
+                minX = math.min(minX, cx - halfX); maxX = math.max(maxX, cx + halfX)
+                minZ = math.min(minZ, cz - halfZ); maxZ = math.max(maxZ, cz + halfZ)
+                found = true
+            end
+        end
+    end
+
+    local radius
+    if found then
+        local sizeX = maxX - minX
+        local sizeZ = maxZ - minZ
+        radius = math.sqrt(sizeX * sizeX + sizeZ * sizeZ) * 0.5 + DryingSystem.ACTIVATION_DISTANCE_BUFFER
+    else
+        radius = 15 + DryingSystem.ACTIVATION_DISTANCE_BUFFER
+    end
+
+    self.placeableRadii[placeable.uniqueId] = radius
+    return radius
 end
 
 function DryingSystem:registerActivatables()
@@ -137,6 +197,7 @@ function DryingSystem:removeActivatable(placeableId)
     g_currentMission.activatableObjectsSystem:removeActivatable(activatable)
     self.activatables[placeableId] = nil
     self.shedBounds[placeableId] = nil
+    self.placeableRadii[placeableId] = nil
 end
 
 function DryingSystem:toggleDrying(placeable)
@@ -374,7 +435,8 @@ function DryingActivatable:getIsActivatable()
     else
         local tx, _, tz = getWorldTranslation(self.placeable.rootNode)
         if tx == nil then return false end
-        if MathUtil.vector2Length(px - tx, pz - tz) > DryingSystem.ACTIVATION_DISTANCE then
+        local activationRadius = self.dryingSystem:getPlaceableRadius(self.placeable)
+        if MathUtil.vector2Length(px - tx, pz - tz) > activationRadius then
             return false
         end
 

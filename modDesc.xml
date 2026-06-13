@@ -35,8 +35,9 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
 
-1.0.0.7 [WIP]:
+1.0.0.7:
 - Fix a freeze when selling certain silos.
+- Improved the area detection for when drying option will be offered.
 
 1.0.0.6:
 - Miscellaneous optimisation to improve performance when a large number of ground objects persist.
