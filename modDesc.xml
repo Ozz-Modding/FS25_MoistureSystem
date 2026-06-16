@@ -273,7 +273,7 @@ Journal des modifications :
                     <text text="$l10n_help_moisture_grading_3"/>
                 </paragraph>
             </page>
-            <page title="$l10n_help_moisture_drying_title" iconSliceId="helpline.icon_store">
+            <page title="$l10n_help_moisture_drying_title" iconSliceId="helpline.icon_others">
                 <paragraph>
                     <text text="$l10n_help_moisture_drying_1"/>
                 </paragraph>
