@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Sistema di Umidità"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Ambiente Climatico"/>
-		<text name="setting_moisture_environment_tooltip" text="Imposta il tipo di clima per i calcoli dell'umidità"/>
-		<text name="setting_moisture_environment_dry" text="SECCO"/>
-		<text name="setting_moisture_environment_normal" text="NORMALE"/>
-		<text name="setting_moisture_environment_wet" text="UMIDO"/>
+		<text name="setting_moisture_weatherProfile" text="Profilo Meteo"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Profilo meteorologico regionale. Determina i modelli di precipitazioni, le temperature e i limiti di umidità. Le modifiche hanno effetto dal prossimo gennaio."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Moltiplicatore Perdita Umidità"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Controlla la velocità di perdita di umidità (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Moltiplicatore Guadagno Umidità"/>

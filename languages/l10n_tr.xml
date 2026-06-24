@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Nem Sistemi"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Hava Durumu Ortamı"/>
-		<text name="setting_moisture_environment_tooltip" text="Nem hesaplamaları için iklim tipini ayarlar"/>
-		<text name="setting_moisture_environment_dry" text="KURU"/>
-		<text name="setting_moisture_environment_normal" text="NORMAL"/>
-		<text name="setting_moisture_environment_wet" text="ISLAK"/>
+		<text name="setting_moisture_weatherProfile" text="Hava Profili"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Bölgesel hava profili. Yağış düzenlerini, sıcaklıkları ve nem aralıklarını belirler. Değişiklikler bir sonraki Ocak ayında geçerli olur."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Nem Kaybı Çarpanı"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Nem kaybı hızını kontrol eder (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Nem Kazanım Çarpanı"/>

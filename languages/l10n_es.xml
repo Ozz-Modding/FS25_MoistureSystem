@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Sistema de Humedad"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Ambiente Climático"/>
-		<text name="setting_moisture_environment_tooltip" text="Establece el tipo de clima para los cálculos de humedad"/>
-		<text name="setting_moisture_environment_dry" text="SECO"/>
-		<text name="setting_moisture_environment_normal" text="NORMAL"/>
-		<text name="setting_moisture_environment_wet" text="HÚMEDO"/>
+		<text name="setting_moisture_weatherProfile" text="Perfil Climático"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Perfil climático regional. Determina los patrones de precipitación, temperaturas y límites de humedad. Los cambios tienen efecto en el próximo enero."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Multiplicador de Pérdida de Humedad"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Controla la velocidad de pérdida de humedad (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Multiplicador de Ganancia de Humedad"/>

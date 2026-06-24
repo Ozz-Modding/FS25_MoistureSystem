@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Feuchtigkeitssystem"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Wetterumgebung"/>
-		<text name="setting_moisture_environment_tooltip" text="Legt den Klimatyp für Feuchtigkeitsberechnungen fest"/>
-		<text name="setting_moisture_environment_dry" text="TROCKEN"/>
-		<text name="setting_moisture_environment_normal" text="NORMAL"/>
-		<text name="setting_moisture_environment_wet" text="FEUCHT"/>
+		<text name="setting_moisture_weatherProfile" text="Wetterprofil"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Regionales Wetterprofil. Bestimmt Niederschlagsmuster, Temperaturen und Feuchtigkeitsgrenzen. Änderungen werden im nächsten Januar wirksam."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Feuchtigkeitsverlust-Multiplikator"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Steuert die Geschwindigkeit des Feuchtigkeitsverlusts (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Feuchtigkeitsgewinn-Multiplikator"/>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    US Pacific Northwest (Oregon / Washington)
+    Very wet mild winters, dry cool summers. NOAA climate normals.
+-->
+<weatherProfile id="uspnw" displayName="US Pacific NW">
+    <scenarios>
+        <scenario id="normal" weight="10">
+            <month id="1"  rainfall="0.80" tempMinOffset="1.0"  tempMaxOffset="0.5"  moistureMin="28" moistureMax="55"/>
+            <month id="2"  rainfall="0.72" tempMinOffset="1.0"  tempMaxOffset="1.0"  moistureMin="26" moistureMax="52"/>
+            <month id="3"  rainfall="0.65" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="22" moistureMax="46"/>
+            <month id="4"  rainfall="0.52" tempMinOffset="0.0"  tempMaxOffset="0.5"  moistureMin="17" moistureMax="36"/>
+            <month id="5"  rainfall="0.40" tempMinOffset="0.0"  tempMaxOffset="0.0"  moistureMin="13" moistureMax="28"/>
+            <month id="6"  rainfall="0.25" tempMinOffset="0.0"  tempMaxOffset="0.0"  moistureMin="8"  moistureMax="19"/>
+            <month id="7"  rainfall="0.10" tempMinOffset="1.0"  tempMaxOffset="2.0"  moistureMin="5"  moistureMax="14"/>
+            <month id="8"  rainfall="0.10" tempMinOffset="1.0"  tempMaxOffset="2.0"  moistureMin="5"  moistureMax="14"/>
+            <month id="9"  rainfall="0.25" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="8"  moistureMax="19"/>
+            <month id="10" rainfall="0.55" tempMinOffset="0.0"  tempMaxOffset="0.0"  moistureMin="17" moistureMax="36"/>
+            <month id="11" rainfall="0.78" tempMinOffset="0.5"  tempMaxOffset="0.5"  moistureMin="24" moistureMax="50"/>
+            <month id="12" rainfall="0.82" tempMinOffset="1.0"  tempMaxOffset="0.5"  moistureMin="28" moistureMax="56"/>
+        </scenario>
+
+        <scenario id="drySummer" weight="3">
+            <month id="1"  rainfall="0.80" tempMinOffset="1.0"  tempMaxOffset="0.5"  moistureMin="28" moistureMax="55"/>
+            <month id="2"  rainfall="0.72" tempMinOffset="1.0"  tempMaxOffset="1.0"  moistureMin="26" moistureMax="52"/>
+            <month id="3"  rainfall="0.60" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="20" moistureMax="42"/>
+            <month id="4"  rainfall="0.45" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="14" moistureMax="30"/>
+            <month id="5"  rainfall="0.28" tempMinOffset="1.0"  tempMaxOffset="1.5"  moistureMin="9"  moistureMax="20"/>
+            <month id="6"  rainfall="0.10" tempMinOffset="2.0"  tempMaxOffset="3.0"  moistureMin="4"  moistureMax="10"/>
+            <month id="7"  rainfall="0.04" tempMinOffset="3.0"  tempMaxOffset="4.5"  moistureMin="3"  moistureMax="10"/>
+            <month id="8"  rainfall="0.04" tempMinOffset="3.0"  tempMaxOffset="4.5"  moistureMin="3"  moistureMax="10"/>
+            <month id="9"  rainfall="0.12" tempMinOffset="2.0"  tempMaxOffset="3.0"  moistureMin="4"  moistureMax="11"/>
+            <month id="10" rainfall="0.50" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="15" moistureMax="32"/>
+            <month id="11" rainfall="0.78" tempMinOffset="0.5"  tempMaxOffset="0.5"  moistureMin="24" moistureMax="50"/>
+            <month id="12" rainfall="0.82" tempMinOffset="1.0"  tempMaxOffset="0.5"  moistureMin="28" moistureMax="56"/>
+        </scenario>
+
+        <scenario id="wetYear" weight="1">
+            <month id="1"  rainfall="1.00" tempMinOffset="0.5"  tempMaxOffset="0.0"  moistureMin="35" moistureMax="65"/>
+            <month id="2"  rainfall="0.95" tempMinOffset="0.5"  tempMaxOffset="0.5"  moistureMin="33" moistureMax="62"/>
+            <month id="3"  rainfall="0.85" tempMinOffset="0.0"  tempMaxOffset="0.5"  moistureMin="28" moistureMax="57"/>
+            <month id="4"  rainfall="0.70" tempMinOffset="-0.5" tempMaxOffset="0.0"  moistureMin="22" moistureMax="46"/>
+            <month id="5"  rainfall="0.55" tempMinOffset="-0.5" tempMaxOffset="0.0"  moistureMin="18" moistureMax="38"/>
+            <month id="6"  rainfall="0.38" tempMinOffset="-0.5" tempMaxOffset="0.0"  moistureMin="12" moistureMax="26"/>
+            <month id="7"  rainfall="0.18" tempMinOffset="0.0"  tempMaxOffset="1.0"  moistureMin="7"  moistureMax="16"/>
+            <month id="8"  rainfall="0.18" tempMinOffset="0.0"  tempMaxOffset="1.0"  moistureMin="7"  moistureMax="16"/>
+            <month id="9"  rainfall="0.38" tempMinOffset="0.0"  tempMaxOffset="0.5"  moistureMin="12" moistureMax="26"/>
+            <month id="10" rainfall="0.70" tempMinOffset="-0.5" tempMaxOffset="0.0"  moistureMin="22" moistureMax="46"/>
+            <month id="11" rainfall="0.95" tempMinOffset="0.0"  tempMaxOffset="0.0"  moistureMin="32" moistureMax="62"/>
+            <month id="12" rainfall="1.00" tempMinOffset="0.5"  tempMaxOffset="0.0"  moistureMin="35" moistureMax="65"/>
+        </scenario>
+    </scenarios>
+</weatherProfile>

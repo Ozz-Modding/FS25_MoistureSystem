@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Система Влажности"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Климатическая Среда"/>
-		<text name="setting_moisture_environment_tooltip" text="Установить тип климата для расчёта влажности"/>
-		<text name="setting_moisture_environment_dry" text="СУХОЙ"/>
-		<text name="setting_moisture_environment_normal" text="НОРМАЛЬНЫЙ"/>
-		<text name="setting_moisture_environment_wet" text="ВЛАЖНЫЙ"/>
+		<text name="setting_moisture_weatherProfile" text="Погодный Профиль"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Региональный погодный профиль. Определяет характер осадков, температуры и диапазоны влажности. Изменения вступают в силу в следующем январе."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Множитель Потери Влажности"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Контролирует скорость потери влажности (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Множитель Набора Влажности"/>

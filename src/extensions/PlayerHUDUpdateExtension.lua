@@ -129,15 +129,12 @@ function MSPlayerHUDExtension:showFieldInfo(x, z)
 
     box:setTitle(g_i18n:getText("moistureSystem_fieldInfo"))
 
-    -- Get current month for clamp ranges
     local currentMonth = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local environment = moistureSystem.settings.environment
-    local clamp = MoistureClamp.Environments[environment].Months[currentMonth]
+    local clamp = g_currentMission.WeatherProfileSystem:getClampForMonth(currentMonth)
 
-    -- Show expected range for this month/environment
     box:addLine(
         g_i18n:getText("moistureSystem_range"),
-        string.format("%.0f%% - %.0f%%", clamp.Min, clamp.Max)
+        string.format("%.0f%% - %.0f%%", clamp.min, clamp.max)
     )
 
     -- Show actual field moisture if setting is enabled

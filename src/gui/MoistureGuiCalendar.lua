@@ -1,6 +1,6 @@
 ---
 -- MoistureSystem - Calendar Frame
--- Displays monthly moisture ranges based on MoistureClamp data
+-- Displays monthly moisture ranges from the active WeatherProfileSystem scenario
 --
 
 MoistureGuiCalendar = {}
@@ -54,37 +54,26 @@ end
 -- Update the calendar display with current environment settings
 ---
 function MoistureGuiCalendar:updateCalendar()
-    if not g_currentMission or not g_currentMission.MoistureSystem then
+    if not g_currentMission or not g_currentMission.WeatherProfileSystem then
         return
     end
 
-    -- Get current environment setting
-    local environment = g_currentMission.MoistureSystem.settings.environment
+    local wps = g_currentMission.WeatherProfileSystem
 
-    -- Get moisture data for this environment
-    local monthData = MoistureClamp.Environments[environment].Months
-
-    -- Update each month cell with the min-max range
     for period = 1, 12 do
         local month = MoistureSystem.periodToMonth(period)
-        local data = monthData[month]
-        if data and self.monthCells[period] then
-            local rangeText = string.format("%d-%d%%", data.Min, data.Max)
+        local clamp = wps:getClampForMonth(month)
+        if self.monthCells[period] then
+            local rangeText = string.format("%d-%d%%", math.floor(clamp.min), math.floor(clamp.max))
             self.monthCells[period]:setText(rangeText)
         end
     end
 
-    -- Update the environment label
-    local envName
-    if environment == MoistureClampEnvironments.DRY then
-        envName = g_i18n:getText("setting_moisture_environment_dry")
-    elseif environment == MoistureClampEnvironments.WET then
-        envName = g_i18n:getText("setting_moisture_environment_wet")
-    else
-        envName = g_i18n:getText("setting_moisture_environment_normal")
-    end
+    local profile = wps.profiles[wps.activeProfileId]
+    local profileName = profile and profile.displayName or wps.activeProfileId
+    local scenarioName = wps.activeScenarioId
 
     if self.environmentLabel then
-        self.environmentLabel:setText(envName)
+        self.environmentLabel:setText(string.format("%s / %s", profileName, scenarioName))
     end
 end

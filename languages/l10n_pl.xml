@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="System wilgotności"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Warunki pogodowe"/>
-		<text name="setting_moisture_environment_tooltip" text="Ustawia typ klimatu do obliczeń wilgotności"/>
-		<text name="setting_moisture_environment_dry" text="Suchy"/>
-		<text name="setting_moisture_environment_normal" text="Normalny"/>
-		<text name="setting_moisture_environment_wet" text="Mokry"/>
+		<text name="setting_moisture_weatherProfile" text="Profil pogodowy"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Regionalny profil pogodowy. Określa wzorce opadów, temperatury i limity wilgotności. Zmiany wejdą w życie w następnym styczniu."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Współczynnik utraty wilgotności"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Reguluje tempo utraty wilgotności (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Współczynnik przyrostu wilgotności"/>

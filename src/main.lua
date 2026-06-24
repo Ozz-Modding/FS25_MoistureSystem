@@ -17,7 +17,6 @@ function MoistureSystem:loadMap()
     self.missionStarted = false
 
     self.settings = {
-        environment = MoistureClampEnvironments.NORMAL,
         moistureLossMultiplier = 3.0,
         moistureGainMultiplier = 3.0,
         teddingMoistureReduction = 0.02,
@@ -58,6 +57,10 @@ function MoistureSystem:loadMap()
 
     if g_addCheatCommands and g_currentMission:getIsServer() then
         addConsoleCommand("msSetMoisture", "Set Moisture", "consoleCommandSetMoisture", self)
+        local wps = g_currentMission.WeatherProfileSystem
+        addConsoleCommand("msWeatherDebug", "Dump active weather profile/scenario", "consoleCommandWeatherDebug", wps)
+        addConsoleCommand("msSetScenario", "Force-set active weather scenario", "consoleCommandSetScenario", wps)
+        addConsoleCommand("msListScenarios", "List scenarios for active profile", "consoleCommandListScenarios", wps)
     end
 end
 
@@ -78,8 +81,13 @@ end
 function MoistureSystem:delete()
     if g_addCheatCommands then
         removeConsoleCommand("msSetMoisture")
+        removeConsoleCommand("msWeatherDebug")
+        removeConsoleCommand("msSetScenario")
+        removeConsoleCommand("msListScenarios")
     end
 end
+
+
 
 function MoistureSystem:loadGUI()
     g_gui:loadProfiles(MoistureSystem.dir .. "src/gui/guiProfiles.xml")
@@ -183,12 +191,10 @@ end
 function MoistureSystem:adjustMoisture(delta)
     if not g_currentMission:getIsServer() then return end
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local environment = self.settings.environment
 
-    -- Get min/max for current month and environment
-    local monthData = MoistureClamp.Environments[environment].Months[month]
-    local minMoisture = monthData.Min / 100
-    local maxMoisture = monthData.Max / 100
+    local clamp = g_currentMission.WeatherProfileSystem:getClampForMonth(month)
+    local minMoisture = clamp.min / 100
+    local maxMoisture = clamp.max / 100
 
     -- Calculate 80% of range to leave headroom for terrain-based variation
     local rangeSize = maxMoisture - minMoisture
@@ -215,12 +221,10 @@ function MoistureSystem:getMoistureAtPosition(x, z)
 
     local height = getTerrainHeightAtWorldPos(g_terrainNode, x, 0, z)
 
-    -- Get current month and environment for clamping
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local environment = self.settings.environment
-    local monthData = MoistureClamp.Environments[environment].Months[month]
-    local minMoisture = monthData.Min / 100
-    local maxMoisture = monthData.Max / 100
+    local clamp = g_currentMission.WeatherProfileSystem:getClampForMonth(month)
+    local minMoisture = clamp.min / 100
+    local maxMoisture = clamp.max / 100
 
     local moistureLevel
     -- Higher elevation = lower moisture, lower elevation = higher moisture
@@ -264,14 +268,8 @@ end
 
 function MoistureSystem:firstLoad()
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local environment = self.settings.environment
-
-    local monthData = MoistureClamp.Environments[environment].Months[month]
-    local minMoisture = monthData.Min
-    local maxMoisture = monthData.Max
-
-    -- Set current moisture to 85% of maximum, converted to 0-1 scale
-    local startMoisture = maxMoisture * 0.85
+    local clamp = g_currentMission.WeatherProfileSystem:getClampForMonth(month)
+    local startMoisture = clamp.max * 0.85
     self.currentMoisturePercent = startMoisture / 100
 end
 
@@ -754,12 +752,7 @@ function MoistureSystem:loadFromXMLFile()
             self.currentMoisturePercent = currentMoisture
         end
 
-        -- Load settings
-        local environment = getXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#environment")
-        if environment then
-            self.settings.environment = environment
-        end
-
+        -- Load settings (settings#environment is silently ignored — replaced by WeatherProfileSystem)
         local lossMultiplier = getXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureLossMultiplier")
         if lossMultiplier then
             self.settings.moistureLossMultiplier = lossMultiplier
@@ -896,6 +889,10 @@ function MoistureSystem:loadFromXMLFile()
             i = i + 1
         end
 
+        if g_currentMission.WeatherProfileSystem then
+            g_currentMission.WeatherProfileSystem:loadFromXMLFile(xmlFile, MoistureSystem.SaveKey)
+        end
+
         self.didLoadFromXML = true
         delete(xmlFile)
     end
@@ -920,7 +917,6 @@ function MoistureSystem:saveToXmlFile()
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. "#dryingInfoShown", ms.dryingInfoShown)
 
     -- Save settings
-    setXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#environment", ms.settings.environment)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureLossMultiplier", ms.settings
         .moistureLossMultiplier)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureGainMultiplier", ms.settings
@@ -935,6 +931,10 @@ function MoistureSystem:saveToXmlFile()
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#sellDryingChargeRate", ms.settings.sellDryingChargeRate)
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#showFieldMoisture", ms.settings.showFieldMoisture)
     setXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureMeterReporting", ms.settings.moistureMeterReporting)
+
+    if g_currentMission.WeatherProfileSystem then
+        g_currentMission.WeatherProfileSystem:saveToXMLFile(xmlFile, MoistureSystem.SaveKey)
+    end
 
     if g_currentMission.groundPropertyTracker then
         g_currentMission.groundPropertyTracker:saveToXMLFile(xmlFile, MoistureSystem.SaveKey)
@@ -1036,11 +1036,7 @@ end
 -- @param connection: Network connection
 ---
 function MoistureSystem:writeInitialClientState(streamId, connection)
-    -- Write current moisture level
     streamWriteFloat32(streamId, self.currentMoisturePercent)
-
-    -- Write settings
-    streamWriteInt32(streamId, self.settings.environment)
     streamWriteFloat32(streamId, self.settings.moistureLossMultiplier)
     streamWriteFloat32(streamId, self.settings.moistureGainMultiplier)
     streamWriteFloat32(streamId, self.settings.teddingMoistureReduction)
@@ -1060,11 +1056,7 @@ end
 -- @param connection: Network connection
 ---
 function MoistureSystem:readInitialClientState(streamId, connection)
-    -- Read current moisture level
     self.currentMoisturePercent = streamReadFloat32(streamId)
-
-    -- Read settings
-    self.settings.environment = streamReadInt32(streamId)
     self.settings.moistureLossMultiplier = streamReadFloat32(streamId)
     self.settings.moistureGainMultiplier = streamReadFloat32(streamId)
     self.settings.teddingMoistureReduction = streamReadFloat32(streamId)

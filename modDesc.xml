@@ -187,7 +187,7 @@ Journal des modifications :
     </description>
     <extraSourceFiles>
         <sourceFile filename="src/data/CropValueMap.lua"/>
-        <sourceFile filename="src/data/MoistureClamp.lua"/>
+        <sourceFile filename="src/WeatherProfileSystem.lua"/>
         <sourceFile filename="src/extensions/PlayerHUDUpdateExtension.lua"/>
         <sourceFile filename="src/extensions/PlaceableInfoTriggerExtension.lua"/>
         <sourceFile filename="src/extensions/CutterExtension.lua"/>

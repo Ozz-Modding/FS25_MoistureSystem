@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Systém vlhkosti"/>
 
 		<!-- Nastavení -->
-		<text name="setting_moisture_environment" text="Povětrnostní prostředí"/>
-		<text name="setting_moisture_environment_tooltip" text="Nastavuje typ klimatu pro výpočty vlhkosti"/>
-		<text name="setting_moisture_environment_dry" text="SUCHÉ"/>
-		<text name="setting_moisture_environment_normal" text="NORMÁLNÍ"/>
-		<text name="setting_moisture_environment_wet" text="VLHKÉ"/>
+		<text name="setting_moisture_weatherProfile" text="Povětrnostní profil"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Regionální povětrnostní profil. Určuje vzorce srážek, teploty a limity vlhkosti. Změny se projeví v příštím lednu."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Násobitel ztráty vlhkosti"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Řídí rychlost ztráty vlhkosti (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Násobitel získávání vlhkosti"/>

@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Система вологості"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Клімат"/>
-		<text name="setting_moisture_environment_tooltip" text="Встановлює тип клімату для розрахунку вологості"/>
-		<text name="setting_moisture_environment_dry" text="СУХО"/>
-		<text name="setting_moisture_environment_normal" text="НОРМАЛЬНО"/>
-		<text name="setting_moisture_environment_wet" text="ВОЛОГО"/>
+		<text name="setting_moisture_weatherProfile" text="Погодний профіль"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Регіональний погодний профіль. Визначає характер опадів, температуру та діапазони вологості. Зміни набувають чинності у наступному січні."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Множник висихання"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Швидкість зменшення вологості (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Множник зволоження"/>

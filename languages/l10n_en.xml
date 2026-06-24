@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Moisture System"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Weather Environment"/>
-		<text name="setting_moisture_environment_tooltip" text="Sets the climate type for moisture calculations"/>
-		<text name="setting_moisture_environment_dry" text="DRY"/>
-		<text name="setting_moisture_environment_normal" text="NORMAL"/>
-		<text name="setting_moisture_environment_wet" text="WET"/>
+		<text name="setting_moisture_weatherProfile" text="Weather Profile"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Regional weather profile. Determines rainfall patterns, temperatures and moisture clamps. Changes take effect at next January."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Moisture Loss Multiplier"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Controls the speed of moisture loss (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Moisture Gain Multiplier"/>
