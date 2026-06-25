@@ -1,53 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    UK West (Wales / West of England / Scotland West)
-    Wetter and milder than UK East due to Atlantic influence.
--->
+
 <weatherProfile id="ukwest" displayName="UK West">
     <scenarios>
         <scenario id="normal" weight="10">
-            <month id="1"  rainfall="0.60" tempMinOffset="2.0"  tempMaxOffset="2.5"  moistureMin="22" moistureMax="46"/>
-            <month id="2"  rainfall="0.55" tempMinOffset="2.0"  tempMaxOffset="2.5"  moistureMin="21" moistureMax="44"/>
-            <month id="3"  rainfall="0.50" tempMinOffset="1.5"  tempMaxOffset="2.0"  moistureMin="17" moistureMax="36"/>
-            <month id="4"  rainfall="0.45" tempMinOffset="1.0"  tempMaxOffset="1.5"  moistureMin="13" moistureMax="28"/>
-            <month id="5"  rainfall="0.45" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="12" moistureMax="26"/>
-            <month id="6"  rainfall="0.45" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="8"  moistureMax="20"/>
-            <month id="7"  rainfall="0.48" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="7"  moistureMax="18"/>
-            <month id="8"  rainfall="0.50" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="8"  moistureMax="20"/>
-            <month id="9"  rainfall="0.55" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="10" moistureMax="26"/>
-            <month id="10" rainfall="0.60" tempMinOffset="1.0"  tempMaxOffset="1.5"  moistureMin="18" moistureMax="38"/>
-            <month id="11" rainfall="0.62" tempMinOffset="1.5"  tempMaxOffset="2.0"  moistureMin="20" moistureMax="42"/>
-            <month id="12" rainfall="0.62" tempMinOffset="2.0"  tempMaxOffset="2.5"  moistureMin="22" moistureMax="45"/>
+            <month id="1" tempMinOffset="2.0" tempMaxOffset="2.5"
+                wRain="7" wThunder="0" wSnow="2" wHail="1" wSun="1" wPartlyCloudy="3" wCloudy="6"
+                moistureMin="22" moistureMax="46" />
+            <month id="2" tempMinOffset="2.0" tempMaxOffset="2.5"
+                wRain="6" wThunder="0" wSnow="2" wHail="1" wSun="2" wPartlyCloudy="3" wCloudy="6"
+                moistureMin="21" moistureMax="44" />
+            <month id="3" tempMinOffset="1.5" tempMaxOffset="2.0"
+                wRain="5" wThunder="0" wSnow="1" wHail="2" wSun="3" wPartlyCloudy="4" wCloudy="5"
+                moistureMin="17" moistureMax="36" />
+            <month id="4" tempMinOffset="1.0" tempMaxOffset="1.5"
+                wRain="4" wThunder="0" wSnow="0" wHail="2" wSun="4" wPartlyCloudy="5" wCloudy="4"
+                moistureMin="13" moistureMax="28" />
+            <month id="5" tempMinOffset="0.5" tempMaxOffset="1.0"
+                wRain="3" wThunder="1" wSnow="0" wHail="1" wSun="5" wPartlyCloudy="5" wCloudy="3"
+                moistureMin="12" moistureMax="26" />
+            <month id="6" tempMinOffset="0.5" tempMaxOffset="1.0"
+                wRain="3" wThunder="1" wSnow="0" wHail="1" wSun="5" wPartlyCloudy="5" wCloudy="3"
+                moistureMin="8" moistureMax="20" />
+            <month id="7" tempMinOffset="0.5" tempMaxOffset="1.0"
+                wRain="3" wThunder="1" wSnow="0" wHail="0" wSun="5" wPartlyCloudy="6" wCloudy="3"
+                moistureMin="7" moistureMax="18" />
+            <month id="8" tempMinOffset="0.5" tempMaxOffset="1.0"
+                wRain="3" wThunder="1" wSnow="0" wHail="0" wSun="5" wPartlyCloudy="5" wCloudy="3"
+                moistureMin="8" moistureMax="20" />
+            <month id="9" tempMinOffset="0.5" tempMaxOffset="1.0"
+                wRain="5" wThunder="1" wSnow="0" wHail="1" wSun="3" wPartlyCloudy="4" wCloudy="5"
+                moistureMin="10" moistureMax="26" />
+            <month id="10" tempMinOffset="1.0" tempMaxOffset="1.5"
+                wRain="7" wThunder="0" wSnow="0" wHail="1" wSun="2" wPartlyCloudy="3" wCloudy="6"
+                moistureMin="18" moistureMax="38" />
+            <month id="11" tempMinOffset="1.5" tempMaxOffset="2.0"
+                wRain="7" wThunder="0" wSnow="1" wHail="1" wSun="1" wPartlyCloudy="3" wCloudy="6"
+                moistureMin="20" moistureMax="42" />
+            <month id="12" tempMinOffset="2.0" tempMaxOffset="2.5"
+                wRain="7" wThunder="0" wSnow="2" wHail="1" wSun="1" wPartlyCloudy="3" wCloudy="6"
+                moistureMin="22" moistureMax="45" />
         </scenario>
-
         <scenario id="stormy" weight="2">
-            <month id="1"  rainfall="0.85" tempMinOffset="2.0"  tempMaxOffset="2.5"  moistureMin="28" moistureMax="56"/>
-            <month id="2"  rainfall="0.80" tempMinOffset="2.0"  tempMaxOffset="2.5"  moistureMin="27" moistureMax="54"/>
-            <month id="3"  rainfall="0.70" tempMinOffset="1.5"  tempMaxOffset="2.0"  moistureMin="22" moistureMax="46"/>
-            <month id="4"  rainfall="0.60" tempMinOffset="1.0"  tempMaxOffset="1.5"  moistureMin="17" moistureMax="36"/>
-            <month id="5"  rainfall="0.55" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="15" moistureMax="32"/>
-            <month id="6"  rainfall="0.50" tempMinOffset="0.0"  tempMaxOffset="0.5"  moistureMin="13" moistureMax="28"/>
-            <month id="7"  rainfall="0.52" tempMinOffset="0.0"  tempMaxOffset="0.5"  moistureMin="12" moistureMax="26"/>
-            <month id="8"  rainfall="0.55" tempMinOffset="0.0"  tempMaxOffset="0.5"  moistureMin="13" moistureMax="28"/>
-            <month id="9"  rainfall="0.70" tempMinOffset="0.5"  tempMaxOffset="1.0"  moistureMin="18" moistureMax="38"/>
-            <month id="10" rainfall="0.80" tempMinOffset="1.0"  tempMaxOffset="1.5"  moistureMin="24" moistureMax="50"/>
-            <month id="11" rainfall="0.85" tempMinOffset="1.5"  tempMaxOffset="2.0"  moistureMin="27" moistureMax="54"/>
-            <month id="12" rainfall="0.85" tempMinOffset="2.0"  tempMaxOffset="2.5"  moistureMin="28" moistureMax="56"/>
+            <month id="1" tempMinOffset="2.0" tempMaxOffset="2.5"
+                wRain="9" wThunder="0" wSnow="1" wHail="1" wSun="0" wPartlyCloudy="2" wCloudy="6"
+                moistureMin="28" moistureMax="56" />
+            <month id="2" tempMinOffset="2.0" tempMaxOffset="2.5"
+                wRain="8" wThunder="0" wSnow="2" wHail="1" wSun="0" wPartlyCloudy="2" wCloudy="6"
+                moistureMin="27" moistureMax="54" />
+            <month id="3" tempMinOffset="1.5" tempMaxOffset="2.0"
+                wRain="7" wThunder="0" wSnow="1" wHail="2" wSun="1" wPartlyCloudy="3" wCloudy="5"
+                moistureMin="22" moistureMax="46" />
+            <month id="4" tempMinOffset="1.0" tempMaxOffset="1.5"
+                wRain="6" wThunder="1" wSnow="0" wHail="2" wSun="2" wPartlyCloudy="3" wCloudy="5"
+                moistureMin="17" moistureMax="36" />
+            <month id="5" tempMinOffset="0.5" tempMaxOffset="1.0"
+                wRain="5" wThunder="1" wSnow="0" wHail="2" wSun="3" wPartlyCloudy="4" wCloudy="4"
+                moistureMin="15" moistureMax="32" />
+            <month id="6" tempMinOffset="0.0" tempMaxOffset="0.5"
+                wRain="5" wThunder="2" wSnow="0" wHail="1" wSun="3" wPartlyCloudy="4" wCloudy="4"
+                moistureMin="13" moistureMax="28" />
+            <month id="7" tempMinOffset="0.0" tempMaxOffset="0.5"
+                wRain="4" wThunder="2" wSnow="0" wHail="0" wSun="3" wPartlyCloudy="5" wCloudy="4"
+                moistureMin="12" moistureMax="26" />
+            <month id="8" tempMinOffset="0.0" tempMaxOffset="0.5"
+                wRain="5" wThunder="2" wSnow="0" wHail="0" wSun="3" wPartlyCloudy="4" wCloudy="4"
+                moistureMin="13" moistureMax="28" />
+            <month id="9" tempMinOffset="0.5" tempMaxOffset="1.0"
+                wRain="7" wThunder="1" wSnow="0" wHail="2" wSun="1" wPartlyCloudy="3" wCloudy="5"
+                moistureMin="18" moistureMax="38" />
+            <month id="10" tempMinOffset="1.0" tempMaxOffset="1.5"
+                wRain="9" wThunder="0" wSnow="0" wHail="1" wSun="0" wPartlyCloudy="2" wCloudy="6"
+                moistureMin="24" moistureMax="50" />
+            <month id="11" tempMinOffset="1.5" tempMaxOffset="2.0"
+                wRain="9" wThunder="0" wSnow="1" wHail="1" wSun="0" wPartlyCloudy="2" wCloudy="6"
+                moistureMin="27" moistureMax="54" />
+            <month id="12" tempMinOffset="2.0" tempMaxOffset="2.5"
+                wRain="9" wThunder="0" wSnow="1" wHail="1" wSun="0" wPartlyCloudy="2" wCloudy="6"
+                moistureMin="28" moistureMax="56" />
         </scenario>
-
         <scenario id="drySummer" weight="2">
-            <month id="1"  rainfall="0.60" tempMinOffset="2.0"  tempMaxOffset="2.5"  moistureMin="22" moistureMax="44"/>
-            <month id="2"  rainfall="0.55" tempMinOffset="2.0"  tempMaxOffset="2.5"  moistureMin="20" moistureMax="42"/>
-            <month id="3"  rainfall="0.48" tempMinOffset="1.5"  tempMaxOffset="2.0"  moistureMin="15" moistureMax="32"/>
-            <month id="4"  rainfall="0.40" tempMinOffset="1.0"  tempMaxOffset="1.5"  moistureMin="10" moistureMax="24"/>
-            <month id="5"  rainfall="0.30" tempMinOffset="1.0"  tempMaxOffset="2.0"  moistureMin="8"  moistureMax="20"/>
-            <month id="6"  rainfall="0.22" tempMinOffset="2.0"  tempMaxOffset="3.0"  moistureMin="6"  moistureMax="15"/>
-            <month id="7"  rainfall="0.20" tempMinOffset="2.5"  tempMaxOffset="3.5"  moistureMin="5"  moistureMax="13"/>
-            <month id="8"  rainfall="0.25" tempMinOffset="2.0"  tempMaxOffset="3.0"  moistureMin="6"  moistureMax="15"/>
-            <month id="9"  rainfall="0.45" tempMinOffset="1.0"  tempMaxOffset="1.5"  moistureMin="11" moistureMax="25"/>
-            <month id="10" rainfall="0.55" tempMinOffset="1.0"  tempMaxOffset="1.5"  moistureMin="16" moistureMax="34"/>
-            <month id="11" rainfall="0.60" tempMinOffset="1.5"  tempMaxOffset="2.0"  moistureMin="19" moistureMax="40"/>
-            <month id="12" rainfall="0.62" tempMinOffset="2.0"  tempMaxOffset="2.5"  moistureMin="21" moistureMax="43"/>
+            <month id="1" tempMinOffset="2.0" tempMaxOffset="2.5"
+                wRain="7" wThunder="0" wSnow="2" wHail="1" wSun="1" wPartlyCloudy="3" wCloudy="6"
+                moistureMin="22" moistureMax="44" />
+            <month id="2" tempMinOffset="2.0" tempMaxOffset="2.5"
+                wRain="6" wThunder="0" wSnow="2" wHail="1" wSun="2" wPartlyCloudy="3" wCloudy="5"
+                moistureMin="20" moistureMax="42" />
+            <month id="3" tempMinOffset="1.5" tempMaxOffset="2.0"
+                wRain="5" wThunder="0" wSnow="1" wHail="2" wSun="3" wPartlyCloudy="4" wCloudy="4"
+                moistureMin="15" moistureMax="32" />
+            <month id="4" tempMinOffset="1.0" tempMaxOffset="1.5"
+                wRain="3" wThunder="0" wSnow="0" wHail="1" wSun="5" wPartlyCloudy="5" wCloudy="3"
+                moistureMin="10" moistureMax="24" />
+            <month id="5" tempMinOffset="1.0" tempMaxOffset="2.0"
+                wRain="2" wThunder="0" wSnow="0" wHail="1" wSun="7" wPartlyCloudy="5" wCloudy="2"
+                moistureMin="8" moistureMax="20" />
+            <month id="6" tempMinOffset="2.0" tempMaxOffset="3.0"
+                wRain="1" wThunder="1" wSnow="0" wHail="0" wSun="8" wPartlyCloudy="5" wCloudy="2"
+                moistureMin="6" moistureMax="15" />
+            <month id="7" tempMinOffset="2.5" tempMaxOffset="3.5"
+                wRain="1" wThunder="1" wSnow="0" wHail="0" wSun="8" wPartlyCloudy="5" wCloudy="2"
+                moistureMin="5" moistureMax="13" />
+            <month id="8" tempMinOffset="2.0" tempMaxOffset="3.0"
+                wRain="1" wThunder="1" wSnow="0" wHail="0" wSun="7" wPartlyCloudy="5" wCloudy="2"
+                moistureMin="6" moistureMax="15" />
+            <month id="9" tempMinOffset="1.0" tempMaxOffset="1.5"
+                wRain="4" wThunder="1" wSnow="0" wHail="1" wSun="4" wPartlyCloudy="4" wCloudy="4"
+                moistureMin="11" moistureMax="25" />
+            <month id="10" tempMinOffset="1.0" tempMaxOffset="1.5"
+                wRain="6" wThunder="0" wSnow="0" wHail="1" wSun="2" wPartlyCloudy="3" wCloudy="5"
+                moistureMin="16" moistureMax="34" />
+            <month id="11" tempMinOffset="1.5" tempMaxOffset="2.0"
+                wRain="7" wThunder="0" wSnow="1" wHail="1" wSun="1" wPartlyCloudy="3" wCloudy="5"
+                moistureMin="19" moistureMax="40" />
+            <month id="12" tempMinOffset="2.0" tempMaxOffset="2.5"
+                wRain="7" wThunder="0" wSnow="2" wHail="1" wSun="1" wPartlyCloudy="3" wCloudy="5"
+                moistureMin="21" moistureMax="43" />
         </scenario>
     </scenarios>
 </weatherProfile>

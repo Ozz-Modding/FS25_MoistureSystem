@@ -1,6 +1,5 @@
 WeatherProfileSystem = {}
 
-WeatherProfileSystem.RAINFALL_WEIGHT_SCALE = 10
 WeatherProfileSystem.TEMPERATURE_OFFSET_SCALE = 1.0
 WeatherProfileSystem.MOISTURE_CLAMP_SCALE = 1.0
 
@@ -59,11 +58,17 @@ function WeatherProfileSystem:loadProfileXML(path)
                 if hasXMLProperty(xmlFile, mKey) then
                     local mid = getXMLInt(xmlFile, mKey .. "#id") or m
                     scenario.months[mid] = {
-                        rainfall = getXMLFloat(xmlFile, mKey .. "#rainfall") or 0.5,
                         tempMinOffset = getXMLFloat(xmlFile, mKey .. "#tempMinOffset") or 0,
                         tempMaxOffset = getXMLFloat(xmlFile, mKey .. "#tempMaxOffset") or 0,
-                        moistureMin = getXMLFloat(xmlFile, mKey .. "#moistureMin") or 10,
-                        moistureMax = getXMLFloat(xmlFile, mKey .. "#moistureMax") or 30,
+                        moistureMin   = getXMLFloat(xmlFile, mKey .. "#moistureMin")   or 10,
+                        moistureMax   = getXMLFloat(xmlFile, mKey .. "#moistureMax")   or 30,
+                        wRain         = getXMLInt(xmlFile, mKey .. "#wRain")           or 0,
+                        wThunder      = getXMLInt(xmlFile, mKey .. "#wThunder")        or 0,
+                        wSnow         = getXMLInt(xmlFile, mKey .. "#wSnow")           or 0,
+                        wHail         = getXMLInt(xmlFile, mKey .. "#wHail")           or 0,
+                        wSun          = getXMLInt(xmlFile, mKey .. "#wSun")            or 1,
+                        wPartlyCloudy = getXMLInt(xmlFile, mKey .. "#wPartlyCloudy")   or 1,
+                        wCloudy       = getXMLInt(xmlFile, mKey .. "#wCloudy")         or 1,
                     }
                 end
             end
@@ -87,11 +92,12 @@ end
 function WeatherProfileSystem:installWeatherOverrides()
     local weather = g_currentMission.environment.weather
 
-    Weather.fillWeatherForecast = Utils.overwrittenFunction(
-        Weather.fillWeatherForecast,
-        function(self, superFunc, isInitialSync)
-            g_currentMission.WeatherProfileSystem:rebuildWeatherWeights(self)
-            superFunc(self, isInitialSync)
+    Weather.updateAvailableWeatherObjects = Utils.appendedFunction(
+        Weather.updateAvailableWeatherObjects,
+        function(self)
+            if g_currentMission and g_currentMission.WeatherProfileSystem then
+                g_currentMission.WeatherProfileSystem:rebuildWeatherWeights(self)
+            end
         end
     )
 
@@ -116,33 +122,34 @@ end
 function WeatherProfileSystem:rebuildWeatherWeights(weather)
     if not g_currentMission:getIsServer() then return end
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local rainfall = self:getRainfallWeightForMonth(month)
-    local scaledWeight = math.max(1, math.floor(rainfall * WeatherProfileSystem.RAINFALL_WEIGHT_SCALE))
+    local md = self:getMonthData(month)
+    if not md then return end
 
-    -- weightedWeatherObjects is indexed by season (0-3), each entry is a list of repeated objectIndex values
-    -- We rebuild the rain entries proportionally by clearing and re-inserting
-    for season = 0, 3 do
-        local baseObjects = weather.weatherObjects[season]
-        if baseObjects == nil then break end
-
-        local rainWeight = scaledWeight
-        local sunWeight = math.max(1, WeatherProfileSystem.RAINFALL_WEIGHT_SCALE - scaledWeight)
-
+    for season, baseObjects in pairs(weather.weatherObjects) do
         local newWeighted = {}
         for _, obj in ipairs(baseObjects) do
             local wt
-            if obj.weatherType == WeatherType.RAIN or obj.weatherType == WeatherType.THUNDER then
-                wt = rainWeight
-            elseif obj.weatherType == WeatherType.SNOW then
-                wt = math.max(1, math.floor(rainWeight * 0.5))
-            else
-                wt = sunWeight
+            if     obj.weatherType == WeatherType.RAIN             then wt = md.wRain
+            elseif obj.weatherType == WeatherType.THUNDER          then wt = md.wThunder
+            elseif obj.weatherType == WeatherType.SNOW             then wt = md.wSnow
+            elseif obj.weatherType == WeatherType.HAIL             then wt = md.wHail
+            elseif obj.weatherType == WeatherType.SUN              then wt = md.wSun
+            elseif obj.weatherType == WeatherType.PARTIALLY_CLOUDY then wt = md.wPartlyCloudy
+            elseif obj.weatherType == WeatherType.CLOUDY           then wt = md.wCloudy
+            else wt = 1
             end
-            for _ = 1, wt do
-                table.insert(newWeighted, obj)
+            if wt > 0 then
+                for _ = 1, wt do
+                    table.insert(newWeighted, obj.index)
+                end
             end
         end
-        weather.weightedWeatherObjects[season] = newWeighted
+        -- Never leave a season's pool empty: getRandomWeatherObjectVariation does
+        -- math.random(1, #pool) and would crash on an empty list. Fall back to the
+        -- base game's weighting for this season if every type resolved to weight 0.
+        if #newWeighted > 0 then
+            weather.weightedWeatherObjects[season] = newWeighted
+        end
     end
 end
 
@@ -152,6 +159,7 @@ function WeatherProfileSystem:onPeriodChanged()
     if month == 1 then
         self:selectScenario()
     end
+    g_currentMission.environment.weather:rebuild()
 end
 
 function WeatherProfileSystem:selectScenario()
@@ -189,32 +197,30 @@ function WeatherProfileSystem:getActiveScenario()
 end
 
 function WeatherProfileSystem:getClampForMonth(month)
-    local scenario = self:getActiveScenario()
-    if not scenario then
-        return { min = 10, max = 30 }
-    end
-    local md = scenario.months[month]
-    if not md then
-        return { min = 10, max = 30 }
-    end
+    local md = self:getMonthData(month)
+    if not md then return { min = 10, max = 30 } end
     return {
         min = md.moistureMin * WeatherProfileSystem.MOISTURE_CLAMP_SCALE,
         max = md.moistureMax * WeatherProfileSystem.MOISTURE_CLAMP_SCALE,
     }
 end
 
-function WeatherProfileSystem:getRainfallWeightForMonth(month)
+function WeatherProfileSystem:getMonthData(month)
     local scenario = self:getActiveScenario()
-    if not scenario then return 0.5 end
-    local md = scenario.months[month]
-    if not md then return 0.5 end
-    return md.rainfall
+    if not scenario then return nil end
+    return scenario.months[month]
+end
+
+function WeatherProfileSystem:getRainfallWeightForMonth(month)
+    local md = self:getMonthData(month)
+    if not md then return 0 end
+    local total = md.wRain + md.wThunder + md.wSnow + md.wHail + md.wSun + md.wPartlyCloudy + md.wCloudy
+    if total == 0 then return 0 end
+    return (md.wRain + md.wThunder) / total
 end
 
 function WeatherProfileSystem:getTemperatureOffsetsForMonth(month)
-    local scenario = self:getActiveScenario()
-    if not scenario then return { minOffset = 0, maxOffset = 0 } end
-    local md = scenario.months[month]
+    local md = self:getMonthData(month)
     if not md then return { minOffset = 0, maxOffset = 0 } end
     return { minOffset = md.tempMinOffset, maxOffset = md.tempMaxOffset }
 end
@@ -265,15 +271,16 @@ function WeatherProfileSystem:consoleCommandWeatherDebug()
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
     local scenario = self:getActiveScenario()
     local clamp = self:getClampForMonth(month)
-    local rainfall = self:getRainfallWeightForMonth(month)
     local offsets = self:getTemperatureOffsetsForMonth(month)
-    local scaledRainfall = math.max(1, math.floor(rainfall * WeatherProfileSystem.RAINFALL_WEIGHT_SCALE))
+    local md = self:getMonthData(month)
     local weight = scenario and scenario.weight or 0
     local lines = {
         string.format("Profile:  %s", self.activeProfileId),
         string.format("Scenario: %s (weight %.1f)", self.activeScenarioId, weight),
         string.format("Month:    %d", month),
-        string.format("Rainfall: %.2f (raw) | %d (scaled)", rainfall, scaledRainfall),
+        string.format("Weights:  rain=%d thunder=%d snow=%d hail=%d sun=%d partCloud=%d cloudy=%d",
+            md and md.wRain or 0, md and md.wThunder or 0, md and md.wSnow or 0, md and md.wHail or 0,
+            md and md.wSun or 0, md and md.wPartlyCloudy or 0, md and md.wCloudy or 0),
         string.format("TempOffset: min %+.1f  max %+.1f", offsets.minOffset, offsets.maxOffset),
         string.format("Clamp:    min %.0f%%  max %.0f%%", clamp.min, clamp.max),
     }
