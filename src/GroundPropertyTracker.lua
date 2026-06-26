@@ -12,13 +12,13 @@ GroundPropertyTracker.DELAYED_PROCESSING_CYCLES = 2
 GroundPropertyTracker.WINDROWER_PROCESSING_CYCLES = 2
 
 -- Rotting constants
-GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME = 30 * 60 * 1000   -- 30 minutes (ms)
-GroundPropertyTracker.NORMAL_ROT_EXPOSURE_TIME = 50 * 60 * 1000 -- 50 minutes (ms)
+GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME = 60 * 60 * 1000   -- 60 minutes (ms)
+GroundPropertyTracker.NORMAL_ROT_EXPOSURE_TIME = 100 * 60 * 1000 -- 100 minutes (ms)
 GroundPropertyTracker.DRYING_DECAY_RATE = 0.375
 GroundPropertyTracker.ROT_REMOVAL_THRESHOLD = 10.0              -- liters removed when accumulator reached
 -- ROT_ACCUMULATION_* are liters/sec at timescale 1; scaled by (updateDelta/1000)
-GroundPropertyTracker.ROT_ACCUMULATION_MIN = 0.0015
-GroundPropertyTracker.ROT_ACCUMULATION_MAX = 0.00375
+GroundPropertyTracker.ROT_ACCUMULATION_MIN = 0.00075
+GroundPropertyTracker.ROT_ACCUMULATION_MAX = 0.001875
 
 function GroundPropertyTracker.new()
     local self = setmetatable({}, GroundPropertyTracker_mt)
@@ -740,7 +740,8 @@ function GroundPropertyTracker:processGrassRainExposure(key, pile, updateDelta, 
         local baseAmount = GroundPropertyTracker.ROT_ACCUMULATION_MIN +
             math.random() * (GroundPropertyTracker.ROT_ACCUMULATION_MAX - GroundPropertyTracker.ROT_ACCUMULATION_MIN)
 
-        local scaledAmount = baseAmount * rotLevel * (updateDelta / 1000)
+        local rotMultiplier = rotLevel == 2 and 1.4 or 1.0
+        local scaledAmount = baseAmount * rotMultiplier * (updateDelta / 1000)
         self.grassRotAccumulators[key] = self.grassRotAccumulators[key] + scaledAmount
 
         if self.grassRotAccumulators[key] >= GroundPropertyTracker.ROT_REMOVAL_THRESHOLD then
@@ -1028,7 +1029,8 @@ function GroundPropertyTracker:processStrawRainExposure(key, pile, updateDelta, 
         local baseAmount = GroundPropertyTracker.ROT_ACCUMULATION_MIN +
             math.random() * (GroundPropertyTracker.ROT_ACCUMULATION_MAX - GroundPropertyTracker.ROT_ACCUMULATION_MIN)
 
-        local scaledAmount = baseAmount * rotLevel * (updateDelta / 1000)
+        local rotMultiplier = rotLevel == 2 and 1.4 or 1.0
+        local scaledAmount = baseAmount * rotMultiplier * (updateDelta / 1000)
         self.strawRotAccumulators[key] = self.strawRotAccumulators[key] + scaledAmount
 
         if self.strawRotAccumulators[key] >= GroundPropertyTracker.ROT_REMOVAL_THRESHOLD then

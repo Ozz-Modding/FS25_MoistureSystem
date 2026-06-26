@@ -18,14 +18,14 @@ BaleRottingSystem.BALE_STATUS = {
 }
 
 -- Rot rate tiers based on peak exposure
-BaleRottingSystem.SLOW_ROT_RATE = 0.00005  -- Slow volume loss per timescale unit
-BaleRottingSystem.NORMAL_ROT_RATE = 0.0001 -- Normal volume loss per timescale unit
-BaleRottingSystem.FAST_ROT_RATE = 0.0002   -- Fast volume loss per timescale unit
+BaleRottingSystem.SLOW_ROT_RATE = 0.0000375  -- Slow volume loss per timescale unit
+BaleRottingSystem.NORMAL_ROT_RATE = 0.000075 -- Normal volume loss per timescale unit
+BaleRottingSystem.FAST_ROT_RATE = 0.00015    -- Fast volume loss per timescale unit
 
 -- Thresholds for rot tiers (based on peak exposure time)
-BaleRottingSystem.SLOW_ROT_THRESHOLD = 30 * 60 * 1000   -- 30 minutes
-BaleRottingSystem.NORMAL_ROT_THRESHOLD = 50 * 60 * 1000 -- 50 minutes
-BaleRottingSystem.FAST_ROT_THRESHOLD = 70 * 60 * 1000   -- 70 minutes
+BaleRottingSystem.SLOW_ROT_THRESHOLD = 60 * 60 * 1000   -- 60 minutes
+BaleRottingSystem.NORMAL_ROT_THRESHOLD = 100 * 60 * 1000 -- 100 minutes
+BaleRottingSystem.FAST_ROT_THRESHOLD = 140 * 60 * 1000   -- 140 minutes
 
 BaleRottingSystem.DECAY_RATE = 0.375                    -- Decay rate when dry (20min exposure / 53min = 0.375)
 

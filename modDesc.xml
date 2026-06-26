@@ -37,6 +37,7 @@ Changelog:
 
 2.0.0.0 [WIP]:
 - The moisture system now controls weather. Choose a Weather Profile that matches your region in game settings. Weather includes variability that simulates realistic seasonal patterns. This impacts your harvest and requires even more planning than before.
+- Generally eased material rotting, both for bales and ground piles. Material will take longer to begin to rot, and rot more slowly.
 
 1.0.0.7:
 - Fix a freeze when selling certain silos.
