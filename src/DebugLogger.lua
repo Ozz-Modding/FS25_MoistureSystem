@@ -81,7 +81,7 @@ function MoistureDebugLogger:onMonthChanged()
 
     print("[MSDebug] ================================================")
     print(string.format("[MSDebug] Month %d  |  Profile: %s  |  Scenario: %s (w=%.1f)",
-        month, wps.activeProfileId, wps.activeScenarioId, weight))
+        month, g_currentMission.MoistureSystem.settings.weatherProfile, wps.activeScenarioId, weight))
     if md then
         print(string.format("[MSDebug]   Weights:    rain=%d thunder=%d snow=%d hail=%d sun=%d partCloud=%d cloudy=%d",
             md.wRain, md.wThunder, md.wSnow, md.wHail, md.wSun, md.wPartlyCloudy, md.wCloudy))

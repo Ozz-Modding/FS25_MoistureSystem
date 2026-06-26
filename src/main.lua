@@ -17,6 +17,7 @@ function MoistureSystem:loadMap()
     self.missionStarted = false
 
     self.settings = {
+        weatherProfile = "ukwest",
         moistureLossMultiplier = 3.0,
         moistureGainMultiplier = 3.0,
         teddingMoistureReduction = 0.02,
@@ -752,7 +753,12 @@ function MoistureSystem:loadFromXMLFile()
             self.currentMoisturePercent = currentMoisture
         end
 
-        -- Load settings (settings#environment is silently ignored — replaced by WeatherProfileSystem)
+        -- Load settings
+        local weatherProfile = getXMLString(xmlFile, MoistureSystem.SaveKey .. ".settings#weatherProfile")
+        if weatherProfile then
+            self.settings.weatherProfile = weatherProfile
+        end
+
         local lossMultiplier = getXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureLossMultiplier")
         if lossMultiplier then
             self.settings.moistureLossMultiplier = lossMultiplier
@@ -917,6 +923,7 @@ function MoistureSystem:saveToXmlFile()
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. "#dryingInfoShown", ms.dryingInfoShown)
 
     -- Save settings
+    setXMLString(xmlFile, MoistureSystem.SaveKey .. ".settings#weatherProfile", ms.settings.weatherProfile)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureLossMultiplier", ms.settings
         .moistureLossMultiplier)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureGainMultiplier", ms.settings

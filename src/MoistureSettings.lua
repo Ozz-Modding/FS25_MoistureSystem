@@ -35,8 +35,8 @@ MoistureSettings.SETTINGS.weatherProfile = {
     ['default'] = 1,
     ['serverOnly'] = true,
     ['permission'] = 'moistureSettings',
-    ['values'] = { "centraleurope" },
-    ['strings'] = { "Central Europe" }
+    ['values'] = { "ukwest" },
+    ['strings'] = { "UK West" }
 }
 
 function MoistureSettings.populateWeatherProfileSetting()
@@ -45,9 +45,10 @@ function MoistureSettings.populateWeatherProfileSetting()
     local ids = wps:getProfileIds()
     if #ids == 0 then return end
     local strings = wps:getProfileDisplayNames()
+    local activeId = g_currentMission.MoistureSystem.settings.weatherProfile
     local defaultIdx = 1
     for i, id in ipairs(ids) do
-        if id == wps.activeProfileId then defaultIdx = i end
+        if id == activeId then defaultIdx = i end
     end
     MoistureSettings.SETTINGS.weatherProfile.values = ids
     MoistureSettings.SETTINGS.weatherProfile.strings = strings
@@ -153,12 +154,7 @@ MoistureSettings.SETTINGS.sellDryingChargeRate = {
 
 function MoistureSettings.getStateIndex(id, value)
     if value == nil then
-        if id == 'weatherProfile' then
-            local wps = g_currentMission and g_currentMission.WeatherProfileSystem
-            value = wps and wps.activeProfileId or MoistureSettings.SETTINGS.weatherProfile.values[1]
-        else
-            value = g_currentMission.MoistureSystem.settings[id]
-        end
+        value = g_currentMission.MoistureSystem.settings[id]
     end
     local values = MoistureSettings.SETTINGS[id].values
     if type(value) == 'number' then
@@ -189,11 +185,10 @@ function MoistureSettingsControls.onMenuOptionChanged(self, state, menuOption)
     local value = setting[id].values[state]
 
     if value ~= nil then
+        g_currentMission.MoistureSystem.settings[id] = value
         if id == 'weatherProfile' then
             local wps = g_currentMission.WeatherProfileSystem
             if wps then wps:setActiveProfile(value) end
-        else
-            g_currentMission.MoistureSystem.settings[id] = value
         end
     end
 

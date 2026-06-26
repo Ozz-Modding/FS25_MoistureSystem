@@ -10,6 +10,7 @@ end
 
 function MoistureSettingsEvent.new()
     local self = MoistureSettingsEvent.emptyNew()
+    self.weatherProfile = g_currentMission.MoistureSystem.settings.weatherProfile
     self.moistureLossMultiplier = g_currentMission.MoistureSystem.settings.moistureLossMultiplier
     self.moistureGainMultiplier = g_currentMission.MoistureSystem.settings.moistureGainMultiplier
     self.teddingMoistureReduction = g_currentMission.MoistureSystem.settings.teddingMoistureReduction
@@ -22,6 +23,7 @@ function MoistureSettingsEvent.new()
 end
 
 function MoistureSettingsEvent:writeStream(streamId, connection)
+    streamWriteString(streamId, self.weatherProfile)
     streamWriteFloat32(streamId, self.moistureLossMultiplier)
     streamWriteFloat32(streamId, self.moistureGainMultiplier)
     streamWriteFloat32(streamId, self.teddingMoistureReduction)
@@ -33,6 +35,7 @@ function MoistureSettingsEvent:writeStream(streamId, connection)
 end
 
 function MoistureSettingsEvent:readStream(streamId, connection)
+    self.weatherProfile = streamReadString(streamId)
     self.moistureLossMultiplier = streamReadFloat32(streamId)
     self.moistureGainMultiplier = streamReadFloat32(streamId)
     self.teddingMoistureReduction = streamReadFloat32(streamId)
@@ -49,6 +52,9 @@ function MoistureSettingsEvent:run(connection)
         g_server:broadcastEvent(MoistureSettingsEvent.new())
     end
 
+    g_currentMission.MoistureSystem.settings.weatherProfile = self.weatherProfile
+    local wps = g_currentMission.WeatherProfileSystem
+    if wps then wps:setActiveProfile(self.weatherProfile) end
     g_currentMission.MoistureSystem.settings.moistureLossMultiplier = self.moistureLossMultiplier
     g_currentMission.MoistureSystem.settings.moistureGainMultiplier = self.moistureGainMultiplier
     g_currentMission.MoistureSystem.settings.teddingMoistureReduction = self.teddingMoistureReduction

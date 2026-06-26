@@ -6,7 +6,6 @@ WeatherProfileSystem.MOISTURE_CLAMP_SCALE = 1.0
 function WeatherProfileSystem:loadMap()
     g_currentMission.WeatherProfileSystem = self
     self.profiles = {}
-    self.activeProfileId = "centraleurope"
     self.activeScenarioId = "normal"
     self:loadProfiles()
 end
@@ -119,25 +118,90 @@ function WeatherProfileSystem:installWeatherOverrides()
     )
 end
 
+function WeatherProfileSystem:rollWeightVariation(month)
+    local md = self:getMonthData(month)
+    if not md or md.wRain == 0 then
+        self.weightVariation = nil
+        return
+    end
+
+    local roll = math.random(3)
+    if roll == 1 then
+        self.weightVariation = nil
+        return
+    end
+
+    local pct = 0.08 + math.random() * 0.04
+    local delta = math.floor(md.wRain * pct + 0.5)
+    if delta == 0 then
+        self.weightVariation = nil
+        return
+    end
+
+    local otherKeys = { "wThunder", "wSnow", "wHail", "wSun", "wPartlyCloudy", "wCloudy" }
+    local candidates = {}
+    for _, k in ipairs(otherKeys) do
+        if roll == 2 then
+            if (md[k] or 0) >= delta then
+                table.insert(candidates, k)
+            end
+        else
+            table.insert(candidates, k)
+        end
+    end
+
+    if #candidates == 0 then
+        self.weightVariation = nil
+        return
+    end
+
+    self.weightVariation = {
+        direction = roll,
+        delta = delta,
+        targetKey = candidates[math.random(#candidates)],
+    }
+end
+
 function WeatherProfileSystem:rebuildWeatherWeights(weather)
     if not g_currentMission:getIsServer() then return end
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
     local md = self:getMonthData(month)
     if not md then return end
 
+    local weights = {
+        wRain         = md.wRain,
+        wThunder      = md.wThunder,
+        wSnow         = md.wSnow,
+        wHail         = md.wHail,
+        wSun          = md.wSun,
+        wPartlyCloudy = md.wPartlyCloudy,
+        wCloudy       = md.wCloudy,
+    }
+    local v = self.weightVariation
+    if v then
+        if v.direction == 2 then
+            weights.wRain = weights.wRain + v.delta
+            weights[v.targetKey] = math.max(0, weights[v.targetKey] - v.delta)
+        else
+            weights.wRain = math.max(0, weights.wRain - v.delta)
+            weights[v.targetKey] = weights[v.targetKey] + v.delta
+        end
+    end
+
+    local typeToWeight = {
+        [WeatherType.RAIN]             = weights.wRain,
+        [WeatherType.THUNDER]          = weights.wThunder,
+        [WeatherType.SNOW]             = weights.wSnow,
+        [WeatherType.HAIL]             = weights.wHail,
+        [WeatherType.SUN]              = weights.wSun,
+        [WeatherType.PARTIALLY_CLOUDY] = weights.wPartlyCloudy,
+        [WeatherType.CLOUDY]           = weights.wCloudy,
+    }
+
     for season, baseObjects in pairs(weather.weatherObjects) do
         local newWeighted = {}
         for _, obj in ipairs(baseObjects) do
-            local wt
-            if     obj.weatherType == WeatherType.RAIN             then wt = md.wRain
-            elseif obj.weatherType == WeatherType.THUNDER          then wt = md.wThunder
-            elseif obj.weatherType == WeatherType.SNOW             then wt = md.wSnow
-            elseif obj.weatherType == WeatherType.HAIL             then wt = md.wHail
-            elseif obj.weatherType == WeatherType.SUN              then wt = md.wSun
-            elseif obj.weatherType == WeatherType.PARTIALLY_CLOUDY then wt = md.wPartlyCloudy
-            elseif obj.weatherType == WeatherType.CLOUDY           then wt = md.wCloudy
-            else wt = 1
-            end
+            local wt = typeToWeight[obj.weatherType] or 1
             if wt > 0 then
                 for _ = 1, wt do
                     table.insert(newWeighted, obj.index)
@@ -159,11 +223,12 @@ function WeatherProfileSystem:onPeriodChanged()
     if month == 1 then
         self:selectScenario()
     end
+    self:rollWeightVariation(month)
     g_currentMission.environment.weather:rebuild()
 end
 
 function WeatherProfileSystem:selectScenario()
-    local profile = self.profiles[self.activeProfileId]
+    local profile = self.profiles[g_currentMission.MoistureSystem.settings.weatherProfile]
     if not profile or #profile.scenarios == 0 then return end
 
     local totalWeight = 0
@@ -184,7 +249,7 @@ function WeatherProfileSystem:selectScenario()
 end
 
 function WeatherProfileSystem:getActiveScenario()
-    local profile = self.profiles[self.activeProfileId]
+    local profile = self.profiles[g_currentMission.MoistureSystem.settings.weatherProfile]
     if not profile then return nil end
     for _, s in ipairs(profile.scenarios) do
         if s.id == self.activeScenarioId then return s end
@@ -245,23 +310,18 @@ end
 
 function WeatherProfileSystem:setActiveProfile(profileId)
     if self.profiles[profileId] then
-        self.activeProfileId = profileId
+        g_currentMission.MoistureSystem.settings.weatherProfile = profileId
     end
 end
 
 function WeatherProfileSystem:loadFromXMLFile(xmlFile, key)
-    local profileId = getXMLString(xmlFile, key .. ".weatherProfile#activeProfileId")
     local scenarioId = getXMLString(xmlFile, key .. ".weatherProfile#activeScenarioId")
-    if profileId and self.profiles[profileId] then
-        self.activeProfileId = profileId
-    end
     if scenarioId then
         self.activeScenarioId = scenarioId
     end
 end
 
 function WeatherProfileSystem:saveToXMLFile(xmlFile, key)
-    setXMLString(xmlFile, key .. ".weatherProfile#activeProfileId", self.activeProfileId)
     setXMLString(xmlFile, key .. ".weatherProfile#activeScenarioId", self.activeScenarioId)
 end
 
@@ -275,7 +335,7 @@ function WeatherProfileSystem:consoleCommandWeatherDebug()
     local md = self:getMonthData(month)
     local weight = scenario and scenario.weight or 0
     local lines = {
-        string.format("Profile:  %s", self.activeProfileId),
+        string.format("Profile:  %s", g_currentMission.MoistureSystem.settings.weatherProfile),
         string.format("Scenario: %s (weight %.1f)", self.activeScenarioId, weight),
         string.format("Month:    %d", month),
         string.format("Weights:  rain=%d thunder=%d snow=%d hail=%d sun=%d partCloud=%d cloudy=%d",
@@ -290,7 +350,7 @@ end
 
 function WeatherProfileSystem:consoleCommandSetScenario(scenarioId)
     if not scenarioId then return "Usage: msSetScenario <scenarioId>" end
-    local profile = self.profiles[self.activeProfileId]
+    local profile = self.profiles[g_currentMission.MoistureSystem.settings.weatherProfile]
     if not profile then return "No active profile" end
     for _, s in ipairs(profile.scenarios) do
         if s.id == scenarioId then
@@ -302,7 +362,7 @@ function WeatherProfileSystem:consoleCommandSetScenario(scenarioId)
 end
 
 function WeatherProfileSystem:consoleCommandListScenarios()
-    local profile = self.profiles[self.activeProfileId]
+    local profile = self.profiles[g_currentMission.MoistureSystem.settings.weatherProfile]
     if not profile then return "No active profile loaded" end
     local lines = { string.format("Profile: %s (%s)", profile.id, profile.displayName) }
     for _, s in ipairs(profile.scenarios) do

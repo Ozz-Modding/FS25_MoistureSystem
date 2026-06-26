@@ -69,8 +69,9 @@ function MoistureGuiCalendar:updateCalendar()
         end
     end
 
-    local profile = wps.profiles[wps.activeProfileId]
-    local profileName = profile and profile.displayName or wps.activeProfileId
+    local activeProfileId = g_currentMission.MoistureSystem.settings.weatherProfile
+    local profile = wps.profiles[activeProfileId]
+    local profileName = profile and profile.displayName or activeProfileId
     local scenarioName = wps.activeScenarioId
 
     if self.environmentLabel then
