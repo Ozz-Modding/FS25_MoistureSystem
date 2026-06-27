@@ -67,4 +67,63 @@
         <textMaxNumLines value="3"/>
         <textVerticalAlignment value="top"/>
     </Profile>
+
+    <!-- Weather tab -->
+    <Profile name="msWeatherSectionHeader" extends="fs25_textDefault" with="anchorTopLeft">
+        <textSize value="18px"/>
+        <textBold value="true"/>
+        <textUpperCase value="true"/>
+        <textColor value="$preset_colorWhite_50"/>
+    </Profile>
+    <Profile name="msWeatherPanelRow" extends="emptyPanel" with="anchorTopLeft flowLayoutX">
+        <flowLayoutGap value="20px"/>
+    </Profile>
+    <Profile name="msWeatherPanel" extends="emptyPanel" with="anchorTopLeft">
+        <size value="450px 280px"/>
+        <imageColor value="$preset_fs25_colorGrey"/>
+        <padding value="15px"/>
+    </Profile>
+    <Profile name="msWeatherPanelSeasonIcon" extends="baseReference" with="anchorTopLeft">
+        <size value="40px 40px"/>
+        <position value="0px 0px"/>
+    </Profile>
+    <Profile name="msWeatherPanelTitle" extends="fs25_textDefault" with="anchorTopLeft">
+        <position value="50px 8px"/>
+        <textSize value="18px"/>
+        <textBold value="true"/>
+        <textUpperCase value="true"/>
+    </Profile>
+    <Profile name="msWeatherPanelStats" extends="emptyPanel" with="anchorTopLeft">
+        <position value="0px -55px"/>
+        <size value="420px 100px"/>
+    </Profile>
+    <Profile name="msWeatherGroupLabel" extends="fs25_textGrey" with="anchorTopLeft">
+        <size value="220px 24px"/>
+        <textSize value="15px"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msWeatherGroupPct" extends="fs25_textDefault" with="anchorTopLeft">
+        <size value="55px 24px"/>
+        <textSize value="15px"/>
+        <textBold value="true"/>
+        <textAlignment value="right"/>
+        <textVerticalAlignment value="middle"/>
+        <textColor value="$preset_fs25_colorMainHighlight"/>
+    </Profile>
+    <Profile name="msWeatherGroupDiff" extends="fs25_textGrey" with="anchorTopLeft">
+        <size value="80px 24px"/>
+        <textSize value="13px"/>
+        <textAlignment value="left"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msWeatherMonthRow" extends="fs25_textGrey" with="anchorTopLeft">
+        <size value="420px 22px"/>
+        <textSize value="13px"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msWeatherNoData" extends="fs25_textGrey" with="anchorMiddleCenter">
+        <textSize value="16px"/>
+        <textAlignment value="center"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
 </GUIProfiles>

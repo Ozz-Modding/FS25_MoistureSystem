@@ -98,8 +98,8 @@ function MoistureSystem:loadGUI()
     local pricesFrame = MoistureGuiPrices.new(g_i18n)
     g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiPrices.xml", "MoistureGuiPrices", pricesFrame, true)
 
-    local calendarFrame = MoistureGuiCalendar.new(g_i18n)
-    g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiCalendar.xml", "MoistureGuiCalendar", calendarFrame, true)
+    local weatherFrame = MoistureGuiWeather.new(g_i18n)
+    g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiWeather.xml", "MoistureGuiWeather", weatherFrame, true)
 
     self.moistureGui = MoistureGui:new(g_messageCenter, g_i18n, g_inputBinding)
     g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGui.xml", "MoistureGui", self.moistureGui)

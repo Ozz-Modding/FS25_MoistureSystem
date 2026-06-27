@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI>
+    <GuiElement profile="uiInGameMenuFrame">
+
+        <GuiElement profile="fs25_menuHeaderPanel">
+            <Bitmap profile="fs25_menuHeaderIconBg">
+                <Bitmap profile="fs25_menuHeaderIcon" imageSliceId="gui.icon_ingameMenu_calendar" />
+            </Bitmap>
+            <Text profile="fs25_menuHeaderTitle" text="$l10n_moistureSystem_gui_weather" />
+        </GuiElement>
+
+        <!-- Forecast section label -->
+        <Text profile="msWeatherSectionHeader" position="20px -50px"
+              text="$l10n_moistureSystem_gui_weather_forecast" />
+
+        <!-- Forecast panels row -->
+        <BoxLayout profile="msWeatherPanelRow" position="20px -80px" size="1400px 300px">
+
+            <!-- Panel 1: current season -->
+            <GuiElement profile="msWeatherPanel" id="forecastPanel1">
+                <Bitmap profile="msWeatherPanelSeasonIcon" id="seasonIcon" />
+                <Text profile="msWeatherPanelTitle" id="seasonTitle" text="" />
+                <GuiElement profile="msWeatherPanelStats">
+                    <Text profile="msWeatherGroupLabel" position="0px 0px"   text="$l10n_moistureSystem_gui_weather_precipitation" />
+                    <Text profile="msWeatherGroupPct"   id="precipitationPct"  position="220px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="precipitationDiff" position="280px 0px"  text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -30px"  text="$l10n_moistureSystem_gui_weather_sun" />
+                    <Text profile="msWeatherGroupPct"   id="sunPct"            position="220px -30px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="sunDiff"           position="280px -30px" text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -60px"  text="$l10n_moistureSystem_gui_weather_cloudy" />
+                    <Text profile="msWeatherGroupPct"   id="cloudyPct"         position="220px -60px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="cloudyDiff"        position="280px -60px" text="" />
+                </GuiElement>
+                <Text profile="msWeatherMonthRow" id="month1" position="0px -170px" text="" />
+                <Text profile="msWeatherMonthRow" id="month2" position="0px -195px" text="" />
+                <Text profile="msWeatherMonthRow" id="month3" position="0px -220px" text="" />
+            </GuiElement>
+
+            <!-- Panel 2: next season -->
+            <GuiElement profile="msWeatherPanel" id="forecastPanel2">
+                <Bitmap profile="msWeatherPanelSeasonIcon" id="seasonIcon" />
+                <Text profile="msWeatherPanelTitle" id="seasonTitle" text="" />
+                <GuiElement profile="msWeatherPanelStats">
+                    <Text profile="msWeatherGroupLabel" position="0px 0px"   text="$l10n_moistureSystem_gui_weather_precipitation" />
+                    <Text profile="msWeatherGroupPct"   id="precipitationPct"  position="220px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="precipitationDiff" position="280px 0px"  text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -30px"  text="$l10n_moistureSystem_gui_weather_sun" />
+                    <Text profile="msWeatherGroupPct"   id="sunPct"            position="220px -30px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="sunDiff"           position="280px -30px" text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -60px"  text="$l10n_moistureSystem_gui_weather_cloudy" />
+                    <Text profile="msWeatherGroupPct"   id="cloudyPct"         position="220px -60px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="cloudyDiff"        position="280px -60px" text="" />
+                </GuiElement>
+                <Text profile="msWeatherMonthRow" id="month1" position="0px -170px" text="" />
+                <Text profile="msWeatherMonthRow" id="month2" position="0px -195px" text="" />
+                <Text profile="msWeatherMonthRow" id="month3" position="0px -220px" text="" />
+            </GuiElement>
+
+            <!-- Panel 3: season+2 -->
+            <GuiElement profile="msWeatherPanel" id="forecastPanel3">
+                <Bitmap profile="msWeatherPanelSeasonIcon" id="seasonIcon" />
+                <Text profile="msWeatherPanelTitle" id="seasonTitle" text="" />
+                <GuiElement profile="msWeatherPanelStats">
+                    <Text profile="msWeatherGroupLabel" position="0px 0px"   text="$l10n_moistureSystem_gui_weather_precipitation" />
+                    <Text profile="msWeatherGroupPct"   id="precipitationPct"  position="220px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="precipitationDiff" position="280px 0px"  text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -30px"  text="$l10n_moistureSystem_gui_weather_sun" />
+                    <Text profile="msWeatherGroupPct"   id="sunPct"            position="220px -30px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="sunDiff"           position="280px -30px" text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -60px"  text="$l10n_moistureSystem_gui_weather_cloudy" />
+                    <Text profile="msWeatherGroupPct"   id="cloudyPct"         position="220px -60px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="cloudyDiff"        position="280px -60px" text="" />
+                </GuiElement>
+                <Text profile="msWeatherMonthRow" id="month1" position="0px -170px" text="" />
+                <Text profile="msWeatherMonthRow" id="month2" position="0px -195px" text="" />
+                <Text profile="msWeatherMonthRow" id="month3" position="0px -220px" text="" />
+            </GuiElement>
+
+        </BoxLayout>
+
+        <!-- History section label -->
+        <Text profile="msWeatherSectionHeader" position="20px -400px"
+              text="$l10n_moistureSystem_gui_weather_history" />
+
+        <!-- History panels row -->
+        <BoxLayout profile="msWeatherPanelRow" position="20px -430px" size="1400px 300px">
+
+            <!-- Year 1 (last year) -->
+            <GuiElement profile="msWeatherPanel" id="historyPanel1">
+                <Text profile="msWeatherPanelTitle" id="yearLabel" position="0px 0px" text="" />
+                <GuiElement profile="msWeatherPanelStats" id="statsBlock">
+                    <Text profile="msWeatherGroupLabel" position="0px 0px"   text="$l10n_moistureSystem_gui_weather_precipitation" />
+                    <Text profile="msWeatherGroupPct"   id="precipitationPct"  position="220px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="precipitationDiff" position="280px 0px"  text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -30px"  text="$l10n_moistureSystem_gui_weather_sun" />
+                    <Text profile="msWeatherGroupPct"   id="sunPct"            position="220px -30px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="sunDiff"           position="280px -30px" text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -60px"  text="$l10n_moistureSystem_gui_weather_cloudy" />
+                    <Text profile="msWeatherGroupPct"   id="cloudyPct"         position="220px -60px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="cloudyDiff"        position="280px -60px" text="" />
+                </GuiElement>
+                <Text profile="msWeatherNoData" id="noDataLabel" position="0px -55px" size="420px 80px"
+                      text="$l10n_moistureSystem_gui_weather_noData" />
+                <Text profile="msWeatherGroupLabel" id="season1Label" position="0px -170px" size="420px 22px" text="" />
+                <Text profile="msWeatherGroupLabel" id="season2Label" position="0px -195px" size="420px 22px" text="" />
+                <Text profile="msWeatherGroupLabel" id="season3Label" position="0px -220px" size="420px 22px" text="" />
+                <Text profile="msWeatherGroupLabel" id="season4Label" position="0px -245px" size="420px 22px" text="" />
+            </GuiElement>
+
+            <!-- Year 2 -->
+            <GuiElement profile="msWeatherPanel" id="historyPanel2">
+                <Text profile="msWeatherPanelTitle" id="yearLabel" position="0px 0px" text="" />
+                <GuiElement profile="msWeatherPanelStats" id="statsBlock">
+                    <Text profile="msWeatherGroupLabel" position="0px 0px"   text="$l10n_moistureSystem_gui_weather_precipitation" />
+                    <Text profile="msWeatherGroupPct"   id="precipitationPct"  position="220px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="precipitationDiff" position="280px 0px"  text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -30px"  text="$l10n_moistureSystem_gui_weather_sun" />
+                    <Text profile="msWeatherGroupPct"   id="sunPct"            position="220px -30px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="sunDiff"           position="280px -30px" text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -60px"  text="$l10n_moistureSystem_gui_weather_cloudy" />
+                    <Text profile="msWeatherGroupPct"   id="cloudyPct"         position="220px -60px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="cloudyDiff"        position="280px -60px" text="" />
+                </GuiElement>
+                <Text profile="msWeatherNoData" id="noDataLabel" position="0px -55px" size="420px 80px"
+                      text="$l10n_moistureSystem_gui_weather_noData" />
+                <Text profile="msWeatherGroupLabel" id="season1Label" position="0px -170px" size="420px 22px" text="" />
+                <Text profile="msWeatherGroupLabel" id="season2Label" position="0px -195px" size="420px 22px" text="" />
+                <Text profile="msWeatherGroupLabel" id="season3Label" position="0px -220px" size="420px 22px" text="" />
+                <Text profile="msWeatherGroupLabel" id="season4Label" position="0px -245px" size="420px 22px" text="" />
+            </GuiElement>
+
+            <!-- Year 3 -->
+            <GuiElement profile="msWeatherPanel" id="historyPanel3">
+                <Text profile="msWeatherPanelTitle" id="yearLabel" position="0px 0px" text="" />
+                <GuiElement profile="msWeatherPanelStats" id="statsBlock">
+                    <Text profile="msWeatherGroupLabel" position="0px 0px"   text="$l10n_moistureSystem_gui_weather_precipitation" />
+                    <Text profile="msWeatherGroupPct"   id="precipitationPct"  position="220px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="precipitationDiff" position="280px 0px"  text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -30px"  text="$l10n_moistureSystem_gui_weather_sun" />
+                    <Text profile="msWeatherGroupPct"   id="sunPct"            position="220px -30px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="sunDiff"           position="280px -30px" text="" />
+                    <Text profile="msWeatherGroupLabel" position="0px -60px"  text="$l10n_moistureSystem_gui_weather_cloudy" />
+                    <Text profile="msWeatherGroupPct"   id="cloudyPct"         position="220px -60px" text="-" />
+                    <Text profile="msWeatherGroupDiff"  id="cloudyDiff"        position="280px -60px" text="" />
+                </GuiElement>
+                <Text profile="msWeatherNoData" id="noDataLabel" position="0px -55px" size="420px 80px"
+                      text="$l10n_moistureSystem_gui_weather_noData" />
+                <Text profile="msWeatherGroupLabel" id="season1Label" position="0px -170px" size="420px 22px" text="" />
+                <Text profile="msWeatherGroupLabel" id="season2Label" position="0px -195px" size="420px 22px" text="" />
+                <Text profile="msWeatherGroupLabel" id="season3Label" position="0px -220px" size="420px 22px" text="" />
+                <Text profile="msWeatherGroupLabel" id="season4Label" position="0px -245px" size="420px 22px" text="" />
+            </GuiElement>
+
+        </BoxLayout>
+
+    </GuiElement>
+</GUI>

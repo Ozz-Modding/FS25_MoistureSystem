@@ -62,8 +62,7 @@
 		<text name="moistureSystem_fieldInfo" text="Field Moisture"/>
 		<text name="moistureSystem_moisture" text="Moisture"/>
 		<text name="moistureSystem_quality" text="Quality"/>
-		<text name="moistureSystem_range" text="Expected Range"/>
-		<text name="moistureSystem_rainExposure" text="Rain Exposure"/>
+<text name="moistureSystem_rainExposure" text="Rain Exposure"/>
 		<text name="moistureSystem_baleStatus" text="Status"/>
 		<text name="moistureSystem_baleGettingWet" text="Getting Wet"/>
 		<text name="moistureSystem_baleRottingSlowly" text="Rotting Slowly"/>
@@ -84,10 +83,23 @@
 		<text name="moistureSystem_gui_gradeC" text="Grade C"/>
 		<text name="moistureSystem_gui_gradeD" text="Grade D"/>
 
-		<!-- Calendar GUI -->
+		<!-- Calendar GUI (retained for any saved references) -->
 		<text name="moistureSystem_gui_moistureCalendar" text="Moisture Calendar"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Current Environment"/>
 		<text name="moistureSystem_gui_calendarDescription" text="The calendar below shows the expected moisture range for each month based on your current environment setting. Moisture levels are influenced by rainfall, temperature, and season."/>
+
+		<!-- Weather GUI -->
+		<text name="moistureSystem_gui_weather" text="Weather"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Forecast"/>
+		<text name="moistureSystem_gui_weather_history" text="History"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Precipitation"/>
+		<text name="moistureSystem_gui_weather_sun" text="Sun"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Cloudy"/>
+		<text name="moistureSystem_gui_weather_noData" text="No Data"/>
+		<text name="moistureSystem_gui_weather_season1" text="Spring"/>
+		<text name="moistureSystem_gui_weather_season2" text="Summer"/>
+		<text name="moistureSystem_gui_weather_season3" text="Autumn"/>
+		<text name="moistureSystem_gui_weather_season4" text="Winter"/>
 
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Moisture Meter"/>

@@ -37,6 +37,7 @@ Changelog:
 
 2.0.0.0 [WIP]:
 - The moisture system now controls weather. Choose a Weather Profile that matches your region in game settings. Weather includes variability that simulates realistic seasonal patterns. This impacts your harvest and requires even more planning than before.
+- The moisture calendar has been replaced with a Weather information view, showing seasonal forecasts and historical weather data.
 - Generally eased material rotting, both for bales and ground piles. Material will take longer to begin to rot, and rot more slowly.
 
 1.0.0.7:
@@ -191,6 +192,7 @@ Journal des modifications :
     </description>
     <extraSourceFiles>
         <sourceFile filename="src/data/CropValueMap.lua"/>
+        <sourceFile filename="src/WeatherHistoryCollector.lua"/>
         <sourceFile filename="src/WeatherProfileSystem.lua"/>
         <sourceFile filename="src/extensions/PlayerHUDUpdateExtension.lua"/>
         <sourceFile filename="src/extensions/PlaceableInfoTriggerExtension.lua"/>
@@ -212,7 +214,7 @@ Journal des modifications :
         <sourceFile filename="src/gui/QualityPriceTableRenderer.lua"/>
         <sourceFile filename="src/gui/MoistureGuiGrades.lua"/>
         <sourceFile filename="src/gui/MoistureGuiPrices.lua"/>
-        <sourceFile filename="src/gui/MoistureGuiCalendar.lua"/>
+        <sourceFile filename="src/gui/MoistureGuiWeather.lua"/>
         <sourceFile filename="src/gui/MoistureGui.lua"/>
         <sourceFile filename="src/GroundPropertyTracker.lua"/>
         <sourceFile filename="src/BaleRottingSystem.lua"/>

@@ -4,7 +4,7 @@
   <Paging profile="uiInGameMenuPaging" onPageChange="onPageChange" onPageUpdate="onPageUpdate" id="pagingElement">
     <FrameReference ref="MoistureGuiGrades" name="MoistureGuiGrades" id="pageGrades"/>
     <FrameReference ref="MoistureGuiPrices" name="MoistureGuiPrices" id="pagePrices"/>
-    <FrameReference ref="MoistureGuiCalendar" name="MoistureGuiCalendar" id="pageCalendar"/>
+    <FrameReference ref="MoistureGuiWeather" name="MoistureGuiWeather" id="pageWeather"/>
   </Paging>
   <Bitmap profile="fs25_tabListContainer" id="header">
     <MultiTextOption profile="uiInGameMenuHeaderSelector" onClick="onClickPageSelection" id="pageSelector" soundDisabled="true" />

@@ -111,7 +111,13 @@ end
 -- Appended to PlayerHUDUpdater.showFieldInfo
 ---
 function MSPlayerHUDExtension:showFieldInfo(x, z)
-    -- Initialize box on first use
+    local moistureSystem = g_currentMission.MoistureSystem
+    if moistureSystem == nil then return end
+
+    if self.fieldInfo.groundType == FieldGroundType.NONE then return end
+
+    if not moistureSystem.settings.showFieldMoisture then return end
+
     if self.moistureBox == nil then
         self.moistureBox = g_currentMission.hud.infoDisplay:createBox(InfoDisplayKeyValueBox)
     end
@@ -120,31 +126,13 @@ function MSPlayerHUDExtension:showFieldInfo(x, z)
     if box == nil then return end
 
     box:clear()
-
-    local moistureSystem = g_currentMission.MoistureSystem
-    if moistureSystem == nil then return end
-
-    -- Only show if we're on farmable ground
-    if self.fieldInfo.groundType == FieldGroundType.NONE then return end
-
     box:setTitle(g_i18n:getText("moistureSystem_fieldInfo"))
 
-    local currentMonth = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local clamp = g_currentMission.WeatherProfileSystem:getClampForMonth(currentMonth)
-
+    local fieldMoisture = moistureSystem:getMoistureAtPosition(x, z)
     box:addLine(
-        g_i18n:getText("moistureSystem_range"),
-        string.format("%.0f%% - %.0f%%", clamp.min, clamp.max)
+        g_i18n:getText("moistureSystem_fieldInfo"),
+        string.format("%.1f%%", fieldMoisture * 100)
     )
-
-    -- Show actual field moisture if setting is enabled
-    if moistureSystem.settings.showFieldMoisture then
-        local fieldMoisture = moistureSystem:getMoistureAtPosition(x, z)
-        box:addLine(
-            g_i18n:getText("moistureSystem_fieldInfo"),
-            string.format("%.1f%%", fieldMoisture * 100)
-        )
-    end
 
     box:showNextFrame()
 end
