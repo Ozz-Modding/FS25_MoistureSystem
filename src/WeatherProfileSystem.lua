@@ -3,6 +3,14 @@ WeatherProfileSystem = {}
 WeatherProfileSystem.TEMPERATURE_OFFSET_SCALE = 1.0
 WeatherProfileSystem.MOISTURE_CLAMP_SCALE = 1.0
 
+-- All weather spells are normalized to this duration range (hours). Giving every weather
+-- type the SAME duration range is what lets the XML weights map directly to measured time:
+-- with equal durations, a type's share of hours == its share of scheduled events == its
+-- share of pool copies == its weight. Short, uniform spells also give enough events per
+-- (short) month for the ratios to converge. See rebuildWeatherWeights.
+WeatherProfileSystem.SPELL_MIN_HOURS = 2
+WeatherProfileSystem.SPELL_MAX_HOURS = 5
+
 WeatherProfileSystem.SEASONS = {
     {months = {3, 4, 5}},
     {months = {6, 7, 8}},
@@ -62,37 +70,37 @@ function WeatherProfileSystem:loadProfileXML(path)
 
     local profile = { id = id, displayName = displayName, scenarios = {} }
 
-    local si = 0
+    local scenarioIdx = 0
     while true do
-        local sKey = string.format("%s.scenarios.scenario(%d)", profileKey, si)
-        if not hasXMLProperty(xmlFile, sKey) then break end
+        local scenarioXmlKey = string.format("%s.scenarios.scenario(%d)", profileKey, scenarioIdx)
+        if not hasXMLProperty(xmlFile, scenarioXmlKey) then break end
 
-        local scenarioId = getXMLString(xmlFile, sKey .. "#id")
-        local weight = getXMLFloat(xmlFile, sKey .. "#weight") or 1
+        local scenarioId = getXMLString(xmlFile, scenarioXmlKey .. "#id")
+        local weight = getXMLFloat(xmlFile, scenarioXmlKey .. "#weight") or 1
         if scenarioId then
             local scenario = { id = scenarioId, weight = weight, months = {} }
             for m = 1, 12 do
-                local mKey = string.format("%s.month(%d)", sKey, m - 1)
-                if hasXMLProperty(xmlFile, mKey) then
-                    local mid = getXMLInt(xmlFile, mKey .. "#id") or m
-                    scenario.months[mid] = {
-                        tempMinOffset = getXMLFloat(xmlFile, mKey .. "#tempMinOffset") or 0,
-                        tempMaxOffset = getXMLFloat(xmlFile, mKey .. "#tempMaxOffset") or 0,
-                        moistureMin   = getXMLFloat(xmlFile, mKey .. "#moistureMin")   or 10,
-                        moistureMax   = getXMLFloat(xmlFile, mKey .. "#moistureMax")   or 30,
-                        wRain         = getXMLInt(xmlFile, mKey .. "#wRain")           or 0,
-                        wThunder      = getXMLInt(xmlFile, mKey .. "#wThunder")        or 0,
-                        wSnow         = getXMLInt(xmlFile, mKey .. "#wSnow")           or 0,
-                        wHail         = getXMLInt(xmlFile, mKey .. "#wHail")           or 0,
-                        wSun          = getXMLInt(xmlFile, mKey .. "#wSun")            or 1,
-                        wPartlyCloudy = getXMLInt(xmlFile, mKey .. "#wPartlyCloudy")   or 1,
-                        wCloudy       = getXMLInt(xmlFile, mKey .. "#wCloudy")         or 1,
+                local monthXmlKey = string.format("%s.month(%d)", scenarioXmlKey, m - 1)
+                if hasXMLProperty(xmlFile, monthXmlKey) then
+                    local monthId = getXMLInt(xmlFile, monthXmlKey .. "#id") or m
+                    scenario.months[monthId] = {
+                        tempMinOffset = getXMLFloat(xmlFile, monthXmlKey .. "#tempMinOffset") or 0,
+                        tempMaxOffset = getXMLFloat(xmlFile, monthXmlKey .. "#tempMaxOffset") or 0,
+                        moistureMin   = getXMLFloat(xmlFile, monthXmlKey .. "#moistureMin")   or 10,
+                        moistureMax   = getXMLFloat(xmlFile, monthXmlKey .. "#moistureMax")   or 30,
+                        wRain         = getXMLInt(xmlFile, monthXmlKey .. "#wRain")           or 0,
+                        wThunder      = getXMLInt(xmlFile, monthXmlKey .. "#wThunder")        or 0,
+                        wSnow         = getXMLInt(xmlFile, monthXmlKey .. "#wSnow")           or 0,
+                        wHail         = getXMLInt(xmlFile, monthXmlKey .. "#wHail")           or 0,
+                        wSun          = getXMLInt(xmlFile, monthXmlKey .. "#wSun")            or 1,
+                        wPartlyCloudy = getXMLInt(xmlFile, monthXmlKey .. "#wPartlyCloudy")   or 1,
+                        wCloudy       = getXMLInt(xmlFile, monthXmlKey .. "#wCloudy")         or 1,
                     }
                 end
             end
             table.insert(profile.scenarios, scenario)
         end
-        si = si + 1
+        scenarioIdx = scenarioIdx + 1
     end
 
     self.profiles[id] = profile
@@ -108,8 +116,87 @@ function WeatherProfileSystem:onStartMission()
     end
 end
 
+-- Shallow+selective deep copy of a weather-object variation. We must NOT share variation
+-- tables between the source season's object and the injected winter copy, because our
+-- WeatherObject.activate hook mutates instance.variation.minTemperature/maxTemperature in
+-- place; sharing would corrupt the source object. Sub-tables (rain/clouds/wind settings) are
+-- read-only as far as we're concerned, so they can be shared by reference.
+local function copyVariation(v)
+    local c = {}
+    for k, val in pairs(v) do
+        c[k] = val
+    end
+    return c
+end
+
+-- Clone a weather object of weatherType into the given season, sourcing variations from an
+-- object of that type in another season. Shares the engine's updaters (same references) but
+-- deep-copies variation tables so our temperature mutation stays isolated per season. Returns
+-- the new object, or nil if no source exists / it's already present.
+function WeatherProfileSystem:cloneWeatherObjectInto(weather, season, weatherType)
+    local objects = weather.weatherObjects[season]
+    local typeMap = weather.typeToWeatherObject[season]
+    if not objects or not typeMap then return nil end
+    if typeMap[weatherType] then return nil end  -- already present
+
+    local source
+    for s, objs in pairs(weather.weatherObjects) do
+        if s ~= season then
+            for _, obj in ipairs(objs) do
+                if obj.weatherType == weatherType then source = obj; break end
+            end
+        end
+        if source then break end
+    end
+    if not source then return nil end
+
+    -- Build the clone via the SOURCE's own class, not base WeatherObject.new: subclasses
+    -- (e.g. WeatherObjectHail) override activate/update/initInstanceData and add instance
+    -- fields (destructionArea, perlinPercentage), which a plain object would lack and crash on
+    -- activation. source:class() returns the source's members table (its .new constructor).
+    local sourceClass = source:class()
+    local newObj = sourceClass.new(weatherType, source.cloudUpdater,
+        source.temperatureUpdater, source.windUpdater, source.rainUpdater)
+    newObj.weight = source.weight or 1
+    newObj.variations = {}
+    newObj.weightedVariations = {}
+    for _, v in ipairs(source.variations or {}) do
+        local nv = copyVariation(v)
+        table.insert(newObj.variations, nv)
+        nv.index = #newObj.variations
+        for _ = 1, (nv.weight or 1) do
+            table.insert(newObj.weightedVariations, nv.index)
+        end
+    end
+
+    table.insert(objects, newObj)
+    newObj.index = #objects
+    newObj.season = season
+    typeMap[weatherType] = newObj
+    return newObj
+end
+
+-- FS25's base map doesn't author RAIN or HAIL weather objects for every season (winter has no
+-- rain; hail exists only in spring). Profiles legitimately assign wRain/wHail in those seasons
+-- (UK winter rain, hail across the year), so without an object that weight is unschedulable.
+-- The engine permits these objects in any season (isRainAllowed is true during load) -- they
+-- simply aren't authored -- so we clone real RAIN and HAIL objects into every season missing
+-- them. After this, wRain/wHail schedule genuine weather instead of redirecting to a fallback.
+function WeatherProfileSystem:injectMissingWeatherObjects()
+    local weather = g_currentMission.environment.weather
+    if not weather or not weather.weatherObjects then return end
+
+    for season in pairs(weather.weatherObjects) do
+        for _, wt in ipairs({ WeatherType.RAIN, WeatherType.HAIL }) do
+            self:cloneWeatherObjectInto(weather, season, wt)
+        end
+    end
+end
+
 function WeatherProfileSystem:installWeatherOverrides()
     local weather = g_currentMission.environment.weather
+
+    self:injectMissingWeatherObjects()
 
     Weather.updateAvailableWeatherObjects = Utils.appendedFunction(
         Weather.updateAvailableWeatherObjects,
@@ -151,8 +238,8 @@ function WeatherProfileSystem:rollWeightVariation(month)
         return
     end
 
-    local pct = 0.08 + math.random() * 0.04
-    local delta = math.floor(md.wRain * pct + 0.5)
+    local swingFraction = 0.08 + math.random() * 0.04
+    local delta = math.floor(md.wRain * swingFraction + 0.5)
     if delta == 0 then
         self.weightVariation = nil
         return
@@ -176,7 +263,7 @@ function WeatherProfileSystem:rollWeightVariation(month)
     end
 
     self.weightVariation = {
-        direction = roll,
+        increaseRain = (roll == 2),
         delta = delta,
         targetKey = candidates[math.random(#candidates)],
     }
@@ -197,14 +284,14 @@ function WeatherProfileSystem:rebuildWeatherWeights(weather)
         wPartlyCloudy = md.wPartlyCloudy,
         wCloudy       = md.wCloudy,
     }
-    local v = self.weightVariation
-    if v then
-        if v.direction == 2 then
-            weights.wRain = weights.wRain + v.delta
-            weights[v.targetKey] = math.max(0, weights[v.targetKey] - v.delta)
+    local variation = self.weightVariation
+    if variation then
+        if variation.increaseRain then
+            weights.wRain = weights.wRain + variation.delta
+            weights[variation.targetKey] = math.max(0, weights[variation.targetKey] - variation.delta)
         else
-            weights.wRain = math.max(0, weights.wRain - v.delta)
-            weights[v.targetKey] = weights[v.targetKey] + v.delta
+            weights.wRain = math.max(0, weights.wRain - variation.delta)
+            weights[variation.targetKey] = weights[variation.targetKey] + variation.delta
         end
     end
 
@@ -218,12 +305,69 @@ function WeatherProfileSystem:rebuildWeatherWeights(weather)
         [WeatherType.CLOUDY]           = weights.wCloudy,
     }
 
+    -- Fallback chains: a weather type may have NO object in a given engine season (e.g. FS25
+    -- winter has no RAIN or HAIL object -- winter precipitation is snow). Weight assigned to a
+    -- type with no object would silently vanish, under-reporting that season. So any such
+    -- weight is redirected to the first available type in its chain. Precip redirects to precip
+    -- (rain<->snow<->hail) so the precipitation SHARE is preserved regardless of which precip
+    -- object the season actually has. This makes profiles authored with wRain in winter (ours
+    -- or third-party) still produce winter precipitation.
+    local FALLBACK_CHAINS = {
+        [WeatherType.RAIN]             = { WeatherType.SNOW, WeatherType.HAIL },
+        [WeatherType.THUNDER]          = { WeatherType.RAIN, WeatherType.SNOW, WeatherType.HAIL },
+        [WeatherType.HAIL]             = { WeatherType.RAIN, WeatherType.SNOW },
+        [WeatherType.SNOW]             = { WeatherType.RAIN, WeatherType.HAIL },
+        [WeatherType.PARTIALLY_CLOUDY] = { WeatherType.CLOUDY },
+        [WeatherType.CLOUDY]           = { WeatherType.PARTIALLY_CLOUDY },
+        [WeatherType.SUN]              = {},
+    }
+
+    -- The scheduler picks an object from the weighted pool (frequency proportional to its
+    -- pool copies), then runs it for a random minHours..maxHours taken from that object's
+    -- variation. So measured HOURS of a type == poolShare(type) * avgDuration(type). The
+    -- base game gives different types wildly different durations (long sun spells, short rain
+    -- spells), which skews hours away from the weights. We neutralize that by forcing EVERY
+    -- variation to the same duration range, so avgDuration is identical across types and
+    -- cancels out: hours(type) becomes proportional to poolShare(type) == weight(type).
+    -- With equal durations, pool copies are just the (redirected) weight.
+    local minH = WeatherProfileSystem.SPELL_MIN_HOURS
+    local maxH = WeatherProfileSystem.SPELL_MAX_HOURS
+
     for season, baseObjects in pairs(weather.weatherObjects) do
+        -- First pass: normalize durations and record which weather types this season can schedule.
+        local available = {}
+        for _, obj in ipairs(baseObjects) do
+            available[obj.weatherType] = true
+            if obj.variations then
+                for _, v in ipairs(obj.variations) do
+                    v.minHours = minH
+                    v.maxHours = maxH
+                end
+            end
+        end
+
+        -- Resolve each weighted type to an available type, redirecting via the fallback chain
+        -- when its own object is missing. Weight with no available target is simply not added.
+        local effectiveWeight = {}
+        for wt, w in pairs(typeToWeight) do
+            if w > 0 then
+                local target = available[wt] and wt or nil
+                if not target then
+                    for _, alt in ipairs(FALLBACK_CHAINS[wt] or {}) do
+                        if available[alt] then target = alt; break end
+                    end
+                end
+                if target then
+                    effectiveWeight[target] = (effectiveWeight[target] or 0) + w
+                end
+            end
+        end
+
         local newWeighted = {}
         for _, obj in ipairs(baseObjects) do
-            local wt = typeToWeight[obj.weatherType] or 1
-            if wt > 0 then
-                for _ = 1, wt do
+            local weight = effectiveWeight[obj.weatherType] or 0
+            if weight > 0 then
+                for _ = 1, weight do
                     table.insert(newWeighted, obj.index)
                 end
             end
@@ -240,8 +384,17 @@ end
 function WeatherProfileSystem:onPeriodChanged()
     if not g_currentMission:getIsServer() then return end
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
+
+    -- Archive the just-completed agricultural year at the start of March (the FS25 year
+    -- boundary). Running the reporting year March->February keeps the winter bucket
+    -- (Dec/Jan/Feb) contiguous and complete before the accumulators reset; archiving in
+    -- January instead would capture only December and split the rest into the next record.
+    -- The completed year is labelled currentYear-1 since its growing season is the prior year.
+    if month == 3 then
+        self.historyCollector:archiveYear(g_currentMission.environment.currentYear - 1, self:getNormalScenario())
+    end
+
     if month == 1 then
-        self.historyCollector:archiveYear(g_currentMission.environment.currentYear, self:getNormalScenario())
         if self.nextYearScenarioId ~= nil then
             self.activeScenarioId = self.nextYearScenarioId
         end
@@ -381,6 +534,8 @@ end
 function WeatherProfileSystem:rollForecastOffsets()
     -- Store as fractions; applied as (normal_value * fraction) in getForecastData so
     -- the absolute swing scales with how much of that weather type normally exists.
+    -- Each forecast season holds one independent offset triple per constituent month, so
+    -- the three months in a season show different forecast error rather than a shared bias.
     local function jitter(range)
         return {
             precipitation = (math.random() * 2 - 1) * range,
@@ -388,8 +543,15 @@ function WeatherProfileSystem:rollForecastOffsets()
             cloudy        = (math.random() * 2 - 1) * range,
         }
     end
+    local function seasonOffsets(range)
+        local months = {}
+        for m = 1, 3 do
+            months[m] = jitter(range)
+        end
+        return months
+    end
     -- Ranges: current season ±5%, next ±10%, season after ±20%
-    self.forecastOffsets = { jitter(0.05), jitter(0.10), jitter(0.20) }
+    self.forecastOffsets = { seasonOffsets(0.05), seasonOffsets(0.10), seasonOffsets(0.20) }
 end
 
 function WeatherProfileSystem:ensureForecastOffsets()
@@ -462,57 +624,69 @@ function WeatherProfileSystem:getForecastData(seasonIndex)
         return activeScenario
     end
 
+    -- Apply jitter per month, scaled to that month's normal baseline: swing = normal * fraction.
+    -- Scaling to the baseline keeps small-value groups (e.g. 5% sun) from swinging to zero or
+    -- negative, while larger groups (e.g. 55% precipitation) get proportionally larger wobble.
+    local seasonOffsets = self.forecastOffsets[seasonIndex + 1]
+
     local monthData = {}
+    -- The season summary is a roll-up of the per-month values (their average), not an
+    -- independent computation, so the summary diff equals the mean of the per-month diffs.
+    local jitteredAvg = { precipitation = 0, sun = 0, cloudy = 0 }
+    local normalAvg   = { precipitation = 0, sun = 0, cloudy = 0 }
+
     for j, month in ipairs(targetMonths) do
         local scenario = scenarioForMonth(month)
         local groups  = self:getGroupPercentagesForMonths(scenario,       {month})
         local normal  = self:getGroupPercentagesForMonths(normalScenario, {month})
+        local offsets = seasonOffsets[j] or { precipitation = 0, sun = 0, cloudy = 0 }
+
+        local precipPct = math.max(0, groups.precipitation + normal.precipitation * offsets.precipitation)
+        local sunPct    = math.max(0, groups.sun           + normal.sun           * offsets.sun)
+        local cloudyPct = math.max(0, groups.cloudy        + normal.cloudy        * offsets.cloudy)
+        -- Renormalize so the three groups still sum to 100 after independent jitter.
+        local total = precipPct + sunPct + cloudyPct
+        if total > 0 then
+            precipPct = (precipPct / total) * 100
+            sunPct    = (sunPct    / total) * 100
+            cloudyPct = (cloudyPct / total) * 100
+        end
+
         table.insert(monthData, {
             month             = month,
             isActual          = (seasonIndex == 0) and (j < currentPosInSeason),
-            precipitation     = groups.precipitation,
-            sun               = groups.sun,
-            cloudy            = groups.cloudy,
-            precipitationDiff = groups.precipitation - normal.precipitation,
-            sunDiff           = groups.sun           - normal.sun,
-            cloudyDiff        = groups.cloudy        - normal.cloudy,
+            precipitation     = precipPct,
+            sun               = sunPct,
+            cloudy            = cloudyPct,
+            precipitationDiff = precipPct - normal.precipitation,
+            sunDiff           = sunPct    - normal.sun,
+            cloudyDiff        = cloudyPct - normal.cloudy,
         })
+
+        jitteredAvg.precipitation = jitteredAvg.precipitation + precipPct
+        jitteredAvg.sun           = jitteredAvg.sun           + sunPct
+        jitteredAvg.cloudy        = jitteredAvg.cloudy        + cloudyPct
+        normalAvg.precipitation   = normalAvg.precipitation   + normal.precipitation
+        normalAvg.sun             = normalAvg.sun             + normal.sun
+        normalAvg.cloudy          = normalAvg.cloudy          + normal.cloudy
     end
 
-    -- Season-level aggregate (average across constituent months)
-    local aggG = { precipitation = 0, sun = 0, cloudy = 0 }
-    local aggN = { precipitation = 0, sun = 0, cloudy = 0 }
-    for _, month in ipairs(targetMonths) do
-        local g = self:getGroupPercentagesForMonths(scenarioForMonth(month), {month})
-        local n = self:getGroupPercentagesForMonths(normalScenario,          {month})
-        for _, grp in ipairs({"precipitation", "sun", "cloudy"}) do
-            aggG[grp] = aggG[grp] + g[grp]
-            aggN[grp] = aggN[grp] + n[grp]
-        end
-    end
-    local n = #targetMonths
+    local monthCount = #targetMonths
     for _, grp in ipairs({"precipitation", "sun", "cloudy"}) do
-        aggG[grp] = aggG[grp] / n
-        aggN[grp] = aggN[grp] / n
+        jitteredAvg[grp] = jitteredAvg[grp] / monthCount
+        normalAvg[grp]   = normalAvg[grp]   / monthCount
     end
 
-    -- Apply jitter scaled to the normal baseline: swing = normal_value * fraction.
-    -- This keeps small-value groups (e.g. 5% sun) from swinging to zero or negative,
-    -- while larger groups (e.g. 55% precipitation) get proportionally larger wobble.
-    local offsets = self.forecastOffsets[seasonIndex + 1]
-    local jitterPrec = aggN.precipitation * offsets.precipitation
-    local jitterSun  = aggN.sun           * offsets.sun
-    local jitterCld  = aggN.cloudy        * offsets.cloudy
     return {
         seasonIndex       = seasonIndex,
         seasonDef         = WeatherProfileSystem.SEASONS[targetSeasonIdx],
         months            = monthData,
-        precipitation     = aggG.precipitation     + jitterPrec,
-        sun               = aggG.sun               + jitterSun,
-        cloudy            = aggG.cloudy            + jitterCld,
-        precipitationDiff = (aggG.precipitation - aggN.precipitation) + jitterPrec,
-        sunDiff           = (aggG.sun           - aggN.sun)           + jitterSun,
-        cloudyDiff        = (aggG.cloudy        - aggN.cloudy)        + jitterCld,
+        precipitation     = jitteredAvg.precipitation,
+        sun               = jitteredAvg.sun,
+        cloudy            = jitteredAvg.cloudy,
+        precipitationDiff = jitteredAvg.precipitation - normalAvg.precipitation,
+        sunDiff           = jitteredAvg.sun           - normalAvg.sun,
+        cloudyDiff        = jitteredAvg.cloudy        - normalAvg.cloudy,
     }
 end
 
@@ -534,17 +708,29 @@ function WeatherProfileSystem:loadFromXMLFile(xmlFile, key)
         self:selectNextYearScenario()
     end
 
+    -- Per-month forecast offsets: 3 seasons x 3 months. Saves from the older one-triple-per-
+    -- season format won't have the month nodes, so we leave forecastOffsets nil and let
+    -- ensureForecastOffsets reroll in the new shape on first use.
     local offsetsKey = key .. ".forecastOffsets"
     if hasXMLProperty(xmlFile, offsetsKey) then
         local loaded = {}
         for i = 0, 2 do
-            local oKey = string.format("%s.season(%d)", offsetsKey, i)
-            if hasXMLProperty(xmlFile, oKey) then
-                loaded[i + 1] = {
-                    precipitation = getXMLFloat(xmlFile, oKey .. "#precipitation") or 0,
-                    sun           = getXMLFloat(xmlFile, oKey .. "#sun")           or 0,
-                    cloudy        = getXMLFloat(xmlFile, oKey .. "#cloudy")        or 0,
-                }
+            local seasonKey = string.format("%s.season(%d)", offsetsKey, i)
+            if hasXMLProperty(xmlFile, seasonKey) then
+                local months = {}
+                for m = 0, 2 do
+                    local monthKey = string.format("%s.month(%d)", seasonKey, m)
+                    if hasXMLProperty(xmlFile, monthKey) then
+                        months[m + 1] = {
+                            precipitation = getXMLFloat(xmlFile, monthKey .. "#precipitation") or 0,
+                            sun           = getXMLFloat(xmlFile, monthKey .. "#sun")           or 0,
+                            cloudy        = getXMLFloat(xmlFile, monthKey .. "#cloudy")        or 0,
+                        }
+                    end
+                end
+                if #months == 3 then
+                    loaded[i + 1] = months
+                end
             end
         end
         if #loaded == 3 then
@@ -562,11 +748,13 @@ function WeatherProfileSystem:saveToXMLFile(xmlFile, key)
     end
 
     if self.forecastOffsets then
-        for i, offsets in ipairs(self.forecastOffsets) do
-            local oKey = string.format("%s.forecastOffsets.season(%d)", key, i - 1)
-            setXMLFloat(xmlFile, oKey .. "#precipitation", offsets.precipitation)
-            setXMLFloat(xmlFile, oKey .. "#sun",           offsets.sun)
-            setXMLFloat(xmlFile, oKey .. "#cloudy",        offsets.cloudy)
+        for i, seasonOffsets in ipairs(self.forecastOffsets) do
+            for m, offsets in ipairs(seasonOffsets) do
+                local monthKey = string.format("%s.forecastOffsets.season(%d).month(%d)", key, i - 1, m - 1)
+                setXMLFloat(xmlFile, monthKey .. "#precipitation", offsets.precipitation)
+                setXMLFloat(xmlFile, monthKey .. "#sun",           offsets.sun)
+                setXMLFloat(xmlFile, monthKey .. "#cloudy",        offsets.cloudy)
+            end
         end
     end
 

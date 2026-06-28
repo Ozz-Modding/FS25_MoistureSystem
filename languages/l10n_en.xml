@@ -101,6 +101,8 @@
 		<text name="moistureSystem_gui_weather_season3" text="Autumn"/>
 		<text name="moistureSystem_gui_weather_season4" text="Winter"/>
 		<text name="moistureSystem_gui_weather_forecastNote" text="Forecasts are estimates. Accuracy decreases for seasons further ahead."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Year %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Completed years span March to February so that seasons are correctly represented."/>
 
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Moisture Meter"/>

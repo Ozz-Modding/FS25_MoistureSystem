@@ -85,59 +85,58 @@ function WeatherHistoryCollector.new()
     for s = 1, 4 do
         self.currentSeasonAccumulators[s] = newSeasonBucket()
     end
-    self.currentWeatherType = nil
-    self.currentWeatherSeason = nil
-    self.currentWeatherStartTime = nil
     self.yearHistory = {}
     return self
 end
 
 function WeatherHistoryCollector:install()
-    local reverseMap = {}
-    for typeName, typeValue in pairs(WeatherHistoryCollector.WEATHER_TYPES) do
-        reverseMap[typeValue] = typeName
+    -- Sample the active weather type once per game-hour rather than timing
+    -- WeatherObject.activate->deactivate. Those hooks fire back-to-back (sub-second) at
+    -- weather transitions and do NOT bracket how long the weather actually persists, so the
+    -- old approach filled the buckets with meaningless ~1s slivers. Buckets now count hours;
+    -- percentages are unaffected since computeGroupsFromBucket normalizes by the total.
+    g_messageCenter:subscribe(MessageType.HOUR_CHANGED, self.onHourChanged, self)
+end
+
+function WeatherHistoryCollector:onHourChanged()
+    if not g_currentMission:getIsServer() then return end
+
+    local weather = g_currentMission.environment.weather
+
+    -- Count the hour by the SCHEDULED weather object type. The weighted scheduler pool
+    -- (weightedWeatherObjects, built from the XML weights) is what determines which object
+    -- is active, so counting types makes the measured distribution converge on the weights:
+    -- 40% rain weight -> ~40% rain objects scheduled -> ~40% rain hours measured.
+    --
+    -- We deliberately do NOT classify by getRainFallScale(): that value is rain *intensity*,
+    -- lerped from the active object's preset and ramped over each transition (see RainUpdater).
+    -- A light-rain object can peak near 0.1, so an intensity threshold under/over-counts the
+    -- scheduled weather and would never match the weights.
+    local reverseMap = WeatherHistoryCollector.TYPE_VALUE_TO_NAME
+    if not reverseMap then
+        reverseMap = {}
+        for typeName, typeValue in pairs(WeatherHistoryCollector.WEATHER_TYPES) do
+            reverseMap[typeValue] = typeName
+        end
+        WeatherHistoryCollector.TYPE_VALUE_TO_NAME = reverseMap
     end
 
-    local collector = self
+    local weatherType = weather:getCurrentWeatherType()
+    local typeName = reverseMap[weatherType]
+    if not typeName then return end
 
-    WeatherObject.activate = Utils.appendedFunction(
-        WeatherObject.activate,
-        function(self, instance, changeDuration)
-            local typeName = reverseMap[self.weatherType]
-            if typeName then
-                local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-                local seasonIdx = 1
-                for i, season in ipairs(WeatherProfileSystem.SEASONS) do
-                    for _, m in ipairs(season.months) do
-                        if m == month then seasonIdx = i; break end
-                    end
-                end
-                collector.currentWeatherType = typeName
-                collector.currentWeatherSeason = seasonIdx
-                collector.currentWeatherStartTime = g_currentMission.time
-            end
+    local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
+    local seasonIdx = 1
+    for i, season in ipairs(WeatherProfileSystem.SEASONS) do
+        for _, m in ipairs(season.months) do
+            if m == month then seasonIdx = i; break end
         end
-    )
+    end
 
-    WeatherObject.deactivate = Utils.appendedFunction(
-        WeatherObject.deactivate,
-        function(self, changeDuration)
-            local typeName = collector.currentWeatherType
-            local seasonIdx = collector.currentWeatherSeason
-            if typeName and seasonIdx and collector.currentWeatherStartTime then
-                local elapsed = (g_currentMission.time - collector.currentWeatherStartTime) / 1000
-                if elapsed > 0 then
-                    local bucket = collector.currentSeasonAccumulators[seasonIdx]
-                    if bucket then
-                        bucket[typeName] = (bucket[typeName] or 0) + elapsed
-                    end
-                end
-            end
-            collector.currentWeatherType = nil
-            collector.currentWeatherSeason = nil
-            collector.currentWeatherStartTime = nil
-        end
-    )
+    local bucket = self.currentSeasonAccumulators[seasonIdx]
+    if bucket then
+        bucket[typeName] = (bucket[typeName] or 0) + 1
+    end
 end
 
 function WeatherHistoryCollector:archiveYear(year, normalScenario)
@@ -180,9 +179,6 @@ function WeatherHistoryCollector:archiveYear(year, normalScenario)
     for s = 1, 4 do
         self.currentSeasonAccumulators[s] = newSeasonBucket()
     end
-    self.currentWeatherType = nil
-    self.currentWeatherSeason = nil
-    self.currentWeatherStartTime = nil
 end
 
 function WeatherHistoryCollector:getHistoryData(yearOffset)
@@ -194,14 +190,10 @@ function WeatherHistoryCollector:saveToXMLFile(xmlFile, key)
 
     for s = 1, 4 do
         local sKey = string.format("%s.accumulators.season(%d)", base, s - 1)
-        for typeName, seconds in pairs(self.currentSeasonAccumulators[s]) do
-            setXMLFloat(xmlFile, sKey .. "#" .. typeName, seconds)
+        for typeName, hours in pairs(self.currentSeasonAccumulators[s]) do
+            setXMLFloat(xmlFile, sKey .. "#" .. typeName, hours)
         end
     end
-
-    if self.currentWeatherType   then setXMLString(xmlFile, base .. ".current#weatherType",   self.currentWeatherType)   end
-    if self.currentWeatherSeason then setXMLInt(xmlFile,    base .. ".current#weatherSeason",  self.currentWeatherSeason) end
-    if self.currentWeatherStartTime then setXMLFloat(xmlFile, base .. ".current#startTime",    self.currentWeatherStartTime) end
 
     for i, entry in ipairs(self.yearHistory) do
         local eKey = string.format("%s.year(%d)", base, i - 1)
@@ -239,13 +231,6 @@ function WeatherHistoryCollector:loadFromXMLFile(xmlFile, key)
             end
         end
     end
-
-    local wt = getXMLString(xmlFile, base .. ".current#weatherType")
-    if wt then self.currentWeatherType = wt end
-    local ws = getXMLInt(xmlFile, base .. ".current#weatherSeason")
-    if ws then self.currentWeatherSeason = ws end
-    local st = getXMLFloat(xmlFile, base .. ".current#startTime")
-    if st then self.currentWeatherStartTime = st end
 
     self.yearHistory = {}
     local i = 0

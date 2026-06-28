@@ -25,13 +25,19 @@ FS25 mod (Lua + XML) that adds moisture simulation, crop quality grading, bale r
 
 `src/events/` — multiplayer network events. All simulation runs server-side only; no new sync events were added for WeatherProfileSystem.
 
-`src/gui/` — tabbed menu frames (Shift+M). `MoistureGuiCalendar` shows monthly clamp ranges from the active scenario.
+`src/gui/` — tabbed menu frames (Shift+M). `MoistureGuiCalendar` shows monthly clamp ranges from the active scenario. `MoistureGuiWeather` shows the weather Forecast (per-month group %, with per-month forecast error/jitter) and History (per-season group % vs. normal, newest year rightmost) tabs.
 
 `xml/weatherProfiles/` — one XML per region. Loaded at `loadMap()`.
 
 ## Weather profiles
 
 Seven regional profiles, each with 2–4 weighted scenarios. Scenario selected once per January via `PERIOD_CHANGED`; persists in savegame under `<weatherProfile>` key.
+
+**Weather history** (`WeatherHistoryCollector`) records actual realized weather. It samples
+the scheduled weather type once per game-hour into per-season buckets, and archives the
+completed year at the **start of March** (the FS25 year boundary), labelling it `currentYear-1`.
+The reporting year runs March→February so each winter (Dec/Jan/Feb) is a complete contiguous
+season; archiving in January would split winter and capture only December.
 
 Each month entry defines `rainfall`, `tempMinOffset`, `tempMaxOffset`, `moistureMin`, `moistureMax`.
 
@@ -50,6 +56,40 @@ This is what field moisture actually settles within. Always check inner range, n
 - Maize/Soybean: October, November
 - Rice/LongGrainRice: August (rice), September (both)
 - Canola: July
+
+## Weather weights → actual weather
+
+Each month entry carries per-type weights (`wRain`, `wThunder`, `wSnow`, `wHail`, `wSun`,
+`wPartlyCloudy`, `wCloudy`). The design goal: **a type's weight share equals its share of
+time** — e.g. 40% rain weight ⇒ raining ~40% of that month. `WeatherProfileSystem:rebuildWeatherWeights`
+rebuilds the engine's `weightedWeatherObjects` pool each period from these weights. Getting
+weight→time fidelity required three engine-level fixes (all in `WeatherProfileSystem.lua`):
+
+- **Equal spell durations.** The engine runs each scheduled weather object for a random
+  `minHours..maxHours` *specific to that object*; base-game sun spells are much longer than
+  rain spells, so weighting the pool by raw weight made long-spell types dominate the hours.
+  We normalize EVERY variation to `SPELL_MIN_HOURS`..`SPELL_MAX_HOURS` (2–5h). With equal
+  durations the duration term cancels and hours-share == pool-share == weight-share. Pool
+  copies are therefore just the raw weight (no duration correction).
+- **Missing weather objects injected.** The base map only authors RAIN/HAIL objects for some
+  seasons (engine season 4 / winter has no rain object; hail exists only in spring). Weight
+  for an absent type would be unschedulable. `injectMissingWeatherObjects` clones real RAIN
+  and HAIL objects into every season that lacks them (cloning via the source's own class so
+  `WeatherObjectHail` behavior is preserved, and deep-copying variations so our per-instance
+  temperature mutation stays isolated). This is why winter rain works.
+- **Fallback chains.** As a safety net for any still-unschedulable weight (e.g. THUNDER, which
+  has no object class), `rebuildWeatherWeights` redirects it to a related available type
+  (rain↔snow↔hail, partlyCloudy↔cloudy) so its precipitation/cloud share is preserved.
+
+**Engine season vs. calendar month.** The engine groups the 12 months into 4 visual seasons
+(`weatherObjects`/`weightedWeatherObjects` are keyed by season 1–4, three months each). With
+~1-day months, each reporting season is a small sample, so single-year scatter is wide
+(±~10pp) — extreme dry/wet years are statistically expected and intentional, not a bug.
+
+**Single source of truth for "raining":** the moisture sim treats `getRainFallScale() > 0.1`
+as raining (`GroundPropertyTracker`). Note `getRainFallScale()` is rain *intensity* (ramped
+per the active object's preset), NOT a scheduled-type flag — do not use it to measure weather
+type composition; use the scheduled weather type instead (see `WeatherHistoryCollector`).
 
 ## Console commands
 
