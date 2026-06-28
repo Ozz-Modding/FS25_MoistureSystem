@@ -79,31 +79,24 @@
         <flowLayoutGap value="20px"/>
     </Profile>
     <Profile name="msWeatherPanel" extends="emptyPanel" with="anchorTopLeft">
-        <size value="450px 280px"/>
+        <size value="450px 240px"/>
         <imageColor value="$preset_fs25_colorGrey"/>
         <padding value="15px"/>
     </Profile>
-    <Profile name="msWeatherPanelSeasonIcon" extends="baseReference" with="anchorTopLeft">
-        <size value="40px 40px"/>
-        <position value="0px 0px"/>
-    </Profile>
     <Profile name="msWeatherPanelTitle" extends="fs25_textDefault" with="anchorTopLeft">
-        <position value="50px 8px"/>
+        <size value="380px 36px"/>
         <textSize value="18px"/>
         <textBold value="true"/>
         <textUpperCase value="true"/>
-    </Profile>
-    <Profile name="msWeatherPanelStats" extends="emptyPanel" with="anchorTopLeft">
-        <position value="0px -55px"/>
-        <size value="420px 100px"/>
-    </Profile>
-    <Profile name="msWeatherGroupLabel" extends="fs25_textGrey" with="anchorTopLeft">
-        <size value="220px 24px"/>
-        <textSize value="15px"/>
         <textVerticalAlignment value="middle"/>
     </Profile>
+    <!-- Summary row: icon (26px) + percentage + diff, 3 groups across 420px -->
+    <Profile name="msWeatherGroupIcon" extends="baseReference" with="anchorTopLeft">
+        <size value="26px 26px"/>
+        <imageSdfWidth value="0.025"/>
+    </Profile>
     <Profile name="msWeatherGroupPct" extends="fs25_textDefault" with="anchorTopLeft">
-        <size value="55px 24px"/>
+        <size value="50px 26px"/>
         <textSize value="15px"/>
         <textBold value="true"/>
         <textAlignment value="right"/>
@@ -111,15 +104,40 @@
         <textColor value="$preset_fs25_colorMainHighlight"/>
     </Profile>
     <Profile name="msWeatherGroupDiff" extends="fs25_textGrey" with="anchorTopLeft">
-        <size value="80px 24px"/>
+        <size value="54px 24px"/>
         <textSize value="13px"/>
         <textAlignment value="left"/>
         <textVerticalAlignment value="middle"/>
     </Profile>
-    <Profile name="msWeatherMonthRow" extends="fs25_textGrey" with="anchorTopLeft">
-        <size value="420px 22px"/>
-        <textSize value="13px"/>
+    <!-- Month / season rows: name label + icon (20px) + pct + diff -->
+    <Profile name="msWeatherMonthIcon" extends="baseReference" with="anchorTopLeft">
+        <size value="20px 20px"/>
+        <imageSdfWidth value="0.025"/>
+    </Profile>
+    <Profile name="msWeatherMonthLabel" extends="fs25_textGrey" with="anchorTopLeft">
+        <size value="72px 22px"/>
+        <textSize value="14px"/>
         <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msWeatherMonthPct" extends="fs25_textDefault" with="anchorTopLeft">
+        <size value="44px 22px"/>
+        <textSize value="14px"/>
+        <textBold value="true"/>
+        <textAlignment value="right"/>
+        <textVerticalAlignment value="middle"/>
+        <textColor value="$preset_fs25_colorMainHighlight"/>
+    </Profile>
+    <Profile name="msWeatherMonthDiff" extends="fs25_textGrey" with="anchorTopLeft">
+        <size value="40px 22px"/>
+        <textSize value="12px"/>
+        <textAlignment value="left"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msWeatherNote" extends="fs25_textGrey" with="anchorTopLeft">
+        <textSize value="13px"/>
+        <textColor value="$preset_colorWhite_50"/>
+        <textMaxNumLines value="2"/>
+        <textVerticalAlignment value="top"/>
     </Profile>
     <Profile name="msWeatherNoData" extends="fs25_textGrey" with="anchorMiddleCenter">
         <textSize value="16px"/>

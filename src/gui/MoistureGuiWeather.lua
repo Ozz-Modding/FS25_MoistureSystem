@@ -2,12 +2,11 @@ MoistureGuiWeather = {}
 
 local MoistureGuiWeather_mt = Class(MoistureGuiWeather, TabbedMenuFrameElement)
 
-local SEASON_ICONS = {
-    "gui.icon_ingameMenu_calendarSpring",
-    "gui.icon_ingameMenu_calendarSummer",
-    "gui.icon_ingameMenu_calendarAutumn",
-    "gui.icon_ingameMenu_calendarWinter",
-}
+local SEASON_SUFFIXES = {"Spr", "Sum", "Fal", "Win"}
+local SEASON_NAMES    = {"moistureSystem_gui_weather_season1",
+                         "moistureSystem_gui_weather_season2",
+                         "moistureSystem_gui_weather_season3",
+                         "moistureSystem_gui_weather_season4"}
 
 function MoistureGuiWeather.new(l18n)
     local self = TabbedMenuFrameElement.new(nil, MoistureGuiWeather_mt)
@@ -35,6 +34,15 @@ function MoistureGuiWeather:updateWeather()
     local wps = g_currentMission and g_currentMission.WeatherProfileSystem
     if not wps then return end
 
+    local envLabel = self["weatherEnvLabel"]
+    if envLabel then
+        local profileId   = g_currentMission.MoistureSystem.settings.weatherProfile
+        local profile     = wps.profiles[profileId]
+        local profileName = profile and profile.displayName or profileId
+        local scenarioId  = wps.activeScenarioId or "normal"
+        envLabel:setText(profileName .. " / " .. scenarioId)
+    end
+
     for i = 0, 2 do
         self:updateForecastPanel(i, wps)
     end
@@ -48,99 +56,124 @@ local function fmtPct(v)
 end
 
 local function fmtDiff(v)
-    if v >= 0 then
-        return string.format("+%.0f%%", v)
-    end
-    return string.format("%.0f%%", v)
+    if v >= 0 then return string.format(" +%.0f%%", v) end
+    return string.format(" %.0f%%", v)
 end
 
 function MoistureGuiWeather:updateForecastPanel(seasonIndex, wps)
-    local panel = self["forecastPanel" .. (seasonIndex + 1)]
-    if not panel then return end
+    local pn  = seasonIndex + 1
+    local pfx = "fp" .. pn
 
-    local data = wps:getForecastData(seasonIndex)
-
+    local data            = wps:getForecastData(seasonIndex)
     local currentSeasonIdx = wps:getCurrentSeasonIndex()
     local displaySeasonIdx = ((currentSeasonIdx - 1 + seasonIndex) % 4) + 1
 
-    if panel.seasonIcon then
-        panel.seasonIcon:setImageSlice(nil, SEASON_ICONS[displaySeasonIdx])
-    end
-    if panel.seasonTitle then
-        panel.seasonTitle:setText(g_i18n:getText("moistureSystem_gui_weather_season" .. displaySeasonIdx))
+    -- Season icon: show only the matching bitmap
+    for si, suf in ipairs(SEASON_SUFFIXES) do
+        local icon = self[pfx .. suf]
+        if icon then icon:setVisible(si == displaySeasonIdx) end
     end
 
-    for _, grp in ipairs({"precipitation", "sun", "cloudy"}) do
-        local pctEl  = panel[grp .. "Pct"]
-        local diffEl = panel[grp .. "Diff"]
+    local titleEl = self[pfx .. "Title"]
+    if titleEl then
+        titleEl:setText(g_i18n:getText(SEASON_NAMES[displaySeasonIdx]))
+    end
+
+    -- Summary row
+    local function setSummary(key, grp)
+        local pctEl  = self[pfx .. key .. "Pct"]
+        local diffEl = self[pfx .. key .. "Diff"]
         if pctEl  then pctEl:setText(fmtPct(data[grp]))             end
         if diffEl then diffEl:setText(fmtDiff(data[grp .. "Diff"])) end
     end
+    setSummary("Prec", "precipitation")
+    setSummary("Sun",  "sun")
+    setSummary("Cld",  "cloudy")
 
+    -- Per-month rows
     for j = 1, 3 do
-        local monthEl   = panel["month" .. j]
         local monthData = data.months[j]
-        if monthEl and monthData then
-            local label   = g_i18n:formatPeriod(MoistureGuiWeather.monthToPeriod(monthData.month), true)
-            local content = string.format("%s  %s / %s / %s",
-                label,
-                fmtPct(monthData.precipitation),
-                fmtPct(monthData.sun),
-                fmtPct(monthData.cloudy))
-            monthEl:setText(content)
-            monthEl:setAlpha(monthData.isActual and 0.5 or 1.0)
+        local mp        = pfx .. "M" .. j
+        local lblEl     = self[mp .. "Lbl"]
+        local precEl    = self[mp .. "Prec"]
+        local precDEl   = self[mp .. "PrecD"]
+        local sunEl     = self[mp .. "Sun"]
+        local sunDEl    = self[mp .. "SunD"]
+        local cldEl     = self[mp .. "Cld"]
+        local cldDEl    = self[mp .. "CldD"]
+
+        if monthData then
+            local label = g_i18n:formatPeriod(MoistureGuiWeather.monthToPeriod(monthData.month), true)
+            local alpha = monthData.isActual and 0.5 or 1.0
+            if lblEl  then lblEl:setText(label);                                  lblEl:setAlpha(alpha)  end
+            if precEl then precEl:setText(fmtPct(monthData.precipitation));       precEl:setAlpha(alpha) end
+            if precDEl then precDEl:setText(fmtDiff(monthData.precipitationDiff)); precDEl:setAlpha(alpha) end
+            if sunEl  then sunEl:setText(fmtPct(monthData.sun));                  sunEl:setAlpha(alpha)  end
+            if sunDEl  then sunDEl:setText(fmtDiff(monthData.sunDiff));           sunDEl:setAlpha(alpha)  end
+            if cldEl  then cldEl:setText(fmtPct(monthData.cloudy));               cldEl:setAlpha(alpha)  end
+            if cldDEl  then cldDEl:setText(fmtDiff(monthData.cloudyDiff));        cldDEl:setAlpha(alpha)  end
+        else
+            if lblEl   then lblEl:setText("")   end
+            if precEl  then precEl:setText("")  end
+            if precDEl then precDEl:setText("") end
+            if sunEl   then sunEl:setText("")   end
+            if sunDEl  then sunDEl:setText("")  end
+            if cldEl   then cldEl:setText("")   end
+            if cldDEl  then cldDEl:setText("")  end
         end
     end
 end
 
 function MoistureGuiWeather:updateHistoryPanel(yearOffset, wps)
-    local panel = self["historyPanel" .. yearOffset]
-    if not panel then return end
+    local pfx = "hp" .. yearOffset
 
-    local data = wps:getHistoryData(yearOffset)
-
-    local statsBlock  = panel.statsBlock
-    local noDataLabel = panel.noDataLabel
+    local data    = wps:getHistoryData(yearOffset)
+    local yearEl  = self[pfx .. "Year"]
+    local statsEl = self[pfx .. "Stats"]
+    local noDataEl = self[pfx .. "NoData"]
 
     if not data then
-        if panel.yearLabel  then panel.yearLabel:setText("")  end
-        if statsBlock       then statsBlock:setVisible(false) end
-        if noDataLabel      then noDataLabel:setVisible(true) end
-        for s = 1, 4 do
-            local el = panel["season" .. s .. "Label"]
-            if el then el:setText("") end
-        end
+        if yearEl   then yearEl:setText("")        end
+        if statsEl  then statsEl:setVisible(false) end
+        if noDataEl then noDataEl:setVisible(true) end
         return
     end
 
-    if panel.yearLabel then
-        panel.yearLabel:setText(tostring(data.year))
+    if yearEl   then yearEl:setText(tostring(data.year)) end
+    if statsEl  then statsEl:setVisible(true)            end
+    if noDataEl then noDataEl:setVisible(false)          end
+
+    -- Annual summary
+    local function setAnnual(key, grp)
+        local pctEl  = self[pfx .. key .. "Pct"]
+        local diffEl = self[pfx .. key .. "Diff"]
+        if pctEl  then pctEl:setText(fmtPct(data.groups[grp]))       end
+        if diffEl then diffEl:setText(fmtDiff(data.diffs[grp]))      end
     end
-    if statsBlock  then statsBlock:setVisible(true)  end
-    if noDataLabel then noDataLabel:setVisible(false) end
+    setAnnual("Prec", "precipitation")
+    setAnnual("Sun",  "sun")
+    setAnnual("Cld",  "cloudy")
 
-    local sb = statsBlock or panel
-    if sb.precipitationPct  then sb.precipitationPct:setText(fmtPct(data.groups.precipitation))       end
-    if sb.precipitationDiff then sb.precipitationDiff:setText(fmtDiff(data.diffs.precipitation))      end
-    if sb.sunPct            then sb.sunPct:setText(fmtPct(data.groups.sun))                           end
-    if sb.sunDiff           then sb.sunDiff:setText(fmtDiff(data.diffs.sun))                          end
-    if sb.cloudyPct         then sb.cloudyPct:setText(fmtPct(data.groups.cloudy))                     end
-    if sb.cloudyDiff        then sb.cloudyDiff:setText(fmtDiff(data.diffs.cloudy))                    end
-
+    -- Per-season rows
     for s = 1, 4 do
-        local el = panel["season" .. s .. "Label"]
-        if el then
-            local seasonName = g_i18n:getText("moistureSystem_gui_weather_season" .. s)
-            if data.seasons and data.seasons[s] then
-                local sg = data.seasons[s].groups
-                el:setText(string.format("%s: %s / %s / %s",
-                    seasonName,
-                    fmtPct(sg.precipitation),
-                    fmtPct(sg.sun),
-                    fmtPct(sg.cloudy)))
-            else
-                el:setText(seasonName .. ": -")
-            end
+        local sp     = pfx .. "S" .. s
+        local lblEl  = self[sp .. "Lbl"]
+        local precEl = self[sp .. "Prec"]
+        local sunEl  = self[sp .. "Sun"]
+        local cldEl  = self[sp .. "Cld"]
+
+        local seasonName = g_i18n:getText(SEASON_NAMES[s])
+        if lblEl then lblEl:setText(seasonName) end
+
+        if data.seasons and data.seasons[s] then
+            local sg = data.seasons[s].groups
+            if precEl then precEl:setText(fmtPct(sg.precipitation)) end
+            if sunEl  then sunEl:setText(fmtPct(sg.sun))            end
+            if cldEl  then cldEl:setText(fmtPct(sg.cloudy))         end
+        else
+            if precEl then precEl:setText("-") end
+            if sunEl  then sunEl:setText("-")  end
+            if cldEl  then cldEl:setText("-")  end
         end
     end
 end

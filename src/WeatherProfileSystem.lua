@@ -379,14 +379,17 @@ end
 -- Forecast query interface
 
 function WeatherProfileSystem:rollForecastOffsets()
+    -- Store as fractions; applied as (normal_value * fraction) in getForecastData so
+    -- the absolute swing scales with how much of that weather type normally exists.
     local function jitter(range)
         return {
-            precipitation = (math.random() * 2 - 1) * range * 100,
-            sun           = (math.random() * 2 - 1) * range * 100,
-            cloudy        = (math.random() * 2 - 1) * range * 100,
+            precipitation = (math.random() * 2 - 1) * range,
+            sun           = (math.random() * 2 - 1) * range,
+            cloudy        = (math.random() * 2 - 1) * range,
         }
     end
-    self.forecastOffsets = { jitter(0.05), jitter(0.25), jitter(0.40) }
+    -- Ranges: current season ±5%, next ±10%, season after ±20%
+    self.forecastOffsets = { jitter(0.05), jitter(0.10), jitter(0.20) }
 end
 
 function WeatherProfileSystem:ensureForecastOffsets()
@@ -493,18 +496,23 @@ function WeatherProfileSystem:getForecastData(seasonIndex)
         aggN[grp] = aggN[grp] / n
     end
 
-    -- Apply jitter to aggregate display values
+    -- Apply jitter scaled to the normal baseline: swing = normal_value * fraction.
+    -- This keeps small-value groups (e.g. 5% sun) from swinging to zero or negative,
+    -- while larger groups (e.g. 55% precipitation) get proportionally larger wobble.
     local offsets = self.forecastOffsets[seasonIndex + 1]
+    local jitterPrec = aggN.precipitation * offsets.precipitation
+    local jitterSun  = aggN.sun           * offsets.sun
+    local jitterCld  = aggN.cloudy        * offsets.cloudy
     return {
         seasonIndex       = seasonIndex,
         seasonDef         = WeatherProfileSystem.SEASONS[targetSeasonIdx],
         months            = monthData,
-        precipitation     = aggG.precipitation     + offsets.precipitation,
-        sun               = aggG.sun               + offsets.sun,
-        cloudy            = aggG.cloudy            + offsets.cloudy,
-        precipitationDiff = (aggG.precipitation - aggN.precipitation) + offsets.precipitation,
-        sunDiff           = (aggG.sun           - aggN.sun)           + offsets.sun,
-        cloudyDiff        = (aggG.cloudy        - aggN.cloudy)        + offsets.cloudy,
+        precipitation     = aggG.precipitation     + jitterPrec,
+        sun               = aggG.sun               + jitterSun,
+        cloudy            = aggG.cloudy            + jitterCld,
+        precipitationDiff = (aggG.precipitation - aggN.precipitation) + jitterPrec,
+        sunDiff           = (aggG.sun           - aggN.sun)           + jitterSun,
+        cloudyDiff        = (aggG.cloudy        - aggN.cloudy)        + jitterCld,
     }
 end
 
