@@ -40,7 +40,7 @@ function MSPlaceableInfoTriggerExtension:updateInfo(info)
                 if info_data.quality then
                     table.insert(info, {
                         title = fillType.title .. " " .. g_i18n:getText("moistureSystem_quality"),
-                        text = string.format("%d%%", math.floor(info_data.quality)),
+                        text = MSPlayerHUDExtension.formatQualityText(info_data.quality, fillTypeName),
                         accentuate = false
                     })
                 end
