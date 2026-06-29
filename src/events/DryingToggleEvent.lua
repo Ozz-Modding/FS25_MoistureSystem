@@ -7,17 +7,17 @@ function DryingToggleEvent.emptyNew()
     return Event.new(DryingToggleEvent_mt)
 end
 
--- When newState is nil this is a client→server toggle request.
--- When newState is a bool this is a server→client state broadcast.
-function DryingToggleEvent.new(placeableUniqueId, newState)
+-- objectId: network object ID (from NetworkUtil.getObjectId)
+-- newState: nil = client→server toggle request; bool = server→client state broadcast
+function DryingToggleEvent.new(objectId, newState)
     local self = DryingToggleEvent.emptyNew()
-    self.placeableUniqueId = placeableUniqueId
+    self.objectId = objectId
     self.newState = newState
     return self
 end
 
 function DryingToggleEvent:writeStream(streamId, connection)
-    streamWriteString(streamId, self.placeableUniqueId)
+    streamWriteInt32(streamId, self.objectId)
     local hasState = self.newState ~= nil
     streamWriteBool(streamId, hasState)
     if hasState then
@@ -26,7 +26,7 @@ function DryingToggleEvent:writeStream(streamId, connection)
 end
 
 function DryingToggleEvent:readStream(streamId, connection)
-    self.placeableUniqueId = streamReadString(streamId)
+    self.objectId = streamReadInt32(streamId)
     local hasState = streamReadBool(streamId)
     if hasState then
         self.newState = streamReadBool(streamId)
@@ -38,18 +38,17 @@ function DryingToggleEvent:run(connection)
     local dryingSystem = g_currentMission.dryingSystem
     if dryingSystem == nil then return end
 
+    local placeable = NetworkUtil.getObject(self.objectId)
+    if placeable == nil then return end
+
     if g_currentMission:getIsServer() then
         if self.newState == nil then
             -- Toggle request from a client
-            local placeable = dryingSystem:getPlaceableByUniqueId(self.placeableUniqueId)
-            if placeable then
-                dryingSystem:toggleDrying(placeable)
-                local isNowDrying = dryingSystem:isDrying(placeable.uniqueId)
-                g_server:broadcastEvent(DryingToggleEvent.new(self.placeableUniqueId, isNowDrying))
-            end
+            dryingSystem:toggleDrying(placeable)
+            local isNowDrying = dryingSystem:isDrying(placeable.uniqueId)
+            g_server:broadcastEvent(DryingToggleEvent.new(self.objectId, isNowDrying))
         end
-        -- Ignore inbound state-broadcast packets on the server (sent to clients only)
     elseif self.newState ~= nil then
-        dryingSystem:setDryingState(self.placeableUniqueId, self.newState)
+        dryingSystem:setDryingState(placeable.uniqueId, self.newState)
     end
 end

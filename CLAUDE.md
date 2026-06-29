@@ -106,3 +106,15 @@ type composition; use the scheduled weather type instead (see `WeatherHistoryCol
 - `MoistureClamp.lua` is retained on disk but not loaded — replaced entirely by WeatherProfileSystem.
 - Adding a new profile: create `xml/weatherProfiles/<id>.xml`, add the filename to the `profileFiles` list in `WeatherProfileSystem:loadProfiles()`.
 - Multiplayer: do not add client-side moisture logic without a corresponding network event.
+
+## Multiplayer networking rules
+
+**Object identity over the network:** `placeable.uniqueId` is a local string identifier and is NOT guaranteed to match between client and server. Never send `uniqueId` over the network. Always use `NetworkUtil.getObjectId(object)` (returns an int32) to identify objects in events, then resolve back to the local object on the receiving side with `NetworkUtil.getObject(objectId)`. From there, read `.uniqueId` locally as needed.
+
+**DryingSystem MP pattern:** `DryingToggleEvent` is bidirectional:
+- Client→server: sends `objectId` (int32), `newState` absent — server toggles and broadcasts back.
+- Server→all clients: sends `objectId` + `newState` (bool) — clients call `dryingSystem:setDryingState(uniqueId, isActive)` to sync their local `activeDryers` table and show the notification.
+- Auto-stop (drying complete): server broadcasts `newState=false` to all clients from `onHourChanged`.
+- The server player's notification comes from `toggleDrying()` directly; client notifications come from `setDryingState()`.
+
+**Silo moisture sync:** `drySilo` broadcasts `ObjectMoistureResponseEvent` each hour it runs, keeping client `objectInfo` current. No equivalent is needed for shed pile moisture (that lives in `GroundPropertyTracker` which has its own sync path).

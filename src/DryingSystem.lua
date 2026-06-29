@@ -255,7 +255,13 @@ function DryingSystem:onHourChanged()
 
     for _, placeableId in ipairs(completedDryers) do
         self.activeDryers[placeableId] = nil
-        g_server:broadcastEvent(DryingToggleEvent.new(placeableId, false))
+        local placeable = self:getPlaceableByUniqueId(placeableId)
+        if placeable ~= nil then
+            local objectId = NetworkUtil.getObjectId(placeable)
+            if objectId ~= nil then
+                g_server:broadcastEvent(DryingToggleEvent.new(objectId, false))
+            end
+        end
     end
 end
 
@@ -534,7 +540,10 @@ function DryingActivatable:onKeybindPressed()
             end
         end
     else
-        g_client:getServerConnection():sendEvent(DryingToggleEvent.new(self.placeable.uniqueId))
+        local objectId = NetworkUtil.getObjectId(self.placeable)
+        if objectId ~= nil then
+            g_client:getServerConnection():sendEvent(DryingToggleEvent.new(objectId))
+        end
         -- Button text and notification will update when the server broadcasts back via applyRemoteState
     end
 end

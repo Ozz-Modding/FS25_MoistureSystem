@@ -39,7 +39,7 @@ Changelog:
 - The moisture system now controls weather. Choose a Weather Profile that matches your region in game settings. Weather includes variability that simulates realistic seasonal patterns. This impacts your harvest and requires even more planning than before.
 - The moisture calendar has been replaced with a Weather information view, showing seasonal forecasts and historical weather data.
 - Generally eased material rotting, both for bales and ground piles. Material will take longer to begin to rot, and rot more slowly.
-- Fixed an issue with grain drying in multiplayer games.
+- Fixed an issue with grain drying not starting in multiplayer games.
 - Vehicles and silos with crop in will now show the current grade of the crop in the HUD. Previously only moisture and quality were shown.
 
 1.0.0.7:
