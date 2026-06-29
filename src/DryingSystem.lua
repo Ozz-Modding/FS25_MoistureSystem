@@ -219,6 +219,18 @@ function DryingSystem:isDrying(placeableId)
     return self.activeDryers[placeableId] ~= nil
 end
 
+function DryingSystem:setDryingState(placeableUniqueId, isActive)
+    if isActive then
+        self.activeDryers[placeableUniqueId] = true
+        g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_OK,
+            g_i18n:getText("ms_drying_started"))
+    else
+        self.activeDryers[placeableUniqueId] = nil
+        g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_OK,
+            g_i18n:getText("ms_drying_stopped"))
+    end
+end
+
 function DryingSystem:onHourChanged()
     if not g_currentMission:getIsServer() then return end
 
@@ -243,6 +255,7 @@ function DryingSystem:onHourChanged()
 
     for _, placeableId in ipairs(completedDryers) do
         self.activeDryers[placeableId] = nil
+        g_server:broadcastEvent(DryingToggleEvent.new(placeableId, false))
     end
 end
 
@@ -513,16 +526,16 @@ function DryingActivatable:onKeybindPressed()
 
     if g_currentMission:getIsServer() then
         self.dryingSystem:toggleDrying(self.placeable)
+        if self.actionEventId then
+            if self.dryingSystem:isDrying(self.placeable.uniqueId) then
+                g_inputBinding:setActionEventText(self.actionEventId, g_i18n:getText("ms_action_stopDrying"))
+            else
+                g_inputBinding:setActionEventText(self.actionEventId, g_i18n:getText("ms_action_startDrying"))
+            end
+        end
     else
         g_client:getServerConnection():sendEvent(DryingToggleEvent.new(self.placeable.uniqueId))
-    end
-
-    if self.actionEventId then
-        if self.dryingSystem:isDrying(self.placeable.uniqueId) then
-            g_inputBinding:setActionEventText(self.actionEventId, g_i18n:getText("ms_action_stopDrying"))
-        else
-            g_inputBinding:setActionEventText(self.actionEventId, g_i18n:getText("ms_action_startDrying"))
-        end
+        -- Button text and notification will update when the server broadcasts back via applyRemoteState
     end
 end
 
