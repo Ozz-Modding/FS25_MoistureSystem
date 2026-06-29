@@ -77,7 +77,7 @@ Track moisture levels easily with built-in tools:
 - **Moisture Meter Hand Tool**: Equip the moisture meter to read exact field/ground moisture at your location
 - **HUD Display**: Optional field moisture display in the game HUD
 - **Crop Grade Menu**: Access detailed moisture range tables for all crops via the in-game menu (Shift+M)
-- **Moisture Calendar**: View monthly moisture ranges for your chosen environment type
+- **Weather Screen**: View upcoming forecast data and previous year data
 
 ## How to Use
 
@@ -170,6 +170,14 @@ Access moisture information through the in-game menu system:
 5. **Protect or Process**: Bale and wrap materials, or store them before weather turns bad
 6. **Multiple Tedding**: Ted grass several times in good weather for fastest drying
 7. **Monitor Moisture**: Check field moisture before starting harvest
+
+## Custom Weather Profiles
+
+Weather profiles define the regional climate — monthly moisture ranges, temperature offsets, and per-type weather weights (rain, snow, sun, etc.). The mod ships with seven profiles (UK East/West, Central Europe, Mediterranean, US Midwest, US Pacific Northwest, East Asia).
+
+If you want to create a profile for a different region, see the authoring guide:
+
+[docs/weather-profile-authoring.md](docs/weather-profile-authoring.md)
 
 ## Thanks
 

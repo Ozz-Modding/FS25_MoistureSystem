@@ -21,10 +21,10 @@ WeatherProfileSystem.SEASONS = {
 local SEASON_START_MONTHS = {[3] = true, [6] = true, [9] = true, [12] = true}
 
 local GROUP_WEIGHT_KEYS = {
-    wRain = "precipitation", wThunder = "precipitation",
-    wSnow = "precipitation", wHail = "precipitation",
-    wSun = "sun",
-    wPartlyCloudy = "cloudy", wCloudy = "cloudy",
+    rain = "precipitation", thunder = "precipitation",
+    snow = "precipitation", hail = "precipitation",
+    sun = "sun",
+    partlyCloudy = "cloudy", cloudy = "cloudy",
 }
 
 function WeatherProfileSystem:loadMap()
@@ -39,19 +39,10 @@ end
 
 function WeatherProfileSystem:loadProfiles()
     local profileDir = MoistureSystem.dir .. "xml/weatherProfiles/"
-    local profileFiles = {
-        "ukeast.xml",
-        "ukwest.xml",
-        "centraleurope.xml",
-        "mediterranean.xml",
-        "usmidwest.xml",
-        "uspnw.xml",
-        "eastasia.xml",
-    }
-    for _, filename in ipairs(profileFiles) do
-        local path = profileDir .. filename
-        if fileExists(path) then
-            self:loadProfileXML(path)
+    local files = Files.new(profileDir)
+    for _, entry in pairs(files.files) do
+        if not entry.isDirectory and entry.filename:sub(-4) == ".xml" then
+            self:loadProfileXML(profileDir .. entry.filename)
         end
     end
 end
@@ -88,13 +79,13 @@ function WeatherProfileSystem:loadProfileXML(path)
                         tempMaxOffset = getXMLFloat(xmlFile, monthXmlKey .. "#tempMaxOffset") or 0,
                         moistureMin   = getXMLFloat(xmlFile, monthXmlKey .. "#moistureMin")   or 10,
                         moistureMax   = getXMLFloat(xmlFile, monthXmlKey .. "#moistureMax")   or 30,
-                        wRain         = getXMLInt(xmlFile, monthXmlKey .. "#wRain")           or 0,
-                        wThunder      = getXMLInt(xmlFile, monthXmlKey .. "#wThunder")        or 0,
-                        wSnow         = getXMLInt(xmlFile, monthXmlKey .. "#wSnow")           or 0,
-                        wHail         = getXMLInt(xmlFile, monthXmlKey .. "#wHail")           or 0,
-                        wSun          = getXMLInt(xmlFile, monthXmlKey .. "#wSun")            or 1,
-                        wPartlyCloudy = getXMLInt(xmlFile, monthXmlKey .. "#wPartlyCloudy")   or 1,
-                        wCloudy       = getXMLInt(xmlFile, monthXmlKey .. "#wCloudy")         or 1,
+                        rain         = getXMLInt(xmlFile, monthXmlKey .. "#rain")           or 0,
+                        thunder      = getXMLInt(xmlFile, monthXmlKey .. "#thunder")        or 0,
+                        snow         = getXMLInt(xmlFile, monthXmlKey .. "#snow")           or 0,
+                        hail         = getXMLInt(xmlFile, monthXmlKey .. "#hail")           or 0,
+                        sun          = getXMLInt(xmlFile, monthXmlKey .. "#sun")            or 1,
+                        partlyCloudy = getXMLInt(xmlFile, monthXmlKey .. "#partlyCloudy")   or 1,
+                        cloudy       = getXMLInt(xmlFile, monthXmlKey .. "#cloudy")         or 1,
                     }
                 end
             end
@@ -177,11 +168,11 @@ function WeatherProfileSystem:cloneWeatherObjectInto(weather, season, weatherTyp
 end
 
 -- FS25's base map doesn't author RAIN or HAIL weather objects for every season (winter has no
--- rain; hail exists only in spring). Profiles legitimately assign wRain/wHail in those seasons
+-- rain; hail exists only in spring). Profiles legitimately assign rain/hail in those seasons
 -- (UK winter rain, hail across the year), so without an object that weight is unschedulable.
 -- The engine permits these objects in any season (isRainAllowed is true during load) -- they
 -- simply aren't authored -- so we clone real RAIN and HAIL objects into every season missing
--- them. After this, wRain/wHail schedule genuine weather instead of redirecting to a fallback.
+-- them. After this, rain/hail schedule genuine weather instead of redirecting to a fallback.
 function WeatherProfileSystem:injectMissingWeatherObjects()
     local weather = g_currentMission.environment.weather
     if not weather or not weather.weatherObjects then return end
@@ -227,7 +218,7 @@ end
 
 function WeatherProfileSystem:rollWeightVariation(month)
     local md = self:getMonthData(month)
-    if not md or md.wRain == 0 then
+    if not md or md.rain == 0 then
         self.weightVariation = nil
         return
     end
@@ -239,13 +230,13 @@ function WeatherProfileSystem:rollWeightVariation(month)
     end
 
     local swingFraction = 0.08 + math.random() * 0.04
-    local delta = math.floor(md.wRain * swingFraction + 0.5)
+    local delta = math.floor(md.rain * swingFraction + 0.5)
     if delta == 0 then
         self.weightVariation = nil
         return
     end
 
-    local otherKeys = { "wThunder", "wSnow", "wHail", "wSun", "wPartlyCloudy", "wCloudy" }
+    local otherKeys = { "thunder", "snow", "hail", "sun", "partlyCloudy", "cloudy" }
     local candidates = {}
     for _, k in ipairs(otherKeys) do
         if roll == 2 then
@@ -276,33 +267,33 @@ function WeatherProfileSystem:rebuildWeatherWeights(weather)
     if not md then return end
 
     local weights = {
-        wRain         = md.wRain,
-        wThunder      = md.wThunder,
-        wSnow         = md.wSnow,
-        wHail         = md.wHail,
-        wSun          = md.wSun,
-        wPartlyCloudy = md.wPartlyCloudy,
-        wCloudy       = md.wCloudy,
+        rain         = md.rain,
+        thunder      = md.thunder,
+        snow         = md.snow,
+        hail         = md.hail,
+        sun          = md.sun,
+        partlyCloudy = md.partlyCloudy,
+        cloudy       = md.cloudy,
     }
     local variation = self.weightVariation
     if variation then
         if variation.increaseRain then
-            weights.wRain = weights.wRain + variation.delta
+            weights.rain = weights.rain + variation.delta
             weights[variation.targetKey] = math.max(0, weights[variation.targetKey] - variation.delta)
         else
-            weights.wRain = math.max(0, weights.wRain - variation.delta)
+            weights.rain = math.max(0, weights.rain - variation.delta)
             weights[variation.targetKey] = weights[variation.targetKey] + variation.delta
         end
     end
 
     local typeToWeight = {
-        [WeatherType.RAIN]             = weights.wRain,
-        [WeatherType.THUNDER]          = weights.wThunder,
-        [WeatherType.SNOW]             = weights.wSnow,
-        [WeatherType.HAIL]             = weights.wHail,
-        [WeatherType.SUN]              = weights.wSun,
-        [WeatherType.PARTIALLY_CLOUDY] = weights.wPartlyCloudy,
-        [WeatherType.CLOUDY]           = weights.wCloudy,
+        [WeatherType.RAIN]             = weights.rain,
+        [WeatherType.THUNDER]          = weights.thunder,
+        [WeatherType.SNOW]             = weights.snow,
+        [WeatherType.HAIL]             = weights.hail,
+        [WeatherType.SUN]              = weights.sun,
+        [WeatherType.PARTIALLY_CLOUDY] = weights.partlyCloudy,
+        [WeatherType.CLOUDY]           = weights.cloudy,
     }
 
     -- Fallback chains: a weather type may have NO object in a given engine season (e.g. FS25
@@ -310,7 +301,7 @@ function WeatherProfileSystem:rebuildWeatherWeights(weather)
     -- type with no object would silently vanish, under-reporting that season. So any such
     -- weight is redirected to the first available type in its chain. Precip redirects to precip
     -- (rain<->snow<->hail) so the precipitation SHARE is preserved regardless of which precip
-    -- object the season actually has. This makes profiles authored with wRain in winter (ours
+    -- object the season actually has. This makes profiles authored with rain in winter (ours
     -- or third-party) still produce winter precipitation.
     local FALLBACK_CHAINS = {
         [WeatherType.RAIN]             = { WeatherType.SNOW, WeatherType.HAIL },
@@ -485,9 +476,9 @@ end
 function WeatherProfileSystem:getRainfallWeightForMonth(month)
     local md = self:getMonthData(month)
     if not md then return 0 end
-    local total = md.wRain + md.wThunder + md.wSnow + md.wHail + md.wSun + md.wPartlyCloudy + md.wCloudy
+    local total = md.rain + md.thunder + md.snow + md.hail + md.sun + md.partlyCloudy + md.cloudy
     if total == 0 then return 0 end
-    return (md.wRain + md.wThunder) / total
+    return (md.rain + md.thunder) / total
 end
 
 function WeatherProfileSystem:getTemperatureOffsetsForMonth(month)
@@ -787,8 +778,8 @@ function WeatherProfileSystem:consoleCommandWeatherDebug()
         string.format("NextYear: %s", self.nextYearScenarioId or "none"),
         string.format("Month:    %d", month),
         string.format("Weights:  rain=%d thunder=%d snow=%d hail=%d sun=%d partCloud=%d cloudy=%d",
-            md and md.wRain or 0, md and md.wThunder or 0, md and md.wSnow or 0, md and md.wHail or 0,
-            md and md.wSun or 0, md and md.wPartlyCloudy or 0, md and md.wCloudy or 0),
+            md and md.rain or 0, md and md.thunder or 0, md and md.snow or 0, md and md.hail or 0,
+            md and md.sun or 0, md and md.partlyCloudy or 0, md and md.cloudy or 0),
         string.format("TempOffset: min %+.1f  max %+.1f", offsets.minOffset, offsets.maxOffset),
         string.format("Clamp:    min %.0f%%  max %.0f%%", clamp.min, clamp.max),
     }

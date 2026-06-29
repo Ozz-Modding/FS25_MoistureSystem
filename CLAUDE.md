@@ -59,8 +59,8 @@ This is what field moisture actually settles within. Always check inner range, n
 
 ## Weather weights → actual weather
 
-Each month entry carries per-type weights (`wRain`, `wThunder`, `wSnow`, `wHail`, `wSun`,
-`wPartlyCloudy`, `wCloudy`). The design goal: **a type's weight share equals its share of
+Each month entry carries per-type weights (`rain`, `thunder`, `snow`, `hail`, `sun`,
+`partlyCloudy`, `cloudy`). The design goal: **a type's weight share equals its share of
 time** — e.g. 40% rain weight ⇒ raining ~40% of that month. `WeatherProfileSystem:rebuildWeatherWeights`
 rebuilds the engine's `weightedWeatherObjects` pool each period from these weights. Getting
 weight→time fidelity required three engine-level fixes (all in `WeatherProfileSystem.lua`):
@@ -104,7 +104,7 @@ type composition; use the scheduled weather type instead (see `WeatherHistoryCol
 - Moisture values stored internally on 0–1 scale; displayed as percentage (×100).
 - All simulation is server-side. Clients receive state via `InitialClientStateEvent`.
 - `MoistureClamp.lua` is retained on disk but not loaded — replaced entirely by WeatherProfileSystem.
-- Adding a new profile: create `xml/weatherProfiles/<id>.xml`, add the filename to the `profileFiles` list in `WeatherProfileSystem:loadProfiles()`.
+- Adding a new profile: create `xml/weatherProfiles/<id>.xml`. All `.xml` files in that directory are auto-discovered via `Files.new()` — no code registration needed.
 - Multiplayer: do not add client-side moisture logic without a corresponding network event.
 
 ## Multiplayer networking rules

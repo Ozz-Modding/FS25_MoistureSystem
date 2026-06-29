@@ -3,154 +3,154 @@
     <scenarios>
         <scenario id="normal" weight="10">
             <month id="1"  tempMinOffset="-1.0" tempMaxOffset="1.0"
-                wRain="3" wThunder="0" wSnow="4" wHail="0" wSun="2" wPartlyCloudy="3" wCloudy="5"
+                rain="3" thunder="0" snow="4" hail="0" sun="2" partlyCloudy="3" cloudy="5"
                 moistureMin="17" moistureMax="36"/>
             <month id="2"  tempMinOffset="-1.0" tempMaxOffset="1.0"
-                wRain="2" wThunder="0" wSnow="4" wHail="0" wSun="2" wPartlyCloudy="3" wCloudy="5"
+                rain="2" thunder="0" snow="4" hail="0" sun="2" partlyCloudy="3" cloudy="5"
                 moistureMin="16" moistureMax="35"/>
             <month id="3"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="3" wThunder="0" wSnow="2" wHail="1" wSun="3" wPartlyCloudy="4" wCloudy="4"
+                rain="3" thunder="0" snow="2" hail="1" sun="3" partlyCloudy="4" cloudy="4"
                 moistureMin="12" moistureMax="28"/>
             <month id="4"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="4" wThunder="1" wSnow="0" wHail="1" wSun="4" wPartlyCloudy="4" wCloudy="3"
+                rain="4" thunder="1" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="3"
                 moistureMin="9"  moistureMax="22"/>
             <month id="5"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="5" wThunder="2" wSnow="0" wHail="1" wSun="3" wPartlyCloudy="4" wCloudy="3"
+                rain="5" thunder="2" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
                 moistureMin="8"  moistureMax="20"/>
             <month id="6"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="5" wThunder="2" wSnow="0" wHail="1" wSun="3" wPartlyCloudy="4" wCloudy="3"
+                rain="5" thunder="2" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
                 moistureMin="7"  moistureMax="18"/>
             <month id="7"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="4" wThunder="3" wSnow="0" wHail="1" wSun="4" wPartlyCloudy="4" wCloudy="2"
+                rain="4" thunder="3" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="2"
                 moistureMin="6"  moistureMax="16"/>
             <month id="8"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="4" wThunder="2" wSnow="0" wHail="1" wSun="4" wPartlyCloudy="4" wCloudy="3"
+                rain="4" thunder="2" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="3"
                 moistureMin="7"  moistureMax="18"/>
             <month id="9"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="4" wThunder="1" wSnow="0" wHail="1" wSun="3" wPartlyCloudy="4" wCloudy="4"
+                rain="4" thunder="1" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="4"
                 moistureMin="10" moistureMax="24"/>
             <month id="10" tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="3" wThunder="0" wSnow="1" wHail="0" wSun="3" wPartlyCloudy="4" wCloudy="5"
+                rain="3" thunder="0" snow="1" hail="0" sun="3" partlyCloudy="4" cloudy="5"
                 moistureMin="10" moistureMax="24"/>
             <month id="11" tempMinOffset="-0.5" tempMaxOffset="0.5"
-                wRain="3" wThunder="0" wSnow="2" wHail="0" wSun="2" wPartlyCloudy="3" wCloudy="6"
+                rain="3" thunder="0" snow="2" hail="0" sun="2" partlyCloudy="3" cloudy="6"
                 moistureMin="16" moistureMax="33"/>
             <month id="12" tempMinOffset="-1.0" tempMaxOffset="1.0"
-                wRain="2" wThunder="0" wSnow="4" wHail="0" wSun="2" wPartlyCloudy="3" wCloudy="5"
+                rain="2" thunder="0" snow="4" hail="0" sun="2" partlyCloudy="3" cloudy="5"
                 moistureMin="17" moistureMax="35"/>
         </scenario>
         <scenario id="drySummer" weight="2">
             <month id="1"  tempMinOffset="-1.0" tempMaxOffset="1.0"
-                wRain="3" wThunder="0" wSnow="4" wHail="0" wSun="2" wPartlyCloudy="3" wCloudy="5"
+                rain="3" thunder="0" snow="4" hail="0" sun="2" partlyCloudy="3" cloudy="5"
                 moistureMin="17" moistureMax="36"/>
             <month id="2"  tempMinOffset="-1.0" tempMaxOffset="1.0"
-                wRain="2" wThunder="0" wSnow="4" wHail="0" wSun="2" wPartlyCloudy="3" wCloudy="5"
+                rain="2" thunder="0" snow="4" hail="0" sun="2" partlyCloudy="3" cloudy="5"
                 moistureMin="16" moistureMax="35"/>
             <month id="3"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="3" wThunder="0" wSnow="1" wHail="1" wSun="3" wPartlyCloudy="4" wCloudy="4"
+                rain="3" thunder="0" snow="1" hail="1" sun="3" partlyCloudy="4" cloudy="4"
                 moistureMin="11" moistureMax="26"/>
             <month id="4"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="3" wThunder="0" wSnow="0" wHail="1" wSun="5" wPartlyCloudy="4" wCloudy="3"
+                rain="3" thunder="0" snow="0" hail="1" sun="5" partlyCloudy="4" cloudy="3"
                 moistureMin="8"  moistureMax="20"/>
             <month id="5"  tempMinOffset="1.0"  tempMaxOffset="2.0"
-                wRain="3" wThunder="1" wSnow="0" wHail="1" wSun="5" wPartlyCloudy="4" wCloudy="2"
+                rain="3" thunder="1" snow="0" hail="1" sun="5" partlyCloudy="4" cloudy="2"
                 moistureMin="6"  moistureMax="16"/>
             <month id="6"  tempMinOffset="2.0"  tempMaxOffset="4.0"
-                wRain="1" wThunder="1" wSnow="0" wHail="1" wSun="7" wPartlyCloudy="5" wCloudy="1"
+                rain="1" thunder="1" snow="0" hail="1" sun="7" partlyCloudy="5" cloudy="1"
                 moistureMin="4"  moistureMax="12"/>
             <month id="7"  tempMinOffset="3.0"  tempMaxOffset="5.0"
-                wRain="1" wThunder="1" wSnow="0" wHail="1" wSun="8" wPartlyCloudy="4" wCloudy="1"
+                rain="1" thunder="1" snow="0" hail="1" sun="8" partlyCloudy="4" cloudy="1"
                 moistureMin="3"  moistureMax="10"/>
             <month id="8"  tempMinOffset="2.0"  tempMaxOffset="4.0"
-                wRain="1" wThunder="1" wSnow="0" wHail="1" wSun="7" wPartlyCloudy="4" wCloudy="1"
+                rain="1" thunder="1" snow="0" hail="1" sun="7" partlyCloudy="4" cloudy="1"
                 moistureMin="4"  moistureMax="12"/>
             <month id="9"  tempMinOffset="1.0"  tempMaxOffset="2.0"
-                wRain="3" wThunder="0" wSnow="0" wHail="1" wSun="4" wPartlyCloudy="4" wCloudy="4"
+                rain="3" thunder="0" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="4"
                 moistureMin="8"  moistureMax="20"/>
             <month id="10" tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="3" wThunder="0" wSnow="1" wHail="0" wSun="3" wPartlyCloudy="4" wCloudy="5"
+                rain="3" thunder="0" snow="1" hail="0" sun="3" partlyCloudy="4" cloudy="5"
                 moistureMin="12" moistureMax="27"/>
             <month id="11" tempMinOffset="-0.5" tempMaxOffset="0.5"
-                wRain="3" wThunder="0" wSnow="2" wHail="0" wSun="2" wPartlyCloudy="3" wCloudy="6"
+                rain="3" thunder="0" snow="2" hail="0" sun="2" partlyCloudy="3" cloudy="6"
                 moistureMin="15" moistureMax="32"/>
             <month id="12" tempMinOffset="-1.0" tempMaxOffset="1.0"
-                wRain="2" wThunder="0" wSnow="4" wHail="0" wSun="2" wPartlyCloudy="3" wCloudy="5"
+                rain="2" thunder="0" snow="4" hail="0" sun="2" partlyCloudy="3" cloudy="5"
                 moistureMin="17" moistureMax="35"/>
         </scenario>
         <scenario id="wetYear" weight="2">
             <month id="1"  tempMinOffset="-0.5" tempMaxOffset="0.5"
-                wRain="5" wThunder="0" wSnow="3" wHail="0" wSun="1" wPartlyCloudy="2" wCloudy="6"
+                rain="5" thunder="0" snow="3" hail="0" sun="1" partlyCloudy="2" cloudy="6"
                 moistureMin="22" moistureMax="44"/>
             <month id="2"  tempMinOffset="-0.5" tempMaxOffset="0.5"
-                wRain="4" wThunder="0" wSnow="3" wHail="0" wSun="1" wPartlyCloudy="2" wCloudy="6"
+                rain="4" thunder="0" snow="3" hail="0" sun="1" partlyCloudy="2" cloudy="6"
                 moistureMin="21" moistureMax="43"/>
             <month id="3"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="5" wThunder="0" wSnow="1" wHail="1" wSun="2" wPartlyCloudy="3" wCloudy="5"
+                rain="5" thunder="0" snow="1" hail="1" sun="2" partlyCloudy="3" cloudy="5"
                 moistureMin="17" moistureMax="36"/>
             <month id="4"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="6" wThunder="1" wSnow="0" wHail="1" wSun="2" wPartlyCloudy="3" wCloudy="4"
+                rain="6" thunder="1" snow="0" hail="1" sun="2" partlyCloudy="3" cloudy="4"
                 moistureMin="14" moistureMax="30"/>
             <month id="5"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="7" wThunder="2" wSnow="0" wHail="1" wSun="1" wPartlyCloudy="3" wCloudy="4"
+                rain="7" thunder="2" snow="0" hail="1" sun="1" partlyCloudy="3" cloudy="4"
                 moistureMin="13" moistureMax="28"/>
             <month id="6"  tempMinOffset="-1.0" tempMaxOffset="-1.0"
-                wRain="7" wThunder="2" wSnow="0" wHail="1" wSun="1" wPartlyCloudy="3" wCloudy="4"
+                rain="7" thunder="2" snow="0" hail="1" sun="1" partlyCloudy="3" cloudy="4"
                 moistureMin="12" moistureMax="26"/>
             <month id="7"  tempMinOffset="-1.0" tempMaxOffset="-1.0"
-                wRain="6" wThunder="3" wSnow="0" wHail="1" wSun="2" wPartlyCloudy="3" wCloudy="3"
+                rain="6" thunder="3" snow="0" hail="1" sun="2" partlyCloudy="3" cloudy="3"
                 moistureMin="11" moistureMax="25"/>
             <month id="8"  tempMinOffset="-1.0" tempMaxOffset="-1.0"
-                wRain="6" wThunder="2" wSnow="0" wHail="1" wSun="2" wPartlyCloudy="3" wCloudy="4"
+                rain="6" thunder="2" snow="0" hail="1" sun="2" partlyCloudy="3" cloudy="4"
                 moistureMin="12" moistureMax="26"/>
             <month id="9"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="6" wThunder="1" wSnow="0" wHail="1" wSun="1" wPartlyCloudy="3" wCloudy="5"
+                rain="6" thunder="1" snow="0" hail="1" sun="1" partlyCloudy="3" cloudy="5"
                 moistureMin="15" moistureMax="32"/>
             <month id="10" tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="5" wThunder="0" wSnow="1" wHail="0" wSun="1" wPartlyCloudy="3" wCloudy="6"
+                rain="5" thunder="0" snow="1" hail="0" sun="1" partlyCloudy="3" cloudy="6"
                 moistureMin="18" moistureMax="38"/>
             <month id="11" tempMinOffset="-0.5" tempMaxOffset="0.5"
-                wRain="5" wThunder="0" wSnow="1" wHail="0" wSun="1" wPartlyCloudy="2" wCloudy="6"
+                rain="5" thunder="0" snow="1" hail="0" sun="1" partlyCloudy="2" cloudy="6"
                 moistureMin="22" moistureMax="44"/>
             <month id="12" tempMinOffset="-0.5" tempMaxOffset="0.5"
-                wRain="4" wThunder="0" wSnow="3" wHail="0" wSun="1" wPartlyCloudy="2" wCloudy="6"
+                rain="4" thunder="0" snow="3" hail="0" sun="1" partlyCloudy="2" cloudy="6"
                 moistureMin="23" moistureMax="45"/>
         </scenario>
         <scenario id="coldWinter" weight="1">
             <month id="1"  tempMinOffset="-4.0" tempMaxOffset="-3.0"
-                wRain="1" wThunder="0" wSnow="6" wHail="0" wSun="2" wPartlyCloudy="2" wCloudy="5"
+                rain="1" thunder="0" snow="6" hail="0" sun="2" partlyCloudy="2" cloudy="5"
                 moistureMin="14" moistureMax="30"/>
             <month id="2"  tempMinOffset="-4.0" tempMaxOffset="-3.0"
-                wRain="1" wThunder="0" wSnow="6" wHail="0" wSun="2" wPartlyCloudy="2" wCloudy="5"
+                rain="1" thunder="0" snow="6" hail="0" sun="2" partlyCloudy="2" cloudy="5"
                 moistureMin="13" moistureMax="29"/>
             <month id="3"  tempMinOffset="-2.0" tempMaxOffset="-1.0"
-                wRain="2" wThunder="0" wSnow="3" wHail="0" wSun="3" wPartlyCloudy="3" wCloudy="4"
+                rain="2" thunder="0" snow="3" hail="0" sun="3" partlyCloudy="3" cloudy="4"
                 moistureMin="10" moistureMax="24"/>
             <month id="4"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="4" wThunder="1" wSnow="0" wHail="1" wSun="4" wPartlyCloudy="4" wCloudy="3"
+                rain="4" thunder="1" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="3"
                 moistureMin="9"  moistureMax="22"/>
             <month id="5"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="5" wThunder="2" wSnow="0" wHail="1" wSun="3" wPartlyCloudy="4" wCloudy="3"
+                rain="5" thunder="2" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
                 moistureMin="8"  moistureMax="20"/>
             <month id="6"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="5" wThunder="2" wSnow="0" wHail="1" wSun="3" wPartlyCloudy="4" wCloudy="3"
+                rain="5" thunder="2" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
                 moistureMin="7"  moistureMax="18"/>
             <month id="7"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="4" wThunder="3" wSnow="0" wHail="1" wSun="4" wPartlyCloudy="4" wCloudy="2"
+                rain="4" thunder="3" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="2"
                 moistureMin="6"  moistureMax="16"/>
             <month id="8"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="4" wThunder="2" wSnow="0" wHail="1" wSun="4" wPartlyCloudy="4" wCloudy="3"
+                rain="4" thunder="2" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="3"
                 moistureMin="7"  moistureMax="18"/>
             <month id="9"  tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="4" wThunder="1" wSnow="0" wHail="1" wSun="3" wPartlyCloudy="4" wCloudy="4"
+                rain="4" thunder="1" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="4"
                 moistureMin="10" moistureMax="24"/>
             <month id="10" tempMinOffset="0.0"  tempMaxOffset="0.0"
-                wRain="3" wThunder="0" wSnow="1" wHail="0" wSun="3" wPartlyCloudy="4" wCloudy="5"
+                rain="3" thunder="0" snow="1" hail="0" sun="3" partlyCloudy="4" cloudy="5"
                 moistureMin="13" moistureMax="29"/>
             <month id="11" tempMinOffset="-1.0" tempMaxOffset="0.0"
-                wRain="3" wThunder="0" wSnow="2" wHail="0" wSun="2" wPartlyCloudy="3" wCloudy="6"
+                rain="3" thunder="0" snow="2" hail="0" sun="2" partlyCloudy="3" cloudy="6"
                 moistureMin="15" moistureMax="32"/>
             <month id="12" tempMinOffset="-3.0" tempMaxOffset="-2.0"
-                wRain="1" wThunder="0" wSnow="5" wHail="0" wSun="2" wPartlyCloudy="2" wCloudy="5"
+                rain="1" thunder="0" snow="5" hail="0" sun="2" partlyCloudy="2" cloudy="5"
                 moistureMin="15" moistureMax="31"/>
         </scenario>
     </scenarios>

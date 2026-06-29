@@ -17,10 +17,10 @@ WeatherHistoryCollector.GROUPS = {
 }
 
 local GROUP_WEIGHT_KEYS = {
-    wRain = "precipitation", wThunder = "precipitation",
-    wSnow = "precipitation", wHail = "precipitation",
-    wSun = "sun",
-    wPartlyCloudy = "cloudy", wCloudy = "cloudy",
+    rain = "precipitation", thunder = "precipitation",
+    snow = "precipitation", hail = "precipitation",
+    sun = "sun",
+    partlyCloudy = "cloudy", cloudy = "cloudy",
 }
 
 local function newSeasonBucket()
