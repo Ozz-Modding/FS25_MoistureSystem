@@ -31,7 +31,9 @@ FS25 mod (Lua + XML) that adds moisture simulation, crop quality grading, bale r
 
 ## Weather profiles
 
-Seven regional profiles, each with 2–4 weighted scenarios. Scenario selected once per January via `PERIOD_CHANGED`; persists in savegame under `<weatherProfile>` key.
+Nine regional profiles, each with 2–4 weighted scenarios. Scenario selected once per January via `PERIOD_CHANGED`; persists in savegame under `<weatherProfile>` key.
+
+**Available profiles:** `ukwest`, `ukeast`, `centraleurope`, `mediterranean`, `usmidwest`, `uspnw`, `eastasia`, `brazilcentral`, `brazilsouth`
 
 **Weather history** (`WeatherHistoryCollector`) records actual realized weather. It samples
 the scheduled weather type once per game-hour into per-season buckets, and archives the
@@ -106,6 +108,14 @@ type composition; use the scheduled weather type instead (see `WeatherHistoryCol
 - `MoistureClamp.lua` is retained on disk but not loaded — replaced entirely by WeatherProfileSystem.
 - Adding a new profile: create `xml/weatherProfiles/<id>.xml`. All `.xml` files in that directory are auto-discovered via `Files.new()` — no code registration needed.
 - Multiplayer: do not add client-side moisture logic without a corresponding network event.
+
+## Map → profile auto-defaults
+
+`MoistureSystem.MapProfileDefaults` (top of `src/main.lua`) maps `g_currentMission.missionInfo.customEnvironment` (the map's mod folder name, e.g. `FS25_Witcombe`) to a profile id. This is used as the **default** only — it is overridden by any value saved in the player's savegame. If the map is not in the table the default falls back to `ukwest`.
+
+`MoistureSystem:getDefaultProfileForMap()` performs the lookup and is called at `loadMap()` time to initialise `settings.weatherProfile` before `loadFromXMLFile()` overwrites it if save data exists.
+
+When adding entries: use the exact zip filename without `.zip` as the key. Maps with multiple variants (crossplay, pc, etc.) need separate entries. Only add maps where the region is reasonably confident — leave ambiguous/generic maps unmapped so they fall back gracefully.
 
 ## Multiplayer networking rules
 

@@ -3,6 +3,65 @@ MoistureSystem = {}
 MoistureSystem.dir = g_currentModDirectory
 MoistureSystem.SaveKey = "MoistureSystem"
 
+MoistureSystem.MapProfileDefaults = {
+    FS25_Witcombe                        = "ukwest",
+    FS25_calmsden                        = "ukwest",
+    FS25_Saxlingham                      = "ukeast",
+    FS25_Saxlingham_crossplay            = "ukeast",
+    FS25_Mindenerwald                    = "centraleurope",
+    FS25_Helden                          = "centraleurope",
+    FS25_Birgland                        = "centraleurope",
+    FS25_Geistal                         = "centraleurope",
+    FS25_Klattenhof                      = "centraleurope",
+    FS25_SchwesingBahnhof                = "centraleurope",
+    FS25_Schellenberg                    = "centraleurope",
+    FS25_Oberschwaben_crossplay          = "centraleurope",
+    FS25_Pfaffenwinkel                   = "centraleurope",
+    FS25_DH_crossplay                    = "centraleurope",
+    FS25_Lunow_crossplay                 = "centraleurope",
+    FS25_Daheim                          = "centraleurope",
+    FS25_The_Mechet                      = "centraleurope",
+    FS25_Pallegney                       = "centraleurope",
+    FS25_The_Pichonniere_Valley          = "centraleurope",
+    FS25_DeFrieseWouden                  = "centraleurope",
+    FS25_Solek                           = "centraleurope",
+    FS25_Cybuchowo                       = "centraleurope",
+    FS25_WolaZabierzowska                = "centraleurope",
+    FS25_Szpakowo                        = "centraleurope",
+    FS25_Szpakowo_pc                     = "centraleurope",
+    FS25_CarpathianCountryside_crossplay = "centraleurope",
+    FS25_Fenyerpuszta                    = "centraleurope",
+    FS25_Ujret                           = "centraleurope",
+    FS25_Monteriggioni                   = "mediterranean",
+    FS25_Iowa_Plains_View                = "usmidwest",
+    FS25_Alma_Missouri                   = "usmidwest",
+    FS25_fourFields                      = "usmidwest",
+    FS25_silverrunForest                 = "uspnw",
+    FS25_AgroForests                     = "uspnw",
+    FS25_Smoky_Mountain_Farming          = "usmidwest",
+    FS25_Estancia_Sao_Carlos             = "brazilcentral",
+    FS25_New_Gloria_Farm                 = "brazilcentral",
+    FS25_Sumidouro_Farm                  = "brazilcentral",
+    FS25_Rancho_Fundo                    = "brazilcentral",
+    FS25_Chapadao_Farm                   = "brazilcentral",
+    FS25_Pirambeiras                     = "brazilcentral",
+    FS25_BR163_Brazil                    = "brazilcentral",
+    FS25_3_Marias_Farm                   = "brazilcentral",
+    FS25_Estancia_Lapacho                = "brazilcentral",
+    FS25_Gaucho_Fields                   = "brazilsouth",
+    FS25_Pertile                         = "brazilsouth",
+    FS25_Turvo_Map                       = "brazilsouth",
+}
+
+function MoistureSystem:getDefaultProfileForMap()
+    local env = g_currentMission and g_currentMission.missionInfo and g_currentMission.missionInfo.customEnvironment
+    if env then
+        local mapped = MoistureSystem.MapProfileDefaults[env]
+        if mapped then return mapped end
+    end
+    return "ukwest"
+end
+
 function MoistureSystem:loadMap()
     g_currentMission.MoistureSystem = self
     self.didLoadFromXML = false
@@ -17,7 +76,7 @@ function MoistureSystem:loadMap()
     self.missionStarted = false
 
     self.settings = {
-        weatherProfile = "ukwest",
+        weatherProfile = MoistureSystem:getDefaultProfileForMap(),
         moistureLossMultiplier = 3.0,
         moistureGainMultiplier = 3.0,
         teddingMoistureReduction = 0.02,
