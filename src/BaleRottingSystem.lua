@@ -56,6 +56,13 @@ function BaleRottingSystem.new()
     return self
 end
 
+-- Engine teardown hook for mod event listeners. A fresh instance is created per
+-- mission in MoistureSystem:loadMap, so we must unregister here or stale
+-- instances would keep receiving update(dt) after a mission reload.
+function BaleRottingSystem:deleteMap()
+    removeModEventListener(self)
+end
+
 ---
 -- Update bale exposure time (accumulate or decay) and determine status
 -- @param uniqueId: Bale unique ID

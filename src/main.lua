@@ -96,6 +96,13 @@ function MoistureSystem:loadMap()
 
     g_currentMission.dryingSystem = DryingSystem.new()
 
+    -- Drive the ground tracker and bale rotting system off their own engine
+    -- update(dt) hooks rather than hand-pumping them from MoistureSystem:update.
+    -- They unregister themselves in deleteMap (fresh instances are built per
+    -- mission load, so a stale listener would otherwise double-update).
+    addModEventListener(g_currentMission.groundPropertyTracker)
+    addModEventListener(g_currentMission.baleRottingSystem)
+
     self.objectInfo = {}
     self.objectMoistureTimestamps = {}
     self.pendingObjectRequests = {}
@@ -121,6 +128,8 @@ function MoistureSystem:loadMap()
         addConsoleCommand("msWeatherDebug", "Dump active weather profile/scenario", "consoleCommandWeatherDebug", wps)
         addConsoleCommand("msSetScenario", "Force-set active weather scenario", "consoleCommandSetScenario", wps)
         addConsoleCommand("msListScenarios", "List scenarios for active profile", "consoleCommandListScenarios", wps)
+        addConsoleCommand("msSweepDebug", "Report ground drying-sweep throughput", "consoleCommandSweepDebug",
+            g_currentMission.groundPropertyTracker)
     end
 end
 
@@ -144,6 +153,7 @@ function MoistureSystem:delete()
         removeConsoleCommand("msWeatherDebug")
         removeConsoleCommand("msSetScenario")
         removeConsoleCommand("msListScenarios")
+        removeConsoleCommand("msSweepDebug")
     end
 end
 
@@ -175,9 +185,10 @@ function MoistureSystem:update(dt)
         self.timeSinceLastUpdate = 0
     end
 
-    if g_currentMission.baleRottingSystem then
-        g_currentMission.baleRottingSystem:update(dt)
-    end
+    -- groundPropertyTracker and baleRottingSystem drive their own update(dt) via
+    -- addModEventListener (registered in loadMap), so they are not pumped from
+    -- here. MoistureSystem:updateMoistureLevel feeds the global field delta into
+    -- the tracker's drying accumulator each cycle.
 
     SellingStationExtension.update()
 
@@ -237,10 +248,13 @@ function MoistureSystem:updateMoistureLevel(delta)
         self:adjustMoisture(moistureDelta)
     end
 
+    -- Feed the global field moisture delta and elapsed time into the tracker's
+    -- drying / rain-exposure accumulators. The per-pile application is amortized
+    -- across frames by the tracker's own cursor sweep (GroundPropertyTracker:update),
+    -- driven from MoistureSystem:update. `delta` is raw (pre-timescale) ms; the
+    -- tracker applies the timescale itself.
     if g_currentMission.groundPropertyTracker then
-        g_currentMission.groundPropertyTracker:updateGrassMoisture(moistureDelta, delta)
-        g_currentMission.groundPropertyTracker:updateHayMoisture(moistureDelta)
-        g_currentMission.groundPropertyTracker:updateStrawMoisture(moistureDelta, delta)
+        g_currentMission.groundPropertyTracker:feedMoistureDelta(moistureDelta, delta)
     end
 end
 

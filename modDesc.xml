@@ -42,6 +42,7 @@ Changelog:
 - Generally eased material rotting, both for bales and ground piles. Material will take longer to begin to rot, and rot more slowly.
 - Fixed an issue with grain drying not starting in multiplayer games.
 - Vehicles and silos with crop in will now show the current grade of the crop in the HUD. Previously only moisture and quality were shown.
+- Added optimisations on how weather impacts ground piles to improve performance for lower end machines.
 
 1.0.0.7:
 - Fix a freeze when selling certain silos.

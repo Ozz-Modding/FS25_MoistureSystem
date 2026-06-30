@@ -70,12 +70,6 @@ function GroundPropertyTracker.new()
     -- Key: "gridX_gridZ_fillType", Value: accumulated liters waiting for removal
     self.strawRotAccumulators = {}
 
-    -- Wet pile indices for rain-exposure update fast path.
-    -- Only piles with rainExposure > 0 or peakRainExposure > 0 are tracked.
-    -- Avoids walking every grass/straw pile every cycle when it isn't raining.
-    self.wetGrassKeys = {}
-    self.wetStrawKeys = {}
-
     -- Track pending windrower drops with volume-weighted moisture
     -- Key: getGridKey(gridX, gridZ, fillType), Value: { gridX, gridZ, fillType, volume, moistureSum, cyclesRemaining }
     self.windrowerPendingDrops = {}
@@ -88,8 +82,72 @@ function GroundPropertyTracker.new()
     self.pileCache = {}
     self.pendingPileRequests = {}
 
+    -- Memo: fillType index -> storage table (avoids re-running the is*FillType
+    -- predicates for every pile touched in the hot path).
+    self.storageByFillType = {}
+
+    -- Amortized continuous-drying state.
+    -- MoistureSystem feeds the global field moisture delta into dryingAccumulator
+    -- each weather cycle (it is the same value for every pile). The cursor sweep
+    -- applies, per pile, the accumulator growth since that pile was last visited:
+    --   applied = dryingAccumulator - pile.lastAcc
+    -- This is mathematically equivalent to applying the delta to every pile every
+    -- cycle, but spreads the O(N) work across frames.
+    self.dryingAccumulator = 0
+
+    -- Amortized rain-exposure / rot state, same accumulator-clock pattern as
+    -- dryingAccumulator. rainTimeAcc accrues game-ms spent raining; dryTimeAcc
+    -- accrues game-ms spent dry. The sweep visit drains both per pile:
+    --   rainSince = rainTimeAcc - pile.lastRainAcc   (exposure gained)
+    --   drySince  = dryTimeAcc  - pile.lastDryAcc    (exposure decayed)
+    -- so rain exposure + rotting fold into the SAME bounded per-frame visit as
+    -- drying, replacing the old uncapped per-cycle walk of wetGrassKeys/wetStrawKeys.
+    self.rainTimeAcc = 0
+    self.dryTimeAcc = 0
+
+    -- Cursor sweep snapshot. Two parallel arrays (key + kind) maintained
+    -- incrementally: keys are appended as piles are created (queuePileUpdate) and
+    -- swap-removed lazily as the cursor passes a slot whose pile is gone. The
+    -- cursor advances a bounded number of slots per frame and wraps without a
+    -- rebuild. inSweep tracks which keys are currently in the array so a pile
+    -- isn't appended twice. A full rebuild (rebuildSweepSnapshot) is only used for
+    -- bulk-load events that replace the storage tables wholesale (savegame load,
+    -- grid-size conversion).
+    self.sweepKeys = {}
+    self.sweepKinds = {}
+    self.inSweep = {}
+    self.sweepLen = 0
+    self.sweepPos = 1
+
+    -- Internal 500ms cycle clock for the bounded active-set work (tedding,
+    -- conversions, windrower, cooldown decrement). Kept separate from the
+    -- per-frame sweep so the cycle-based cooldown counters keep their cadence.
+    self.cycleTimer = 0
+
+    -- Lightweight sweep metrics for the msSweepDebug console command. Cheap to
+    -- maintain (a few integer increments per frame); reported on demand.
+    self.sweepStats = {
+        framesWithWork = 0,    -- frames where the sweep visited >= 1 pile
+        pilesVisited = 0,      -- total pile visits since last completed sweep period
+        lastPeriodPiles = 0,   -- pile visits in the last full sweep period
+        lastPeriodFrames = 0,  -- frames the last full sweep period took
+        periodPilesAccum = 0,  -- accumulator for the in-progress sweep period
+        periodFramesAccum = 0, -- accumulator for the in-progress sweep period
+        sweepCount = 0,        -- number of completed full sweep periods
+        peakSnapshotLen = 0,   -- high-water mark of snapshot size (approx peak piles)
+    }
+
     return self
 end
+
+-- Per-frame budget for the continuous-drying cursor sweep. Bounds worst-case
+-- cost regardless of total pile count; the full-sweep period stretches as piles
+-- grow, which is harmless because drying is slow.
+GroundPropertyTracker.SWEEP_BUDGET = 64
+
+-- Cadence of the bounded active-set work (matches the old updateInterval so the
+-- cycle-based cooldown counters expire at the same wall-clock rate as before).
+GroundPropertyTracker.CYCLE_INTERVAL = 500
 
 -- Grid position helper
 function GroundPropertyTracker:getGridPosition(x, z)
@@ -112,18 +170,47 @@ function GroundPropertyTracker:getSimpleGridKey(gridX, gridZ)
     return string.format("%d_%d", gridX, gridZ)
 end
 
--- Return storage table for a fillType
-function GroundPropertyTracker:getStorageForFillType(fillType)
-    local moistureSystem = g_currentMission.MoistureSystem
-    if moistureSystem:isGrassOnGroundFillType(fillType) then
+-- Resolve a storage "kind" to the live storage table. Kept as a lookup off the
+-- live self.* fields (not cached table identity) so storages can be reassigned
+-- (delete/convertGridCells/readInitialClientState) without invalidating anything.
+function GroundPropertyTracker:getStorageByKind(kind)
+    if kind == "grass" then
         return self.grassPiles
-    elseif moistureSystem:isHayFillType(fillType) then
+    elseif kind == "hay" then
         return self.hayPiles
-    elseif moistureSystem:isStrawFillType(fillType) then
+    elseif kind == "straw" then
         return self.strawPiles
-    else
-        return self.gridPiles
     end
+    return self.gridPiles
+end
+
+-- Return the storage kind for a fillType. Memoized: the fillType->kind mapping is
+-- static, so this keeps the is*FillType predicate calls out of the hot path.
+function GroundPropertyTracker:getStorageKindForFillType(fillType)
+    local cached = self.storageByFillType[fillType]
+    if cached then
+        return cached
+    end
+
+    local moistureSystem = g_currentMission.MoistureSystem
+    local kind
+    if moistureSystem:isGrassOnGroundFillType(fillType) then
+        kind = "grass"
+    elseif moistureSystem:isHayFillType(fillType) then
+        kind = "hay"
+    elseif moistureSystem:isStrawFillType(fillType) then
+        kind = "straw"
+    else
+        kind = "grid"
+    end
+
+    self.storageByFillType[fillType] = kind
+    return kind
+end
+
+-- Return storage table for a fillType.
+function GroundPropertyTracker:getStorageForFillType(fillType)
+    return self:getStorageByKind(self:getStorageKindForFillType(fillType))
 end
 
 function GroundPropertyTracker:delete()
@@ -133,8 +220,19 @@ function GroundPropertyTracker:delete()
     self.strawPiles = {}
     self.grassRotAccumulators = {}
     self.strawRotAccumulators = {}
-    self.wetGrassKeys = {}
-    self.wetStrawKeys = {}
+    self.sweepKeys = {}
+    self.sweepKinds = {}
+    self.inSweep = {}
+    self.sweepLen = 0
+    self.sweepPos = 1
+end
+
+-- Engine teardown hook for mod event listeners. A fresh tracker is created per
+-- mission in MoistureSystem:loadMap, so we must unregister here or stale
+-- instances would keep receiving update(dt) after a mission reload.
+function GroundPropertyTracker:deleteMap()
+    removeModEventListener(self)
+    self:delete()
 end
 
 -- Update local pile storage (server-side only)
@@ -148,16 +246,41 @@ function GroundPropertyTracker:queuePileUpdate(key, properties, fillTypeIndex, g
             storage[key].properties[propKey] = propValue
         end
     else
-        -- Create new pile entry
+        -- Create new pile entry. Seed lastAcc / lastRainAcc / lastDryAcc to the
+        -- current accumulators so the next sweep applies zero retroactive drying
+        -- or exposure to a freshly-created pile.
         storage[key] = {
             properties = {},
             fillType = fillTypeIndex,
             gridX = gridX,
-            gridZ = gridZ
+            gridZ = gridZ,
+            lastAcc = self.dryingAccumulator,
+            lastRainAcc = self.rainTimeAcc,
+            lastDryAcc = self.dryTimeAcc
         }
         for propKey, propValue in pairs(properties) do
             storage[key].properties[propKey] = propValue
         end
+
+        -- Add to the drying sweep snapshot incrementally (only the four swept
+        -- storage kinds; gridPiles are not dried so they stay out of the sweep).
+        local kind = self:getStorageKindForFillType(fillTypeIndex)
+        if kind ~= "grid" then
+            self:appendToSweep(key, kind)
+        end
+    end
+end
+
+-- Append a key to the sweep snapshot if it isn't already present. O(1).
+function GroundPropertyTracker:appendToSweep(key, kind)
+    if self.inSweep[key] then return end
+    local n = self.sweepLen + 1
+    self.sweepKeys[n] = key
+    self.sweepKinds[n] = kind
+    self.sweepLen = n
+    self.inSweep[key] = true
+    if n > self.sweepStats.peakSnapshotLen then
+        self.sweepStats.peakSnapshotLen = n
     end
 end
 
@@ -516,17 +639,59 @@ function GroundPropertyTracker:convertHayToGrassInCell(gridX, gridZ, hayFillType
     end
 end
 
--- Update grass moisture and handle tedding/rot
-function GroundPropertyTracker:updateGrassMoisture(moistureDelta, dt)
+---
+-- Feed the global field moisture delta produced by MoistureSystem into the
+-- drying accumulator, and accrue elapsed game-ms into the rain/dry exposure
+-- accumulators. All three are the same for every pile, so accumulating here and
+-- draining lazily during the cursor sweep is equivalent to applying to every
+-- pile every cycle. Called once per MoistureSystem weather cycle.
+-- @param moistureDelta: field moisture delta for this cycle (0-1 scale)
+-- @param rawDelta: wall-clock ms elapsed this cycle (pre-timescale)
+---
+function GroundPropertyTracker:feedMoistureDelta(moistureDelta, rawDelta)
     if not self.isServer then return end
-    if moistureDelta == 0 then return end
+    self.dryingAccumulator = self.dryingAccumulator + moistureDelta
 
+    -- Accrue rain/dry exposure time (game-ms). Uses the rot system's own
+    -- "raining" definition (rainfall intensity > 0.1), matching the original
+    -- per-pile rain-exposure isRaining check now folded into tickRainExposureAndRot.
+    local updateDelta = (rawDelta or 0) * g_currentMission:getEffectiveTimeScale()
+    local isRaining = g_currentMission.environment.weather:getRainFallScale() > 0.1
+    if isRaining then
+        self.rainTimeAcc = self.rainTimeAcc + updateDelta
+    else
+        self.dryTimeAcc = self.dryTimeAcc + updateDelta
+    end
+end
+
+---
+-- Per-frame entry point (driven from MoistureSystem:update, which already runs
+-- every frame on the server). Two cadences:
+--   * the bounded active-set work (tedding, conversions, windrower, cooldowns)
+--     runs on a 500ms internal clock to preserve the original cycle-counter
+--     semantics;
+--   * the O(N) drying + rain-exposure/rot sweep advances a fixed budget of piles
+--     every frame so its per-frame cost is bounded regardless of pile count.
+---
+function GroundPropertyTracker:update(dt)
+    if not self.isServer then return end
+
+    self.cycleTimer = self.cycleTimer + dt
+    if self.cycleTimer >= GroundPropertyTracker.CYCLE_INTERVAL then
+        self:runCycleWork()
+        self.cycleTimer = 0
+    end
+
+    self:runDryingSweep(GroundPropertyTracker.SWEEP_BUDGET)
+end
+
+-- Bounded active-set work; cost scales with active sets (tedded cells, pending
+-- drops, cooldowns), not with total pile count.
+function GroundPropertyTracker:runCycleWork()
     -- Copy tedded cells for this cycle and clear the table for next cycle
     local teddedCellsThisCycle = {}
-    local teddedCount = 0
     for gridKey, _ in pairs(self.teddedGridCells) do
         teddedCellsThisCycle[gridKey] = true
-        teddedCount = teddedCount + 1
     end
     self.teddedGridCells = {}
 
@@ -536,16 +701,335 @@ function GroundPropertyTracker:updateGrassMoisture(moistureDelta, dt)
     self:processHayConversions(converter)
 
     local moistureSystem = g_currentMission.MoistureSystem
-    self:processTeddedCells(teddedCellsThisCycle, processedThisCycle, moistureSystem)
+    self:processTeddedCells(teddedCellsThisCycle, processedThisCycle, moistureSystem, converter)
 
-    self:applyMoistureToGrassPiles(moistureDelta, teddedCellsThisCycle, processedThisCycle)
+    -- One-time tedding moisture reduction for existing grass piles in tedded
+    -- cells (newly-created tedded piles already got it in processTeddedCells).
+    self:applyTeddingToExistingPiles(teddedCellsThisCycle, processedThisCycle, converter)
 
-    local updateDelta = dt * g_currentMission:getEffectiveTimeScale()
-    self:updateRainExposureAndProcessGrassRot(updateDelta)
+    -- Rain exposure + rotting are no longer walked here; they're folded into the
+    -- per-pile drying sweep (tickRainExposureAndRot) on the same bounded budget,
+    -- draining the rain/dry time accumulators. This removes the old uncapped
+    -- per-cycle walk of wetGrassKeys/wetStrawKeys (which grew to the full open-sky
+    -- pile count during rain).
+
+    -- Hay -> grass conversion bookkeeping (grassCells set is populated by the
+    -- drying sweep when a hay pile rises back above DRY_THRESHOLD).
+    self:processGrassConversions(converter)
 
     self:processWindrowerPendingDrops()
 
     self:decrementCooldownsAndBuffers()
+end
+
+---
+-- Continuous-drying cursor sweep. Advances through the incrementally-maintained
+-- snapshot of pile keys, applying the drying accumulated since each pile was last
+-- visited. Bounded to `budget` slot examinations per call. The snapshot is NOT
+-- rebuilt on wrap — new piles are appended in queuePileUpdate and gone piles are
+-- swap-removed here as the cursor reaches their slot, so there is no O(N) burst.
+---
+function GroundPropertyTracker:runDryingSweep(budget)
+    if self.sweepPos > self.sweepLen then
+        self:onSweepWrapped()
+        if self.sweepLen == 0 then
+            return
+        end
+    end
+
+    local acc = self.dryingAccumulator
+    local examined = 0
+
+    while examined < budget and self.sweepPos <= self.sweepLen do
+        local key = self.sweepKeys[self.sweepPos]
+        local kind = self.sweepKinds[self.sweepPos]
+
+        local storage = self:getStorageByKind(kind)
+        local pile = storage[key]
+
+        examined = examined + 1
+
+        if pile ~= nil then
+            -- applyDryingToPile returns false if the pile rotted fully away (its
+            -- storage entry is already removed); drop its sweep slot too.
+            local alive = self:applyDryingToPile(key, pile, kind, acc)
+            if alive then
+                self.sweepPos = self.sweepPos + 1
+            else
+                self:removeSweepSlot(self.sweepPos)
+            end
+        else
+            -- Pile gone: swap-remove this slot. The element pulled into this slot
+            -- still needs examining, so the cursor stays put. Examining the stale
+            -- slot already counted against the budget, so a run of removals can't
+            -- burst beyond `budget` work per frame.
+            self:removeSweepSlot(self.sweepPos)
+        end
+    end
+
+    -- Update metrics for this frame's slice.
+    local stats = self.sweepStats
+    stats.periodFramesAccum = stats.periodFramesAccum + 1
+    if examined > 0 then
+        stats.framesWithWork = stats.framesWithWork + 1
+        stats.pilesVisited = stats.pilesVisited + examined
+        stats.periodPilesAccum = stats.periodPilesAccum + examined
+    end
+end
+
+-- Cursor wrapped: roll the completed period's metrics into the "last period"
+-- snapshot and reset the cursor. No rebuild (snapshot is maintained incrementally).
+function GroundPropertyTracker:onSweepWrapped()
+    local stats = self.sweepStats
+    if stats.periodPilesAccum > 0 then
+        stats.lastPeriodPiles = stats.periodPilesAccum
+        stats.lastPeriodFrames = stats.periodFramesAccum
+        stats.sweepCount = stats.sweepCount + 1
+        stats.periodPilesAccum = 0
+        stats.periodFramesAccum = 0
+    end
+    self.sweepPos = 1
+end
+
+-- Swap-remove a snapshot slot in O(1): move the last element into this slot,
+-- shrink the array, and drop the removed key from the membership set.
+function GroundPropertyTracker:removeSweepSlot(i)
+    local n = self.sweepLen
+    local removedKey = self.sweepKeys[i]
+
+    if i ~= n then
+        self.sweepKeys[i] = self.sweepKeys[n]
+        self.sweepKinds[i] = self.sweepKinds[n]
+    end
+    self.sweepKeys[n] = nil
+    self.sweepKinds[n] = nil
+    self.sweepLen = n - 1
+    self.inSweep[removedKey] = nil
+end
+
+-- Console command: report drying-sweep throughput so the amortization can be
+-- validated against the live (multiplayer) pile load.
+function GroundPropertyTracker:consoleCommandSweepDebug()
+    if not self.isServer then
+        return "msSweepDebug is server-side only"
+    end
+
+    local function count(t)
+        local n = 0
+        for _ in pairs(t) do n = n + 1 end
+        return n
+    end
+
+    local grass = count(self.grassPiles)
+    local hay = count(self.hayPiles)
+    local straw = count(self.strawPiles)
+    local grid = count(self.gridPiles)
+    local total = grass + hay + straw + grid
+
+    -- Wet piles: those carrying rain exposure (rainExposure or peakRainExposure
+    -- > 0), counted on demand. Rain exposure + rotting are now handled inside the
+    -- bounded drying sweep (tickRainExposureAndRot), so this is purely diagnostic
+    -- and no longer drives any per-cycle walk.
+    local function countWet(storage)
+        local n = 0
+        for _, pile in pairs(storage) do
+            if (pile.properties.rainExposure or 0) > 0 or (pile.properties.peakRainExposure or 0) > 0 then
+                n = n + 1
+            end
+        end
+        return n
+    end
+    local wetGrass = countWet(self.grassPiles)
+    local wetStraw = countWet(self.strawPiles)
+
+    local weather = g_currentMission.environment.weather
+    local isRaining = weather:getRainFallScale() > 0.1
+
+    local stats = self.sweepStats
+    -- Estimate full-sweep period in seconds from the last completed period
+    -- (frames * assumed ~16.6ms/frame is unreliable; report frames instead).
+    local lastPeriodPiles = stats.lastPeriodPiles
+    local lastPeriodFrames = stats.lastPeriodFrames
+    local avgPerFrame = lastPeriodFrames > 0 and (lastPeriodPiles / lastPeriodFrames) or 0
+
+    local lines = {
+        string.format("Piles:     total=%d (grass=%d hay=%d straw=%d grid=%d)",
+            total, grass, hay, straw, grid),
+        string.format("Snapshot:  len=%d pos=%d budget=%d peak=%d",
+            self.sweepLen, self.sweepPos, GroundPropertyTracker.SWEEP_BUDGET, stats.peakSnapshotLen),
+        string.format("WetPiles:  grass=%d straw=%d (raining=%s) -- folded into bounded sweep",
+            wetGrass, wetStraw, tostring(isRaining)),
+        string.format("ExpoAcc:   rain=%.0f dry=%.0f", self.rainTimeAcc, self.dryTimeAcc),
+        string.format("LastSweep: %d piles over %d frames (%.1f piles/frame avg)",
+            lastPeriodPiles, lastPeriodFrames, avgPerFrame),
+        string.format("Totals:    %d sweeps completed, %d frames did work",
+            stats.sweepCount, stats.framesWithWork),
+        string.format("Drying:    accumulator=%.5f", self.dryingAccumulator),
+    }
+    for _, line in ipairs(lines) do print(line) end
+    return table.concat(lines, " | ")
+end
+
+-- Full rebuild of the sweep snapshot from current pile storages. Only for
+-- bulk-load events that replace the storage tables wholesale (savegame load,
+-- grid-size conversion) — steady-state add/remove is handled incrementally by
+-- appendToSweep / removeSweepSlot, so this is NOT called on cursor wrap.
+function GroundPropertyTracker:rebuildSweepSnapshot()
+    local keys = self.sweepKeys
+    local kinds = self.sweepKinds
+    local inSweep = self.inSweep
+    local n = 0
+
+    -- Clear the membership set; repopulated below.
+    for k in pairs(inSweep) do inSweep[k] = nil end
+
+    for key in pairs(self.grassPiles) do
+        n = n + 1
+        keys[n] = key
+        kinds[n] = "grass"
+        inSweep[key] = true
+    end
+    for key in pairs(self.hayPiles) do
+        n = n + 1
+        keys[n] = key
+        kinds[n] = "hay"
+        inSweep[key] = true
+    end
+    for key in pairs(self.strawPiles) do
+        n = n + 1
+        keys[n] = key
+        kinds[n] = "straw"
+        inSweep[key] = true
+    end
+
+    -- Trim any stale trailing entries from a previous, longer snapshot.
+    for i = n + 1, self.sweepLen do
+        keys[i] = nil
+        kinds[i] = nil
+    end
+
+    self.sweepLen = n
+    self.sweepPos = 1
+
+    if n > self.sweepStats.peakSnapshotLen then
+        self.sweepStats.peakSnapshotLen = n
+    end
+end
+
+-- Apply accumulated drying to a single pile during the sweep. Per-kind clamps
+-- and threshold-conversion marking mirror the original bulk loops. Rain exposure
+-- and rotting (grass/straw) are folded into the same visit via
+-- tickRainExposureAndRot, draining the rain/dry time accumulators. Returns false
+-- if the pile was removed (rotted away), so the caller can drop it from the sweep.
+function GroundPropertyTracker:applyDryingToPile(key, pile, kind, acc)
+    local moisture = pile.properties.moisture
+    if moisture == nil then
+        pile.lastAcc = acc
+        return true
+    end
+
+    if kind == "grass" then
+        local gridKey = self:getSimpleGridKey(pile.gridX, pile.gridZ)
+
+        -- Freshly-mowed grass is held out of drying. Advance lastAcc without
+        -- applying, so this cycle's delta is dropped (matching the original
+        -- per-cycle `continue`) rather than accumulating into a catch-up jump
+        -- when the cooldown clears. Rain exposure still ticks (it did before too).
+        if self.recentMowedCells[gridKey] then
+            pile.lastAcc = acc
+            return self:tickRainExposureAndRot(key, pile, self.grassRotAccumulators)
+        end
+
+        local applied = acc - (pile.lastAcc or acc)
+        pile.lastAcc = acc
+
+        if applied ~= 0 then
+            local newMoisture = moisture + applied
+            newMoisture = math.max(GroundPropertyTracker.MIN_GRASS_MOISTURE,
+                math.min(GroundPropertyTracker.MAX_GRASS_MOISTURE, newMoisture))
+
+            if newMoisture <= GroundPropertyTracker.DRY_THRESHOLD then
+                self.hayCells[gridKey] = 10
+            end
+
+            if newMoisture ~= moisture then
+                pile.properties.moisture = newMoisture
+            end
+        end
+
+        return self:tickRainExposureAndRot(key, pile, self.grassRotAccumulators)
+    elseif kind == "hay" then
+        local applied = acc - (pile.lastAcc or acc)
+        pile.lastAcc = acc
+        if applied ~= 0 then
+            local newMoisture = math.max(GroundPropertyTracker.MIN_HAY_MOISTURE, moisture + applied)
+
+            if newMoisture > GroundPropertyTracker.DRY_THRESHOLD then
+                local gridKey = self:getSimpleGridKey(pile.gridX, pile.gridZ)
+                self.grassCells[gridKey] = 10
+            end
+
+            if newMoisture ~= moisture then
+                pile.properties.moisture = newMoisture
+            end
+        end
+        return true
+    elseif kind == "straw" then
+        local applied = acc - (pile.lastAcc or acc)
+        pile.lastAcc = acc
+        if applied ~= 0 then
+            -- No max clamp; straw can get very wet.
+            local newMoisture = math.max(0, moisture + applied)
+            if newMoisture ~= moisture then
+                pile.properties.moisture = newMoisture
+            end
+        end
+
+        return self:tickRainExposureAndRot(key, pile, self.strawRotAccumulators)
+    end
+
+    return true
+end
+
+-- One-time tedding moisture reduction applied to existing grass piles whose cell
+-- was tedded this cycle (split out of the former applyMoistureToGrassPiles loop;
+-- drying itself is now handled by the accumulator sweep).
+--
+-- Iterates the (small) tedded-cell set rather than all grass piles, deriving
+-- candidate pile keys from the converter's source fill types, so cost scales with
+-- tedded cells × converter entries — not with total pile count.
+function GroundPropertyTracker:applyTeddingToExistingPiles(teddedCellsThisCycle, processedThisCycle, converter)
+    local reduction = g_currentMission.MoistureSystem.settings.teddingMoistureReduction
+
+    for gridKey, _ in pairs(teddedCellsThisCycle) do
+        if not self.recentMowedCells[gridKey] and not processedThisCycle[gridKey] then
+            local gridX, gridZ = gridKey:match("([^_]+)_([^_]+)")
+            gridX = tonumber(gridX)
+            gridZ = tonumber(gridZ)
+
+            for fromFillType, to in pairs(converter) do
+                if fromFillType ~= to.targetFillTypeIndex then
+                    local key = self:getGridKey(gridX, gridZ, fromFillType)
+                    local pile = self.grassPiles[key]
+
+                    if pile and pile.properties.moisture then
+                        local newMoisture = pile.properties.moisture - reduction
+                        newMoisture = math.max(GroundPropertyTracker.MIN_GRASS_MOISTURE,
+                            math.min(GroundPropertyTracker.MAX_GRASS_MOISTURE, newMoisture))
+
+                        self.teddedGridCellsCooldown[gridKey] = GroundPropertyTracker.TEDDED_COOLDOWN_CYCLES
+                        self.teddedGridCells[gridKey] = nil
+
+                        if newMoisture <= GroundPropertyTracker.DRY_THRESHOLD then
+                            self.hayCells[gridKey] = 10
+                        end
+
+                        pile.properties.moisture = newMoisture
+                    end
+                end
+            end
+        end
+    end
 end
 
 -- Process TEDDER conversions for hay/grasses
@@ -567,12 +1051,8 @@ function GroundPropertyTracker:processHayConversions(converter)
 end
 
 -- Handle tedded cells and create grass piles
-function GroundPropertyTracker:processTeddedCells(teddedCellsThisCycle, processedThisCycle, moistureSystem)
+function GroundPropertyTracker:processTeddedCells(teddedCellsThisCycle, processedThisCycle, moistureSystem, converter)
     local checkRadius = GroundPropertyTracker.GRID_SIZE / 2
-    local cellCount = 0
-    for _ in pairs(teddedCellsThisCycle) do
-        cellCount = cellCount + 1
-    end
 
     for gridKey, _ in pairs(teddedCellsThisCycle) do
         local gridX, gridZ = gridKey:match("([^_]+)_([^_]+)")
@@ -581,12 +1061,6 @@ function GroundPropertyTracker:processTeddedCells(teddedCellsThisCycle, processe
 
         if self.recentMowedCells[gridKey] then
             continue
-        end
-
-        local converter = g_fillTypeManager:getConverterDataByName("TEDDER")
-        local converterEntries = 0
-        for _ in pairs(converter) do
-            converterEntries = converterEntries + 1
         end
 
         for fromFillType, to in pairs(converter) do
@@ -634,82 +1108,44 @@ function GroundPropertyTracker:processTeddedCells(teddedCellsThisCycle, processe
     end
 end
 
--- Apply moisture changes to grass piles
-function GroundPropertyTracker:applyMoistureToGrassPiles(moistureDelta, teddedCellsThisCycle, processedThisCycle)
-    for key, pile in pairs(self.grassPiles) do
-        if pile.properties.moisture then
-            local gridKey = self:getSimpleGridKey(pile.gridX, pile.gridZ)
+-- Per-pile rain exposure update + rot tick, called from the drying sweep for
+-- grass and straw piles. Drains the global rain/dry time accumulators since this
+-- pile was last visited and applies the net exposure change in one step:
+--   exposure += (rainTimeAcc - lastRainAcc)              -- time spent raining
+--   exposure -= (dryTimeAcc  - lastDryAcc) * DECAY_RATE  -- time spent dry
+-- This is equivalent to the old per-cycle tick (which added/decayed a fixed
+-- updateDelta each 500ms while iterating the whole wet set), but folds into the
+-- same bounded per-frame sweep visit as drying, so there is no uncapped walk.
+-- @param rotAccumulators: self.grassRotAccumulators or self.strawRotAccumulators
+-- @return false if the pile was fully removed (rotted away), true otherwise.
+function GroundPropertyTracker:tickRainExposureAndRot(key, pile, rotAccumulators)
+    local rainSince = self.rainTimeAcc - (pile.lastRainAcc or self.rainTimeAcc)
+    local drySince = self.dryTimeAcc - (pile.lastDryAcc or self.dryTimeAcc)
+    pile.lastRainAcc = self.rainTimeAcc
+    pile.lastDryAcc = self.dryTimeAcc
 
-            if self.recentMowedCells[gridKey] then
-                continue
-            end
-
-            local totalDelta = moistureDelta
-
-            if teddedCellsThisCycle[gridKey] and not processedThisCycle[gridKey] then
-                totalDelta = totalDelta - g_currentMission.MoistureSystem.settings.teddingMoistureReduction
-                self.teddedGridCellsCooldown[gridKey] = GroundPropertyTracker.TEDDED_COOLDOWN_CYCLES
-                self.teddedGridCells[gridKey] = nil -- Clear from teddedGridCells after processing
-            end
-
-            local newMoisture = pile.properties.moisture + totalDelta
-            newMoisture = math.max(GroundPropertyTracker.MIN_GRASS_MOISTURE,
-                math.min(GroundPropertyTracker.MAX_GRASS_MOISTURE, newMoisture))
-
-            if newMoisture <= GroundPropertyTracker.DRY_THRESHOLD then
-                self.hayCells[gridKey] = 10
-            end
-
-            if newMoisture ~= pile.properties.moisture then
-                self:queuePileUpdate(key, { moisture = newMoisture }, pile.fillType, pile.gridX, pile.gridZ)
-            end
-        end
-    end
-end
-
--- Update rain exposure and perform grass rotting
--- Fast path: when not raining, only iterate piles already in wetGrassKeys
--- (piles that have accumulated rain exposure or are rotting). When raining,
--- iterate all grass piles so newly-exposed ones get added to the index.
-function GroundPropertyTracker:updateRainExposureAndProcessGrassRot(updateDelta)
-    local weather = g_currentMission.environment.weather
-    local isRaining = weather:getRainFallScale() > 0.1
-
-    if isRaining then
-        for key, pile in pairs(self.grassPiles) do
-            self:processGrassRainExposure(key, pile, updateDelta, true)
-        end
-    else
-        for key, _ in pairs(self.wetGrassKeys) do
-            local pile = self.grassPiles[key]
-            if pile == nil then
-                self.wetGrassKeys[key] = nil
-                self.grassRotAccumulators[key] = nil
-            else
-                self:processGrassRainExposure(key, pile, updateDelta, false)
-            end
-        end
-    end
-end
-
--- Per-pile rain exposure update + rot tick.
--- Maintains wetGrassKeys: a pile is in the index whenever rainExposure or
--- peakRainExposure is > 0; it's removed once both have decayed back to 0.
-function GroundPropertyTracker:processGrassRainExposure(key, pile, updateDelta, isRaining)
     local rainExposure = pile.properties.rainExposure or 0
     local peakRainExposure = pile.properties.peakRainExposure or 0
 
-    if isRaining then
-        rainExposure = rainExposure + updateDelta
+    -- Apply accrued rain time (gain) then accrued dry time (decay). If a sweep
+    -- window straddles a weather transition both can be > 0 in one visit; we apply
+    -- gain-then-decay. This is exact for the common rain->dry case (pile gets wet,
+    -- then dries) and introduces at most min(rainSince,drySince)*DECAY_RATE of
+    -- error for the rarer dry->rain case — a few seconds of exposure within a
+    -- ~sweep-period window, negligible against the 60-100 min rot thresholds and
+    -- non-cumulative (each visit re-reads the true accumulators).
+    if rainSince > 0 then
+        rainExposure = rainExposure + rainSince
         if rainExposure > peakRainExposure then
             peakRainExposure = rainExposure
         end
-    else
-        rainExposure = math.max(0, rainExposure - (updateDelta * GroundPropertyTracker.DRYING_DECAY_RATE))
+    end
+    if drySince > 0 then
+        rainExposure = math.max(0, rainExposure - (drySince * GroundPropertyTracker.DRYING_DECAY_RATE))
 
         -- Once a pile crosses SLOW_ROT_EXPOSURE_TIME its peak stays elevated
         -- forever (rot is permanent). Below that threshold, peak follows the
-        -- decaying current exposure so the pile can leave the wet set.
+        -- decaying current exposure so the pile can settle back to dry.
         if rainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME and
             peakRainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
             peakRainExposure = rainExposure
@@ -719,12 +1155,6 @@ function GroundPropertyTracker:processGrassRainExposure(key, pile, updateDelta, 
     pile.properties.rainExposure = rainExposure
     pile.properties.peakRainExposure = peakRainExposure
 
-    if rainExposure > 0 or peakRainExposure > 0 then
-        self.wetGrassKeys[key] = true
-    else
-        self.wetGrassKeys[key] = nil
-    end
-
     local rotLevel = 0
     if peakRainExposure >= GroundPropertyTracker.NORMAL_ROT_EXPOSURE_TIME then
         rotLevel = 2
@@ -733,69 +1163,80 @@ function GroundPropertyTracker:processGrassRainExposure(key, pile, updateDelta, 
     end
 
     if rotLevel > 0 then
-        if not self.grassRotAccumulators[key] then
-            self.grassRotAccumulators[key] = 0
-        end
-
-        local baseAmount = GroundPropertyTracker.ROT_ACCUMULATION_MIN +
-            math.random() * (GroundPropertyTracker.ROT_ACCUMULATION_MAX - GroundPropertyTracker.ROT_ACCUMULATION_MIN)
-
-        local rotMultiplier = rotLevel == 2 and 1.4 or 1.0
-        local scaledAmount = baseAmount * rotMultiplier * (updateDelta / 1000)
-        self.grassRotAccumulators[key] = self.grassRotAccumulators[key] + scaledAmount
-
-        if self.grassRotAccumulators[key] >= GroundPropertyTracker.ROT_REMOVAL_THRESHOLD then
-            local removalAmount = GroundPropertyTracker.ROT_REMOVAL_THRESHOLD
-
-            local gridX = pile.gridX
-            local gridZ = pile.gridZ
-            local halfSize = GroundPropertyTracker.GRID_SIZE / 2
-
-            if not self:checkPileHasContent(gridX, gridZ, pile.fillType) then
-                self.grassRotAccumulators[key] = nil
-                self.wetGrassKeys[key] = nil
-                return
+        -- Rot accrues over total elapsed time since last visit (rain + dry), as
+        -- the original did (it ran every cycle regardless of current rain state
+        -- once peak crossed the threshold).
+        local elapsed = rainSince + drySince
+        if elapsed > 0 then
+            if not rotAccumulators[key] then
+                rotAccumulators[key] = 0
             end
 
-            local sx = gridX - halfSize
-            local sz = gridZ - halfSize
-            local sy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, sx, 0, sz)
+            local baseAmount = GroundPropertyTracker.ROT_ACCUMULATION_MIN +
+                math.random() * (GroundPropertyTracker.ROT_ACCUMULATION_MAX - GroundPropertyTracker.ROT_ACCUMULATION_MIN)
 
-            local wx = gridX + halfSize
-            local wz = gridZ - halfSize
-            local wy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, wx, 0, wz)
+            local rotMultiplier = rotLevel == 2 and 1.4 or 1.0
+            rotAccumulators[key] = rotAccumulators[key] + baseAmount * rotMultiplier * (elapsed / 1000)
 
-            local hx = gridX - halfSize
-            local hz = gridZ + halfSize
-            local hy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, hx, 0, hz)
-
-            local lsx, lsy, lsz, lex, ley, lez, lineRadius = DensityMapHeightUtil.getLineByAreaDimensions(
-                sx, sy, sz, wx, wy, wz, hx, hy, hz, true
-            )
-
-            local removed = DensityMapHeightUtil.tipToGroundAroundLine(
-                nil,
-                -removalAmount,
-                pile.fillType,
-                lsx, lsy, lsz,
-                lex, ley, lez,
-                2,
-                nil,
-                nil,
-                false,
-                nil
-            )
-
-            if removed ~= 0 then
-                self.grassRotAccumulators[key] = 0
-                self:checkPileHasContent(gridX, gridZ, pile.fillType)
+            if rotAccumulators[key] >= GroundPropertyTracker.ROT_REMOVAL_THRESHOLD then
+                return self:removeRottedPileVolume(key, pile, rotAccumulators)
             end
         end
     else
-        if self.grassRotAccumulators[key] then
-            self.grassRotAccumulators[key] = nil
-        end
+        rotAccumulators[key] = nil
     end
+
+    return true
+end
+
+-- Remove ROT_REMOVAL_THRESHOLD liters from a rotting pile's density-map area.
+-- Shared by grass and straw rot. Returns false if the pile is now empty (caller
+-- should drop it from the sweep), true otherwise.
+function GroundPropertyTracker:removeRottedPileVolume(key, pile, rotAccumulators)
+    local gridX = pile.gridX
+    local gridZ = pile.gridZ
+    local halfSize = GroundPropertyTracker.GRID_SIZE / 2
+
+    if not self:checkPileHasContent(gridX, gridZ, pile.fillType) then
+        rotAccumulators[key] = nil
+        return false
+    end
+
+    local sx = gridX - halfSize
+    local sz = gridZ - halfSize
+    local sy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, sx, 0, sz)
+
+    local wx = gridX + halfSize
+    local wz = gridZ - halfSize
+    local wy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, wx, 0, wz)
+
+    local hx = gridX - halfSize
+    local hz = gridZ + halfSize
+    local hy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, hx, 0, hz)
+
+    local lsx, lsy, lsz, lex, ley, lez, lineRadius = DensityMapHeightUtil.getLineByAreaDimensions(
+        sx, sy, sz, wx, wy, wz, hx, hy, hz, true
+    )
+
+    local removed = DensityMapHeightUtil.tipToGroundAroundLine(
+        nil,
+        -GroundPropertyTracker.ROT_REMOVAL_THRESHOLD,
+        pile.fillType,
+        lsx, lsy, lsz,
+        lex, ley, lez,
+        2,
+        nil,
+        nil,
+        false,
+        nil
+    )
+
+    if removed ~= 0 then
+        rotAccumulators[key] = 0
+        return self:checkPileHasContent(gridX, gridZ, pile.fillType)
+    end
+
+    return true
 end
 
 -- Decrement cooldowns and buffers
@@ -893,33 +1334,11 @@ function GroundPropertyTracker:processWindrowerPendingDrops()
     end
 end
 
--- Update hay moisture
-function GroundPropertyTracker:updateHayMoisture(moistureDelta)
-    if not self.isServer then return end
-    if moistureDelta == 0 then return end
-
-    local moistureSystem = g_currentMission.MoistureSystem
-    local checkRadius = GroundPropertyTracker.GRID_SIZE / 2
-
-    -- Update all hay piles with minimum clamping only
-    for key, pile in pairs(self.hayPiles) do
-        if pile.properties.moisture then
-            local newMoisture = pile.properties.moisture + moistureDelta
-            newMoisture = math.max(GroundPropertyTracker.MIN_HAY_MOISTURE, newMoisture)
-
-            local gridKey = self:getSimpleGridKey(pile.gridX, pile.gridZ)
-
-            if newMoisture > GroundPropertyTracker.DRY_THRESHOLD then
-                self.grassCells[gridKey] = 10
-            end
-
-            if newMoisture ~= pile.properties.moisture then
-                self:queuePileUpdate(key, { moisture = newMoisture }, pile.fillType, pile.gridX, pile.gridZ)
-            end
-        end
-    end
-
-    local converter = g_fillTypeManager:getConverterDataByName("TEDDER")
+-- Process hay -> grass conversion for cells the drying sweep flagged (grassCells
+-- is populated when a hay pile's moisture rises back above DRY_THRESHOLD).
+-- Hay/grass moisture itself is now applied by the drying sweep; this only handles
+-- the density-map fill type conversion and its cooldown decrement.
+function GroundPropertyTracker:processGrassConversions(converter)
     for fromFillType, to in pairs(converter) do
         local targetFillType = to.targetFillTypeIndex
         if fromFillType == targetFillType then
@@ -939,151 +1358,6 @@ function GroundPropertyTracker:updateHayMoisture(moistureDelta)
         self.grassCells[gridKey] = counter - 1
         if self.grassCells[gridKey] <= 0 then
             self.grassCells[gridKey] = nil
-        end
-    end
-end
-
--- Update straw moisture and handle rot
-function GroundPropertyTracker:updateStrawMoisture(moistureDelta, dt)
-    if not self.isServer then return end
-    if moistureDelta == 0 then return end
-
-    -- Update all straw piles
-    for key, pile in pairs(self.strawPiles) do
-        if pile.properties.moisture then
-            -- Apply natural moisture change (no max clamp, straw can get very wet)
-            local newMoisture = pile.properties.moisture + moistureDelta
-            newMoisture = math.max(0, newMoisture)
-
-            if newMoisture ~= pile.properties.moisture then
-                self:queuePileUpdate(key, { moisture = newMoisture }, pile.fillType, pile.gridX, pile.gridZ)
-            end
-        end
-    end
-
-    local updateDelta = dt * g_currentMission:getEffectiveTimeScale()
-    self:updateRainExposureAndProcessStrawRot(updateDelta)
-end
-
--- Update rain exposure and perform straw rotting (see grass version for rationale)
-function GroundPropertyTracker:updateRainExposureAndProcessStrawRot(updateDelta)
-    local weather = g_currentMission.environment.weather
-    local isRaining = weather:getRainFallScale() > 0.1
-
-    if isRaining then
-        for key, pile in pairs(self.strawPiles) do
-            self:processStrawRainExposure(key, pile, updateDelta, true)
-        end
-    else
-        for key, _ in pairs(self.wetStrawKeys) do
-            local pile = self.strawPiles[key]
-            if pile == nil then
-                self.wetStrawKeys[key] = nil
-                self.strawRotAccumulators[key] = nil
-            else
-                self:processStrawRainExposure(key, pile, updateDelta, false)
-            end
-        end
-    end
-end
-
-function GroundPropertyTracker:processStrawRainExposure(key, pile, updateDelta, isRaining)
-    local rainExposure = pile.properties.rainExposure or 0
-    local peakRainExposure = pile.properties.peakRainExposure or 0
-
-    if isRaining then
-        rainExposure = rainExposure + updateDelta
-        if rainExposure > peakRainExposure then
-            peakRainExposure = rainExposure
-        end
-    else
-        rainExposure = math.max(0, rainExposure - (updateDelta * GroundPropertyTracker.DRYING_DECAY_RATE))
-
-        if rainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME and
-            peakRainExposure < GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
-            peakRainExposure = rainExposure
-        end
-    end
-
-    pile.properties.rainExposure = rainExposure
-    pile.properties.peakRainExposure = peakRainExposure
-
-    if rainExposure > 0 or peakRainExposure > 0 then
-        self.wetStrawKeys[key] = true
-    else
-        self.wetStrawKeys[key] = nil
-    end
-
-    local rotLevel = 0
-    if peakRainExposure >= GroundPropertyTracker.NORMAL_ROT_EXPOSURE_TIME then
-        rotLevel = 2
-    elseif peakRainExposure >= GroundPropertyTracker.SLOW_ROT_EXPOSURE_TIME then
-        rotLevel = 1
-    end
-
-    if rotLevel > 0 then
-        if not self.strawRotAccumulators[key] then
-            self.strawRotAccumulators[key] = 0
-        end
-
-        local baseAmount = GroundPropertyTracker.ROT_ACCUMULATION_MIN +
-            math.random() * (GroundPropertyTracker.ROT_ACCUMULATION_MAX - GroundPropertyTracker.ROT_ACCUMULATION_MIN)
-
-        local rotMultiplier = rotLevel == 2 and 1.4 or 1.0
-        local scaledAmount = baseAmount * rotMultiplier * (updateDelta / 1000)
-        self.strawRotAccumulators[key] = self.strawRotAccumulators[key] + scaledAmount
-
-        if self.strawRotAccumulators[key] >= GroundPropertyTracker.ROT_REMOVAL_THRESHOLD then
-            local removalAmount = GroundPropertyTracker.ROT_REMOVAL_THRESHOLD
-
-            local gridX = pile.gridX
-            local gridZ = pile.gridZ
-            local halfSize = GroundPropertyTracker.GRID_SIZE / 2
-
-            local hasContent = self:checkPileHasContent(gridX, gridZ, pile.fillType)
-            if not hasContent then
-                self.strawRotAccumulators[key] = nil
-                self.wetStrawKeys[key] = nil
-                return
-            end
-
-            local sx = gridX - halfSize
-            local sz = gridZ - halfSize
-            local sy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, sx, 0, sz)
-
-            local wx = gridX + halfSize
-            local wz = gridZ - halfSize
-            local wy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, wx, 0, wz)
-
-            local hx = gridX - halfSize
-            local hz = gridZ + halfSize
-            local hy = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, hx, 0, hz)
-
-            local lsx, lsy, lsz, lex, ley, lez, lineRadius = DensityMapHeightUtil.getLineByAreaDimensions(
-                sx, sy, sz, wx, wy, wz, hx, hy, hz, true
-            )
-
-            local removed = DensityMapHeightUtil.tipToGroundAroundLine(
-                nil,
-                -removalAmount,
-                pile.fillType,
-                lsx, lsy, lsz,
-                lex, ley, lez,
-                2,
-                nil,
-                nil,
-                false,
-                nil
-            )
-
-            if removed ~= 0 then
-                self.strawRotAccumulators[key] = 0
-                self:checkPileHasContent(gridX, gridZ, pile.fillType)
-            end
-        end
-    else
-        if self.strawRotAccumulators[key] then
-            self.strawRotAccumulators[key] = nil
         end
     end
 end
@@ -1297,13 +1571,19 @@ function GroundPropertyTracker:convertGridCells(fromSize, toSize)
         end
     end
 
-    self:rebuildWetPileIndex()
+    -- Storages were rebuilt wholesale; rebuild the sweep snapshot to match.
+    self:rebuildSweepSnapshot()
 end
 
 function GroundPropertyTracker:degradeQuality(decayRate, decayMultiplier)
     if not self.isServer then return end
 
-    local allStorages = { self.gridPiles, self.grassPiles, self.hayPiles, self.strawPiles }
+    -- Only gridPiles can hold CropValueMap fill types (crops), which is the only
+    -- thing quality grading / sell price uses. grass/hay/straw fill types have no
+    -- CropValueMap entry, so getIdealRange returns nil and they were already
+    -- no-ops here — skip them entirely to keep this hourly walk off those (much
+    -- larger) tables.
+    local allStorages = { self.gridPiles }
 
     for _, storage in ipairs(allStorages) do
         for _, pile in pairs(storage) do
@@ -1446,31 +1726,8 @@ function GroundPropertyTracker:loadFromXMLFile(xmlFile, key)
         groupIndex = groupIndex + 1
     end
 
-    self:rebuildWetPileIndex()
-end
-
--- Repopulate wetGrassKeys / wetStrawKeys from current pile state.
--- rainExposure isn't currently persisted, so this is usually a no-op after a
--- load — but it keeps the index correct if exposure data is ever loaded into
--- pile.properties from elsewhere, and is cheap enough to run unconditionally.
-function GroundPropertyTracker:rebuildWetPileIndex()
-    self.wetGrassKeys = {}
-    for key, pile in pairs(self.grassPiles) do
-        local rx = pile.properties.rainExposure or 0
-        local pk = pile.properties.peakRainExposure or 0
-        if rx > 0 or pk > 0 then
-            self.wetGrassKeys[key] = true
-        end
-    end
-
-    self.wetStrawKeys = {}
-    for key, pile in pairs(self.strawPiles) do
-        local rx = pile.properties.rainExposure or 0
-        local pk = pile.properties.peakRainExposure or 0
-        if rx > 0 or pk > 0 then
-            self.wetStrawKeys[key] = true
-        end
-    end
+    -- Storages were just populated from the savegame; build the sweep snapshot.
+    self:rebuildSweepSnapshot()
 end
 
 ---
