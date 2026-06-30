@@ -1,5 +1,7 @@
 WeatherProfileSystem = {}
 
+WeatherProfileSystem.modSettingsDir = g_currentModSettingsDirectory
+
 WeatherProfileSystem.TEMPERATURE_OFFSET_SCALE = 1.0
 WeatherProfileSystem.MOISTURE_CLAMP_SCALE = 1.0
 
@@ -43,6 +45,21 @@ function WeatherProfileSystem:loadProfiles()
     for _, entry in pairs(files.files) do
         if not entry.isDirectory and entry.filename:sub(-4) == ".xml" then
             self:loadProfileXML(profileDir .. entry.filename)
+        end
+    end
+
+    -- Also load any user-supplied profiles from modSettings (e.g.
+    -- .../modSettings/FS25_MoistureSystem/). Files here override built-in
+    -- profiles that share the same id, so users can customise without editing
+    -- the mod itself.
+    local userDir = WeatherProfileSystem.modSettingsDir
+    if userDir then
+        createFolder(userDir)
+        local userFiles = Files.new(userDir)
+        for _, entry in pairs(userFiles.files) do
+            if not entry.isDirectory and entry.filename:sub(-4) == ".xml" then
+                self:loadProfileXML(userDir .. entry.filename)
+            end
         end
     end
 end

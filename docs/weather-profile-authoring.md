@@ -1,6 +1,6 @@
 # Authoring Weather Profile XMLs
 
-Weather profiles define the climate behaviour for a region — monthly moisture clamps, temperature offsets, and per-type weather weights. Each profile lives in `xml/weatherProfiles/<id>.xml` and must be registered in `WeatherProfileSystem:loadProfiles()` before it will be loaded.
+Weather profiles define the climate behaviour for a region — monthly moisture clamps, temperature offsets, and per-type weather weights. Each profile lives in an XML file and is discovered automatically at map load — no code changes required.
 
 ## File structure
 
@@ -102,7 +102,14 @@ Example with one variant:
 
 ## Adding a new profile
 
-Drop your file into `xml/weatherProfiles/`. All `.xml` files in that directory are loaded automatically — no code changes required.
+There are two places the mod looks for profile XMLs, in load order:
+
+1. **`xml/weatherProfiles/`** (inside the mod) — the built-in profiles shipped with the mod.
+2. **`modSettings/FS25_MoistureSystem/`** (inside your FS25 game documents folder, e.g. `Documents/My Games/FarmingSimulator2025/modSettings/FS25_MoistureSystem/`) — user-supplied profiles loaded after the built-ins.
+
+**For end users:** drop your `.xml` file into the `modSettings/FS25_MoistureSystem/` folder. It appears in the in-game profile picker automatically without editing the mod. If your file uses the same `id` as a built-in profile it will replace it.
+
+**For mod authors bundling a profile:** drop the file into `xml/weatherProfiles/` as before.
 
 ## Crop grade A windows
 

@@ -36,7 +36,8 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 Changelog:
 
 2.0.0.0 [WIP]:
-- The moisture system now controls weather. Choose a Weather Profile that matches your region in game settings. Weather includes variability that simulates realistic seasonal patterns. This impacts your harvest and requires even more planning than before.
+- The moisture system now controls weather. Choose a Weather Profile that matches your region in game settings. Many maps have appropriate defaults configured within the mod. Weather includes variability that simulates realistic seasonal patterns. This impacts your harvest and requires even more planning than before.
+- You can write your own weather profiles if you like. Visit GitHub and follow the guide.
 - The moisture calendar has been replaced with a Weather information view, showing seasonal forecasts and historical weather data.
 - Generally eased material rotting, both for bales and ground piles. Material will take longer to begin to rot, and rot more slowly.
 - Fixed an issue with grain drying not starting in multiplayer games.

@@ -75,7 +75,7 @@
         <textUpperCase value="true"/>
         <textColor value="$preset_colorWhite_50"/>
     </Profile>
-    <Profile name="msWeatherPanelRow" extends="emptyPanel" with="anchorTopLeft flowLayoutX">
+    <Profile name="msWeatherPanelRow" extends="emptyPanel" with="anchorTopLeft">
         <flowLayoutGap value="20px"/>
     </Profile>
     <Profile name="msWeatherPanel" extends="emptyPanel" with="anchorTopLeft">
