@@ -51,9 +51,6 @@
 		<text name="ms_drying_stopped" text="Сушка в силосе остановлена"/>
 		<text name="ms_drying_complete" text="Сушка завершена - весь урожай на идеальной влажности"/>
 
-		<!-- Информационный диалог -->
-		<text name="ms_info_dryingUpdate" text="Система влажности теперь включает сушку зерна. Собранные культуры имеют значение качества и уровень влажности. Вы должны сушить зерно в зернохранилище или силосе, чтобы предотвратить потерю качества. Продажа культур с избыточной влажностью может повлечь плату за сушку. Подробности смотрите в меню помощи. Это сообщение отображается один раз за сохранение и будет удалено в будущем обновлении."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Открыть Меню Влажности"/>
 		<text name="input_MOISTURE_START_DRYING" text="Переключить сушку в силосе"/>
@@ -62,7 +59,6 @@
 		<text name="moistureSystem_fieldInfo" text="Влажность Поля"/>
 		<text name="moistureSystem_moisture" text="Влажность"/>
 		<text name="moistureSystem_quality" text="Качество"/>
-		<text name="moistureSystem_range" text="Ожидаемый Диапазон"/>
 		<text name="moistureSystem_rainExposure" text="Воздействие Дождя"/>
 		<text name="moistureSystem_baleStatus" text="Состояние"/>
 		<text name="moistureSystem_baleGettingWet" text="Намокает"/>
@@ -88,6 +84,22 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Календарь Влажности"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Текущая Среда"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Календарь ниже показывает ожидаемый диапазон влажности для каждого месяца на основе текущей настройки среды. Уровни влажности зависят от осадков, температуры и сезона."/>
+
+		<!-- GUI Погоды -->
+		<text name="moistureSystem_gui_weather" text="Погода"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Прогноз"/>
+		<text name="moistureSystem_gui_weather_history" text="История"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Осадки"/>
+		<text name="moistureSystem_gui_weather_sun" text="Солнце"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Облачно"/>
+		<text name="moistureSystem_gui_weather_noData" text="Нет Данных"/>
+		<text name="moistureSystem_gui_weather_season1" text="Весна"/>
+		<text name="moistureSystem_gui_weather_season2" text="Лето"/>
+		<text name="moistureSystem_gui_weather_season3" text="Осень"/>
+		<text name="moistureSystem_gui_weather_season4" text="Зима"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Прогнозы являются оценочными. Точность снижается для более отдалённых сезонов."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Год %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Завершённые годы охватывают период с марта по февраль, чтобы сезоны были правильно представлены."/>
 
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Влагомер"/>

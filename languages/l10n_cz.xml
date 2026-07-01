@@ -51,9 +51,6 @@
 		<text name="ms_drying_stopped" text="Sušení v silu zastaveno"/>
 		<text name="ms_drying_complete" text="Sušení dokončeno - všechny plodiny na ideální vlhkosti"/>
 
-		<!-- Informační dialog -->
-		<text name="ms_info_dryingUpdate" text="Systém vlhkosti nyní zahrnuje sušení obilí. Sklizené plodiny mají hodnotu kvality a úroveň vlhkosti. Musíte sušit obilí v sýpce nebo silu, abyste zabránili ztrátě kvality. Prodej plodin s nadměrnou vlhkostí může znamenat poplatky za sušení. Více informací naleznete v menu nápovědy. Tato zpráva se zobrazí jednou za uložení a bude odstraněna v budoucí aktualizaci."/>
-
 		<!-- Ovládací vazby -->
 		<text name="input_MOISTURE_MENU" text="Otevřít menu vlhkosti"/>
 		<text name="input_MOISTURE_START_DRYING" text="Přepnout sušení v silu"/>
@@ -62,7 +59,6 @@
 		<text name="moistureSystem_fieldInfo" text="Vlhkost pole"/>
 		<text name="moistureSystem_moisture" text="Vlhkost"/>
 		<text name="moistureSystem_quality" text="Kvalita"/>
-		<text name="moistureSystem_range" text="Očekávaný rozsah"/>
 		<text name="moistureSystem_rainExposure" text="Vystavení dešti"/>
 		<text name="moistureSystem_baleStatus" text="Stav"/>
 		<text name="moistureSystem_baleGettingWet" text="Namáčí se"/>
@@ -88,6 +84,22 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Kalendář vlhkosti"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Aktuální prostředí"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Kalendář níže ukazuje očekávaný rozsah vlhkosti pro každý měsíc na základě aktuálního nastavení prostředí. Úrovně vlhkosti jsou ovlivněny srážkami, teplotou a ročním obdobím."/>
+
+		<!-- GUI počasí -->
+		<text name="moistureSystem_gui_weather" text="Počasí"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Předpověď"/>
+		<text name="moistureSystem_gui_weather_history" text="Historie"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Srážky"/>
+		<text name="moistureSystem_gui_weather_sun" text="Slunce"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Oblačno"/>
+		<text name="moistureSystem_gui_weather_noData" text="Žádná data"/>
+		<text name="moistureSystem_gui_weather_season1" text="Jaro"/>
+		<text name="moistureSystem_gui_weather_season2" text="Léto"/>
+		<text name="moistureSystem_gui_weather_season3" text="Podzim"/>
+		<text name="moistureSystem_gui_weather_season4" text="Zima"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Předpovědi jsou odhady. Přesnost klesá pro vzdálenější roční období."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Rok %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Dokončené roky probíhají od března do února, aby byla roční období správně zobrazena."/>
 
 		<!-- Ruční nástroj -->
 		<text name="moistureSystem_moistureMeter" text="Vlhkoměr"/>

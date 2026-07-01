@@ -51,9 +51,6 @@
 		<text name="ms_drying_stopped" text="Сушіння у силосі зупинено"/>
 		<text name="ms_drying_complete" text="Сушіння завершено - всі культури на ідеальній вологості"/>
 
-		<!-- Інформаційний діалог -->
-		<text name="ms_info_dryingUpdate" text="Система вологості тепер включає сушіння зерна. Зібрані культури мають значення якості та рівень вологості. Ви повинні сушити зерно в зерносховищі або силосі, щоб запобігти втраті якості. Продаж культур з надлишковою вологістю може спричинити плату за сушіння. Дивіться меню довідки для деталей. Це повідомлення показується один раз на збереження і буде видалено в майбутньому оновленні."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Відкрити меню вологості"/>
 		<text name="input_MOISTURE_START_DRYING" text="Перемкнути сушіння в силосі"/>
@@ -62,7 +59,6 @@
 		<text name="moistureSystem_fieldInfo" text="Вологість поля"/>
 		<text name="moistureSystem_moisture" text="Вологість"/>
 		<text name="moistureSystem_quality" text="Якість"/>
-		<text name="moistureSystem_range" text="Очікуваний діапазон"/>
 		<text name="moistureSystem_rainExposure" text="Вплив дощу"/>
 		<text name="moistureSystem_baleStatus" text="Стан"/>
 		<text name="moistureSystem_baleGettingWet" text="Намокає"/>
@@ -88,6 +84,22 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Календар вологості"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Поточний клімат"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Очікуваний рівень вологості по місяцях залежно від клімату."/>
+
+		<!-- GUI погоди -->
+		<text name="moistureSystem_gui_weather" text="Погода"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Прогноз"/>
+		<text name="moistureSystem_gui_weather_history" text="Історія"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Опади"/>
+		<text name="moistureSystem_gui_weather_sun" text="Сонце"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Хмарно"/>
+		<text name="moistureSystem_gui_weather_noData" text="Немає даних"/>
+		<text name="moistureSystem_gui_weather_season1" text="Весна"/>
+		<text name="moistureSystem_gui_weather_season2" text="Літо"/>
+		<text name="moistureSystem_gui_weather_season3" text="Осінь"/>
+		<text name="moistureSystem_gui_weather_season4" text="Зима"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Прогнози є приблизними. Точність зменшується для більш віддалених сезонів."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Рік %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Завершені роки охоплюють період з березня по лютий, щоб сезони були правильно представлені."/>
 
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Вимірювач вологості"/>

@@ -51,9 +51,6 @@
 		<text name="ms_drying_stopped" text="Silo kurutma durduruldu"/>
 		<text name="ms_drying_complete" text="Kurutma tamamlandı - tüm mahsuller ideal nemde"/>
 
-		<!-- Bilgi Diyaloğu -->
-		<text name="ms_info_dryingUpdate" text="Nem sistemi artık tahıl kurutmayı içeriyor. Hasat edilen ürünlerin bir kalite değeri ve nem seviyesi vardır. Kalite kaybını önlemek için tahılı bir tahıl deposunda veya siloda kurutmalısınız. Fazla nemli ürün satışı kurutma ücreti gerektirebilir. Daha fazla bilgi için yardım menüsüne bakın. Bu mesaj kayıt başına bir kez gösterilir ve gelecek bir güncellemede kaldırılacaktır."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Nem Menüsünü Aç"/>
 		<text name="input_MOISTURE_START_DRYING" text="Silo Kurutmayı Aç/Kapat"/>
@@ -62,7 +59,6 @@
 		<text name="moistureSystem_fieldInfo" text="Tarla Nemi"/>
 		<text name="moistureSystem_moisture" text="Nem"/>
 		<text name="moistureSystem_quality" text="Kalite"/>
-		<text name="moistureSystem_range" text="Beklenen Aralık"/>
 		<text name="moistureSystem_rainExposure" text="Yağmura Maruz Kalma"/>
 		<text name="moistureSystem_baleStatus" text="Durum"/>
 		<text name="moistureSystem_baleGettingWet" text="Islanıyor"/>
@@ -88,6 +84,22 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Nem Takvimi"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Mevcut Ortam"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Aşağıdaki takvim, mevcut ortam ayarınıza göre her ay için beklenen nem aralığını gösterir. Nem seviyeleri yağış, sıcaklık ve mevsimden etkilenir."/>
+
+		<!-- Hava Durumu GUI -->
+		<text name="moistureSystem_gui_weather" text="Hava Durumu"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Tahmin"/>
+		<text name="moistureSystem_gui_weather_history" text="Geçmiş"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Yağış"/>
+		<text name="moistureSystem_gui_weather_sun" text="Güneş"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Bulutlu"/>
+		<text name="moistureSystem_gui_weather_noData" text="Veri Yok"/>
+		<text name="moistureSystem_gui_weather_season1" text="İlkbahar"/>
+		<text name="moistureSystem_gui_weather_season2" text="Yaz"/>
+		<text name="moistureSystem_gui_weather_season3" text="Sonbahar"/>
+		<text name="moistureSystem_gui_weather_season4" text="Kış"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Tahminler yaklaşıktır. Daha uzak mevsimler için doğruluk azalır."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Yıl %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Tamamlanan yıllar, mevsimlerin doğru temsil edilmesi için Mart'tan Şubat'a kadar uzanır."/>
 
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Nem Ölçer"/>

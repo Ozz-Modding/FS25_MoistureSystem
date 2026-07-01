@@ -65,7 +65,6 @@ end
 function MoistureSystem:loadMap()
     g_currentMission.MoistureSystem = self
     self.didLoadFromXML = false
-    self.dryingInfoShown = false
     self.midHeight = 0
     self.currentMoisturePercent = 0
     self.timeSinceLastUpdate = 0
@@ -753,13 +752,6 @@ function MoistureSystem:onStartMission()
     end
 
 
-    if not ms.dryingInfoShown and g_dedicatedServer == nil then
-        ms.dryingInfoShown = true
-        Timer.createOneshot(100, function()
-            InfoDialog.show(g_i18n:getText("ms_info_dryingUpdate"))
-        end)
-    end
-
     if g_currentMission:getIsServer() then
         -- Initialize mod on new game
         if not ms.didLoadFromXML then
@@ -888,11 +880,6 @@ function MoistureSystem:loadFromXMLFile()
             self.settings.moistureMeterReporting = moistureMeterReporting
         end
 
-        local dryingInfoShown = getXMLBool(xmlFile, MoistureSystem.SaveKey .. "#dryingInfoShown")
-        if dryingInfoShown ~= nil then
-            self.dryingInfoShown = dryingInfoShown
-        end
-
         if g_currentMission.groundPropertyTracker then
             g_currentMission.groundPropertyTracker:loadFromXMLFile(xmlFile, MoistureSystem.SaveKey)
         end
@@ -993,8 +980,6 @@ function MoistureSystem:saveToXmlFile()
 
     -- Save current moisture level
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. "#currentMoisturePercent", ms.currentMoisturePercent)
-    setXMLBool(xmlFile, MoistureSystem.SaveKey .. "#dryingInfoShown", ms.dryingInfoShown)
-
     -- Save settings
     setXMLString(xmlFile, MoistureSystem.SaveKey .. ".settings#weatherProfile", ms.settings.weatherProfile)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureLossMultiplier", ms.settings

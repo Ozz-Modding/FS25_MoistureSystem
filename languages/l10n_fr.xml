@@ -51,9 +51,6 @@
 		<text name="ms_drying_stopped" text="Séchage en silo arrêté"/>
 		<text name="ms_drying_complete" text="Séchage terminé - toutes les cultures à l'humidité idéale"/>
 
-		<!-- Dialogue d'information -->
-		<text name="ms_info_dryingUpdate" text="Le système d'humidité inclut désormais le séchage des céréales. Les cultures récoltées ont une valeur de qualité et un taux d'humidité. Vous devez sécher le grain dans un hangar ou un silo pour éviter la perte de qualité. La vente de cultures trop humides peut entraîner des frais de séchage. Consultez le menu d'aide pour plus de détails. Ce message s'affiche une seule fois par sauvegarde et sera supprimé dans une future mise à jour."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Ouvrir le Menu d'Humidité"/>
 		<text name="input_MOISTURE_START_DRYING" text="Activer/Désactiver le séchage"/>
@@ -62,7 +59,6 @@
 		<text name="moistureSystem_fieldInfo" text="Humidité du Champ"/>
 		<text name="moistureSystem_moisture" text="Humidité"/>
 		<text name="moistureSystem_quality" text="Qualité"/>
-		<text name="moistureSystem_range" text="Plage Attendue"/>
 		<text name="moistureSystem_rainExposure" text="Exposition à la Pluie"/>
 		<text name="moistureSystem_baleStatus" text="Statut"/>
 		<text name="moistureSystem_baleGettingWet" text="Se Mouille"/>
@@ -88,6 +84,22 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Calendrier d'Humidité"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Environnement Actuel"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Le calendrier ci-dessous montre la plage d'humidité attendue pour chaque mois en fonction de votre paramètre d'environnement actuel. Les niveaux d'humidité sont influencés par les précipitations, la température et la saison."/>
+
+		<!-- GUI Météo -->
+		<text name="moistureSystem_gui_weather" text="Météo"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Prévisions"/>
+		<text name="moistureSystem_gui_weather_history" text="Historique"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Précipitations"/>
+		<text name="moistureSystem_gui_weather_sun" text="Soleil"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Nuageux"/>
+		<text name="moistureSystem_gui_weather_noData" text="Aucune Donnée"/>
+		<text name="moistureSystem_gui_weather_season1" text="Printemps"/>
+		<text name="moistureSystem_gui_weather_season2" text="Été"/>
+		<text name="moistureSystem_gui_weather_season3" text="Automne"/>
+		<text name="moistureSystem_gui_weather_season4" text="Hiver"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Les prévisions sont des estimations. La précision diminue pour les saisons plus éloignées."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Année %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Les années complètes s'étendent de mars à février afin que les saisons soient correctement représentées."/>
 
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Humidimètre"/>

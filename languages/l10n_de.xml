@@ -51,9 +51,6 @@
 		<text name="ms_drying_stopped" text="Silotrocknung gestoppt"/>
 		<text name="ms_drying_complete" text="Trocknung abgeschlossen - alle Ernten auf idealer Feuchtigkeit"/>
 
-		<!-- Info-Dialog -->
-		<text name="ms_info_dryingUpdate" text="Das Feuchtigkeitssystem enthält jetzt Getreidetrocknung. Geerntete Feldfrüchte haben einen Qualitätswert und einen Feuchtigkeitsgehalt. Sie müssen Getreide in einer Lagerhalle oder einem Silo trocknen, um Qualitätsverluste zu vermeiden. Beim Verkauf von Erntegut mit zu hoher Feuchtigkeit können Trocknungsgebühren anfallen. Weitere Informationen finden Sie im Hilfemenü. Diese Nachricht wird einmal pro Spielstand angezeigt und in einem zukünftigen Update entfernt."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Feuchtigkeitsmenü öffnen"/>
 		<text name="input_MOISTURE_START_DRYING" text="Silo-Trocknung umschalten"/>
@@ -62,7 +59,6 @@
 		<text name="moistureSystem_fieldInfo" text="Feldfeuchtigkeit"/>
 		<text name="moistureSystem_moisture" text="Feuchtigkeit"/>
 		<text name="moistureSystem_quality" text="Qualität"/>
-		<text name="moistureSystem_range" text="Erwarteter Bereich"/>
 		<text name="moistureSystem_rainExposure" text="Regenexposition"/>
 		<text name="moistureSystem_baleStatus" text="Status"/>
 		<text name="moistureSystem_baleGettingWet" text="Wird Nass"/>
@@ -88,6 +84,22 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Feuchtigkeitskalender"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Aktuelle Umgebung"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Der Kalender unten zeigt den erwarteten Feuchtigkeitsbereich für jeden Monat basierend auf Ihrer aktuellen Umgebungseinstellung. Feuchtigkeitsniveaus werden von Niederschlag, Temperatur und Jahreszeit beeinflusst."/>
+
+		<!-- Wetter-GUI -->
+		<text name="moistureSystem_gui_weather" text="Wetter"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Vorhersage"/>
+		<text name="moistureSystem_gui_weather_history" text="Verlauf"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Niederschlag"/>
+		<text name="moistureSystem_gui_weather_sun" text="Sonne"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Bewölkt"/>
+		<text name="moistureSystem_gui_weather_noData" text="Keine Daten"/>
+		<text name="moistureSystem_gui_weather_season1" text="Frühling"/>
+		<text name="moistureSystem_gui_weather_season2" text="Sommer"/>
+		<text name="moistureSystem_gui_weather_season3" text="Herbst"/>
+		<text name="moistureSystem_gui_weather_season4" text="Winter"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Vorhersagen sind Schätzungen. Die Genauigkeit nimmt für weiter entfernte Jahreszeiten ab."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Jahr %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Abgeschlossene Jahre laufen von März bis Februar, damit die Jahreszeiten korrekt dargestellt werden."/>
 
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Feuchtigkeitsmesser"/>

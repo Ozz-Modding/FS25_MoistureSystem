@@ -51,9 +51,6 @@
 		<text name="ms_drying_stopped" text="Silo drying stopped"/>
 		<text name="ms_drying_complete" text="Drying complete - all crops at ideal moisture"/>
 
-		<!-- Info Dialog -->
-		<text name="ms_info_dryingUpdate" text="The Moisture System now includes grain drying. Harvested crops have a quality value and a moisture level. You must dry grain in a grain shed or silo to prevent quality loss. Selling crop with excess moisture may incur drying charges. See the in-game help menu for more details. This message will show once per save and be removed in a future update."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Open Moisture Menu"/>
 		<text name="input_MOISTURE_START_DRYING" text="Toggle Silo Drying"/>
@@ -62,7 +59,7 @@
 		<text name="moistureSystem_fieldInfo" text="Field Moisture"/>
 		<text name="moistureSystem_moisture" text="Moisture"/>
 		<text name="moistureSystem_quality" text="Quality"/>
-<text name="moistureSystem_rainExposure" text="Rain Exposure"/>
+		<text name="moistureSystem_rainExposure" text="Rain Exposure"/>
 		<text name="moistureSystem_baleStatus" text="Status"/>
 		<text name="moistureSystem_baleGettingWet" text="Getting Wet"/>
 		<text name="moistureSystem_baleRottingSlowly" text="Rotting Slowly"/>

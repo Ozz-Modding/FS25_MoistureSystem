@@ -51,9 +51,6 @@
 		<text name="ms_drying_stopped" text="Secado en silo detenido"/>
 		<text name="ms_drying_complete" text="Secado completo - todos los cultivos en humedad ideal"/>
 
-		<!-- Diálogo informativo -->
-		<text name="ms_info_dryingUpdate" text="El sistema de humedad ahora incluye el secado de grano. Los cultivos cosechados tienen un valor de calidad y un nivel de humedad. Debes secar el grano en un granero o silo para evitar la pérdida de calidad. Vender cultivos con exceso de humedad puede generar cargos por secado. Consulta el menú de ayuda para más información. Este mensaje se muestra una vez por partida guardada y se eliminará en una futura actualización."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Abrir Menú de Humedad"/>
 		<text name="input_MOISTURE_START_DRYING" text="Alternar secado en silo"/>
@@ -62,7 +59,6 @@
 		<text name="moistureSystem_fieldInfo" text="Humedad del Campo"/>
 		<text name="moistureSystem_moisture" text="Humedad"/>
 		<text name="moistureSystem_quality" text="Calidad"/>
-		<text name="moistureSystem_range" text="Rango Esperado"/>
 		<text name="moistureSystem_rainExposure" text="Exposición a la Lluvia"/>
 		<text name="moistureSystem_baleStatus" text="Estado"/>
 		<text name="moistureSystem_baleGettingWet" text="Mojándose"/>
@@ -88,6 +84,22 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Calendario de Humedad"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Ambiente Actual"/>
 		<text name="moistureSystem_gui_calendarDescription" text="El calendario a continuación muestra el rango de humedad esperado para cada mes según tu configuración de ambiente actual. Los niveles de humedad están influenciados por las precipitaciones, la temperatura y la estación."/>
+
+		<!-- GUI del Clima -->
+		<text name="moistureSystem_gui_weather" text="Clima"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Pronóstico"/>
+		<text name="moistureSystem_gui_weather_history" text="Historial"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Precipitación"/>
+		<text name="moistureSystem_gui_weather_sun" text="Sol"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Nublado"/>
+		<text name="moistureSystem_gui_weather_noData" text="Sin Datos"/>
+		<text name="moistureSystem_gui_weather_season1" text="Primavera"/>
+		<text name="moistureSystem_gui_weather_season2" text="Verano"/>
+		<text name="moistureSystem_gui_weather_season3" text="Otoño"/>
+		<text name="moistureSystem_gui_weather_season4" text="Invierno"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Los pronósticos son estimaciones. La precisión disminuye para estaciones más lejanas."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Año %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Los años completos van de marzo a febrero para que las estaciones estén correctamente representadas."/>
 
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Medidor de Humedad"/>

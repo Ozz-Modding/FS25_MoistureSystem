@@ -51,9 +51,6 @@
 		<text name="ms_drying_stopped" text="Suszenie w silosie zatrzymane"/>
 		<text name="ms_drying_complete" text="Suszenie zakończone - wszystkie plony osiągnęły idealną wilgotność"/>
 
-		<!-- Dialog informacyjny -->
-		<text name="ms_info_dryingUpdate" text="System wilgotności zawiera teraz suszenie zboża. Zebrane plony mają wartość jakości i poziom wilgotności. Musisz suszyć zboże w magazynie lub silosie, aby zapobiec utracie jakości. Sprzedaż plonów z nadmierną wilgotnością może wiązać się z opłatami za suszenie. Więcej informacji znajdziesz w menu pomocy. Ta wiadomość wyświetli się raz na zapis i zostanie usunięta w przyszłej aktualizacji."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Otwórz menu systemu wilgotności"/>
 		<text name="input_MOISTURE_START_DRYING" text="Przełącz suszenie w silosie"/>
@@ -62,7 +59,6 @@
 		<text name="moistureSystem_fieldInfo" text="Wilgotność gleby"/>
 		<text name="moistureSystem_moisture" text="Wilgotność"/>
 		<text name="moistureSystem_quality" text="Jakość"/>
-		<text name="moistureSystem_range" text="Oczekiwany zakres"/>
 		<text name="moistureSystem_rainExposure" text="Wpływ deszczu"/>
 		<text name="moistureSystem_baleStatus" text="Status"/>
 		<text name="moistureSystem_baleGettingWet" text="Moknie"/>
@@ -88,6 +84,22 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Kalendarz wilgotności"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Obecne środowisko"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Poniższy kalendarz przedstawia przewidywany zakres wilgotności dla każdego miesiąca w oparciu o aktualne ustawienia środowiskowe. Na poziom wilgotności wpływają opady deszczu, temperatura i pora roku."/>
+
+		<!-- GUI Pogody -->
+		<text name="moistureSystem_gui_weather" text="Pogoda"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Prognoza"/>
+		<text name="moistureSystem_gui_weather_history" text="Historia"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Opady"/>
+		<text name="moistureSystem_gui_weather_sun" text="Słońce"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Pochmurno"/>
+		<text name="moistureSystem_gui_weather_noData" text="Brak danych"/>
+		<text name="moistureSystem_gui_weather_season1" text="Wiosna"/>
+		<text name="moistureSystem_gui_weather_season2" text="Lato"/>
+		<text name="moistureSystem_gui_weather_season3" text="Jesień"/>
+		<text name="moistureSystem_gui_weather_season4" text="Zima"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Prognozy są szacunkowe. Dokładność spada dla dalszych pór roku."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Rok %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Ukończone lata obejmują okres od marca do lutego, aby pory roku były prawidłowo reprezentowane."/>
 
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Miernik wilgotności"/>
