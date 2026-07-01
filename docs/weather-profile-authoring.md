@@ -1,6 +1,6 @@
 # Authoring Weather Profile XMLs
 
-Weather profiles define the climate behaviour for a region — monthly moisture clamps, temperature offsets, and per-type weather weights. Each profile lives in an XML file and is discovered automatically at map load — no code changes required.
+Weather profiles define the climate behaviour for a region — monthly moisture clamps, absolute temperatures, and per-type weather weights. Each profile lives in an XML file and is discovered automatically at map load — no code changes required.
 
 ## File structure
 
@@ -9,7 +9,7 @@ Weather profiles define the climate behaviour for a region — monthly moisture 
 <weatherProfile id="myregion" displayName="My Region">
     <scenarios>
         <scenario id="normal" weight="10">
-            <month id="1"  tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="1"  tempMin="4" tempMax="9"
                 rain="3" thunder="0" snow="0" hail="0" sun="5" partlyCloudy="5" cloudy="3"
                 moistureMin="10" moistureMax="25"/>
             <!-- months 2–12 required -->
@@ -54,14 +54,16 @@ innerMax = moistureMax - 0.1 * (moistureMax - moistureMin)
 
 When tuning for crop quality, check that `innerMin`–`innerMax` overlaps the grade A window for your region's primary crops during their harvest months. See [Crop grade A windows](#crop-grade-a-windows) below.
 
-### Temperature offsets
+### Temperature
 
-| Attribute      | Type  | Unit | Description                                         |
-|----------------|-------|------|-----------------------------------------------------|
-| `tempMinOffset`| float | °C   | Added to the engine's daily minimum temperature     |
-| `tempMaxOffset`| float | °C   | Added to the engine's daily maximum temperature     |
+| Attribute  | Type    | Unit | Description                                                        |
+|------------|---------|------|--------------------------------------------------------------------|
+| `tempMin`  | integer | °C   | Absolute daily minimum temperature for this month                  |
+| `tempMax`  | integer | °C   | Absolute daily maximum temperature for this month                  |
 
-Use these to shift the base map's temperatures toward your region's climate. Positive values warm the month; negative values cool it.
+These values replace the engine's built-in variation temperatures for the duration of the month. Both attributes are optional — if omitted, the engine's baked-in temperatures for the active weather variation are used unchanged.
+
+Values must be integers. The engine enforces a hard ceiling of 63°C; there is no enforced floor but sub-zero values work correctly. Vary these between scenarios to represent warmer dry years, cooler wet years, etc.
 
 ### Weather weights
 
@@ -135,40 +137,40 @@ Remember to check the **inner range** (the 80% window described above), not raw 
 <weatherProfile id="template" displayName="Template Region">
     <scenarios>
         <scenario id="normal" weight="10">
-            <month id="1"  tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="1"  tempMin="3"  tempMax="8"
                 rain="2" thunder="0" snow="2" hail="0" sun="4" partlyCloudy="4" cloudy="4"
                 moistureMin="15" moistureMax="30"/>
-            <month id="2"  tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="2"  tempMin="3"  tempMax="9"
                 rain="2" thunder="0" snow="1" hail="0" sun="4" partlyCloudy="4" cloudy="4"
                 moistureMin="14" moistureMax="28"/>
-            <month id="3"  tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="3"  tempMin="5"  tempMax="11"
                 rain="3" thunder="0" snow="0" hail="1" sun="4" partlyCloudy="5" cloudy="3"
                 moistureMin="12" moistureMax="25"/>
-            <month id="4"  tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="4"  tempMin="7"  tempMax="14"
                 rain="3" thunder="1" snow="0" hail="1" sun="4" partlyCloudy="5" cloudy="3"
                 moistureMin="10" moistureMax="22"/>
-            <month id="5"  tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="5"  tempMin="10" tempMax="17"
                 rain="3" thunder="1" snow="0" hail="0" sun="5" partlyCloudy="5" cloudy="3"
                 moistureMin="9"  moistureMax="20"/>
-            <month id="6"  tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="6"  tempMin="13" tempMax="20"
                 rain="2" thunder="1" snow="0" hail="0" sun="6" partlyCloudy="5" cloudy="2"
                 moistureMin="7"  moistureMax="17"/>
-            <month id="7"  tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="7"  tempMin="15" tempMax="22"
                 rain="2" thunder="1" snow="0" hail="0" sun="6" partlyCloudy="5" cloudy="2"
                 moistureMin="6"  moistureMax="15"/>
-            <month id="8"  tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="8"  tempMin="15" tempMax="22"
                 rain="2" thunder="1" snow="0" hail="0" sun="6" partlyCloudy="5" cloudy="2"
                 moistureMin="7"  moistureMax="16"/>
-            <month id="9"  tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="9"  tempMin="11" tempMax="18"
                 rain="3" thunder="0" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="4"
                 moistureMin="10" moistureMax="22"/>
-            <month id="10" tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="10" tempMin="7"  tempMax="13"
                 rain="3" thunder="0" snow="0" hail="0" sun="3" partlyCloudy="4" cloudy="5"
                 moistureMin="13" moistureMax="26"/>
-            <month id="11" tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="11" tempMin="5"  tempMax="10"
                 rain="3" thunder="0" snow="1" hail="0" sun="3" partlyCloudy="3" cloudy="5"
                 moistureMin="14" moistureMax="28"/>
-            <month id="12" tempMinOffset="0.0" tempMaxOffset="0.0"
+            <month id="12" tempMin="3"  tempMax="8"
                 rain="2" thunder="0" snow="2" hail="0" sun="3" partlyCloudy="3" cloudy="5"
                 moistureMin="15" moistureMax="30"/>
         </scenario>
