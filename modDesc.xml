@@ -35,7 +35,7 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
 
-2.0.0.0 [WIP]:
+2.0.0.0:
 - The moisture system now controls weather. Choose a Weather Profile that matches your region in game settings. Many maps have appropriate defaults configured within the mod. Weather includes variability that simulates realistic seasonal patterns. This impacts your harvest and requires even more planning than before.
 - You can write your own weather profiles if you like. Visit GitHub and follow the guide.
 - The moisture calendar has been replaced with a Weather information view, showing seasonal forecasts and historical weather data.
@@ -105,6 +105,15 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop
 
 Änderungsprotokoll:
 
+2.0.0.0:
+- Das Feuchtigkeitssystem steuert jetzt das Wetter. Wählen Sie in den Spieleinstellungen ein Wetterprofil, das zu Ihrer Region passt. Viele Karten haben innerhalb des Mods geeignete Standardeinstellungen konfiguriert. Das Wetter enthält Variabilität, die realistische jahreszeitliche Muster simuliert. Dies beeinflusst Ihre Ernte und erfordert noch mehr Planung als zuvor.
+- Sie können Ihre eigenen Wetterprofile erstellen. Besuchen Sie GitHub und folgen Sie der Anleitung.
+- Der Feuchtigkeitskalender wurde durch eine Wetterinformationsansicht ersetzt, die jahreszeitliche Prognosen und historische Wetterdaten anzeigt.
+- Generell erleichtertes Materialverrotten, sowohl für Ballen als auch für Bodenhaufen. Material braucht länger, um zu verrotten, und verrottet langsamer.
+- Ein Problem behoben, bei dem die Getreidetrocknung im Multiplayer-Modus nicht startete.
+- Fahrzeuge und Silos mit Ernte zeigen jetzt im HUD die aktuelle Qualitätsstufe der Ernte an. Zuvor wurden nur Feuchtigkeit und Qualität angezeigt.
+- Optimierungen hinzugefügt, wie Wetter Bodenhaufen beeinflusst, um die Leistung für leistungsschwächere Maschinen zu verbessern.
+
 1.0.0.6:
 - Verschiedene Optimierungen zur Verbesserung der Leistung, wenn eine große Anzahl von Bodenobjekten dauerhaft bestehen bleibt.
 
@@ -161,6 +170,15 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop
 
 Journal des modifications :
+
+2.0.0.0 :
+- Le système d'humidité contrôle désormais la météo. Choisissez un profil météorologique correspondant à votre région dans les paramètres du jeu. De nombreuses cartes ont des valeurs par défaut appropriées configurées dans le mod. La météo inclut une variabilité qui simule des schémas saisonniers réalistes. Cela impacte votre récolte et nécessite encore plus de planification qu'auparavant.
+- Vous pouvez créer vos propres profils météorologiques. Visitez GitHub et suivez le guide.
+- Le calendrier d'humidité a été remplacé par une vue d'informations météorologiques, affichant des prévisions saisonnières et des données météorologiques historiques.
+- Pourriture des matériaux généralement allégée, aussi bien pour les balles que pour les tas au sol. Les matériaux mettront plus de temps à commencer à pourrir et pourriront plus lentement.
+- Correction d'un problème où le séchage des céréales ne démarrait pas dans les parties multijoueur.
+- Les véhicules et silos contenant des récoltes affichent désormais la qualité actuelle de la récolte dans le HUD. Auparavant, seuls l'humidité et la qualité étaient affichées.
+- Ajout d'optimisations sur la façon dont la météo affecte les tas au sol pour améliorer les performances sur les machines moins puissantes.
 
 1.0.0.6 :
 - Optimisations diverses pour améliorer les performances lorsqu'un grand nombre d'objets au sol persistent.
