@@ -18,7 +18,8 @@ Experience authentic environmental interactions where moisture levels fluctuate 
 Advanced Crop Quality System: Each harvested load receives a quality rating (0-100) based on its moisture content at harvest. Quality determines your sell price and degrades over time when crops are stored above their ideal moisture level. Sell wet crops and you'll incur drying charges on top of reduced prices. Use the silo drying system to reduce moisture and halt quality loss before selling. Each crop species has unique optimal moisture windows and quality-to-price bands calibrated to real-world agricultural standards. Access quality tables, price grades, and seasonal moisture projections through the in-game menu (Shift+M).
 
 Features:
-- Terrain-aware field moisture simulation with monthly variation patterns across three distinct environment profiles (Dry/Wet/Normal)
+- Regional weather simulation: choose a weather profile matching your region, with realistic seasonal patterns and yearly variation that directly impacts harvest timing and requires forward planning. See the guide on GitHub to create your own.
+- Terrain-aware field moisture simulation driven by the active weather profile, with monthly variation patterns that reflect real regional climates
 - Crop quality system: quality set at harvest, degrades hourly when stored above ideal moisture, drives sell price per crop-specific grade bands
 - Silo drying: walk up to any silo and activate drying to reduce moisture over time. Costs scale with volume and are cheaper than selling wet.
 - Drying charges at point of sale for crops above ideal moisture, shown as a separate finance entry
@@ -88,7 +89,8 @@ Erleben Sie authentische Umweltinteraktionen, bei denen die Feuchtigkeitsstufen 
 Fortgeschrittenes Kulturqualitätssystem: Jede geerntete Ladung erhält eine Qualitätsbewertung (0-100) basierend auf dem Feuchtigkeitsgehalt bei der Ernte. Die Qualität bestimmt Ihren Verkaufspreis und verschlechtert sich mit der Zeit, wenn Kulturen über ihrem idealen Feuchtigkeitsgehalt gelagert werden. Verkaufen Sie feuchtes Getreide und es fallen zusätzliche Trocknungsgebühren an. Nutzen Sie das Silo-Trocknungssystem, um die Feuchtigkeit zu reduzieren und den Qualitätsverlust vor dem Verkauf zu stoppen. Jede Kulturart verfügt über einzigartige optimale Feuchtigkeitsfenster und kulturspezifische Qualitäts-Preis-Stufen. Greifen Sie auf Qualitätstabellen, Preisstufen und saisonale Feuchtigkeitsprognosen über das In-Game-Menü (Shift+M) zu.
 
 Funktionen:
-- Geländebewusste Feldfeuchtesimulation mit monatlichen Variationsmustern über drei unterschiedliche Umgebungsprofile (Trocken/Nass/Normal)
+- Regionale Wettersimulation: Wählen Sie ein Wetterprofil, das zu Ihrer Region passt, mit realistischen jahreszeitlichen Mustern und jährlicher Variabilität, die den Erntezeitpunkt direkt beeinflusst und vorausschauende Planung erfordert. Weitere Informationen zur Erstellung eigener Profile finden Sie in der Anleitung auf GitHub.
+- Geländebewusste Feldfeuchtesimulation, die vom aktiven Wetterprofil gesteuert wird, mit monatlichen Variationsmustern, die reale regionale Klimata widerspiegeln
 - Qualitätssystem: Qualität wird bei der Ernte festgelegt, verschlechtert sich stündlich bei Lagerung über idealer Feuchtigkeit, bestimmt den Verkaufspreis über kulturspezifische Preisstufen
 - Silo-Trocknung: Gehen Sie zu einem Silo und aktivieren Sie die Trocknung, um die Feuchtigkeit über Zeit zu reduzieren. Kosten skalieren mit dem Volumen und sind günstiger als feuchter Verkauf.
 - Trocknungsgebühren beim Verkauf für Kulturen über idealer Feuchtigkeit, als separater Finanzposten angezeigt
@@ -154,7 +156,8 @@ Découvrez des interactions environnementales authentiques où les niveaux d'hum
 Système avancé de qualité des cultures : Chaque chargement récolté reçoit une note de qualité (0-100) basée sur sa teneur en humidité à la récolte. La qualité détermine votre prix de vente et se dégrade avec le temps lorsque les cultures sont stockées au-dessus de leur niveau d'humidité idéal. Vendez des cultures humides et vous encourrez des frais de séchage en plus des prix réduits. Utilisez le système de séchage en silo pour réduire l'humidité et stopper la perte de qualité avant la vente. Chaque espèce de culture possède des fenêtres d'humidité optimales uniques et des bandes qualité-prix spécifiques. Accédez aux tables de qualité, aux grades de prix et aux projections d'humidité saisonnières via le menu en jeu (Maj+M).
 
 Caractéristiques :
-- Simulation d'humidité des champs sensible au terrain avec modèles de variation mensuelle sur trois profils environnementaux distincts (Sec/Humide/Normal)
+- Simulation météorologique régionale : choisissez un profil météo correspondant à votre région, avec des schémas saisonniers réalistes et une variabilité annuelle qui impacte directement le timing de récolte et exige une planification anticipée. Consultez le guide sur GitHub pour créer vos propres profils.
+- Simulation d'humidité des champs sensible au terrain, pilotée par le profil météorologique actif, avec des modèles de variation mensuelle reflétant les climats régionaux réels
 - Système de qualité : la qualité est définie à la récolte, se dégrade chaque heure lorsque stockée au-dessus de l'humidité idéale, détermine le prix de vente selon des bandes de prix spécifiques par culture
 - Séchage en silo : approchez-vous d'un silo et activez le séchage pour réduire l'humidité au fil du temps. Les coûts varient selon le volume et sont moins chers que la vente humide.
 - Frais de séchage au point de vente pour les cultures au-dessus de l'humidité idéale, affichés comme une entrée financière séparée
