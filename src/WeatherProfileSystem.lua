@@ -92,8 +92,8 @@ function WeatherProfileSystem:loadProfileXML(path)
                 if hasXMLProperty(xmlFile, monthXmlKey) then
                     local monthId = getXMLInt(xmlFile, monthXmlKey .. "#id") or m
                     scenario.months[monthId] = {
-                        tempMinOffset = getXMLFloat(xmlFile, monthXmlKey .. "#tempMinOffset") or 0,
-                        tempMaxOffset = getXMLFloat(xmlFile, monthXmlKey .. "#tempMaxOffset") or 0,
+                        tempMin = getXMLFloat(xmlFile, monthXmlKey .. "#tempMin"),
+                        tempMax = getXMLFloat(xmlFile, monthXmlKey .. "#tempMax"),
                         moistureMin   = getXMLFloat(xmlFile, monthXmlKey .. "#moistureMin")   or 10,
                         moistureMax   = getXMLFloat(xmlFile, monthXmlKey .. "#moistureMax")   or 30,
                         rain         = getXMLInt(xmlFile, monthXmlKey .. "#rain")           or 0,
@@ -221,11 +221,14 @@ function WeatherProfileSystem:installWeatherOverrides()
             if instance and instance.startDay then
                 local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
                 local offsets = g_currentMission.WeatherProfileSystem:getTemperatureOffsetsForMonth(month)
-                if offsets and instance.variation then
-                    instance.variation.minTemperature = (instance.variation.minTemperature or 0)
-                        + offsets.minOffset * WeatherProfileSystem.TEMPERATURE_OFFSET_SCALE
-                    instance.variation.maxTemperature = (instance.variation.maxTemperature or 10)
-                        + offsets.maxOffset * WeatherProfileSystem.TEMPERATURE_OFFSET_SCALE
+                local variation = self.variations and self.variations[instance.variationIndex]
+                if offsets and variation then
+                    if offsets.tempMin ~= nil then
+                        variation.minTemperature = offsets.tempMin
+                    end
+                    if offsets.tempMax ~= nil then
+                        variation.maxTemperature = offsets.tempMax
+                    end
                 end
             end
             superFunc(self, instance, changeDuration)
@@ -500,8 +503,8 @@ end
 
 function WeatherProfileSystem:getTemperatureOffsetsForMonth(month)
     local md = self:getMonthData(month)
-    if not md then return { minOffset = 0, maxOffset = 0 } end
-    return { minOffset = md.tempMinOffset, maxOffset = md.tempMaxOffset }
+    if not md then return {} end
+    return { tempMin = md.tempMin, tempMax = md.tempMax }
 end
 
 function WeatherProfileSystem:getProfileIds()
@@ -797,7 +800,9 @@ function WeatherProfileSystem:consoleCommandWeatherDebug()
         string.format("Weights:  rain=%d thunder=%d snow=%d hail=%d sun=%d partCloud=%d cloudy=%d",
             md and md.rain or 0, md and md.thunder or 0, md and md.snow or 0, md and md.hail or 0,
             md and md.sun or 0, md and md.partlyCloudy or 0, md and md.cloudy or 0),
-        string.format("TempOffset: min %+.1f  max %+.1f", offsets.minOffset, offsets.maxOffset),
+        string.format("Temp: min %s  max %s",
+            offsets.tempMin ~= nil and string.format("%.1f°C", offsets.tempMin) or "engine",
+            offsets.tempMax ~= nil and string.format("%.1f°C", offsets.tempMax) or "engine"),
         string.format("Clamp:    min %.0f%%  max %.0f%%", clamp.min, clamp.max),
     }
     for _, line in ipairs(lines) do print(line) end

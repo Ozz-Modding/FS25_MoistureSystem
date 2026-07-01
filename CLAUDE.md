@@ -41,7 +41,7 @@ completed year at the **start of March** (the FS25 year boundary), labelling it 
 The reporting year runs March→February so each winter (Dec/Jan/Feb) is a complete contiguous
 season; archiving in January would split winter and capture only December.
 
-Each month entry defines `rainfall`, `tempMinOffset`, `tempMaxOffset`, `moistureMin`, `moistureMax`.
+Each month entry defines `rainfall`, `tempMin`, `tempMax`, `moistureMin`, `moistureMax`.
 
 **Inner clamp range** — `adjustMoisture` uses the inner 80% of the min/max range:
 ```
@@ -100,6 +100,13 @@ type composition; use the scheduled weather type instead (see `WeatherHistoryCol
 | `msWeatherDebug` | Print active profile/scenario and current month clamp |
 | `msSetScenario <id>` | Force-switch scenario mid-game |
 | `msListScenarios` | List available scenarios for the active profile |
+
+## Decompiled FS25 source
+
+Located at `C:\Users\steve\Documents\My FS 25 Mods\Reference\FS25_Lua`. Relevant weather engine files:
+- `environment/weather/Weather.lua` — constants (e.g. `SEND_BITS_TEMPERATURE = 6`, so max encodable value = 2^6 = 64°C)
+- `environment/weather/WeatherObject.lua` — loads `minTemperature`/`maxTemperature` per variation from XML (integers, default 15/25); `activate()` calls `temperatureUpdater:setTargetValues(variation.minTemperature, variation.maxTemperature, ...)`
+- `environment/weather/WeatherInstance.lua`, `WeatherForecast.lua`, `WeatherStateEvent.lua`
 
 ## Key conventions
 
