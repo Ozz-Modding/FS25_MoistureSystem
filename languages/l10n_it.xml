@@ -126,19 +126,25 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Panoramica"/>
-		<text name="help_moisture_overview_1" text="La mod Sistema di Umidità introduce livelli di umidità dinamici e tracciamento della qualità delle colture che influenzano colture, erba e balle in tutta la tua fattoria. L'umidità varia in base all'elevazione del terreno, alle condizioni meteorologiche e all'ora del giorno. La qualità viene determinata al raccolto e degrada nel tempo se le colture sono stoccate troppo umide."/>
-		<text name="help_moisture_overview_2" text="Questo crea un'esperienza agricola più realistica dove i tempi di raccolta, l'essiccazione e la gestione dello stoccaggio contano. Usa il Menu Umidità (Shift+M) per visualizzare tabelle qualità-a-prezzo, grafici umidità-a-qualità e calendari dell'umidità."/>
+		<text name="help_moisture_overview_1" text="La mod Sistema di Umidità introduce livelli di umidità dinamici, tracciamento della qualità delle colture e simulazione meteorologica che influenzano colture, erba e balle in tutta la tua fattoria. L'umidità varia in base all'elevazione del terreno, alle condizioni meteorologiche e all'ora del giorno. La qualità e la resa vengono determinate al raccolto, e la qualità degrada nel tempo se le colture sono stoccate troppo umide."/>
+		<text name="help_moisture_overview_2" text="Questo crea un'esperienza agricola più realistica dove i tempi di raccolta, l'essiccazione e la gestione dello stoccaggio contano. Usa il Menu Umidità (Shift+M) per visualizzare tabelle qualità-a-prezzo, grafici Impatto Umidità e previsioni e cronologia meteorologica."/>
 
 		<!-- Field Moisture Page -->
 		<text name="help_moisture_field_title" text="Umidità del Campo"/>
 		<text name="help_moisture_field_1" text="L'umidità del campo varia nella tua fattoria in base a diversi fattori: Elevazione del terreno (le aree più basse sono più umide), condizioni meteorologiche (pioggia e neve aumentano l'umidità), temperatura (il clima più caldo accelera l'asciugatura) e ora del giorno (l'umidità diminuisce di più durante il giorno)."/>
-		<text name="help_moisture_field_2" text="Gli intervalli di umidità mensili cambiano durante l'anno in base al tipo di ambiente scelto (Secco/Normale/Umido). Usa lo strumento manuale misuratore di umidità o abilita la visualizzazione HUD nelle impostazioni per monitorare i livelli di umidità."/>
+		<text name="help_moisture_field_2" text="Gli intervalli di umidità mensili cambiano durante l'anno, guidati dal profilo meteorologico attivo. Usa lo strumento manuale misuratore di umidità o abilita la visualizzazione HUD nelle impostazioni per monitorare i livelli di umidità."/>
+
+		<!-- Weather Profiles Page -->
+		<text name="help_moisture_weather_title" text="Profili Meteorologici"/>
+		<text name="help_moisture_weather_1" text="Il Sistema di Umidità controlla il meteo del gioco usando profili meteorologici regionali. Scegli nelle impostazioni un profilo che corrisponde alla regione della tua mappa. Per molte mappe viene selezionato automaticamente un profilo predefinito appropriato. Ogni profilo copre precipitazioni tipiche, temperatura e variazione stagionale per quella regione."/>
+		<text name="help_moisture_weather_2" text="Ogni profilo contiene diversi scenari che rappresentano diversi tipi di anno — anni più secchi, anni più umidi, anni nella media. Una volta all'anno (ogni gennaio) il sistema sceglie uno scenario che modella i pattern meteorologici per tutto l'anno. Aspettati una vera variazione annuale: alcuni raccolti saranno più difficili di altri."/>
+		<text name="help_moisture_weather_3" text="La scheda Meteo nel Menu Umidità (Shift+M) mostra una previsione stagionale per l'anno corrente e una cronologia di come gli anni passati si sono confrontati con la norma. Usala per pianificare quando raccogliere, essiccare e vendere."/>
 
 		<!-- Crop Grading Page -->
-		<text name="help_moisture_grading_title" text="Qualità e Classificazione delle Colture"/>
-		<text name="help_moisture_grading_1" text="Le colture raccolte ricevono un punteggio di qualità (0-100) basato sul loro contenuto di umidità al raccolto. La qualità determina il tuo prezzo di vendita attraverso bande di grado per coltura (da A a D). Ogni coltura ha soglie di qualità diverse — alcune sono più resistenti alla bassa qualità rispetto ad altre."/>
-		<text name="help_moisture_grading_2" text="La qualità degrada ogni ora quando le colture sono stoccate sopra il loro livello di umidità ideale. Più è sopra l'ideale, più velocemente la qualità cala. Una volta persa la qualità, non può essere recuperata — ma puoi arrestare il degrado essiccando le colture alla loro umidità ideale."/>
-		<text name="help_moisture_grading_3" text="Consulta le tabelle umidità-a-qualità e qualità-a-prezzo nel Menu Umidità (Shift+M). Ogni coltura ha un intervallo di umidità ideale unico e bande di prezzo uniche basate sul livello di qualità."/>
+		<text name="help_moisture_grading_title" text="Qualità e Resa delle Colture"/>
+		<text name="help_moisture_grading_1" text="L'umidità influisce sia sulla resa che sulla qualità al raccolto. Le colture raccolte troppo secche daranno una resa scarsa; quelle raccolte troppo umide daranno una buona resa ma qualità ridotta. Ogni coltura ha un intervallo di umidità target dove resa e qualità sono entrambe ottimali — non è sempre la stessa finestra."/>
+		<text name="help_moisture_grading_2" text="La qualità (0-100) determina il tuo prezzo di vendita attraverso bande di grado per coltura (da A a D). La qualità degrada ogni ora quando le colture sono stoccate sopra il loro livello di umidità ideale. Una volta persa la qualità, non può essere recuperata — ma puoi arrestare il degrado essiccando le colture alla loro umidità ideale."/>
+		<text name="help_moisture_grading_3" text="Consulta il grafico Impatto Umidità e le tabelle qualità-a-prezzo nel Menu Umidità (Shift+M). Ogni coltura ha un intervallo di umidità ideale unico e bande di prezzo uniche basate sul livello di qualità."/>
 
 		<!-- Essiccazione & Vendita -->
 		<text name="help_moisture_drying_title" text="Essiccazione &amp; Vendita"/>
@@ -170,7 +176,7 @@
 
 		<!-- Settings Page -->
 		<text name="help_moisture_settings_title" text="Configurazione"/>
-		<text name="help_moisture_settings_1" text="Scegli tra tre preset climatici nelle impostazioni di gioco: Secco (livelli di umidità più bassi), Normale (equilibrato, predefinito) o Umido (livelli di umidità più alti). Ogni preset influenza gli intervalli di umidità mensili durante tutto l'anno."/>
+		<text name="help_moisture_settings_1" text="Scegli un Profilo Meteorologico nelle impostazioni che corrisponde alla regione della tua mappa. Questo controlla i pattern di umidità stagionale e meteorologica nel tuo gioco. Per molte mappe viene selezionato automaticamente un profilo predefinito appropriato, ma puoi cambiarlo in qualsiasi momento."/>
 		<text name="help_moisture_settings_2" text="Regola finemente il comportamento con impostazioni regolabili: I Moltiplicatori di Perdita/Guadagno Umidità controllano la velocità di asciugatura e bagnatura, la Riduzione Umidità per Voltafieno regola l'asciugatura per passaggio, il Tasso di Degrado della Qualità controlla quanto velocemente la qualità degrada, e la Velocità di Essiccazione controlla il tasso di essiccazione del silo."/>
 		<text name="help_moisture_settings_3" text="Altre impostazioni includono il Costo di Essiccazione alla Vendita (costo alla vendita di colture umide), impostazioni di Marciume delle Balle, attivazione Visualizzazione Umidità del Campo e stile Rapporto Misuratore Umidità. Nel multigiocatore, l'host/admin controlla queste impostazioni."/>
 	</texts>

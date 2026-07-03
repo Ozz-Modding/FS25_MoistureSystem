@@ -126,19 +126,25 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Overview"/>
-		<text name="help_moisture_overview_1" text="The Moisture System mod introduces dynamic moisture levels and crop quality tracking that affect crops, grass, and bales throughout your farm. Moisture varies based on terrain elevation, weather conditions, and time of day. Quality is determined at harvest and degrades over time if crops are stored too wet."/>
-		<text name="help_moisture_overview_2" text="This creates a more realistic farming experience where harvest timing, drying, and storage management matter. Use the Moisture Menu (Shift+M) to view quality-to-price tables, moisture-to-quality charts, and moisture calendars."/>
+		<text name="help_moisture_overview_1" text="The Moisture System mod introduces dynamic moisture levels, crop quality tracking, and weather simulation that affect crops, grass, and bales throughout your farm. Moisture varies based on terrain elevation, weather conditions, and time of day. Quality and yield are determined at harvest and quality degrades over time if crops are stored too wet."/>
+		<text name="help_moisture_overview_2" text="This creates a more realistic farming experience where harvest timing, drying, and storage management matter. Use the Moisture Menu (Shift+M) to view quality-to-price tables, Moisture Impact charts, and weather forecasts and history."/>
 
 		<!-- Field Moisture Page -->
 		<text name="help_moisture_field_title" text="Field Moisture"/>
 		<text name="help_moisture_field_1" text="Field moisture varies across your farm based on several factors: Terrain elevation (lower areas are wetter), weather conditions (rain and snow increase moisture), temperature (warmer weather accelerates drying), and time of day (moisture decreases more during daytime)."/>
-		<text name="help_moisture_field_2" text="Monthly moisture ranges change throughout the year based on your chosen environment type (Dry/Normal/Wet). Use the moisture meter hand tool or enable the HUD display in settings to monitor moisture levels."/>
+		<text name="help_moisture_field_2" text="Monthly moisture ranges change throughout the year, driven by your active weather profile. Use the moisture meter hand tool or enable the HUD display in settings to monitor moisture levels."/>
+
+		<!-- Weather Profiles Page -->
+		<text name="help_moisture_weather_title" text="Weather Profiles"/>
+		<text name="help_moisture_weather_1" text="The Moisture System controls the game's weather using regional weather profiles. Choose a profile in settings that matches the region your map is set in. Many maps have a suitable default automatically selected. Each profile covers typical rainfall, temperature, and seasonal variation for that region."/>
+		<text name="help_moisture_weather_2" text="Each profile contains several scenarios representing different year types — drier years, wetter years, average years. Once per year (each January) the system picks a scenario, which shapes the weather patterns for the whole year. Expect real year-to-year variation: some harvests will be trickier than others."/>
+		<text name="help_moisture_weather_3" text="The Weather tab in the Moisture Menu (Shift+M) shows a seasonal forecast for the current year and a history of how past years compared to normal. Use this to plan when to harvest, dry, and sell."/>
 
 		<!-- Crop Grading Page -->
-		<text name="help_moisture_grading_title" text="Crop Quality &amp; Grading"/>
-		<text name="help_moisture_grading_1" text="Harvested crops receive a quality score (0-100) based on their moisture content at harvest. Quality determines your sell price through per-crop grade bands (A through D). Each crop has different quality thresholds — some are more resilient to low quality than others."/>
-		<text name="help_moisture_grading_2" text="Quality degrades every hour when crops are stored above their ideal moisture level. The further above ideal, the faster quality drops. Once quality is lost, it cannot be recovered — but you can halt degradation by drying crops to their ideal moisture."/>
-		<text name="help_moisture_grading_3" text="View moisture-to-quality and quality-to-price tables in the Moisture Menu (Shift+M). Each crop has a unique ideal moisture range and unique price bands based on quality level."/>
+		<text name="help_moisture_grading_title" text="Crop Quality &amp; Yield"/>
+		<text name="help_moisture_grading_1" text="Moisture affects both yield and quality at harvest. Crops harvested too dry will yield poorly; crops harvested too wet yield well but at reduced quality. Each crop has a target moisture range where both yield and quality are optimal — this is not always the same window."/>
+		<text name="help_moisture_grading_2" text="Quality (0-100) determines your sell price through per-crop grade bands (A through D). Quality degrades every hour when crops are stored above their ideal moisture level. Once quality is lost it cannot be recovered, but you can halt degradation by drying crops to their ideal moisture."/>
+		<text name="help_moisture_grading_3" text="View the Moisture Impact chart and quality-to-price tables in the Moisture Menu (Shift+M). Each crop has a unique ideal moisture range and unique price bands based on quality level."/>
 
 		<!-- Drying & Selling Page -->
 		<text name="help_moisture_drying_title" text="Drying &amp; Selling"/>
@@ -170,8 +176,8 @@
 
 		<!-- Settings Page -->
 		<text name="help_moisture_settings_title" text="Configuration"/>
-		<text name="help_moisture_settings_1" text="Choose from three climate presets in the game settings: Dry (lower moisture levels), Normal (balanced, default), or Wet (higher moisture levels). Each preset affects monthly moisture ranges throughout the year."/>
-		<text name="help_moisture_settings_2" text="Fine-tune behavior with adjustable settings: Moisture Loss/Gain Multipliers control drying and wetting speed, Tedding Moisture Reduction adjusts drying per pass, Quality Decay Rate controls how fast quality degrades, and Drying Speed controls silo drying rate."/>
+		<text name="help_moisture_settings_1" text="Choose a Weather Profile in settings that matches your map's region. This controls the seasonal moisture and weather patterns for your game. Many maps have a suitable default automatically selected, but you can change it at any time."/>
+		<text name="help_moisture_settings_2" text="Fine-tune behaviour with adjustable settings: Moisture Loss/Gain Multipliers control drying and wetting speed, Tedding Moisture Reduction adjusts drying per pass, Quality Decay Rate controls how fast quality degrades, and Drying Speed controls silo drying rate."/>
 		<text name="help_moisture_settings_3" text="Other settings include Sell Drying Charge Rate (cost when selling wet crops), Bale Rotting settings, Field Moisture Display toggle, and Moisture Meter Reporting style. In multiplayer, the host/admin controls these settings."/>
 	</texts>
 </l10n>

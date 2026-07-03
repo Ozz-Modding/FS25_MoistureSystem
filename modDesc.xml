@@ -111,8 +111,10 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop
 
 2.0.0.0:
 - Das Feuchtigkeitssystem steuert jetzt das Wetter. Wählen Sie in den Spieleinstellungen ein Wetterprofil, das zu Ihrer Region passt. Viele Karten haben innerhalb des Mods geeignete Standardeinstellungen konfiguriert. Das Wetter enthält Variabilität, die realistische jahreszeitliche Muster simuliert. Dies beeinflusst Ihre Ernte und erfordert noch mehr Planung als zuvor.
+- Feuchtigkeit beeinflusst jetzt sowohl den Ertrag als auch die Qualität. Das ist nicht unbedingt schwieriger - generell liefert zu trockenes Getreide schlechten Ertrag, während zu feuchtes Getreide guten Ertrag aber schlechte Qualität bringt.
 - Sie können Ihre eigenen Wetterprofile erstellen. Besuchen Sie GitHub und folgen Sie der Anleitung.
 - Der Feuchtigkeitskalender wurde durch eine Wetterinformationsansicht ersetzt, die jahreszeitliche Prognosen und historische Wetterdaten anzeigt.
+- Die Feuchtigkeit-zu-Qualität-Oberfläche wurde durch Feuchtigkeitseinfluss ersetzt. Diese zeigt den Einfluss der Feuchtigkeit auf Ertrag und Qualität für eine bestimmte Kultur.
 - Generell erleichtertes Materialverrotten, sowohl für Ballen als auch für Bodenhaufen. Material braucht länger, um zu verrotten, und verrottet langsamer.
 - Ein Problem behoben, bei dem die Getreidetrocknung im Multiplayer-Modus nicht startete.
 - Fahrzeuge und Silos mit Ernte zeigen jetzt im HUD die aktuelle Qualitätsstufe der Ernte an. Zuvor wurden nur Feuchtigkeit und Qualität angezeigt.
@@ -178,8 +180,10 @@ Journal des modifications :
 
 2.0.0.0 :
 - Le système d'humidité contrôle désormais la météo. Choisissez un profil météorologique correspondant à votre région dans les paramètres du jeu. De nombreuses cartes ont des valeurs par défaut appropriées configurées dans le mod. La météo inclut une variabilité qui simule des schémas saisonniers réalistes. Cela impacte votre récolte et nécessite encore plus de planification qu'auparavant.
+- L'humidité affecte désormais le rendement ainsi que la qualité. Ce n'est pas nécessairement plus punitif - en général, les cultures trop sèches donnent un mauvais rendement tandis que les cultures trop humides donnent un bon rendement mais une mauvaise qualité.
 - Vous pouvez créer vos propres profils météorologiques. Visitez GitHub et suivez le guide.
 - Le calendrier d'humidité a été remplacé par une vue d'informations météorologiques, affichant des prévisions saisonnières et des données météorologiques historiques.
+- L'interface humidité-vers-qualité a été remplacée par Impact de l'Humidité. Cela montre l'impact de l'humidité sur le rendement et la qualité pour une culture donnée.
 - Pourriture des matériaux généralement allégée, aussi bien pour les balles que pour les tas au sol. Les matériaux mettront plus de temps à commencer à pourrir et pourriront plus lentement.
 - Correction d'un problème où le séchage des céréales ne démarrait pas dans les parties multijoueur.
 - Les véhicules et silos contenant des récoltes affichent désormais la qualité actuelle de la récolte dans le HUD. Auparavant, seuls l'humidité et la qualité étaient affichées.
@@ -295,6 +299,17 @@ Journal des modifications :
                 </paragraph>
                 <paragraph>
                     <text text="$l10n_help_moisture_field_2"/>
+                </paragraph>
+            </page>
+            <page title="$l10n_help_moisture_weather_title" iconSliceId="helpline.icon_others">
+                <paragraph>
+                    <text text="$l10n_help_moisture_weather_1"/>
+                </paragraph>
+                <paragraph>
+                    <text text="$l10n_help_moisture_weather_2"/>
+                </paragraph>
+                <paragraph>
+                    <text text="$l10n_help_moisture_weather_3"/>
                 </paragraph>
             </page>
             <page title="$l10n_help_moisture_grading_title" iconSliceId="helpline.icon_yieldBoost">

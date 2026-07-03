@@ -126,19 +126,25 @@
 
 		<!-- Stránka přehledu -->
 		<text name="help_moisture_overview_title" text="Přehled"/>
-		<text name="help_moisture_overview_1" text="Mod Systém vlhkosti zavádí dynamické úrovně vlhkosti a sledování kvality plodin, které ovlivňují plodiny, trávu a balíky na celé vaší farmě. Vlhkost se mění v závislosti na nadmořské výšce terénu, povětrnostních podmínkách a denní době. Kvalita je určena při sklizni a klesá v čase, pokud jsou plodiny skladovány příliš vlhké."/>
-		<text name="help_moisture_overview_2" text="To vytváří realističtější farmářský zážitek, kde záleží na načasování sklizně, sušení a řízení skladování. Použijte Menu vlhkosti (Shift+M) k zobrazení tabulek kvalita-cena, grafů vlhkost-kvalita a kalendářů vlhkosti."/>
+		<text name="help_moisture_overview_1" text="Mod Systém vlhkosti zavádí dynamické úrovně vlhkosti, sledování kvality plodin a simulaci počasí, které ovlivňují plodiny, trávu a balíky na celé vaší farmě. Vlhkost se mění v závislosti na nadmořské výšce terénu, povětrnostních podmínkách a denní době. Kvalita i výnos jsou určeny při sklizni a kvalita klesá v čase, pokud jsou plodiny skladovány příliš vlhké."/>
+		<text name="help_moisture_overview_2" text="To vytváří realističtější farmářský zážitek, kde záleží na načasování sklizně, sušení a řízení skladování. Použijte Menu vlhkosti (Shift+M) k zobrazení tabulek kvalita-cena, grafů Vliv vlhkosti a předpovědí a historie počasí."/>
 
 		<!-- Stránka vlhkosti pole -->
 		<text name="help_moisture_field_title" text="Vlhkost pole"/>
 		<text name="help_moisture_field_1" text="Vlhkost pole se na vaší farmě liší na základě několika faktorů: Nadmořská výška terénu (nižší oblasti jsou vlhčí), povětrnostní podmínky (déšť a sníh zvyšují vlhkost), teplota (teplejší počasí urychluje sušení) a denní doba (vlhkost klesá více během dne)."/>
-		<text name="help_moisture_field_2" text="Měsíční rozsahy vlhkosti se mění v průběhu roku na základě vámi zvoleného typu prostředí (Suché/Normální/Vlhké). Použijte ruční vlhkoměr nebo povolte zobrazení HUD v nastavení pro sledování úrovní vlhkosti."/>
+		<text name="help_moisture_field_2" text="Měsíční rozsahy vlhkosti se mění v průběhu roku pod vlivem aktivního profilu počasí. Použijte ruční vlhkoměr nebo povolte zobrazení HUD v nastavení pro sledování úrovní vlhkosti."/>
+
+		<!-- Stránka profilů počasí -->
+		<text name="help_moisture_weather_title" text="Profily počasí"/>
+		<text name="help_moisture_weather_1" text="Systém vlhkosti řídí herní počasí pomocí regionálních profilů počasí. V nastavení vyberte profil odpovídající regionu vaší mapy. Pro mnoho map je automaticky vybrán vhodný výchozí profil. Každý profil pokrývá typické srážky, teplotu a sezónní variaci pro daný region."/>
+		<text name="help_moisture_weather_2" text="Každý profil obsahuje několik scénářů představujících různé typy let — sušší roky, vlhčí roky, průměrné roky. Jednou ročně (každý leden) systém vybere scénář formující vzorce počasí pro celý rok. Očekávejte skutečnou meziroční variabilitu: některé sklizně budou náročnější než jiné."/>
+		<text name="help_moisture_weather_3" text="Záložka Počasí v Menu vlhkosti (Shift+M) zobrazuje sezónní předpověď pro aktuální rok a historii, jak minulé roky srovnávaly s normálem. Využijte to k plánování sklizně, sušení a prodeje."/>
 
 		<!-- Stránka hodnocení plodin -->
-		<text name="help_moisture_grading_title" text="Kvalita a třídění plodin"/>
-		<text name="help_moisture_grading_1" text="Sklizené plodiny obdrží skóre kvality (0-100) na základě jejich vlhkosti při sklizni. Kvalita určuje vaši prodejní cenu prostřednictvím pásem tříd pro každou plodinu (A až D). Každá plodina má různé prahy kvality — některé jsou odolnější vůči nízké kvalitě než jiné."/>
-		<text name="help_moisture_grading_2" text="Kvalita klesá každou hodinu, když jsou plodiny skladovány nad ideální úrovní vlhkosti. Čím více nad ideálem, tím rychleji kvalita klesá. Jakmile je kvalita ztracena, nelze ji obnovit — ale pokles můžete zastavit vysušením plodin na jejich ideální vlhkost."/>
-		<text name="help_moisture_grading_3" text="Prohlédněte si tabulky vlhkost-kvalita a kvalita-cena v Menu vlhkosti (Shift+M). Každá plodina má jedinečný ideální rozsah vlhkosti a jedinečná cenová pásma na základě úrovně kvality."/>
+		<text name="help_moisture_grading_title" text="Kvalita a výnos plodin"/>
+		<text name="help_moisture_grading_1" text="Vlhkost ovlivňuje jak výnos, tak kvalitu při sklizni. Příliš suché plodiny dají špatný výnos; příliš vlhké plodiny dají dobrý výnos, ale sníženou kvalitu. Každá plodina má cílový rozsah vlhkosti, kde jsou výnos i kvalita optimální — to není vždy stejné okno."/>
+		<text name="help_moisture_grading_2" text="Kvalita (0-100) určuje vaši prodejní cenu prostřednictvím pásem tříd pro každou plodinu (A až D). Kvalita klesá každou hodinu, když jsou plodiny skladovány nad ideální úrovní vlhkosti. Jakmile je kvalita ztracena, nelze ji obnovit — ale pokles můžete zastavit vysušením plodin na jejich ideální vlhkost."/>
+		<text name="help_moisture_grading_3" text="Prohlédněte si graf Vliv vlhkosti a tabulky kvalita-cena v Menu vlhkosti (Shift+M). Každá plodina má jedinečný ideální rozsah vlhkosti a jedinečná cenová pásma na základě úrovně kvality."/>
 
 		<!-- Stránka sušení a prodeje -->
 		<text name="help_moisture_drying_title" text="Sušení &amp; Prodej"/>
@@ -170,7 +176,7 @@
 
 		<!-- Stránka nastavení -->
 		<text name="help_moisture_settings_title" text="Konfigurace"/>
-		<text name="help_moisture_settings_1" text="Vyberte z tří klimatických předvoleb v nastavení hry: Suché (nižší úrovně vlhkosti), Normální (vyvážené, výchozí) nebo Vlhké (vyšší úrovně vlhkosti). Každá předvolba ovlivňuje měsíční rozsahy vlhkosti v průběhu roku."/>
+		<text name="help_moisture_settings_1" text="V nastavení vyberte Profil počasí odpovídající regionu vaší mapy. Ten řídí sezónní vzorce vlhkosti a počasí ve vaší hře. Pro mnoho map je automaticky vybrán vhodný výchozí profil, ale kdykoli ho můžete změnit."/>
 		<text name="help_moisture_settings_2" text="Dolaďte chování pomocí nastavitelných parametrů: Násobitele ztráty/získávání vlhkosti řídí rychlost sušení a navlhčování, Snížení vlhkosti obrácením upravuje sušení na průjezd, Rychlost poklesu kvality řídí jak rychle kvalita klesá a Rychlost sušení řídí tempo sušení v silu."/>
 		<text name="help_moisture_settings_3" text="Další nastavení zahrnují Poplatek za sušení při prodeji (náklady při prodeji vlhkých plodin), nastavení Hnití balíků, Přepínač zobrazení vlhkosti pole a Styl hlášení vlhkoměru. Ve hře pro více hráčů hostitel/admin ovládá tato nastavení."/>
 	</texts>

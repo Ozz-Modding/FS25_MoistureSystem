@@ -126,19 +126,25 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Descripción General"/>
-		<text name="help_moisture_overview_1" text="El mod Sistema de Humedad introduce niveles de humedad dinámicos y seguimiento de calidad de cultivos que afectan a los cultivos, el pasto y las pacas en toda tu granja. La humedad varía según la elevación del terreno, las condiciones climáticas y la hora del día. La calidad se determina en la cosecha y se degrada con el tiempo si los cultivos se almacenan demasiado húmedos."/>
-		<text name="help_moisture_overview_2" text="Esto crea una experiencia agrícola más realista donde el momento de la cosecha, el secado y la gestión del almacenamiento importan. Usa el Menú de Humedad (Shift+M) para ver tablas de calidad-a-precio, gráficos de humedad-a-calidad y calendarios de humedad."/>
+		<text name="help_moisture_overview_1" text="El mod Sistema de Humedad introduce niveles de humedad dinámicos, seguimiento de calidad de cultivos y simulación meteorológica que afectan a los cultivos, el pasto y las pacas en toda tu granja. La humedad varía según la elevación del terreno, las condiciones climáticas y la hora del día. La calidad y el rendimiento se determinan en la cosecha, y la calidad se degrada con el tiempo si los cultivos se almacenan demasiado húmedos."/>
+		<text name="help_moisture_overview_2" text="Esto crea una experiencia agrícola más realista donde el momento de la cosecha, el secado y la gestión del almacenamiento importan. Usa el Menú de Humedad (Shift+M) para ver tablas de calidad-a-precio, gráficos de Impacto de Humedad y previsiones e historial meteorológicos."/>
 
 		<!-- Field Moisture Page -->
 		<text name="help_moisture_field_title" text="Humedad del Campo"/>
 		<text name="help_moisture_field_1" text="La humedad del campo varía en tu granja según varios factores: Elevación del terreno (las áreas más bajas son más húmedas), condiciones climáticas (la lluvia y la nieve aumentan la humedad), temperatura (el clima más cálido acelera el secado) y hora del día (la humedad disminuye más durante el día)."/>
-		<text name="help_moisture_field_2" text="Los rangos de humedad mensuales cambian a lo largo del año según el tipo de ambiente elegido (Seco/Normal/Húmedo). Usa la herramienta manual medidor de humedad o habilita la visualización en el HUD en la configuración para monitorear los niveles de humedad."/>
+		<text name="help_moisture_field_2" text="Los rangos de humedad mensuales cambian a lo largo del año, impulsados por tu perfil meteorológico activo. Usa la herramienta manual medidor de humedad o habilita la visualización en el HUD en la configuración para monitorear los niveles de humedad."/>
+
+		<!-- Weather Profiles Page -->
+		<text name="help_moisture_weather_title" text="Perfiles Meteorológicos"/>
+		<text name="help_moisture_weather_1" text="El Sistema de Humedad controla el clima del juego usando perfiles meteorológicos regionales. Elige en la configuración un perfil que corresponda a la región de tu mapa. Para muchos mapas se selecciona automáticamente un perfil predeterminado adecuado. Cada perfil cubre precipitaciones típicas, temperatura y variación estacional para esa región."/>
+		<text name="help_moisture_weather_2" text="Cada perfil contiene varios escenarios que representan diferentes tipos de año — años más secos, años más húmedos, años promedio. Una vez al año (cada enero) el sistema elige un escenario que da forma a los patrones climáticos durante todo el año. Espera una verdadera variación interanual: algunas cosechas serán más difíciles que otras."/>
+		<text name="help_moisture_weather_3" text="La pestaña Clima en el Menú de Humedad (Shift+M) muestra una previsión estacional para el año actual y un historial de cómo los años pasados se compararon con la norma. Úsala para planificar cuándo cosechar, secar y vender."/>
 
 		<!-- Crop Grading Page -->
-		<text name="help_moisture_grading_title" text="Calidad y Clasificación de Cultivos"/>
-		<text name="help_moisture_grading_1" text="Los cultivos cosechados reciben una puntuación de calidad (0-100) basada en su contenido de humedad en la cosecha. La calidad determina tu precio de venta a través de bandas de grado por cultivo (A a D). Cada cultivo tiene diferentes umbrales de calidad — algunos son más resistentes a la baja calidad que otros."/>
-		<text name="help_moisture_grading_2" text="La calidad se degrada cada hora cuando los cultivos se almacenan por encima de su nivel de humedad ideal. Cuanto más por encima del ideal, más rápido cae la calidad. Una vez perdida la calidad, no se puede recuperar — pero puedes detener la degradación secando los cultivos a su humedad ideal."/>
-		<text name="help_moisture_grading_3" text="Consulta las tablas de humedad-a-calidad y calidad-a-precio en el Menú de Humedad (Shift+M). Cada cultivo tiene un rango de humedad ideal único y bandas de precio únicas basadas en el nivel de calidad."/>
+		<text name="help_moisture_grading_title" text="Calidad y Rendimiento de Cultivos"/>
+		<text name="help_moisture_grading_1" text="La humedad afecta tanto el rendimiento como la calidad en la cosecha. Los cultivos cosechados demasiado secos darán un rendimiento bajo; los cosechados demasiado húmedos darán buen rendimiento pero calidad reducida. Cada cultivo tiene un rango de humedad objetivo donde tanto el rendimiento como la calidad son óptimos — no siempre es la misma ventana."/>
+		<text name="help_moisture_grading_2" text="La calidad (0-100) determina tu precio de venta a través de bandas de grado por cultivo (A a D). La calidad se degrada cada hora cuando los cultivos se almacenan por encima de su nivel de humedad ideal. Una vez perdida la calidad, no se puede recuperar — pero puedes detener la degradación secando los cultivos a su humedad ideal."/>
+		<text name="help_moisture_grading_3" text="Consulta el gráfico de Impacto de Humedad y las tablas de calidad-a-precio en el Menú de Humedad (Shift+M). Cada cultivo tiene un rango de humedad ideal único y bandas de precio únicas basadas en el nivel de calidad."/>
 
 		<!-- Secado y Venta -->
 		<text name="help_moisture_drying_title" text="Secado &amp; Venta"/>
@@ -170,7 +176,7 @@
 
 		<!-- Settings Page -->
 		<text name="help_moisture_settings_title" text="Configuración"/>
-		<text name="help_moisture_settings_1" text="Elige entre tres preajustes climáticos en la configuración del juego: Seco (niveles de humedad más bajos), Normal (equilibrado, predeterminado) o Húmedo (niveles de humedad más altos). Cada preajuste afecta los rangos de humedad mensuales a lo largo del año."/>
+		<text name="help_moisture_settings_1" text="Elige un Perfil Meteorológico en la configuración que corresponda a la región de tu mapa. Esto controla los patrones de humedad estacional y climática de tu juego. Para muchos mapas se selecciona automáticamente un perfil predeterminado adecuado, pero puedes cambiarlo en cualquier momento."/>
 		<text name="help_moisture_settings_2" text="Ajusta finamente el comportamiento con configuraciones ajustables: Los Multiplicadores de Pérdida/Ganancia de Humedad controlan la velocidad de secado y humedecimiento, la Reducción de Humedad por Henificación ajusta el secado por pasada, la Tasa de Degradación de Calidad controla qué tan rápido se degrada la calidad, y la Velocidad de Secado controla la tasa de secado en silo."/>
 		<text name="help_moisture_settings_3" text="Otras configuraciones incluyen el Cargo por Secado en Venta (costo al vender cultivos húmedos), configuraciones de Pudrición de Pacas, activación de Visualización de Humedad del Campo y estilo de Reporte del Medidor de Humedad. En multijugador, el anfitrión/administrador controla estas configuraciones."/>
 	</texts>
