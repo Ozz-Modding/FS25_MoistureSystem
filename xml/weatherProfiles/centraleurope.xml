@@ -60,7 +60,7 @@
                 moistureMin="4"  moistureMax="12"/>
             <month id="7"  tempMin="18" tempMax="33"
                 rain="1" thunder="1" snow="0" hail="1" sun="8" partlyCloudy="4" cloudy="1"
-                moistureMin="3"  moistureMax="10"/>
+                moistureMin="2"  moistureMax="10"/>
             <month id="8"  tempMin="17" tempMax="31"
                 rain="1" thunder="1" snow="0" hail="1" sun="7" partlyCloudy="4" cloudy="1"
                 moistureMin="4"  moistureMax="12"/>

@@ -75,7 +75,7 @@ function WitheringSystem:witherPatchAtField(field, fruitTypeIndex)
     local entry = self:getModifierForFruitType(fruitTypeIndex)
     if entry == nil then return end
 
-    local cx, _, cz = field:getCenterOfFieldWorldPosition()
+    local cx, cz = field:getCenterOfFieldWorldPosition()
     -- Random offset within ±20m of centre to spread wither patches
     local ox = (math.random() - 0.5) * 40
     local oz = (math.random() - 0.5) * 40
@@ -118,7 +118,7 @@ function WitheringSystem:onHourChanged()
         )
         if def == nil or def.witherThreshold == nil then continue end
 
-        local cx, _, cz = field:getCenterOfFieldWorldPosition()
+        local cx, cz = field:getCenterOfFieldWorldPosition()
         local moisture = moistureSystem:getMoistureAtPosition(cx, cz)
         if moisture == nil or moisture >= def.witherThreshold then continue end
 

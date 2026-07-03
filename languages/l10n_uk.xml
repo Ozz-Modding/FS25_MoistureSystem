@@ -28,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Множник плати за сушіння при продажу вологих культур. Більше = дорожче."/>
 		<text name="setting_moisture_showFieldMoisture" text="Показувати вологість поля"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Показує рівень вологості у HUD інформації поля."/>
+		<text name="setting_moisture_witheringEnabled" text="Всихання культур"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Увімкнути реалістичне всихання культур від сильної посухи. Всохлі ділянки зменшують урожайність. Вимкніть, щоб натомість використовувати простіший штраф мінімальної урожайності."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Сповіщення вимірювача вологості"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Як відображаються показники вимірювача вологості."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Миготливе попередження"/>
@@ -70,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Якість культур"/>
 		<text name="moistureSystem_gui_description" text="Нижче показано класи вологості для кожної культури та множник ціни."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Вологість до якості"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Вплив вологості"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Показує значення якості, присвоєне при збиранні на основі рівня вологості. Збирайте в ідеальному діапазоні (Клас A) для максимальної якості. Якість падає щогодини при зберіганні вище ідеальної вологості."/>
+		<text name="moistureSystem_gui_selectCrop" text="Оберіть культуру зі списку, щоб переглянути її криву вологості."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Урожайність %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Якість %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Ризик всихання"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="Нижче ідеалу"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Ідеальний діапазон"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Вище ідеалу"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Вологість при збиранні"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Ідеальна вологість %d%%-%d%%: повна урожайність і якість"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Зібрано занадто сухим: урожайність падає до %d%%, але якість лише до %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Зібрано занадто вологим: якість падає до %d%%, але урожайність лише до %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="Нижче %d%% вологості культура ризикує всохнути на полі"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Якість до ціни"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Показує множник ціни продажу на основі якості культури. Діапазони якості відрізняються для різних культур - деякі більш стійкі до втрати якості."/>
 		<text name="moistureSystem_gui_cropName" text="Культура"/>

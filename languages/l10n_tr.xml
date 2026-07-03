@@ -28,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Islak mahsül satarken uygulanan kurutma ücreti çarpanı. Daha yüksek = daha pahalı."/>
 		<text name="setting_moisture_showFieldMoisture" text="Tarla Nemini Göster"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Tarla bilgisi HUD'unda bulunduğunuz konumdaki mevcut nem seviyesini gösterin."/>
+		<text name="setting_moisture_witheringEnabled" text="Mahsul Kuruması"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Şiddetli kuraklıktan kaynaklanan gerçekçi mahsul kurumasını etkinleştirin. Kuruyan alanlar hasat verimini azaltır. Bunun yerine daha basit bir verim taban cezası kullanmak için devre dışı bırakın."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Nem Ölçer Bildirimi"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Nem ölçerin okumaları nasıl gösterdiği."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Yanıp Sönen Uyarı"/>
@@ -70,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Mahsul Derece Değerleri"/>
 		<text name="moistureSystem_gui_description" text="Aşağıdaki veriler desteklenen her mahsul için nem derecelendirmesini gösterir. Derece için nem aralığı gösterilir ve o derece için fiyat çarpanı parantez içinde gösterilir."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Nemden Kaliteye"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Nem Etkisi"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Nem seviyesine göre hasatta atanan kalite değerini gösterir. Maksimum kalite için ideal aralıkta (Derece A) hasat yapın. Kalite, ideal nemin üzerinde depolandığında her saat düşer."/>
+		<text name="moistureSystem_gui_selectCrop" text="Nem eğrisini görüntülemek için listeden bir mahsul seçin."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Verim %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Kalite %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Kuruma Riski"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="İdealin Altında"/>
+		<text name="moistureSystem_gui_legendIdeal" text="İdeal Aralık"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="İdealin Üstünde"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Hasattaki nem"/>
+		<text name="moistureSystem_gui_statIdealRange" text="İdeal nem %d%%-%d%%: tam verim ve kalite"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Çok kuru hasat edildi: verim %d%% seviyesine düşer, ancak kalite yalnızca %d%% seviyesine düşer"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Çok nemli hasat edildi: kalite %d%% seviyesine düşer, ancak verim yalnızca %d%% seviyesine düşer"/>
+		<text name="moistureSystem_gui_statWither" text="%d%% nemin altında mahsul tarlada kuruma riski taşır"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Kaliteden Fiyata"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Mahsul kalitesine göre satış fiyatı çarpanını gösterir. Kalite aralıkları mahsule göre değişir - bazıları kalite kaybına karşı daha dayanıklıdır."/>
 		<text name="moistureSystem_gui_cropName" text="Mahsul Adı"/>

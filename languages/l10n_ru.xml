@@ -28,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Множитель платы за сушку при продаже влажного урожая. Выше = дороже."/>
 		<text name="setting_moisture_showFieldMoisture" text="Показывать Влажность Поля"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Отображать текущий уровень влажности в вашей позиции в HUD информации о поле."/>
+		<text name="setting_moisture_witheringEnabled" text="Увядание Урожая"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Включить реалистичное увядание урожая от сильной засухи. Увядшие участки снижают урожайность. Отключите, чтобы использовать более простой штраф минимальной урожайности."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Отчёт Влагомера"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Как влагомер отображает показания."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Мигающее Предупреждение"/>
@@ -70,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Значения Качества Урожая"/>
 		<text name="moistureSystem_gui_description" text="Данные ниже показывают оценку влажности для каждой поддерживаемой культуры. Показан диапазон влажности для класса, а множитель цены для этого класса показан в скобках."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Влажность к Качеству"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Влияние Влажности"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Показывает значение качества, присваиваемое при сборе урожая на основе уровня влажности. Собирайте в идеальном диапазоне (Класс A) для максимального качества. Качество падает каждый час при хранении выше идеальной влажности."/>
+		<text name="moistureSystem_gui_selectCrop" text="Выберите культуру из списка, чтобы увидеть её кривую влажности."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Урожайность %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Качество %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Риск Увядания"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="Ниже Идеала"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Идеальный Диапазон"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Выше Идеала"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Влажность при уборке"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Идеальная влажность %d%%-%d%%: полная урожайность и качество"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Убрано слишком сухим: урожайность падает до %d%%, но качество только до %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Убрано слишком влажным: качество падает до %d%%, но урожайность только до %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="Ниже %d%% влажности урожай рискует увянуть на поле"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Качество к Цене"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Показывает множитель цены продажи на основе качества урожая. Диапазоны качества различаются по культурам - некоторые более устойчивы к потере качества, чем другие."/>
 		<text name="moistureSystem_gui_cropName" text="Название Культуры"/>

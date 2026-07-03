@@ -28,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Multiplicador del cargo por secado aplicado al vender cultivos húmedos. Mayor = más caro."/>
 		<text name="setting_moisture_showFieldMoisture" text="Mostrar Humedad del Campo"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Muestra el nivel de humedad actual en tu posición en el HUD de información del campo."/>
+		<text name="setting_moisture_witheringEnabled" text="Marchitamiento de Cultivos"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Habilita el marchitamiento realista de los cultivos por sequía severa. Las zonas marchitas reducen el rendimiento de la cosecha. Desactívalo para usar una penalización de rendimiento mínimo más sencilla."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Reporte del Medidor de Humedad"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Cómo muestra las lecturas el medidor de humedad."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Alerta Parpadeante"/>
@@ -70,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Valores de Grado de Cultivos"/>
 		<text name="moistureSystem_gui_description" text="Los datos a continuación muestran la clasificación de humedad para cada cultivo compatible. Se muestra el rango de humedad para el grado, y el multiplicador de precio para ese grado se muestra entre paréntesis."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Humedad a Calidad"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Impacto de la Humedad"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Muestra el valor de calidad asignado en la cosecha según el nivel de humedad. Cosecha dentro del rango ideal (Grado A) para máxima calidad. La calidad se degrada cada hora cuando se almacena por encima de la humedad ideal."/>
+		<text name="moistureSystem_gui_selectCrop" text="Selecciona un cultivo de la lista para ver su curva de humedad."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Rendimiento %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Calidad %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Riesgo de Marchitamiento"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="Por Debajo del Ideal"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Rango Ideal"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Por Encima del Ideal"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Humedad en la cosecha"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Humedad ideal %d%%-%d%%: rendimiento y calidad completos"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Cosechado demasiado seco: el rendimiento baja al %d%%, pero la calidad solo al %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Cosechado demasiado húmedo: la calidad baja al %d%%, pero el rendimiento solo al %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="Por debajo del %d%% de humedad el cultivo corre riesgo de marchitarse en el campo"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Calidad a Precio"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Muestra el multiplicador de precio de venta basado en la calidad del cultivo. Los rangos de calidad varían por cultivo - algunos son más resistentes a la pérdida de calidad que otros."/>
 		<text name="moistureSystem_gui_cropName" text="Nombre del Cultivo"/>

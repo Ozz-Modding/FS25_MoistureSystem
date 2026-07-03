@@ -28,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Násobitel poplatku za sušení při prodeji vlhkých plodin. Vyšší = dražší."/>
 		<text name="setting_moisture_showFieldMoisture" text="Zobrazit vlhkost pole"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Zobrazit aktuální úroveň vlhkosti na vaší pozici v HUD informací o poli."/>
+		<text name="setting_moisture_witheringEnabled" text="Vadnutí plodin"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Povolit realistické vadnutí plodin způsobené silným suchem. Zvadlé oblasti snižují výnosy sklizně. Zakázáním se místo toho použije jednodušší postih minimálního výnosu."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Hlášení vlhkoměru"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Jak vlhkoměr zobrazuje měření."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Blikající upozornění"/>
@@ -70,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Hodnoty tříd plodin"/>
 		<text name="moistureSystem_gui_description" text="Níže uvedená data ukazují hodnocení vlhkosti pro každou podporovanou plodinu. Je zobrazen rozsah vlhkosti pro danou třídu a cenový násobitel pro tuto třídu je uveden v závorkách."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Vlhkost na kvalitu"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Vliv vlhkosti"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Zobrazuje hodnotu kvality přiřazenou při sklizni na základě úrovně vlhkosti. Sklízejte v ideálním rozsahu (Třída A) pro maximální kvalitu. Kvalita klesá každou hodinu při skladování nad ideální vlhkostí."/>
+		<text name="moistureSystem_gui_selectCrop" text="Vyberte plodinu ze seznamu pro zobrazení její křivky vlhkosti."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Výnos %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Kvalita %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Riziko vadnutí"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="Pod ideálem"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Ideální rozsah"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Nad ideálem"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Vlhkost při sklizni"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Ideální vlhkost %d%%-%d%%: plný výnos a kvalita"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Sklizeno příliš suché: výnos klesá na %d%%, ale kvalita pouze na %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Sklizeno příliš vlhké: kvalita klesá na %d%%, ale výnos pouze na %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="Pod %d%% vlhkosti hrozí plodině vadnutí na poli"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Kvalita na cenu"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Zobrazuje násobitel prodejní ceny na základě kvality plodiny. Rozsahy kvality se liší podle plodiny - některé jsou odolnější vůči ztrátě kvality než jiné."/>
 		<text name="moistureSystem_gui_cropName" text="Název plodiny"/>

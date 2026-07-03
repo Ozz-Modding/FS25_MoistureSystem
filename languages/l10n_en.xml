@@ -72,7 +72,7 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Crop Grade Values"/>
 		<text name="moistureSystem_gui_description" text="The data below shows moisture grading for each supported crop. The moisture range for the grade is shown, and the price multiplier for that grade is shown in brackets."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Moisture to Quality"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Moisture Impact"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Shows the quality value assigned at harvest based on moisture level. Harvest within the ideal range (Grade A) for maximum quality. Quality degrades hourly when stored above ideal moisture."/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Quality to Price"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Shows the sell price multiplier based on crop quality. Quality ranges vary per crop - some are more resilient to quality loss than others."/>

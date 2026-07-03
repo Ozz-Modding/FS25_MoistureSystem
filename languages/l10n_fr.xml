@@ -28,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Multiplicateur des frais de séchage appliqué lors de la vente de cultures humides. Plus élevé = plus cher."/>
 		<text name="setting_moisture_showFieldMoisture" text="Afficher l'Humidité du Champ"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Affiche le niveau d'humidité actuel à votre position dans le HUD d'information du champ."/>
+		<text name="setting_moisture_witheringEnabled" text="Flétrissement des Cultures"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Active le flétrissement réaliste des cultures dû à une sécheresse sévère. Les zones flétries réduisent les rendements de récolte. Désactivez pour utiliser à la place une pénalité de rendement minimal plus simple."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Rapport de l'Humidimètre"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Comment l'humidimètre affiche les lectures."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Alerte Clignotante"/>
@@ -70,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Valeurs de Qualité des Cultures"/>
 		<text name="moistureSystem_gui_description" text="Les données ci-dessous montrent la classification d'humidité pour chaque culture prise en charge. La plage d'humidité pour la qualité est indiquée, et le multiplicateur de prix pour cette qualité est indiqué entre parenthèses."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Humidité vers Qualité"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Impact de l'Humidité"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Montre la valeur de qualité attribuée à la récolte en fonction du niveau d'humidité. Récoltez dans la plage idéale (Qualité A) pour une qualité maximale. La qualité se dégrade toutes les heures lorsque stockée au-dessus de l'humidité idéale."/>
+		<text name="moistureSystem_gui_selectCrop" text="Sélectionnez une culture dans la liste pour afficher sa courbe d'humidité."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Rendement %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Qualité %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Risque de Flétrissement"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="En Dessous de l'Idéal"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Plage Idéale"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Au-Dessus de l'Idéal"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Humidité à la récolte"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Humidité idéale %d%%-%d%% : rendement et qualité maximaux"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Récoltée trop sèche : le rendement chute à %d%%, mais la qualité seulement à %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Récoltée trop humide : la qualité chute à %d%%, mais le rendement seulement à %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="En dessous de %d%% d'humidité, la culture risque de flétrir dans le champ"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Qualité vers Prix"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Montre le multiplicateur de prix de vente basé sur la qualité de la culture. Les plages de qualité varient selon la culture - certaines sont plus résistantes à la perte de qualité que d'autres."/>
 		<text name="moistureSystem_gui_cropName" text="Nom de la Culture"/>

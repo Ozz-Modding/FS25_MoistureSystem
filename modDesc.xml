@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="110">
     <author>Ozz</author>
-    <version>2.0.0.0</version>
+    <version>2.0.0.0-alpha1</version>
     <iconFilename>icon_MoistureSystem.dds</iconFilename>
     <title>
         <en>Moisture System</en>
@@ -38,8 +38,10 @@ Changelog:
 
 2.0.0.0:
 - The moisture system now controls weather. Choose a Weather Profile that matches your region in game settings. Many maps have appropriate defaults configured within the mod. Weather includes variability that simulates realistic seasonal patterns. This impacts your harvest and requires even more planning than before.
+- Moisture now impacts yield as well as quality. This is not necessarily more punishing - generally crop that is too dry will yield badly and crop that is too wet yield well but with poor quality.
 - You can write your own weather profiles if you like. Visit GitHub and follow the guide.
 - The moisture calendar has been replaced with a Weather information view, showing seasonal forecasts and historical weather data.
+- The moisture to quality UI has been replace with Moisture Impact. This shows the impact of moisture on yield and quality for a given crop.
 - Generally eased material rotting, both for bales and ground piles. Material will take longer to begin to rot, and rot more slowly.
 - Fixed an issue with grain drying not starting in multiplayer games.
 - Vehicles and silos with crop in will now show the current grade of the crop in the HUD. Previously only moisture and quality were shown.

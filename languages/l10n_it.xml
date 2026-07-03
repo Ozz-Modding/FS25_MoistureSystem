@@ -28,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Moltiplicatore del costo di essiccazione applicato alla vendita di colture umide. Più alto = più costoso."/>
 		<text name="setting_moisture_showFieldMoisture" text="Mostra Umidità del Campo"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Visualizza il livello di umidità corrente nella tua posizione nell'HUD informazioni del campo."/>
+		<text name="setting_moisture_witheringEnabled" text="Appassimento delle Colture"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Abilita un appassimento realistico delle colture in caso di siccità severa. Le zone appassite riducono i raccolti. Disabilita per usare invece una più semplice penalità minima sul raccolto."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Rapporto Misuratore Umidità"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Come il misuratore di umidità visualizza le letture."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Avviso Lampeggiante"/>
@@ -70,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Valori di Qualità delle Colture"/>
 		<text name="moistureSystem_gui_description" text="I dati qui sotto mostrano la classificazione dell'umidità per ogni coltura supportata. L'intervallo di umidità per il grado è mostrato, e il moltiplicatore di prezzo per quel grado è mostrato tra parentesi."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Umidità a Qualità"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Impatto dell'Umidità"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Mostra il valore di qualità assegnato al raccolto in base al livello di umidità. Raccogli nell'intervallo ideale (Grado A) per la massima qualità. La qualità degrada ogni ora quando stoccata sopra l'umidità ideale."/>
+		<text name="moistureSystem_gui_selectCrop" text="Seleziona una coltura dall'elenco per visualizzare la sua curva di umidità."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Resa %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Qualità %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Rischio Appassimento"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="Sotto l'Ideale"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Intervallo Ideale"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Sopra l'Ideale"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Umidità al raccolto"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Umidità ideale %d%%-%d%%: resa e qualità massime"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Raccolto troppo secco: la resa scende al %d%%, ma la qualità solo al %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Raccolto troppo umido: la qualità scende al %d%%, ma la resa solo al %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="Sotto il %d%% di umidità la coltura rischia di appassire nel campo"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Qualità a Prezzo"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Mostra il moltiplicatore del prezzo di vendita basato sulla qualità della coltura. Gli intervalli di qualità variano per coltura - alcune sono più resistenti alla perdita di qualità rispetto ad altre."/>
 		<text name="moistureSystem_gui_cropName" text="Nome della Coltura"/>

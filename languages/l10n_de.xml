@@ -28,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Trocknungsgebühren-Multiplikator beim Verkauf feuchter Ernten. Höher = teurer."/>
 		<text name="setting_moisture_showFieldMoisture" text="Feldfeuchtigkeit anzeigen"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Zeigt den aktuellen Feuchtigkeitsgrad an Ihrer Position im Feldinfo-HUD an."/>
+		<text name="setting_moisture_witheringEnabled" text="Ernteverdorren"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Aktiviert realistisches Ernteverdorren durch schwere Dürre. Verdorrte Stellen verringern den Ernteertrag. Deaktivieren, um stattdessen eine einfachere Ertragsuntergrenze zu verwenden."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Feuchtigkeitsmesser-Bericht"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Wie der Feuchtigkeitsmesser Messwerte anzeigt."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Blinkende Warnung"/>
@@ -70,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Erntegütewerte"/>
 		<text name="moistureSystem_gui_description" text="Die unten stehenden Daten zeigen die Feuchtigkeitsbewertung für jede unterstützte Ernte. Der Feuchtigkeitsbereich für die Güteklasse wird angezeigt, und der Preismultiplikator für diese Klasse wird in Klammern angezeigt."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Feuchtigkeit zu Qualität"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Feuchtigkeitseinfluss"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Zeigt den Qualitätswert, der bei der Ernte basierend auf dem Feuchtigkeitsniveau zugewiesen wird. Ernten Sie im idealen Bereich (Klasse A) für maximale Qualität. Qualität verschlechtert sich stündlich bei Lagerung über idealer Feuchtigkeit."/>
+		<text name="moistureSystem_gui_selectCrop" text="Wählen Sie eine Ernte aus der Liste, um ihre Feuchtigkeitskurve anzuzeigen."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Ertrag %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Qualität %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Verdorrrisiko"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="Unter Ideal"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Idealbereich"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Über Ideal"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Feuchtigkeit bei der Ernte"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Ideale Feuchtigkeit %d%%-%d%%: voller Ertrag und Qualität"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Zu trocken geerntet: Ertrag sinkt auf %d%%, aber Qualität nur auf %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Zu feucht geerntet: Qualität sinkt auf %d%%, aber Ertrag nur auf %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="Unter %d%% Feuchtigkeit droht der Ernte das Verdorren auf dem Feld"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Qualität zu Preis"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Zeigt den Verkaufspreis-Multiplikator basierend auf der Erntequalität. Qualitätsbereiche variieren je Ernte - einige sind widerstandsfähiger gegen Qualitätsverlust als andere."/>
 		<text name="moistureSystem_gui_cropName" text="Erntename"/>
