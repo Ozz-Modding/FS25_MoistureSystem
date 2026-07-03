@@ -1,18 +1,9 @@
----
--- CutterExtension
--- Tracks moisture content of harvested crops
----
-
 MSCutterExtension = {}
 
--- Cache the midpoint of Grade A moisture range per fillType, populated lazily
+-- Cache the midpoint of the ideal moisture range per fillType, populated lazily
 MSCutterExtension.idealMoistureCache = {}
 
----
--- Returns the midpoint of the Grade A moisture range for a fillType, cached.
--- Returns nil if the fillType has no Grade A data.
----
-function MSCutterExtension.getIdealMoisture(fillType)
+local function getIdealMoisture(fillType)
     local cached = MSCutterExtension.idealMoistureCache[fillType]
     if cached ~= nil then
         return cached ~= false and cached or nil
@@ -29,12 +20,75 @@ function MSCutterExtension.getIdealMoisture(fillType)
     return nil
 end
 
----
+-- Hook: apply moisture-driven yield reduction before grain enters the tank.
+-- Modifies lastMultiplierArea in-place so the yield is scaled at source.
+-- Server-side only; coexists with onEndWorkAreaProcessing (quality stamping).
+function MSCutterExtension:processCutterArea(superFunc, ...)
+    if not self.isServer then
+        return superFunc(self, ...)
+    end
+
+    local spec = self.spec_cutter
+    if spec == nil then
+        return superFunc(self, ...)
+    end
+
+    local result = superFunc(self, ...)
+
+    if spec.workAreaParameters.lastMultiplierArea and spec.workAreaParameters.lastMultiplierArea > 0 then
+        local workArea = self:getWorkAreaByIndex(1)
+        if workArea ~= nil then
+            local sx, _, sz = getWorldTranslation(workArea.start)
+            local wx, _, wz = getWorldTranslation(workArea.width)
+            local hx, _, hz = getWorldTranslation(workArea.height)
+            local centerX = (sx + wx + hx) / 3
+            local centerZ = (sz + wz + hz) / 3
+
+            local moistureSystem = g_currentMission.MoistureSystem
+            if moistureSystem ~= nil then
+                local moisture = moistureSystem:getMoistureAtPosition(centerX, centerZ)
+                if moisture ~= nil then
+                    local fruitType = spec.workAreaParameters.lastFruitType
+                    if fruitType ~= nil then
+                        local fillType = g_fruitTypeManager:getFruitTypeByIndex(fruitType).fillType.index
+                        if fillType ~= nil then
+                            local isContract = false
+                            local farmland = g_farmlandManager:getFarmlandAtWorldPosition(centerX, centerZ)
+                            if farmland ~= nil then
+                                isContract = g_missionManager:getIsMissionRunningOnFarmland(farmland)
+                            end
+
+                            if isContract then
+                                local ideal = getIdealMoisture(fillType)
+                                if ideal ~= nil then
+                                    moisture = ideal
+                                end
+                            end
+
+                            local multiplier = CropValueMap.getYieldMultiplier(fillType, moisture)
+
+                            -- Fallback: when withering is disabled, floor yield at wither threshold
+                            local ms = g_currentMission.MoistureSystem
+                            if ms and not ms.settings.witheringEnabled then
+                                local def = CropValueMap.getCropDef(fillType)
+                                if def and def.witherThreshold and moisture < def.witherThreshold then
+                                    multiplier = math.min(multiplier, WitheringSystem.FALLBACK_YIELD_FLOOR)
+                                end
+                            end
+
+                            spec.workAreaParameters.lastMultiplierArea =
+                                spec.workAreaParameters.lastMultiplierArea * multiplier
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return result
+end
+
 -- Extended to track moisture of harvested crops
--- @param superFunc: Original function
--- @param dt: Delta time
--- @param hasProcessed: Whether work areas were processed
----
 function MSCutterExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
     local result = superFunc(self, dt, hasProcessed)
 
@@ -80,16 +134,15 @@ function MSCutterExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
         end
 
         if isContract then
-            local ideal = MSCutterExtension.getIdealMoisture(outputFillType)
+            local ideal = getIdealMoisture(outputFillType)
             if ideal ~= nil then
                 moisture = ideal
-                quality = nil -- let updateCombineMoisture derive quality from ideal moisture
+                quality = nil
             end
         end
 
         MSCutterExtension.updateCombineMoisture(combineVehicle, lastLiters, moisture, outputFillType, quality)
     else
-        -- Normal harvest: cutting standing crop
         local lastArea = spec.workAreaParameters.lastArea or 0
         local lastLiters = spec.workAreaParameters.lastLiters or 0
 
@@ -123,7 +176,7 @@ function MSCutterExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
         end
 
         if isContract then
-            local ideal = MSCutterExtension.getIdealMoisture(fillType)
+            local ideal = getIdealMoisture(fillType)
             if ideal ~= nil then
                 moisture = ideal
             end
@@ -135,12 +188,6 @@ function MSCutterExtension:onEndWorkAreaProcessing(superFunc, dt, hasProcessed)
     return result
 end
 
----
--- Get moisture level at the work area location
--- @param cutter: The cutter vehicle
--- @param spec: The cutter spec
--- @return moisture: Moisture level (0-1 scale) or nil
----
 function MSCutterExtension.getMoistureAtWorkArea(cutter, spec)
     local moistureSystem = g_currentMission.MoistureSystem
 
@@ -177,13 +224,6 @@ function MSCutterExtension.getMoistureAtWorkArea(cutter, spec)
     end
 end
 
----
--- Update combine's moisture based on harvested crop
--- @param combineVehicle: The combine vehicle
--- @param newLiters: Amount of crop picked up
--- @param newMoisture: Moisture level of picked up crop (0-1 scale)
--- @param fillType: FillType index being harvested
----
 function MSCutterExtension.updateCombineMoisture(combineVehicle, newLiters, newMoisture, fillType, newQuality)
     local moistureSystem = g_currentMission.MoistureSystem
     if moistureSystem == nil then
@@ -219,12 +259,6 @@ function MSCutterExtension.updateCombineMoisture(combineVehicle, newLiters, newM
     end
 end
 
----
--- Get current average moisture in combine for specific fillType
--- @param combineVehicle: The combine vehicle
--- @param fillType: FillType index
--- @return average moisture (0-1 scale) or nil
----
 function MSCutterExtension.getCombineMoisture(combineVehicle, fillType)
     local moistureSystem = g_currentMission.MoistureSystem
     if moistureSystem == nil then
@@ -239,11 +273,6 @@ function MSCutterExtension.getCombineMoisture(combineVehicle, fillType)
     return moistureSystem:getObjectMoisture(uniqueId, fillType)
 end
 
----
--- Reset combine moisture tracking (called when tank is emptied)
--- @param combineVehicle: The combine vehicle
--- @param fillType: FillType index to reset (or nil to clear all)
----
 function MSCutterExtension.resetCombineMoisture(combineVehicle, fillType)
     local moistureSystem = g_currentMission.MoistureSystem
     if moistureSystem == nil then
@@ -261,6 +290,11 @@ function MSCutterExtension.resetCombineMoisture(combineVehicle, fillType)
         moistureSystem:setObjectInfo(uniqueId, fillType, nil)
     end
 end
+
+Cutter.processCutterArea = Utils.overwrittenFunction(
+    Cutter.processCutterArea,
+    MSCutterExtension.processCutterArea
+)
 
 Cutter.onEndWorkAreaProcessing = Utils.overwrittenFunction(
     Cutter.onEndWorkAreaProcessing,

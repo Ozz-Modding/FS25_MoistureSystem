@@ -68,6 +68,104 @@
         <textVerticalAlignment value="top"/>
     </Profile>
 
+    <!-- Grades tab -->
+    <Profile name="msGradesPanelLabel" extends="fs25_textDefault" with="anchorTopLeft">
+        <size value="300px 22px"/>
+        <textSize value="14px"/>
+        <textBold value="true"/>
+        <textUpperCase value="true"/>
+        <textColor value="$preset_colorWhite_50"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msGradesCropList" extends="msTable" with="anchorTopLeft pivotTopLeft">
+        <absoluteSizeOffset value="0px 90px"/>
+    </Profile>
+    <Profile name="msGradesCropListItem" extends="msListItem">
+        <height value="40px"/>
+    </Profile>
+    <Profile name="msGradesDetailPanel" extends="emptyPanel" with="anchorTopLeft">
+    </Profile>
+    <!-- One per chart (yield, quality). Children positioned relative to this,
+         so the whole chart moves by changing only the container's position. -->
+    <Profile name="msGradesChart" extends="emptyPanel" with="anchorTopLeft">
+        <size value="1090px 152px"/>
+    </Profile>
+    <Profile name="msGradesCropTitle" extends="fs25_textDefault" with="anchorTopLeft">
+        <textSize value="22px"/>
+        <textBold value="true"/>
+        <textUpperCase value="true"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msGradesBarlabel" extends="fs25_textDefault" with="anchorTopLeft">
+        <textSize value="15px"/>
+        <textBold value="true"/>
+        <textUpperCase value="true"/>
+        <textColor value="$preset_colorWhite_50"/>
+        <textAlignment value="right"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msGradesBarlabelPct" extends="fs25_textDefault" with="anchorTopLeft">
+        <textSize value="15px"/>
+        <textBold value="true"/>
+        <textAlignment value="right"/>
+        <textColor value="$preset_fs25_colorMainHighlight"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <!-- Bar segment: 18px wide (1px gap each side), anchored top-left.
+         Height is set dynamically in Lua proportional to yield/quality value.
+         The bar area is 50px tall; full value = 50px, zero = 2px (min visible).
+         No imageSliceId — inherits baseReference default which honours imageColor. -->
+    <Profile name="msGradesBarSeg" extends="baseReference" with="anchorTopLeft">
+        <size value="18px 100px"/>
+        <imageColor value="0.3 0.7 0.3 1"/>
+    </Profile>
+    <Profile name="msGradesWitherMarker" extends="baseReference" with="anchorTopLeft">
+        <size value="2px 106px"/>
+        <imageColor value="0.9 0.3 0.1 1"/>
+        <visible value="false"/>
+    </Profile>
+    <Profile name="msGradesMoistureMarker" extends="baseReference" with="anchorTopLeft">
+        <size value="2px 106px"/>
+        <imageColor value="1 1 1 0.8"/>
+        <visible value="false"/>
+    </Profile>
+    <Profile name="msGradesLegendSwatch" extends="baseReference" with="anchorTopLeft">
+        <size value="18px 18px"/>
+        <imageColor value="0.3 0.7 0.3 1"/>
+    </Profile>
+    <Profile name="msGradesAxisLine" extends="baseReference" with="anchorTopLeft">
+        <imageColor value="$preset_colorWhite_20"/>
+    </Profile>
+    <Profile name="msGradesAxisLabel" extends="fs25_textGrey" with="anchorTopLeft">
+        <size value="56px 22px"/>
+        <textSize value="13px"/>
+        <textAlignment value="center"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msGradesAxisTitle" extends="fs25_textGrey" with="anchorTopLeft">
+        <textSize value="13px"/>
+        <textBold value="true"/>
+        <textUpperCase value="true"/>
+        <textAlignment value="center"/>
+        <textColor value="$preset_colorWhite_50"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msGradesYAxisLabel" extends="fs25_textGrey" with="anchorTopLeft">
+        <size value="56px 22px"/>
+        <textSize value="12px"/>
+        <textVerticalAlignment value="middle"/>
+        <textColor value="$preset_colorWhite_50"/>
+    </Profile>
+    <Profile name="msGradesLegendText" extends="fs25_textGrey" with="anchorTopLeft">
+        <size value="260px 22px"/>
+        <textSize value="13px"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+    <Profile name="msGradesStatLabel" extends="fs25_textDefault" with="anchorTopLeft">
+        <textSize value="14px"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
+
     <!-- Weather tab -->
     <Profile name="msWeatherSectionHeader" extends="fs25_textDefault" with="anchorTopLeft">
         <textSize value="18px"/>

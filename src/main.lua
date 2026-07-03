@@ -79,6 +79,7 @@ function MoistureSystem:loadMap()
         moistureLossMultiplier = 3.0,
         moistureGainMultiplier = 3.0,
         teddingMoistureReduction = 0.02,
+        witheringEnabled = true,
         baleRotEnabled = true,
         baleRotRate = 1.0,
         baleExposureDecayRate = 1.0,
@@ -94,6 +95,8 @@ function MoistureSystem:loadMap()
     g_currentMission.baleRottingSystem = BaleRottingSystem.new()
 
     g_currentMission.dryingSystem = DryingSystem.new()
+
+    g_currentMission.witheringSystem = WitheringSystem.new()
 
     -- Drive the ground tracker and bale rotting system off their own engine
     -- update(dt) hooks rather than hand-pumping them from MoistureSystem:update.
@@ -550,26 +553,30 @@ function MoistureSystem:deriveQuality(fillType, moisture)
     if CropValueMap.Data == nil then
         return 100
     end
-    local grade, multiplier = CropValueMap.getGrade(fillType, moisture)
-    if multiplier then
-        if grade == CropValueMap.Grades.A then
-            return 100
-        end
-        return math.floor(multiplier * 100) - 1
-    end
 
-    local baseFillType = self:getBaseCropFillType(fillType)
-    if baseFillType and baseFillType ~= fillType then
-        grade, multiplier = CropValueMap.getGrade(baseFillType, moisture)
-        if multiplier then
-            if grade == CropValueMap.Grades.A then
-                return 100
-            end
-            return math.floor(multiplier * 100) - 1
+    local resolvedFillType = CropValueMap.Data[fillType] and fillType or nil
+    if resolvedFillType == nil then
+        local baseFillType = self:getBaseCropFillType(fillType)
+        if baseFillType and baseFillType ~= fillType and CropValueMap.Data[baseFillType] then
+            resolvedFillType = baseFillType
         end
     end
 
-    return 100
+    if resolvedFillType == nil then
+        return 100
+    end
+
+    local quality = CropValueMap.getQualityValue(resolvedFillType, moisture)
+
+    -- When withering is disabled, apply severe fallback penalty below witherThreshold
+    if not self.settings.witheringEnabled then
+        local def = CropValueMap.getCropDef(resolvedFillType)
+        if def and def.witherThreshold and moisture < def.witherThreshold then
+            quality = math.min(quality, WitheringSystem.FALLBACK_QUALITY_FLOOR * 100)
+        end
+    end
+
+    return math.floor(quality)
 end
 
 function MoistureSystem:getBaseCropFillType(fillType)
@@ -798,6 +805,10 @@ function MoistureSystem:onHourChanged()
     if g_currentMission.dryingSystem then
         g_currentMission.dryingSystem:onHourChanged()
     end
+
+    if g_currentMission.witheringSystem and self.settings.witheringEnabled then
+        g_currentMission.witheringSystem:onHourChanged()
+    end
 end
 
 function MoistureSystem:loadFromXMLFile()
@@ -837,6 +848,11 @@ function MoistureSystem:loadFromXMLFile()
         local teddingReduction = getXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#teddingMoistureReduction")
         if teddingReduction then
             self.settings.teddingMoistureReduction = teddingReduction
+        end
+
+        local witheringEnabled = getXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#witheringEnabled")
+        if witheringEnabled ~= nil then
+            self.settings.witheringEnabled = witheringEnabled
         end
 
         local baleRotEnabled = getXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#baleRotEnabled")
@@ -988,6 +1004,7 @@ function MoistureSystem:saveToXmlFile()
         .moistureGainMultiplier)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#teddingMoistureReduction", ms.settings
         .teddingMoistureReduction)
+    setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#witheringEnabled", ms.settings.witheringEnabled)
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#baleRotEnabled", ms.settings.baleRotEnabled)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#baleRotRate", ms.settings.baleRotRate)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#baleExposureDecayRate", ms.settings.baleExposureDecayRate)
@@ -1105,6 +1122,7 @@ function MoistureSystem:writeInitialClientState(streamId, connection)
     streamWriteFloat32(streamId, self.settings.moistureLossMultiplier)
     streamWriteFloat32(streamId, self.settings.moistureGainMultiplier)
     streamWriteFloat32(streamId, self.settings.teddingMoistureReduction)
+    streamWriteBool(streamId, self.settings.witheringEnabled)
     streamWriteBool(streamId, self.settings.baleRotEnabled)
     streamWriteFloat32(streamId, self.settings.baleRotRate)
     streamWriteFloat32(streamId, self.settings.baleExposureDecayRate)
@@ -1125,6 +1143,7 @@ function MoistureSystem:readInitialClientState(streamId, connection)
     self.settings.moistureLossMultiplier = streamReadFloat32(streamId)
     self.settings.moistureGainMultiplier = streamReadFloat32(streamId)
     self.settings.teddingMoistureReduction = streamReadFloat32(streamId)
+    self.settings.witheringEnabled = streamReadBool(streamId)
     self.settings.baleRotEnabled = streamReadBool(streamId)
     self.settings.baleRotRate = streamReadFloat32(streamId)
     self.settings.baleExposureDecayRate = streamReadFloat32(streamId)

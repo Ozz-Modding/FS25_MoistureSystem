@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <GUI>
     <GuiElement profile="uiInGameMenuFrame">
-        <!-- Page header with icon and title -->
         <GuiElement profile="fs25_menuHeaderPanel">
             <Bitmap profile="fs25_menuHeaderIconBg">
                 <Bitmap profile="fs25_menuHeaderIcon" imageSliceId="gui.icon_ingameMenu_prices" />
@@ -9,35 +8,172 @@
             <Text profile="fs25_menuHeaderTitle" text="$l10n_moistureSystem_gui_moistureToQuality" />
         </GuiElement>
 
-        <Text profile="msDescriptiveText" text="$l10n_moistureSystem_gui_moistureToQualityDesc" position="20px -50px" width="1400px" />
-
-        <!-- Table Headers -->
-        <GuiElement profile="fs25_statisticsHeaderBox" position="20px -100px">
-            <Button profile="msTableHeader" position="0px 0px" size="300px 20px" text="$l10n_moistureSystem_gui_cropName" handleFocus="false" />
-            <Button profile="msTableHeader" position="300px 0px" size="200px 20px" text="$l10n_moistureSystem_gui_gradeA" handleFocus="false" />
-            <Button profile="msTableHeader" position="500px 0px" size="200px 20px" text="$l10n_moistureSystem_gui_gradeB" handleFocus="false" />
-            <Button profile="msTableHeader" position="700px 0px" size="200px 20px" text="$l10n_moistureSystem_gui_gradeC" handleFocus="false" />
-            <Button profile="msTableHeader" position="900px 0px" size="200px 20px" text="$l10n_moistureSystem_gui_gradeD" handleFocus="false" />
-        </GuiElement>
-
-        <!-- Table Content -->
-        <SmoothList id="cropGradeTable" profile="msTable" position="0px -140px" size="1100px 700px">
-            <ListItem profile="msListItem">
-                <Text profile="msRowCellLeft" name="cropName" position="20px 0px" size="300px 20px" />
-                <Text profile="msRowCellLeft" name="gradeA1" position="320px 8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeA2" position="320px -8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeB1" position="520px 8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeB2" position="520px -8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeC1" position="720px 8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeC2" position="720px -8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeD1" position="920px 8px" size="200px 15px" />
-                <Text profile="msRowCellLeft" name="gradeD2" position="920px -8px" size="200px 15px" />
+        <!-- Left panel: crop list -->
+        <Text profile="msGradesPanelLabel" position="20px -55px" text="$l10n_moistureSystem_gui_cropName" />
+        <SmoothList id="cropList" profile="msGradesCropList" position="0px -90px" size="300px 760px">
+            <ListItem profile="msGradesCropListItem">
+                <Text profile="msRowCellLeft" name="cropName" position="20px 0px" size="270px 40px" />
             </ListItem>
         </SmoothList>
-
-        <!-- Scrollbar -->
-        <ThreePartBitmap profile="msGroupsSliderBox" position="1140px -140px" size="6px 700px">
-            <Slider profile="fs25_listSlider" dataElementId="cropGradeTable" />
+        <ThreePartBitmap profile="msGroupsSliderBox" position="308px -90px" size="6px 760px">
+            <Slider profile="fs25_listSlider" dataElementId="cropList" />
         </ThreePartBitmap>
+
+        <!-- Right panel: curve detail -->
+        <GuiElement id="gradesDetailPanel" profile="msGradesDetailPanel" position="330px -55px" size="1090px 820px">
+
+            <!-- No-data placeholder shown when no crop selected -->
+            <Text profile="msDescriptiveText" id="noSelectionHint" position="0px -80px" size="1080px 40px"
+                  text="$l10n_moistureSystem_gui_selectCrop" />
+
+            <!-- Crop title (hidden until a crop is selected) -->
+            <Text profile="msGradesCropTitle" id="detailCropName" position="0px -2px" size="1080px 32px" text="" />
+
+            <!-- ============ YIELD CHART ============ -->
+            <!-- Container: move this one position to move the whole yield chart.
+                 Children are relative: label at 0, bars/axis floor at -128. -->
+            <GuiElement id="chartYield" profile="msGradesChart" position="0px -48px">
+                <Text profile="msGradesBarlabel" position="862px -4px" size="200px 22px" text="$l10n_moistureSystem_gui_yieldLabel" />
+                <Bitmap profile="msGradesBarSeg" id="yb1" position="0px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb2" position="20px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb3" position="40px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb4" position="60px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb5" position="80px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb6" position="100px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb7" position="120px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb8" position="140px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb9" position="160px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb10" position="180px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb11" position="200px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb12" position="220px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb13" position="240px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb14" position="260px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb15" position="280px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb16" position="300px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb17" position="320px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb18" position="340px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb19" position="360px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb20" position="380px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb21" position="400px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb22" position="420px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb23" position="440px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb24" position="460px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb25" position="480px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb26" position="500px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb27" position="520px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb28" position="540px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb29" position="560px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb30" position="580px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb31" position="600px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb32" position="620px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb33" position="640px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb34" position="660px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb35" position="680px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb36" position="700px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb37" position="720px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb38" position="740px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb39" position="760px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb40" position="780px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb41" position="800px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb42" position="820px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb43" position="840px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb44" position="860px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb45" position="880px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb46" position="900px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb47" position="920px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb48" position="940px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb49" position="960px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="yb50" position="980px -28px" />
+                <!-- Y-axis labels: centred on bar top (-28), mid (-78), floor (-128) -->
+                <Text profile="msGradesYAxisLabel" id="ybYTop" position="1006px -17px" text="" />
+                <Text profile="msGradesYAxisLabel" id="ybYMid" position="1006px -67px" text="" />
+                <Text profile="msGradesYAxisLabel" id="ybYBot" position="1006px -117px" text="" />
+            </GuiElement>
+
+            <!-- ============ QUALITY CHART ============ -->
+            <GuiElement id="chartQuality" profile="msGradesChart" position="0px -230px">
+                <Text profile="msGradesBarlabel" position="862px -4px" size="200px 22px" text="$l10n_moistureSystem_gui_qualityLabel" />
+                <Bitmap profile="msGradesBarSeg" id="qb1" position="0px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb2" position="20px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb3" position="40px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb4" position="60px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb5" position="80px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb6" position="100px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb7" position="120px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb8" position="140px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb9" position="160px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb10" position="180px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb11" position="200px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb12" position="220px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb13" position="240px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb14" position="260px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb15" position="280px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb16" position="300px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb17" position="320px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb18" position="340px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb19" position="360px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb20" position="380px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb21" position="400px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb22" position="420px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb23" position="440px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb24" position="460px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb25" position="480px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb26" position="500px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb27" position="520px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb28" position="540px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb29" position="560px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb30" position="580px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb31" position="600px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb32" position="620px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb33" position="640px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb34" position="660px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb35" position="680px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb36" position="700px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb37" position="720px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb38" position="740px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb39" position="760px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb40" position="780px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb41" position="800px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb42" position="820px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb43" position="840px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb44" position="860px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb45" position="880px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb46" position="900px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb47" position="920px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb48" position="940px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb49" position="960px -28px" />
+                <Bitmap profile="msGradesBarSeg" id="qb50" position="980px -28px" />
+                <Text profile="msGradesYAxisLabel" id="qbYTop" position="1006px -17px" text="" />
+                <Text profile="msGradesYAxisLabel" id="qbYMid" position="1006px -67px" text="" />
+                <Text profile="msGradesYAxisLabel" id="qbYBot" position="1006px -117px" text="" />
+            </GuiElement>
+
+            <!-- ============ SHARED MOISTURE AXIS ============ -->
+            <!-- Line sits just below the quality chart floor (-230 - 128 = -358). -->
+            <Bitmap profile="msGradesAxisLine" position="0px -362px" size="1000px 1px" />
+            <Text profile="msGradesAxisLabel" id="axisLabel1" position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel2" position="172px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel3" position="372px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel4" position="572px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel5" position="772px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel6" position="972px -378px" text="" />
+            <Text profile="msGradesAxisTitle" position="0px -404px" size="1000px 22px" text="$l10n_moistureSystem_gui_moistureAxisTitle" />
+
+            <!-- Legend row -->
+            <Bitmap profile="msGradesLegendSwatch" id="lgWither" position="0px -438px" />
+            <Text   profile="msGradesLegendText"   position="26px -438px" text="$l10n_moistureSystem_gui_legendWitherRisk" />
+            <Bitmap profile="msGradesLegendSwatch" id="lgDry"    position="220px -438px" />
+            <Text   profile="msGradesLegendText"   position="246px -438px" text="$l10n_moistureSystem_gui_legendBelowIdeal" />
+            <Bitmap profile="msGradesLegendSwatch" id="lgIdeal"  position="440px -438px" />
+            <Text   profile="msGradesLegendText"   position="466px -438px" text="$l10n_moistureSystem_gui_legendIdeal" />
+            <Bitmap profile="msGradesLegendSwatch" id="lgWet"    position="660px -438px" />
+            <Text   profile="msGradesLegendText"   position="686px -438px" text="$l10n_moistureSystem_gui_legendAboveIdeal" />
+
+            <!-- Detail stats: single column -->
+            <Text profile="msGradesStatLabel" id="statIdealRange"   position="0px -482px" size="1000px 24px" text="" />
+            <Text profile="msGradesStatLabel" id="statYieldCurve"   position="0px -510px" size="1000px 24px" text="" />
+            <Text profile="msGradesStatLabel" id="statQualityCurve" position="0px -538px" size="1000px 24px" text="" />
+            <Text profile="msGradesStatLabel" id="statWitherThresh" position="0px -566px" size="1000px 24px" text="" />
+        </GuiElement>
     </GuiElement>
 </GUI>

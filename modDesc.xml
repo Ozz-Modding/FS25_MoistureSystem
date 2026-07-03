@@ -244,6 +244,7 @@ Journal des modifications :
         <sourceFile filename="src/GroundPropertyTracker.lua"/>
         <sourceFile filename="src/BaleRottingSystem.lua"/>
         <sourceFile filename="src/DryingSystem.lua"/>
+        <sourceFile filename="src/WitheringSystem.lua"/>
         <sourceFile filename="src/events/InitialClientStateEvent.lua"/>
         <sourceFile filename="src/events/MoistureSettingsEvent.lua"/>
         <sourceFile filename="src/events/MoistureUpdateEvent.lua"/>

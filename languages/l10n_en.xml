@@ -26,6 +26,8 @@
 		<text name="setting_moisture_dryingSpeed_tooltip" text="Moisture percentage removed per hour by silo drying."/>
 		<text name="setting_moisture_sellDryingChargeRate" text="Sell Drying Charge"/>
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Drying charge multiplier applied when selling wet crops. Higher = more expensive."/>
+		<text name="setting_moisture_witheringEnabled" text="Crop Withering"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Enable realistic crop withering from severe drought. Withered patches reduce harvest yields. Disable to use a simpler yield floor penalty instead."/>
 		<text name="setting_moisture_showFieldMoisture" text="Show Field Moisture"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Display the current moisture level at your position in the field info HUD."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Moisture Meter Reporting"/>
@@ -79,6 +81,18 @@
 		<text name="moistureSystem_gui_gradeB" text="Grade B"/>
 		<text name="moistureSystem_gui_gradeC" text="Grade C"/>
 		<text name="moistureSystem_gui_gradeD" text="Grade D"/>
+		<text name="moistureSystem_gui_selectCrop" text="Select a crop from the list to view its moisture curve."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Yield %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Quality %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Wither Risk"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="Below Ideal"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Ideal Range"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Above Ideal"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Moisture at harvest"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Ideal moisture %d%%-%d%%: full yield and quality"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Harvested too dry: yield drops to %d%%, but quality only to %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Harvested too wet: quality drops to %d%%, but yield only to %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="Below %d%% moisture the crop risks withering in the field"/>
 
 		<!-- Calendar GUI (retained for any saved references) -->
 		<text name="moistureSystem_gui_moistureCalendar" text="Moisture Calendar"/>

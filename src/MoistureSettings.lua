@@ -10,6 +10,7 @@ MoistureSettings.menuItems = {
     'moistureLossMultiplier',
     'moistureGainMultiplier',
     'teddingMoistureReduction',
+    'witheringEnabled',
     'baleRotEnabled',
     'baleRotRate',
     'baleExposureDecayRate',
@@ -77,6 +78,17 @@ MoistureSettings.SETTINGS.teddingMoistureReduction = {
     ['permission'] = 'moistureSettings',
     ['values'] = { 0.01, 0.02, 0.03, 0.04, 0.05 },
     ['strings'] = { "1%", "2%", "3%", "4%", "5%" }
+}
+
+MoistureSettings.SETTINGS.witheringEnabled = {
+    ['default'] = 2, -- Enabled by default
+    ['serverOnly'] = true,
+    ['permission'] = 'moistureSettings',
+    ['values'] = { false, true },
+    ['strings'] = {
+        g_i18n:getText("setting_setting_off"),
+        g_i18n:getText("setting_setting_on")
+    }
 }
 
 MoistureSettings.SETTINGS.baleRotEnabled = {
