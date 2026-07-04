@@ -111,6 +111,19 @@ function WeatherProfileSystem:loadProfileXML(path)
         scenarioIdx = scenarioIdx + 1
     end
 
+    local hasNormal = false
+    for _, scenario in ipairs(profile.scenarios) do
+        if scenario.id == "normal" then
+            hasNormal = true
+            break
+        end
+    end
+    if not hasNormal then
+        print("[WeatherProfileSystem] Skipping profile '%s' (%s): no 'normal' scenario defined", id, path)
+        delete(xmlFile)
+        return
+    end
+
     self.profiles[id] = profile
     delete(xmlFile)
 end

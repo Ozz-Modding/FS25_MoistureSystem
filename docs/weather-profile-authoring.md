@@ -32,7 +32,7 @@ Weather profiles define the climate behaviour for a region — monthly moisture 
 | `id`      | string | Unique within this profile. **A scenario with `id="normal"` is required** (see below) |
 | `weight`  | float  | Relative probability of this scenario being chosen for a given year. Higher = more common |
 
-**The `normal` scenario is mandatory.** It is used as the forecast baseline and as the fallback if no other scenario matches. If it is missing the profile will not behave correctly.
+**The `normal` scenario is mandatory.** It is used as the forecast baseline and as the fallback when no other scenario is active. If it is missing the entire profile is rejected at load time — it will not appear in the picker and a warning is logged.
 
 ## `<month>` attributes
 
