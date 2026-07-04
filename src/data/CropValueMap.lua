@@ -53,20 +53,20 @@ local dataDefinitions = {
         qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.10,
         witherThreshold   = 0.02,
     },
-    -- Maize: very high dry sensitivity at reproductive stage
+    -- Maize: harvested wet (18-22% field moisture is optimal); grade A reflects good combine condition, not storage spec
     ["MAIZE"] = {
-        idealMin          = 0.13, idealMax          = 0.16,
-        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        idealMin          = 0.18, idealMax          = 0.22,
+        yieldCurveStart   = 0.16, yieldCurveFloor   = 0.05,
         yieldLossMaxDry   = 0.55, qualityLossMaxDry = 0.12,
-        qualityCurveStart = 0.17, qualityCurveFloor = 0.28,
+        qualityCurveStart = 0.23, qualityCurveFloor = 0.38,
         qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.10,
         witherThreshold   = 0.03,
     },
     ["SILAGEMAIZE"] = {
-        idealMin          = 0.13, idealMax          = 0.16,
-        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        idealMin          = 0.18, idealMax          = 0.22,
+        yieldCurveStart   = 0.16, yieldCurveFloor   = 0.05,
         yieldLossMaxDry   = 0.55, qualityLossMaxDry = 0.12,
-        qualityCurveStart = 0.17, qualityCurveFloor = 0.28,
+        qualityCurveStart = 0.23, qualityCurveFloor = 0.38,
         qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.10,
         witherThreshold   = 0.03,
     },

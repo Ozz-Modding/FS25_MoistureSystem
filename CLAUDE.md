@@ -12,7 +12,8 @@ FS25 mod (Lua + XML) that adds moisture simulation, crop quality grading, bale r
 - Wheat/WinterWheat: 11–13%
 - Barley/WinterBarley: 12–14%
 - Canola/Mustard/Poppy: 8–10%
-- Maize/Soybean: 13–16%
+- Maize: 18–22% (field harvest moisture — not storage spec; always dried post-harvest)
+- Soybean: 13–16%
 - Oat/Rye/Triticale/Buckwheat/Millet/Sorghum: 13–14%
 - Rice/LongGrainRice: 12–14%
 - Sunflower: 11–14%
