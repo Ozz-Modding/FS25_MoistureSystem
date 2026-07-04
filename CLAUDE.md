@@ -6,7 +6,7 @@ FS25 mod (Lua + XML) that adds moisture simulation, crop quality grading, bale r
 
 `src/main.lua` — core `MoistureSystem` object, registered as a mod event listener. Entry point for field moisture simulation, `adjustMoisture`, and savegame persistence.
 
-`src/WeatherProfileSystem.lua` — loaded alongside main. Owns monthly moisture clamps, rainfall weight overrides, and temperature offsets. Registered as `g_currentMission.WeatherProfileSystem`. Installs hooks on `Weather.fillWeatherForecast` and `WeatherObject.activate`.
+`src/WeatherProfileSystem.lua` — loaded alongside main. Owns monthly moisture clamps, rainfall weight overrides, and per-month temperature ranges. Registered as `g_currentMission.WeatherProfileSystem`. Installs hooks on `Weather.updateAvailableWeatherObjects` (appended) and `WeatherObject.activate` (overwritten).
 
 `src/data/CropValueMap.lua` — static table mapping fill type names to moisture→grade bands. Grade A windows (moisture % range, 0–100 scale):
 - Wheat/WinterWheat: 11–13%
@@ -41,7 +41,7 @@ completed year at the **start of March** (the FS25 year boundary), labelling it 
 The reporting year runs March→February so each winter (Dec/Jan/Feb) is a complete contiguous
 season; archiving in January would split winter and capture only December.
 
-Each month entry defines `rainfall`, `tempMin`, `tempMax`, `moistureMin`, `moistureMax`.
+Each month entry defines `rain`, `thunder`, `snow`, `hail`, `sun`, `partlyCloudy`, `cloudy` (weather type weights), `tempMin`, `tempMax` (absolute °C), and `moistureMin`, `moistureMax`.
 
 **Inner clamp range** — `adjustMoisture` uses the inner 80% of the min/max range:
 ```
@@ -87,6 +87,13 @@ weight→time fidelity required three engine-level fixes (all in `WeatherProfile
 (`weatherObjects`/`weightedWeatherObjects` are keyed by season 1–4, three months each). With
 ~1-day months, each reporting season is a small sample, so single-year scatter is wide
 (±~10pp) — extreme dry/wet years are statistically expected and intentional, not a bug.
+
+**Temperature application.** `tempMin`/`tempMax` are absolute °C values (not offsets). They are applied at two points:
+
+- **`WeatherObject.activate` hook** — stamps the exact current-month temps onto the variation just before the engine calls the real `activate()`, which passes them to `TemperatureUpdater:setTargetValues`. This keeps the live "now" temperature and near-term spells accurate.
+- **`applyTemperatureToVariations`** — called at mission start and after each `rebuild()` (period change). Stamps temps onto every variation in the object pool so that `WeatherForecast:getHourlyForecast`/`getDailyForecast`, which read `variation.minTemperature`/`maxTemperature` directly without going through `activate()`, show correct values. Uses a representative middle month per engine season (spring→April, summer→July, autumn→October, winter→January). The **current season** uses the active scenario's temps; **other seasons** use the normal scenario as a neutral assumption for the year not yet rolled.
+
+The `InGameMenuCalendarFrame` forecast panels read directly from variation objects — they never call `activate()` — so they depend entirely on `applyTemperatureToVariations` being current.
 
 **Single source of truth for "raining":** the moisture sim treats `getRainFallScale() > 0.1`
 as raining (`GroundPropertyTracker`). Note `getRainFallScale()` is rain *intensity* (ramped

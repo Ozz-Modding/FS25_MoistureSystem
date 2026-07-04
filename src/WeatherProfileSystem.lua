@@ -121,14 +121,15 @@ function WeatherProfileSystem:onStartMission()
         g_messageCenter:subscribe(MessageType.PERIOD_CHANGED, WeatherProfileSystem.onPeriodChanged, wps)
         wps:installWeatherOverrides()
         wps.historyCollector:install()
+        wps:applyTemperatureToVariations(g_currentMission.environment.weather)
     end
 end
 
 -- Shallow+selective deep copy of a weather-object variation. We must NOT share variation
--- tables between the source season's object and the injected winter copy, because our
--- WeatherObject.activate hook mutates instance.variation.minTemperature/maxTemperature in
--- place; sharing would corrupt the source object. Sub-tables (rain/clouds/wind settings) are
--- read-only as far as we're concerned, so they can be shared by reference.
+-- tables between the source season's object and the injected winter copy, because we write
+-- minTemperature/maxTemperature in place when applying profile temps; sharing would corrupt
+-- the source object. Sub-tables (rain/clouds/wind settings) are read-only as far as we're
+-- concerned, so they can be shared by reference.
 local function copyVariation(v)
     local c = {}
     for k, val in pairs(v) do
@@ -220,20 +221,52 @@ function WeatherProfileSystem:installWeatherOverrides()
         function(self, superFunc, instance, changeDuration)
             if instance and instance.startDay then
                 local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-                local offsets = g_currentMission.WeatherProfileSystem:getTemperatureOffsetsForMonth(month)
+                local temps = g_currentMission.WeatherProfileSystem:getTemperatureForMonth(month)
                 local variation = self.variations and self.variations[instance.variationIndex]
-                if offsets and variation then
-                    if offsets.tempMin ~= nil then
-                        variation.minTemperature = offsets.tempMin
-                    end
-                    if offsets.tempMax ~= nil then
-                        variation.maxTemperature = offsets.tempMax
-                    end
+                if temps and variation then
+                    if temps.tempMin ~= nil then variation.minTemperature = temps.tempMin end
+                    if temps.tempMax ~= nil then variation.maxTemperature = temps.tempMax end
                 end
             end
             superFunc(self, instance, changeDuration)
         end
     )
+end
+
+-- Write profile temperatures onto every variation of every weather object, per season.
+-- WeatherForecast reads variation.minTemperature/maxTemperature directly from the object
+-- pool (bypassing activate()), so forecast items that haven't activated yet show stale
+-- XML values unless we stamp them here. We use a representative middle month per season.
+-- The current season uses the active scenario (the year's actual weather character).
+-- Other seasons use the normal scenario — they belong to a different year whose scenario
+-- hasn't been rolled yet, and normal is the best neutral assumption.
+-- The activate() hook still applies the exact current-month temps at the moment of
+-- activation, so live and near-term spells stay accurate.
+local SEASON_REPR_MONTH = { [1] = 4, [2] = 7, [3] = 10, [4] = 1 }  -- spring/summer/autumn/winter
+
+function WeatherProfileSystem:applyTemperatureToVariations(weather)
+    local currentSeason = g_currentMission.environment.currentVisualSeason
+    local normalScenario = self:getNormalScenario()
+    for season, objects in pairs(weather.weatherObjects) do
+        local month = SEASON_REPR_MONTH[season]
+        if month then
+            local temps
+            if season == currentSeason then
+                temps = self:getTemperatureForMonth(month)
+            elseif normalScenario then
+                local md = normalScenario.months[month]
+                if md then temps = { tempMin = md.tempMin, tempMax = md.tempMax } end
+            end
+            if temps and (temps.tempMin ~= nil or temps.tempMax ~= nil) then
+                for _, obj in ipairs(objects) do
+                    for _, variation in ipairs(obj.variations or {}) do
+                        if temps.tempMin ~= nil then variation.minTemperature = temps.tempMin end
+                        if temps.tempMax ~= nil then variation.maxTemperature = temps.tempMax end
+                    end
+                end
+            end
+        end
+    end
 end
 
 function WeatherProfileSystem:rollWeightVariation(month)
@@ -420,7 +453,9 @@ function WeatherProfileSystem:onPeriodChanged()
         self:rollForecastOffsets()
     end
     self:rollWeightVariation(month)
-    g_currentMission.environment.weather:rebuild()
+    local weather = g_currentMission.environment.weather
+    weather:rebuild()
+    self:applyTemperatureToVariations(weather)
 end
 
 function WeatherProfileSystem:selectScenarioForProfile(profileId)
@@ -501,7 +536,7 @@ function WeatherProfileSystem:getRainfallWeightForMonth(month)
     return (md.rain + md.thunder) / total
 end
 
-function WeatherProfileSystem:getTemperatureOffsetsForMonth(month)
+function WeatherProfileSystem:getTemperatureForMonth(month)
     local md = self:getMonthData(month)
     if not md then return {} end
     return { tempMin = md.tempMin, tempMax = md.tempMax }
@@ -789,7 +824,7 @@ function WeatherProfileSystem:consoleCommandWeatherDebug()
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
     local scenario = self:getActiveScenario()
     local clamp = self:getClampForMonth(month)
-    local offsets = self:getTemperatureOffsetsForMonth(month)
+    local temps = self:getTemperatureForMonth(month)
     local md = self:getMonthData(month)
     local weight = scenario and scenario.weight or 0
     local lines = {
@@ -801,8 +836,8 @@ function WeatherProfileSystem:consoleCommandWeatherDebug()
             md and md.rain or 0, md and md.thunder or 0, md and md.snow or 0, md and md.hail or 0,
             md and md.sun or 0, md and md.partlyCloudy or 0, md and md.cloudy or 0),
         string.format("Temp: min %s  max %s",
-            offsets.tempMin ~= nil and string.format("%.1f°C", offsets.tempMin) or "engine",
-            offsets.tempMax ~= nil and string.format("%.1f°C", offsets.tempMax) or "engine"),
+            temps.tempMin ~= nil and string.format("%.1f°C", temps.tempMin) or "engine",
+            temps.tempMax ~= nil and string.format("%.1f°C", temps.tempMax) or "engine"),
         string.format("Clamp:    min %.0f%%  max %.0f%%", clamp.min, clamp.max),
     }
     for _, line in ipairs(lines) do print(line) end
