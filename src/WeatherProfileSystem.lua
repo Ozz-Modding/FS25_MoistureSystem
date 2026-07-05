@@ -39,13 +39,17 @@ function WeatherProfileSystem:loadMap()
     self:loadProfiles()
 end
 
+local BUILTIN_PROFILES = {
+    "ukwest", "ukeast", "centraleurope", "mediterranean",
+    "usmidwest", "uspnw", "eastasia", "brazilcentral", "brazilsouth",
+}
+
 function WeatherProfileSystem:loadProfiles()
+    -- Files.new/getFiles cannot enumerate inside a zip archive, so built-in profiles
+    -- are listed explicitly. The modSettings directory is always on the real filesystem.
     local profileDir = MoistureSystem.dir .. "xml/weatherProfiles/"
-    local files = Files.new(profileDir)
-    for _, entry in pairs(files.files) do
-        if not entry.isDirectory and entry.filename:sub(-4) == ".xml" then
-            self:loadProfileXML(profileDir .. entry.filename)
-        end
+    for _, name in ipairs(BUILTIN_PROFILES) do
+        self:loadProfileXML(profileDir .. name .. ".xml")
     end
 
     -- Also load any user-supplied profiles from modSettings (e.g.

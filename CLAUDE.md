@@ -121,7 +121,7 @@ Located at `C:\Users\steve\Documents\My FS 25 Mods\Reference\FS25_Lua`. Relevant
 - Moisture values stored internally on 0–1 scale; displayed as percentage (×100).
 - All simulation is server-side. Clients receive state via `InitialClientStateEvent`.
 - `MoistureClamp.lua` is retained on disk but not loaded — replaced entirely by WeatherProfileSystem.
-- Adding a new profile: create `xml/weatherProfiles/<id>.xml`. All `.xml` files in that directory are auto-discovered via `Files.new()` — no code registration needed.
+- Adding a new profile: create `xml/weatherProfiles/<id>.xml` **and** add its id to the `BUILTIN_PROFILES` list near the top of `WeatherProfileSystem.lua`. The old auto-discovery via `Files.new()` was removed because `getFiles()` cannot enumerate files inside a zip archive — it only works on a real filesystem directory. The modSettings user directory is still scanned via `Files.new()` because that path is always on the real filesystem.
 - Multiplayer: do not add client-side moisture logic without a corresponding network event.
 
 ## Map → profile auto-defaults
