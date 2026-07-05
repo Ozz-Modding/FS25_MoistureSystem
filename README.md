@@ -2,6 +2,10 @@
 
 A comprehensive moisture simulation mod for Farming Simulator 25 that adds realistic moisture tracking to your farming operations.
 
+## v2.0.0.0 Feature Update (YouTube)
+
+[![Watch the video](https://img.youtube.com/vi/-8T2nfkTxQs/maxresdefault.jpg)](https://youtu.be/-8T2nfkTxQs)
+
 ## Overview
 
 The Moisture System mod introduces dynamic moisture levels that affect crops, grass, and bales throughout your farm. Moisture varies based on terrain elevation, weather conditions, and time of day, creating a more realistic farming experience where harvest timing and storage management matter.
