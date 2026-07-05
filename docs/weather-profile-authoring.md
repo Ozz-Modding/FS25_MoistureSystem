@@ -36,7 +36,7 @@ Weather profiles define the climate behaviour for a region — monthly moisture 
 
 ## `<month>` attributes
 
-All 12 months (`id="1"` through `id="12"`, January–December) **must be defined** in every scenario. Missing months fall back to hard-coded defaults (0 rain, 1 sun/partlyCloudy/cloudy, 10–30% moisture) which are unlikely to match your region.
+All 12 months (`id="1"` through `id="12"`, January–December) **must be defined** in every scenario.
 
 ### Moisture clamp
 
@@ -44,15 +44,6 @@ All 12 months (`id="1"` through `id="12"`, January–December) **must be defined
 |--------------|-------|------|----------------------------------------------------------|
 | `moistureMin`| float | %    | Lower bound for field moisture (0–100 scale)             |
 | `moistureMax`| float | %    | Upper bound for field moisture                           |
-
-The simulation uses the inner 80% of this range as the realistic settling window:
-
-```
-innerMin = moistureMin + 0.1 * (moistureMax - moistureMin)
-innerMax = moistureMax - 0.1 * (moistureMax - moistureMin)
-```
-
-When tuning for crop quality, check that `innerMin`–`innerMax` overlaps the grade A window for your region's primary crops during their harvest months. See [Crop grade A windows](#crop-grade-a-windows) below.
 
 ### Temperature
 
@@ -111,11 +102,9 @@ There are two places the mod looks for profile XMLs, in load order:
 
 **For end users:** drop your `.xml` file into the `modSettings/FS25_MoistureSystem/` folder. It appears in the in-game profile picker automatically without editing the mod. If your file uses the same `id` as a built-in profile it will replace it.
 
-**For mod authors bundling a profile:** drop the file into `xml/weatherProfiles/` as before.
-
 ## Crop grade A windows
 
-Use this table when setting `moistureMin`/`moistureMax` to ensure grade A quality is achievable during harvest months.
+Use this table when setting `moistureMin`/`moistureMax` to ensure grade A quality is achievable during harvest months, if realistic for the given region.
 
 | Crop                                          | Grade A moisture | FS25 harvest months |
 |-----------------------------------------------|-----------------|---------------------|
@@ -127,8 +116,6 @@ Use this table when setting `moistureMin`/`moistureMax` to ensure grade A qualit
 | Oat, Rye, Triticale, Buckwheat, Millet, Sorghum | 13–14%       | July–August         |
 | Rice, Long Grain Rice                         | 12–14%          | August–September    |
 | Sunflower                                     | 11–14%          | September–October   |
-
-Remember to check the **inner range** (the 80% window described above), not raw min/max, when evaluating whether grade A is reachable.
 
 ## Minimal valid example
 
