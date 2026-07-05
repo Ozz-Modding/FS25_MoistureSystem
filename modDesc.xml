@@ -47,6 +47,7 @@ Changelog:
 - Vehicles and silos with crop in will now show the current grade of the crop in the HUD. Previously only moisture and quality were shown.
 - Added optimisations on how weather impacts ground piles to improve performance for lower end machines.
 - The impact of weather is now scaled based on the number of days per month.
+- Drying charges are no longer applied when depositing into your own selling station.
 
 1.0.0.7:
 - Fix a freeze when selling certain silos.
@@ -121,6 +122,7 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop
 - Fahrzeuge und Silos mit Ernte zeigen jetzt im HUD die aktuelle Qualitätsstufe der Ernte an. Zuvor wurden nur Feuchtigkeit und Qualität angezeigt.
 - Optimierungen hinzugefügt, wie Wetter Bodenhaufen beeinflusst, um die Leistung für leistungsschwächere Maschinen zu verbessern.
 - Der Einfluss des Wetters wird jetzt basierend auf der Anzahl der Tage pro Monat skaliert.
+- Trocknungsgebühren werden nicht mehr berechnet, wenn Ernte in die eigene Verkaufsstation eingelagert wird.
 
 1.0.0.6:
 - Verschiedene Optimierungen zur Verbesserung der Leistung, wenn eine große Anzahl von Bodenobjekten dauerhaft bestehen bleibt.
@@ -191,6 +193,7 @@ Journal des modifications :
 - Les véhicules et silos contenant des récoltes affichent désormais la qualité actuelle de la récolte dans le HUD. Auparavant, seuls l'humidité et la qualité étaient affichées.
 - Ajout d'optimisations sur la façon dont la météo affecte les tas au sol pour améliorer les performances sur les machines moins puissantes.
 - L'impact de la météo est désormais mis à l'échelle en fonction du nombre de jours par mois.
+- Les frais de séchage ne sont plus appliqués lors du dépôt dans votre propre point de vente.
 
 1.0.0.6 :
 - Optimisations diverses pour améliorer les performances lorsqu'un grand nombre d'objets au sol persistent.
