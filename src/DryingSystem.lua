@@ -219,6 +219,18 @@ function DryingSystem:isDrying(placeableId)
     return self.activeDryers[placeableId] ~= nil
 end
 
+function DryingSystem:setDryingState(placeableUniqueId, isActive)
+    if isActive then
+        self.activeDryers[placeableUniqueId] = true
+        g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_OK,
+            g_i18n:getText("ms_drying_started"))
+    else
+        self.activeDryers[placeableUniqueId] = nil
+        g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_OK,
+            g_i18n:getText("ms_drying_stopped"))
+    end
+end
+
 function DryingSystem:onHourChanged()
     if not g_currentMission:getIsServer() then return end
 
@@ -243,6 +255,13 @@ function DryingSystem:onHourChanged()
 
     for _, placeableId in ipairs(completedDryers) do
         self.activeDryers[placeableId] = nil
+        local placeable = self:getPlaceableByUniqueId(placeableId)
+        if placeable ~= nil then
+            local objectId = NetworkUtil.getObjectId(placeable)
+            if objectId ~= nil then
+                g_server:broadcastEvent(DryingToggleEvent.new(objectId, false))
+            end
+        end
     end
 end
 
@@ -264,7 +283,7 @@ function DryingSystem:drySilo(placeable, ms, dryingRate, sellChargeRate, complet
             g_i18n:getText("ms_drying_complete"))
     else
         local volumeFactor = math.max(1, totalLiters / 10000)
-        local effectiveDryingRate = dryingRate / volumeFactor
+        local effectiveDryingRate = (dryingRate / volumeFactor) * ms:getScaleFactor()
 
         for _, storage in ipairs(placeable.spec_silo.storages) do
             for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
@@ -339,7 +358,7 @@ function DryingSystem:dryShed(placeable, ms, dryingRate, sellChargeRate, complet
     end
 
     local volumeFactor = math.max(1, totalLiters / 10000)
-    local effectiveDryingRate = dryingRate / volumeFactor
+    local effectiveDryingRate = (dryingRate / volumeFactor) * ms:getScaleFactor()
 
     for _, entry in ipairs(pilesToDry) do
         entry.pile.properties.moisture = math.max(entry.idealMax, entry.pile.properties.moisture - effectiveDryingRate)
@@ -513,16 +532,19 @@ function DryingActivatable:onKeybindPressed()
 
     if g_currentMission:getIsServer() then
         self.dryingSystem:toggleDrying(self.placeable)
-    else
-        g_client:getServerConnection():sendEvent(DryingToggleEvent.new(self.placeable.uniqueId))
-    end
-
-    if self.actionEventId then
-        if self.dryingSystem:isDrying(self.placeable.uniqueId) then
-            g_inputBinding:setActionEventText(self.actionEventId, g_i18n:getText("ms_action_stopDrying"))
-        else
-            g_inputBinding:setActionEventText(self.actionEventId, g_i18n:getText("ms_action_startDrying"))
+        if self.actionEventId then
+            if self.dryingSystem:isDrying(self.placeable.uniqueId) then
+                g_inputBinding:setActionEventText(self.actionEventId, g_i18n:getText("ms_action_stopDrying"))
+            else
+                g_inputBinding:setActionEventText(self.actionEventId, g_i18n:getText("ms_action_startDrying"))
+            end
         end
+    else
+        local objectId = NetworkUtil.getObjectId(self.placeable)
+        if objectId ~= nil then
+            g_client:getServerConnection():sendEvent(DryingToggleEvent.new(objectId))
+        end
+        -- Button text and notification will update when the server broadcasts back via applyRemoteState
     end
 end
 

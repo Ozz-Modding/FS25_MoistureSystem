@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<weatherProfile id="brazilcentral" displayName="Brazil Central">
+    <scenarios>
+
+        <scenario id="normal" weight="8">
+            <month id="1"  tempMin="21" tempMax="30"
+                rain="7" thunder="3" snow="0" hail="0" sun="1" partlyCloudy="2" cloudy="3"
+                moistureMin="18" moistureMax="40"/>
+            <month id="2"  tempMin="21" tempMax="30"
+                rain="7" thunder="3" snow="0" hail="0" sun="1" partlyCloudy="2" cloudy="3"
+                moistureMin="18" moistureMax="40"/>
+            <month id="3"  tempMin="21" tempMax="30"
+                rain="5" thunder="2" snow="0" hail="0" sun="2" partlyCloudy="3" cloudy="3"
+                moistureMin="14" moistureMax="32"/>
+            <month id="4"  tempMin="19" tempMax="30"
+                rain="2" thunder="2" snow="0" hail="0" sun="4" partlyCloudy="4" cloudy="3"
+                moistureMin="9"  moistureMax="22"/>
+            <month id="5"  tempMin="17" tempMax="29"
+                rain="1" thunder="0" snow="0" hail="0" sun="6" partlyCloudy="4" cloudy="2"
+                moistureMin="5"  moistureMax="14"/>
+            <month id="6"  tempMin="15" tempMax="29"
+                rain="0" thunder="0" snow="0" hail="0" sun="8" partlyCloudy="3" cloudy="1"
+                moistureMin="3"  moistureMax="10"/>
+            <month id="7"  tempMin="15" tempMax="30"
+                rain="0" thunder="0" snow="0" hail="0" sun="9" partlyCloudy="2" cloudy="1"
+                moistureMin="2"  moistureMax="8"/>
+            <month id="8"  tempMin="17" tempMax="32"
+                rain="0" thunder="0" snow="0" hail="0" sun="8" partlyCloudy="3" cloudy="1"
+                moistureMin="3"  moistureMax="10"/>
+            <month id="9"  tempMin="19" tempMax="33"
+                rain="1" thunder="1" snow="0" hail="0" sun="5" partlyCloudy="4" cloudy="2"
+                moistureMin="6"  moistureMax="16"/>
+            <month id="10" tempMin="20" tempMax="32"
+                rain="4" thunder="4" snow="0" hail="0" sun="2" partlyCloudy="3" cloudy="3"
+                moistureMin="10" moistureMax="22"/>
+            <month id="11" tempMin="21" tempMax="31"
+                rain="5" thunder="5" snow="0" hail="0" sun="1" partlyCloudy="2" cloudy="3"
+                moistureMin="12" moistureMax="28"/>
+            <month id="12" tempMin="21" tempMax="30"
+                rain="6" thunder="5" snow="0" hail="0" sun="1" partlyCloudy="2" cloudy="3"
+                moistureMin="16" moistureMax="36"/>
+        </scenario>
+
+        <scenario id="elNino" weight="2">
+            <month id="1"  tempMin="22" tempMax="31"
+                rain="7" thunder="4" snow="0" hail="0" sun="1" partlyCloudy="1" cloudy="3"
+                moistureMin="22" moistureMax="46"/>
+            <month id="2"  tempMin="22" tempMax="31"
+                rain="7" thunder="4" snow="0" hail="0" sun="1" partlyCloudy="1" cloudy="3"
+                moistureMin="22" moistureMax="46"/>
+            <month id="3"  tempMin="22" tempMax="31"
+                rain="5" thunder="3" snow="0" hail="0" sun="1" partlyCloudy="2" cloudy="4"
+                moistureMin="17" moistureMax="38"/>
+            <month id="4"  tempMin="20" tempMax="30"
+                rain="3" thunder="2" snow="0" hail="0" sun="3" partlyCloudy="4" cloudy="3"
+                moistureMin="12" moistureMax="28"/>
+            <month id="5"  tempMin="18" tempMax="29"
+                rain="1" thunder="0" snow="0" hail="0" sun="5" partlyCloudy="4" cloudy="3"
+                moistureMin="6"  moistureMax="16"/>
+            <month id="6"  tempMin="16" tempMax="30"
+                rain="1" thunder="0" snow="0" hail="0" sun="6" partlyCloudy="4" cloudy="2"
+                moistureMin="4"  moistureMax="13"/>
+            <month id="7"  tempMin="16" tempMax="32"
+                rain="0" thunder="0" snow="0" hail="0" sun="7" partlyCloudy="4" cloudy="1"
+                moistureMin="3"  moistureMax="11"/>
+            <month id="8"  tempMin="18" tempMax="33"
+                rain="1" thunder="0" snow="0" hail="0" sun="6" partlyCloudy="4" cloudy="2"
+                moistureMin="4"  moistureMax="13"/>
+            <month id="9"  tempMin="21" tempMax="34"
+                rain="3" thunder="2" snow="0" hail="0" sun="3" partlyCloudy="4" cloudy="3"
+                moistureMin="10" moistureMax="22"/>
+            <month id="10" tempMin="22" tempMax="32"
+                rain="5" thunder="5" snow="0" hail="0" sun="1" partlyCloudy="1" cloudy="3"
+                moistureMin="14" moistureMax="32"/>
+            <month id="11" tempMin="22" tempMax="31"
+                rain="6" thunder="5" snow="0" hail="0" sun="1" partlyCloudy="1" cloudy="3"
+                moistureMin="18" moistureMax="40"/>
+            <month id="12" tempMin="22" tempMax="31"
+                rain="7" thunder="5" snow="0" hail="0" sun="1" partlyCloudy="1" cloudy="3"
+                moistureMin="20" moistureMax="44"/>
+        </scenario>
+
+        <scenario id="laNina" weight="2">
+            <month id="1"  tempMin="20" tempMax="28"
+                rain="6" thunder="4" snow="0" hail="0" sun="1" partlyCloudy="2" cloudy="3"
+                moistureMin="18" moistureMax="40"/>
+            <month id="2"  tempMin="20" tempMax="28"
+                rain="7" thunder="5" snow="0" hail="0" sun="1" partlyCloudy="1" cloudy="3"
+                moistureMin="20" moistureMax="44"/>
+            <month id="3"  tempMin="20" tempMax="28"
+                rain="5" thunder="3" snow="0" hail="0" sun="1" partlyCloudy="2" cloudy="4"
+                moistureMin="17" moistureMax="38"/>
+            <month id="4"  tempMin="18" tempMax="27"
+                rain="2" thunder="1" snow="0" hail="0" sun="5" partlyCloudy="4" cloudy="2"
+                moistureMin="8"  moistureMax="20"/>
+            <month id="5"  tempMin="16" tempMax="26"
+                rain="0" thunder="0" snow="0" hail="0" sun="7" partlyCloudy="4" cloudy="1"
+                moistureMin="3"  moistureMax="10"/>
+            <month id="6"  tempMin="14" tempMax="27"
+                rain="0" thunder="0" snow="0" hail="0" sun="9" partlyCloudy="2" cloudy="1"
+                moistureMin="2"  moistureMax="7"/>
+            <month id="7"  tempMin="13" tempMax="28"
+                rain="0" thunder="0" snow="0" hail="0" sun="9" partlyCloudy="2" cloudy="1"
+                moistureMin="1"  moistureMax="6"/>
+            <month id="8"  tempMin="15" tempMax="30"
+                rain="0" thunder="0" snow="0" hail="0" sun="9" partlyCloudy="2" cloudy="1"
+                moistureMin="2"  moistureMax="7"/>
+            <month id="9"  tempMin="18" tempMax="31"
+                rain="0" thunder="1" snow="0" hail="0" sun="6" partlyCloudy="4" cloudy="2"
+                moistureMin="3"  moistureMax="10"/>
+            <month id="10" tempMin="19" tempMax="29"
+                rain="1" thunder="2" snow="0" hail="0" sun="5" partlyCloudy="4" cloudy="2"
+                moistureMin="5"  moistureMax="14"/>
+            <month id="11" tempMin="20" tempMax="28"
+                rain="4" thunder="4" snow="0" hail="0" sun="2" partlyCloudy="3" cloudy="3"
+                moistureMin="10" moistureMax="22"/>
+            <month id="12" tempMin="21" tempMax="28"
+                rain="6" thunder="5" snow="0" hail="0" sun="1" partlyCloudy="2" cloudy="3"
+                moistureMin="16" moistureMax="36"/>
+        </scenario>
+
+        <scenario id="dryYear" weight="1">
+            <month id="1"  tempMin="22" tempMax="31"
+                rain="4" thunder="3" snow="0" hail="0" sun="3" partlyCloudy="3" cloudy="3"
+                moistureMin="14" moistureMax="32"/>
+            <month id="2"  tempMin="22" tempMax="31"
+                rain="4" thunder="3" snow="0" hail="0" sun="3" partlyCloudy="3" cloudy="3"
+                moistureMin="14" moistureMax="32"/>
+            <month id="3"  tempMin="21" tempMax="30"
+                rain="2" thunder="2" snow="0" hail="0" sun="4" partlyCloudy="4" cloudy="3"
+                moistureMin="9"  moistureMax="22"/>
+            <month id="4"  tempMin="20" tempMax="29"
+                rain="1" thunder="1" snow="0" hail="0" sun="6" partlyCloudy="4" cloudy="2"
+                moistureMin="5"  moistureMax="14"/>
+            <month id="5"  tempMin="18" tempMax="28"
+                rain="0" thunder="0" snow="0" hail="0" sun="8" partlyCloudy="3" cloudy="1"
+                moistureMin="3"  moistureMax="9"/>
+            <month id="6"  tempMin="16" tempMax="30"
+                rain="0" thunder="0" snow="0" hail="0" sun="9" partlyCloudy="2" cloudy="1"
+                moistureMin="2"  moistureMax="7"/>
+            <month id="7"  tempMin="15" tempMax="31"
+                rain="0" thunder="0" snow="0" hail="0" sun="10" partlyCloudy="1" cloudy="1"
+                moistureMin="1"  moistureMax="5"/>
+            <month id="8"  tempMin="17" tempMax="33"
+                rain="0" thunder="0" snow="0" hail="0" sun="9" partlyCloudy="2" cloudy="1"
+                moistureMin="2"  moistureMax="7"/>
+            <month id="9"  tempMin="20" tempMax="34"
+                rain="0" thunder="1" snow="0" hail="0" sun="7" partlyCloudy="3" cloudy="1"
+                moistureMin="3"  moistureMax="10"/>
+            <month id="10" tempMin="21" tempMax="31"
+                rain="2" thunder="3" snow="0" hail="0" sun="4" partlyCloudy="3" cloudy="3"
+                moistureMin="6"  moistureMax="16"/>
+            <month id="11" tempMin="21" tempMax="30"
+                rain="4" thunder="3" snow="0" hail="0" sun="2" partlyCloudy="3" cloudy="3"
+                moistureMin="10" moistureMax="24"/>
+            <month id="12" tempMin="21" tempMax="30"
+                rain="4" thunder="4" snow="0" hail="0" sun="2" partlyCloudy="2" cloudy="3"
+                moistureMin="13" moistureMax="30"/>
+        </scenario>
+
+    </scenarios>
+</weatherProfile>

@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Feuchtigkeitssystem"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Wetterumgebung"/>
-		<text name="setting_moisture_environment_tooltip" text="Legt den Klimatyp für Feuchtigkeitsberechnungen fest"/>
-		<text name="setting_moisture_environment_dry" text="TROCKEN"/>
-		<text name="setting_moisture_environment_normal" text="NORMAL"/>
-		<text name="setting_moisture_environment_wet" text="FEUCHT"/>
+		<text name="setting_moisture_weatherProfile" text="Wetterprofil"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Regionales Wetterprofil. Bestimmt Niederschlagsmuster, Temperaturen und Feuchtigkeitsgrenzen. Änderungen werden im nächsten Januar wirksam."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Feuchtigkeitsverlust-Multiplikator"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Steuert die Geschwindigkeit des Feuchtigkeitsverlusts (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Feuchtigkeitsgewinn-Multiplikator"/>
@@ -31,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Trocknungsgebühren-Multiplikator beim Verkauf feuchter Ernten. Höher = teurer."/>
 		<text name="setting_moisture_showFieldMoisture" text="Feldfeuchtigkeit anzeigen"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Zeigt den aktuellen Feuchtigkeitsgrad an Ihrer Position im Feldinfo-HUD an."/>
+		<text name="setting_moisture_witheringEnabled" text="Ernteverdorren"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Aktiviert realistisches Ernteverdorren durch schwere Dürre. Verdorrte Stellen verringern den Ernteertrag. Deaktivieren, um stattdessen eine einfachere Ertragsuntergrenze zu verwenden."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Feuchtigkeitsmesser-Bericht"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Wie der Feuchtigkeitsmesser Messwerte anzeigt."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Blinkende Warnung"/>
@@ -54,9 +53,6 @@
 		<text name="ms_drying_stopped" text="Silotrocknung gestoppt"/>
 		<text name="ms_drying_complete" text="Trocknung abgeschlossen - alle Ernten auf idealer Feuchtigkeit"/>
 
-		<!-- Info-Dialog -->
-		<text name="ms_info_dryingUpdate" text="Das Feuchtigkeitssystem enthält jetzt Getreidetrocknung. Geerntete Feldfrüchte haben einen Qualitätswert und einen Feuchtigkeitsgehalt. Sie müssen Getreide in einer Lagerhalle oder einem Silo trocknen, um Qualitätsverluste zu vermeiden. Beim Verkauf von Erntegut mit zu hoher Feuchtigkeit können Trocknungsgebühren anfallen. Weitere Informationen finden Sie im Hilfemenü. Diese Nachricht wird einmal pro Spielstand angezeigt und in einem zukünftigen Update entfernt."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Feuchtigkeitsmenü öffnen"/>
 		<text name="input_MOISTURE_START_DRYING" text="Silo-Trocknung umschalten"/>
@@ -65,7 +61,6 @@
 		<text name="moistureSystem_fieldInfo" text="Feldfeuchtigkeit"/>
 		<text name="moistureSystem_moisture" text="Feuchtigkeit"/>
 		<text name="moistureSystem_quality" text="Qualität"/>
-		<text name="moistureSystem_range" text="Erwarteter Bereich"/>
 		<text name="moistureSystem_rainExposure" text="Regenexposition"/>
 		<text name="moistureSystem_baleStatus" text="Status"/>
 		<text name="moistureSystem_baleGettingWet" text="Wird Nass"/>
@@ -77,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Erntegütewerte"/>
 		<text name="moistureSystem_gui_description" text="Die unten stehenden Daten zeigen die Feuchtigkeitsbewertung für jede unterstützte Ernte. Der Feuchtigkeitsbereich für die Güteklasse wird angezeigt, und der Preismultiplikator für diese Klasse wird in Klammern angezeigt."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Feuchtigkeit zu Qualität"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Feuchtigkeitseinfluss"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Zeigt den Qualitätswert, der bei der Ernte basierend auf dem Feuchtigkeitsniveau zugewiesen wird. Ernten Sie im idealen Bereich (Klasse A) für maximale Qualität. Qualität verschlechtert sich stündlich bei Lagerung über idealer Feuchtigkeit."/>
+		<text name="moistureSystem_gui_selectCrop" text="Wählen Sie eine Ernte aus der Liste, um ihre Feuchtigkeitskurve anzuzeigen."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Ertrag %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Qualität %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Verdorrrisiko"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="Unter Ideal"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Idealbereich"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Über Ideal"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Feuchtigkeit bei der Ernte"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Ideale Feuchtigkeit %d%%-%d%%: voller Ertrag und Qualität"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Zu trocken geerntet: Ertrag sinkt auf %d%%, aber Qualität nur auf %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Zu feucht geerntet: Qualität sinkt auf %d%%, aber Ertrag nur auf %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="Unter %d%% Feuchtigkeit droht der Ernte das Verdorren auf dem Feld"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Qualität zu Preis"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Zeigt den Verkaufspreis-Multiplikator basierend auf der Erntequalität. Qualitätsbereiche variieren je Ernte - einige sind widerstandsfähiger gegen Qualitätsverlust als andere."/>
 		<text name="moistureSystem_gui_cropName" text="Erntename"/>
@@ -92,6 +99,22 @@
 		<text name="moistureSystem_gui_currentEnvironment" text="Aktuelle Umgebung"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Der Kalender unten zeigt den erwarteten Feuchtigkeitsbereich für jeden Monat basierend auf Ihrer aktuellen Umgebungseinstellung. Feuchtigkeitsniveaus werden von Niederschlag, Temperatur und Jahreszeit beeinflusst."/>
 
+		<!-- Wetter-GUI -->
+		<text name="moistureSystem_gui_weather" text="Wetter"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Vorhersage"/>
+		<text name="moistureSystem_gui_weather_history" text="Verlauf"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Niederschlag"/>
+		<text name="moistureSystem_gui_weather_sun" text="Sonne"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Bewölkt"/>
+		<text name="moistureSystem_gui_weather_noData" text="Keine Daten"/>
+		<text name="moistureSystem_gui_weather_season1" text="Frühling"/>
+		<text name="moistureSystem_gui_weather_season2" text="Sommer"/>
+		<text name="moistureSystem_gui_weather_season3" text="Herbst"/>
+		<text name="moistureSystem_gui_weather_season4" text="Winter"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Vorhersagen sind Schätzungen. Die Genauigkeit nimmt für weiter entfernte Jahreszeiten ab."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Jahr %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Abgeschlossene Jahre laufen von März bis Februar, damit die Jahreszeiten korrekt dargestellt werden."/>
+
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Feuchtigkeitsmesser"/>
 		<text name="moistureSystem_moistureMeterFunction" text="Feldfeuchtigkeitsniveaus messen"/>
@@ -103,19 +126,25 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Übersicht"/>
-		<text name="help_moisture_overview_1" text="Die Feuchtigkeitssystem-Mod führt dynamische Feuchtigkeitsniveaus und Erntequalitätsverfolgung ein, die Ernten, Gras und Ballen auf Ihrem gesamten Hof beeinflussen. Die Feuchtigkeit variiert basierend auf Geländehöhe, Wetterbedingungen und Tageszeit. Qualität wird bei der Ernte bestimmt und verschlechtert sich über die Zeit, wenn Ernten zu feucht gelagert werden."/>
-		<text name="help_moisture_overview_2" text="Dies schafft ein realistischeres Landwirtschaftserlebnis, bei dem Erntezeit, Trocknung und Lagerverwaltung wichtig sind. Verwenden Sie das Feuchtigkeitsmenü (Shift+M), um Qualität-zu-Preis-Tabellen, Feuchtigkeit-zu-Qualität-Diagramme und Feuchtigkeitskalender anzuzeigen."/>
+		<text name="help_moisture_overview_1" text="Die Feuchtigkeitssystem-Mod führt dynamische Feuchtigkeitsniveaus, Erntequalitätsverfolgung und Wettersimulation ein, die Ernten, Gras und Ballen auf Ihrem gesamten Hof beeinflussen. Die Feuchtigkeit variiert basierend auf Geländehöhe, Wetterbedingungen und Tageszeit. Qualität und Ertrag werden bei der Ernte bestimmt, und Qualität verschlechtert sich über die Zeit, wenn Ernten zu feucht gelagert werden."/>
+		<text name="help_moisture_overview_2" text="Dies schafft ein realistischeres Landwirtschaftserlebnis, bei dem Erntezeit, Trocknung und Lagerverwaltung wichtig sind. Verwenden Sie das Feuchtigkeitsmenü (Shift+M), um Qualität-zu-Preis-Tabellen, Feuchtigkeitseinfluss-Diagramme und Wetterprognosen und -verlauf anzuzeigen."/>
 
 		<!-- Field Moisture Page -->
 		<text name="help_moisture_field_title" text="Feldfeuchtigkeit"/>
 		<text name="help_moisture_field_1" text="Die Feldfeuchtigkeit variiert auf Ihrem Hof basierend auf mehreren Faktoren: Geländehöhe (niedrigere Bereiche sind feuchter), Wetterbedingungen (Regen und Schnee erhöhen die Feuchtigkeit), Temperatur (wärmeres Wetter beschleunigt die Trocknung) und Tageszeit (Feuchtigkeit nimmt tagsüber stärker ab)."/>
-		<text name="help_moisture_field_2" text="Monatliche Feuchtigkeitsbereiche ändern sich im Laufe des Jahres basierend auf Ihrem gewählten Umgebungstyp (Trocken/Normal/Feucht). Verwenden Sie das Handwerkzeug Feuchtigkeitsmesser oder aktivieren Sie die HUD-Anzeige in den Einstellungen, um Feuchtigkeitsniveaus zu überwachen."/>
+		<text name="help_moisture_field_2" text="Monatliche Feuchtigkeitsbereiche ändern sich im Laufe des Jahres, gesteuert durch Ihr aktives Wetterprofil. Verwenden Sie das Handwerkzeug Feuchtigkeitsmesser oder aktivieren Sie die HUD-Anzeige in den Einstellungen, um Feuchtigkeitsniveaus zu überwachen."/>
+
+		<!-- Weather Profiles Page -->
+		<text name="help_moisture_weather_title" text="Wetterprofile"/>
+		<text name="help_moisture_weather_1" text="Das Feuchtigkeitssystem steuert das Spielwetter mithilfe regionaler Wetterprofile. Wählen Sie in den Einstellungen ein Profil, das zur Region Ihrer Karte passt. Für viele Karten wird automatisch ein passendes Standardprofil ausgewählt. Jedes Profil umfasst typische Niederschlags-, Temperatur- und jahreszeitliche Variationswerte für diese Region."/>
+		<text name="help_moisture_weather_2" text="Jedes Profil enthält mehrere Szenarien, die unterschiedliche Jahrtypen darstellen — trockenere Jahre, feuchtere Jahre, Durchschnittsjahre. Einmal pro Jahr (jeden Januar) wählt das System ein Szenario aus, das die Wettermuster für das gesamte Jahr prägt. Erwarten Sie echte jährliche Schwankungen: Manche Ernten werden schwieriger sein als andere."/>
+		<text name="help_moisture_weather_3" text="Der Wetter-Tab im Feuchtigkeitsmenü (Shift+M) zeigt eine jahreszeitliche Prognose für das aktuelle Jahr und einen Verlauf, wie vergangene Jahre im Vergleich zum Normalwert abschnitten. Nutzen Sie dies, um zu planen, wann Sie ernten, trocknen und verkaufen."/>
 
 		<!-- Crop Grading Page -->
-		<text name="help_moisture_grading_title" text="Erntequalität &amp; Bewertung"/>
-		<text name="help_moisture_grading_1" text="Geerntete Ernten erhalten einen Qualitätswert (0-100) basierend auf ihrem Feuchtigkeitsgehalt bei der Ernte. Qualität bestimmt Ihren Verkaufspreis durch erntespezifische Klassenbänder (A bis D). Jede Ernte hat unterschiedliche Qualitätsschwellen — einige sind widerstandsfähiger gegen niedrige Qualität als andere."/>
-		<text name="help_moisture_grading_2" text="Qualität verschlechtert sich stündlich, wenn Ernten über ihrer idealen Feuchtigkeit gelagert werden. Je weiter über dem Idealwert, desto schneller sinkt die Qualität. Einmal verlorene Qualität kann nicht wiederhergestellt werden — aber Sie können den Verfall durch Trocknung auf die ideale Feuchtigkeit stoppen."/>
-		<text name="help_moisture_grading_3" text="Sehen Sie sich Feuchtigkeit-zu-Qualität- und Qualität-zu-Preis-Tabellen im Feuchtigkeitsmenü (Shift+M) an. Jede Ernte hat einen einzigartigen idealen Feuchtigkeitsbereich und einzigartige Preisbänder basierend auf dem Qualitätsniveau."/>
+		<text name="help_moisture_grading_title" text="Erntequalität &amp; Ertrag"/>
+		<text name="help_moisture_grading_1" text="Feuchtigkeit beeinflusst sowohl Ertrag als auch Qualität bei der Ernte. Zu trocken geerntete Kulturen liefern schlechten Ertrag; zu feucht geerntete Kulturen liefern guten Ertrag, aber mit reduzierter Qualität. Jede Kultur hat einen Zielfeuchtigkeitsbereich, in dem sowohl Ertrag als auch Qualität optimal sind — das ist nicht immer dasselbe Fenster."/>
+		<text name="help_moisture_grading_2" text="Qualität (0-100) bestimmt Ihren Verkaufspreis durch erntespezifische Klassenbänder (A bis D). Qualität verschlechtert sich stündlich, wenn Ernten über ihrer idealen Feuchtigkeit gelagert werden. Einmal verlorene Qualität kann nicht wiederhergestellt werden — aber Sie können den Verfall durch Trocknung auf die ideale Feuchtigkeit stoppen."/>
+		<text name="help_moisture_grading_3" text="Sehen Sie sich das Feuchtigkeitseinfluss-Diagramm und Qualität-zu-Preis-Tabellen im Feuchtigkeitsmenü (Shift+M) an. Jede Ernte hat einen einzigartigen idealen Feuchtigkeitsbereich und einzigartige Preisbänder basierend auf dem Qualitätsniveau."/>
 
 		<!-- Trocknung & Verkauf Seite -->
 		<text name="help_moisture_drying_title" text="Trocknung &amp; Verkauf"/>
@@ -147,7 +176,7 @@
 
 		<!-- Settings Page -->
 		<text name="help_moisture_settings_title" text="Konfiguration"/>
-		<text name="help_moisture_settings_1" text="Wählen Sie aus drei Klimavoreinstellungen in den Spieleinstellungen: Trocken (niedrigere Feuchtigkeitsniveaus), Normal (ausgewogen, Standard) oder Feucht (höhere Feuchtigkeitsniveaus). Jede Voreinstellung beeinflusst monatliche Feuchtigkeitsbereiche während des ganzen Jahres."/>
+		<text name="help_moisture_settings_1" text="Wählen Sie in den Einstellungen ein Wetterprofil, das zur Region Ihrer Karte passt. Dies steuert die jahreszeitlichen Feuchtigkeits- und Wettermuster für Ihr Spiel. Für viele Karten wird automatisch ein passendes Standardprofil ausgewählt, aber Sie können es jederzeit ändern."/>
 		<text name="help_moisture_settings_2" text="Feineinstellung des Verhaltens mit anpassbaren Einstellungen: Feuchtigkeitsverlust-/Gewinn-Multiplikatoren steuern Trocknungs- und Befeuchtungsgeschwindigkeit, Feuchtigkeitsreduzierung durch Heuen passt die Trocknung pro Durchgang an, Qualitätsverfallsrate steuert wie schnell die Qualität abnimmt, und Trocknungsgeschwindigkeit steuert die Silotrocknungsrate."/>
 		<text name="help_moisture_settings_3" text="Weitere Einstellungen umfassen Verkaufstrocknungsgebühr (Kosten beim Verkauf feuchter Ernten), Ballenfäule-Einstellungen, Feldfeuchtigkeitsanzeige umschalten und Feuchtigkeitsmesser-Berichtsstil. Im Mehrspielermodus steuert der Host/Admin diese Einstellungen."/>
 	</texts>

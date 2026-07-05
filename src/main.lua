@@ -3,10 +3,74 @@ MoistureSystem = {}
 MoistureSystem.dir = g_currentModDirectory
 MoistureSystem.SaveKey = "MoistureSystem"
 
+MoistureSystem.MapProfileDefaults = {
+    FS25_Witcombe                        = "ukwest",
+    FS25_calmsden                        = "ukwest",
+    FS25_Saxlingham                      = "ukeast",
+    FS25_Saxlingham_crossplay            = "ukeast",
+    FS25_Mindenerwald                    = "centraleurope",
+    FS25_Helden                          = "centraleurope",
+    FS25_Birgland                        = "centraleurope",
+    FS25_Geistal                         = "centraleurope",
+    FS25_Klattenhof                      = "centraleurope",
+    FS25_SchwesingBahnhof                = "centraleurope",
+    FS25_Schellenberg                    = "centraleurope",
+    FS25_Oberschwaben_crossplay          = "centraleurope",
+    FS25_Pfaffenwinkel                   = "centraleurope",
+    FS25_DH_crossplay                    = "centraleurope",
+    FS25_Lunow_crossplay                 = "centraleurope",
+    FS25_Daheim                          = "centraleurope",
+    FS25_The_Mechet                      = "centraleurope",
+    FS25_Pallegney                       = "centraleurope",
+    FS25_The_Pichonniere_Valley          = "centraleurope",
+    FS25_DeFrieseWouden                  = "centraleurope",
+    FS25_Solek                           = "centraleurope",
+    FS25_Cybuchowo                       = "centraleurope",
+    FS25_WolaZabierzowska                = "centraleurope",
+    FS25_Szpakowo                        = "centraleurope",
+    FS25_Szpakowo_pc                     = "centraleurope",
+    FS25_CarpathianCountryside_crossplay = "centraleurope",
+    FS25_Fenyerpuszta                    = "centraleurope",
+    FS25_Ujret                           = "centraleurope",
+    FS25_Monteriggioni                   = "mediterranean",
+    FS25_Iowa_Plains_View                = "usmidwest",
+    FS25_Alma_Missouri                   = "usmidwest",
+    FS25_fourFields                      = "usmidwest",
+    FS25_silverrunForest                 = "uspnw",
+    FS25_AgroForests                     = "uspnw",
+    FS25_Smoky_Mountain_Farming          = "usmidwest",
+    FS25_Estancia_Sao_Carlos             = "brazilcentral",
+    FS25_New_Gloria_Farm                 = "brazilcentral",
+    FS25_Sumidouro_Farm                  = "brazilcentral",
+    FS25_Rancho_Fundo                    = "brazilcentral",
+    FS25_Chapadao_Farm                   = "brazilcentral",
+    FS25_Pirambeiras                     = "brazilcentral",
+    FS25_BR163_Brazil                    = "brazilcentral",
+    FS25_3_Marias_Farm                   = "brazilcentral",
+    FS25_Estancia_Lapacho                = "brazilcentral",
+    FS25_Gaucho_Fields                   = "brazilsouth",
+    FS25_Pertile                         = "brazilsouth",
+    FS25_Turvo_Map                       = "brazilsouth",
+}
+
+function MoistureSystem:getScaleFactor()
+    local daysPerPeriod = g_currentMission.environment.daysPerPeriod or 1
+    local clamped = math.min(daysPerPeriod, 5)
+    return 1 / (clamped ^ 0.7)
+end
+
+function MoistureSystem:getDefaultProfileForMap()
+    local env = g_currentMission and g_currentMission.missionInfo and g_currentMission.missionInfo.customEnvironment
+    if env then
+        local mapped = MoistureSystem.MapProfileDefaults[env]
+        if mapped then return mapped end
+    end
+    return "ukwest"
+end
+
 function MoistureSystem:loadMap()
     g_currentMission.MoistureSystem = self
     self.didLoadFromXML = false
-    self.dryingInfoShown = false
     self.midHeight = 0
     self.currentMoisturePercent = 0
     self.timeSinceLastUpdate = 0
@@ -17,10 +81,11 @@ function MoistureSystem:loadMap()
     self.missionStarted = false
 
     self.settings = {
-        environment = MoistureClampEnvironments.NORMAL,
+        weatherProfile = MoistureSystem:getDefaultProfileForMap(),
         moistureLossMultiplier = 3.0,
         moistureGainMultiplier = 3.0,
         teddingMoistureReduction = 0.02,
+        witheringEnabled = true,
         baleRotEnabled = true,
         baleRotRate = 1.0,
         baleExposureDecayRate = 1.0,
@@ -36,6 +101,15 @@ function MoistureSystem:loadMap()
     g_currentMission.baleRottingSystem = BaleRottingSystem.new()
 
     g_currentMission.dryingSystem = DryingSystem.new()
+
+    g_currentMission.witheringSystem = WitheringSystem.new()
+
+    -- Drive the ground tracker and bale rotting system off their own engine
+    -- update(dt) hooks rather than hand-pumping them from MoistureSystem:update.
+    -- They unregister themselves in deleteMap (fresh instances are built per
+    -- mission load, so a stale listener would otherwise double-update).
+    addModEventListener(g_currentMission.groundPropertyTracker)
+    addModEventListener(g_currentMission.baleRottingSystem)
 
     self.objectInfo = {}
     self.objectMoistureTimestamps = {}
@@ -58,6 +132,12 @@ function MoistureSystem:loadMap()
 
     if g_addCheatCommands and g_currentMission:getIsServer() then
         addConsoleCommand("msSetMoisture", "Set Moisture", "consoleCommandSetMoisture", self)
+        local wps = g_currentMission.WeatherProfileSystem
+        addConsoleCommand("msWeatherDebug", "Dump active weather profile/scenario", "consoleCommandWeatherDebug", wps)
+        addConsoleCommand("msSetScenario", "Force-set active weather scenario", "consoleCommandSetScenario", wps)
+        addConsoleCommand("msListScenarios", "List scenarios for active profile", "consoleCommandListScenarios", wps)
+        addConsoleCommand("msSweepDebug", "Report ground drying-sweep throughput", "consoleCommandSweepDebug",
+            g_currentMission.groundPropertyTracker)
     end
 end
 
@@ -78,8 +158,14 @@ end
 function MoistureSystem:delete()
     if g_addCheatCommands then
         removeConsoleCommand("msSetMoisture")
+        removeConsoleCommand("msWeatherDebug")
+        removeConsoleCommand("msSetScenario")
+        removeConsoleCommand("msListScenarios")
+        removeConsoleCommand("msSweepDebug")
     end
 end
+
+
 
 function MoistureSystem:loadGUI()
     g_gui:loadProfiles(MoistureSystem.dir .. "src/gui/guiProfiles.xml")
@@ -89,8 +175,8 @@ function MoistureSystem:loadGUI()
     local pricesFrame = MoistureGuiPrices.new(g_i18n)
     g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiPrices.xml", "MoistureGuiPrices", pricesFrame, true)
 
-    local calendarFrame = MoistureGuiCalendar.new(g_i18n)
-    g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiCalendar.xml", "MoistureGuiCalendar", calendarFrame, true)
+    local weatherFrame = MoistureGuiWeather.new(g_i18n)
+    g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiWeather.xml", "MoistureGuiWeather", weatherFrame, true)
 
     self.moistureGui = MoistureGui:new(g_messageCenter, g_i18n, g_inputBinding)
     g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGui.xml", "MoistureGui", self.moistureGui)
@@ -107,9 +193,10 @@ function MoistureSystem:update(dt)
         self.timeSinceLastUpdate = 0
     end
 
-    if g_currentMission.baleRottingSystem then
-        g_currentMission.baleRottingSystem:update(dt)
-    end
+    -- groundPropertyTracker and baleRottingSystem drive their own update(dt) via
+    -- addModEventListener (registered in loadMap), so they are not pumped from
+    -- here. MoistureSystem:updateMoistureLevel feeds the global field delta into
+    -- the tracker's drying accumulator each cycle.
 
     SellingStationExtension.update()
 
@@ -140,9 +227,10 @@ function MoistureSystem:updateMoistureLevel(delta)
     -- Calculate moisture delta
     local moistureDelta = 0
 
+    local scaleFactor = self:getScaleFactor()
     if rainfall > 0 or snowfall > 0 or hailfall > 0 then
         moistureDelta = (rainfall + (snowfall * 0.55) + (hailfall * 0.5)) * 0.009945 * scaledDelta *
-            self.settings.moistureGainMultiplier
+            self.settings.moistureGainMultiplier * scaleFactor
         self:adjustMoisture(moistureDelta)
     else
         -- Lose moisture from temperature (warmer = more loss)
@@ -164,15 +252,18 @@ function MoistureSystem:updateMoistureLevel(delta)
             rateFactor = temperature * 0.00004264
         end
 
-        moistureDelta = moistureDelta - (rateFactor * scaledDelta * sunFactor * self.settings.moistureLossMultiplier)
+        moistureDelta = moistureDelta - (rateFactor * scaledDelta * sunFactor * self.settings.moistureLossMultiplier * scaleFactor)
 
         self:adjustMoisture(moistureDelta)
     end
 
+    -- Feed the global field moisture delta and elapsed time into the tracker's
+    -- drying / rain-exposure accumulators. The per-pile application is amortized
+    -- across frames by the tracker's own cursor sweep (GroundPropertyTracker:update),
+    -- driven from MoistureSystem:update. `delta` is raw (pre-timescale) ms; the
+    -- tracker applies the timescale itself.
     if g_currentMission.groundPropertyTracker then
-        g_currentMission.groundPropertyTracker:updateGrassMoisture(moistureDelta, delta)
-        g_currentMission.groundPropertyTracker:updateHayMoisture(moistureDelta)
-        g_currentMission.groundPropertyTracker:updateStrawMoisture(moistureDelta, delta)
+        g_currentMission.groundPropertyTracker:feedMoistureDelta(moistureDelta, delta)
     end
 end
 
@@ -183,12 +274,10 @@ end
 function MoistureSystem:adjustMoisture(delta)
     if not g_currentMission:getIsServer() then return end
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local environment = self.settings.environment
 
-    -- Get min/max for current month and environment
-    local monthData = MoistureClamp.Environments[environment].Months[month]
-    local minMoisture = monthData.Min / 100
-    local maxMoisture = monthData.Max / 100
+    local clamp = g_currentMission.WeatherProfileSystem:getClampForMonth(month)
+    local minMoisture = clamp.min / 100
+    local maxMoisture = clamp.max / 100
 
     -- Calculate 80% of range to leave headroom for terrain-based variation
     local rangeSize = maxMoisture - minMoisture
@@ -215,12 +304,10 @@ function MoistureSystem:getMoistureAtPosition(x, z)
 
     local height = getTerrainHeightAtWorldPos(g_terrainNode, x, 0, z)
 
-    -- Get current month and environment for clamping
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local environment = self.settings.environment
-    local monthData = MoistureClamp.Environments[environment].Months[month]
-    local minMoisture = monthData.Min / 100
-    local maxMoisture = monthData.Max / 100
+    local clamp = g_currentMission.WeatherProfileSystem:getClampForMonth(month)
+    local minMoisture = clamp.min / 100
+    local maxMoisture = clamp.max / 100
 
     local moistureLevel
     -- Higher elevation = lower moisture, lower elevation = higher moisture
@@ -264,14 +351,8 @@ end
 
 function MoistureSystem:firstLoad()
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local environment = self.settings.environment
-
-    local monthData = MoistureClamp.Environments[environment].Months[month]
-    local minMoisture = monthData.Min
-    local maxMoisture = monthData.Max
-
-    -- Set current moisture to 85% of maximum, converted to 0-1 scale
-    local startMoisture = maxMoisture * 0.85
+    local clamp = g_currentMission.WeatherProfileSystem:getClampForMonth(month)
+    local startMoisture = clamp.max * 0.85
     self.currentMoisturePercent = startMoisture / 100
 end
 
@@ -479,26 +560,30 @@ function MoistureSystem:deriveQuality(fillType, moisture)
     if CropValueMap.Data == nil then
         return 100
     end
-    local grade, multiplier = CropValueMap.getGrade(fillType, moisture)
-    if multiplier then
-        if grade == CropValueMap.Grades.A then
-            return 100
-        end
-        return math.floor(multiplier * 100) - 1
-    end
 
-    local baseFillType = self:getBaseCropFillType(fillType)
-    if baseFillType and baseFillType ~= fillType then
-        grade, multiplier = CropValueMap.getGrade(baseFillType, moisture)
-        if multiplier then
-            if grade == CropValueMap.Grades.A then
-                return 100
-            end
-            return math.floor(multiplier * 100) - 1
+    local resolvedFillType = CropValueMap.Data[fillType] and fillType or nil
+    if resolvedFillType == nil then
+        local baseFillType = self:getBaseCropFillType(fillType)
+        if baseFillType and baseFillType ~= fillType and CropValueMap.Data[baseFillType] then
+            resolvedFillType = baseFillType
         end
     end
 
-    return 100
+    if resolvedFillType == nil then
+        return 100
+    end
+
+    local quality = CropValueMap.getQualityValue(resolvedFillType, moisture)
+
+    -- When withering is disabled, apply severe fallback penalty below witherThreshold
+    if not self.settings.witheringEnabled then
+        local def = CropValueMap.getCropDef(resolvedFillType)
+        if def and def.witherThreshold and moisture < def.witherThreshold then
+            quality = math.min(quality, WitheringSystem.FALLBACK_QUALITY_FLOOR * 100)
+        end
+    end
+
+    return math.floor(quality)
 end
 
 function MoistureSystem:getBaseCropFillType(fillType)
@@ -681,13 +766,6 @@ function MoistureSystem:onStartMission()
     end
 
 
-    if not ms.dryingInfoShown and g_dedicatedServer == nil then
-        ms.dryingInfoShown = true
-        Timer.createOneshot(100, function()
-            InfoDialog.show(g_i18n:getText("ms_info_dryingUpdate"))
-        end)
-    end
-
     if g_currentMission:getIsServer() then
         -- Initialize mod on new game
         if not ms.didLoadFromXML then
@@ -720,7 +798,7 @@ function MoistureSystem:onHourChanged()
                 local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
                 if idealMax and info.moisture > idealMax then
                     local overshoot = info.moisture - idealMax
-                    local degradation = self.QUALITY_DECAY_RATE * overshoot * 100 * decayMultiplier
+                    local degradation = self.QUALITY_DECAY_RATE * overshoot * 100 * decayMultiplier * self:getScaleFactor()
                     info.quality = math.max(0, info.quality - degradation)
                 end
             end
@@ -733,6 +811,10 @@ function MoistureSystem:onHourChanged()
 
     if g_currentMission.dryingSystem then
         g_currentMission.dryingSystem:onHourChanged()
+    end
+
+    if g_currentMission.witheringSystem and self.settings.witheringEnabled then
+        g_currentMission.witheringSystem:onHourChanged()
     end
 end
 
@@ -755,9 +837,9 @@ function MoistureSystem:loadFromXMLFile()
         end
 
         -- Load settings
-        local environment = getXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#environment")
-        if environment then
-            self.settings.environment = environment
+        local weatherProfile = getXMLString(xmlFile, MoistureSystem.SaveKey .. ".settings#weatherProfile")
+        if weatherProfile then
+            self.settings.weatherProfile = weatherProfile
         end
 
         local lossMultiplier = getXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureLossMultiplier")
@@ -773,6 +855,11 @@ function MoistureSystem:loadFromXMLFile()
         local teddingReduction = getXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#teddingMoistureReduction")
         if teddingReduction then
             self.settings.teddingMoistureReduction = teddingReduction
+        end
+
+        local witheringEnabled = getXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#witheringEnabled")
+        if witheringEnabled ~= nil then
+            self.settings.witheringEnabled = witheringEnabled
         end
 
         local baleRotEnabled = getXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#baleRotEnabled")
@@ -814,11 +901,6 @@ function MoistureSystem:loadFromXMLFile()
         local moistureMeterReporting = getXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureMeterReporting")
         if moistureMeterReporting then
             self.settings.moistureMeterReporting = moistureMeterReporting
-        end
-
-        local dryingInfoShown = getXMLBool(xmlFile, MoistureSystem.SaveKey .. "#dryingInfoShown")
-        if dryingInfoShown ~= nil then
-            self.dryingInfoShown = dryingInfoShown
         end
 
         if g_currentMission.groundPropertyTracker then
@@ -896,6 +978,10 @@ function MoistureSystem:loadFromXMLFile()
             i = i + 1
         end
 
+        if g_currentMission.WeatherProfileSystem then
+            g_currentMission.WeatherProfileSystem:loadFromXMLFile(xmlFile, MoistureSystem.SaveKey)
+        end
+
         self.didLoadFromXML = true
         delete(xmlFile)
     end
@@ -917,16 +1003,15 @@ function MoistureSystem:saveToXmlFile()
 
     -- Save current moisture level
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. "#currentMoisturePercent", ms.currentMoisturePercent)
-    setXMLBool(xmlFile, MoistureSystem.SaveKey .. "#dryingInfoShown", ms.dryingInfoShown)
-
     -- Save settings
-    setXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#environment", ms.settings.environment)
+    setXMLString(xmlFile, MoistureSystem.SaveKey .. ".settings#weatherProfile", ms.settings.weatherProfile)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureLossMultiplier", ms.settings
         .moistureLossMultiplier)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureGainMultiplier", ms.settings
         .moistureGainMultiplier)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#teddingMoistureReduction", ms.settings
         .teddingMoistureReduction)
+    setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#witheringEnabled", ms.settings.witheringEnabled)
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#baleRotEnabled", ms.settings.baleRotEnabled)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#baleRotRate", ms.settings.baleRotRate)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#baleExposureDecayRate", ms.settings.baleExposureDecayRate)
@@ -935,6 +1020,10 @@ function MoistureSystem:saveToXmlFile()
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#sellDryingChargeRate", ms.settings.sellDryingChargeRate)
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#showFieldMoisture", ms.settings.showFieldMoisture)
     setXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureMeterReporting", ms.settings.moistureMeterReporting)
+
+    if g_currentMission.WeatherProfileSystem then
+        g_currentMission.WeatherProfileSystem:saveToXMLFile(xmlFile, MoistureSystem.SaveKey)
+    end
 
     if g_currentMission.groundPropertyTracker then
         g_currentMission.groundPropertyTracker:saveToXMLFile(xmlFile, MoistureSystem.SaveKey)
@@ -1036,14 +1125,11 @@ end
 -- @param connection: Network connection
 ---
 function MoistureSystem:writeInitialClientState(streamId, connection)
-    -- Write current moisture level
     streamWriteFloat32(streamId, self.currentMoisturePercent)
-
-    -- Write settings
-    streamWriteInt32(streamId, self.settings.environment)
     streamWriteFloat32(streamId, self.settings.moistureLossMultiplier)
     streamWriteFloat32(streamId, self.settings.moistureGainMultiplier)
     streamWriteFloat32(streamId, self.settings.teddingMoistureReduction)
+    streamWriteBool(streamId, self.settings.witheringEnabled)
     streamWriteBool(streamId, self.settings.baleRotEnabled)
     streamWriteFloat32(streamId, self.settings.baleRotRate)
     streamWriteFloat32(streamId, self.settings.baleExposureDecayRate)
@@ -1060,14 +1146,11 @@ end
 -- @param connection: Network connection
 ---
 function MoistureSystem:readInitialClientState(streamId, connection)
-    -- Read current moisture level
     self.currentMoisturePercent = streamReadFloat32(streamId)
-
-    -- Read settings
-    self.settings.environment = streamReadInt32(streamId)
     self.settings.moistureLossMultiplier = streamReadFloat32(streamId)
     self.settings.moistureGainMultiplier = streamReadFloat32(streamId)
     self.settings.teddingMoistureReduction = streamReadFloat32(streamId)
+    self.settings.witheringEnabled = streamReadBool(streamId)
     self.settings.baleRotEnabled = streamReadBool(streamId)
     self.settings.baleRotRate = streamReadFloat32(streamId)
     self.settings.baleExposureDecayRate = streamReadFloat32(streamId)

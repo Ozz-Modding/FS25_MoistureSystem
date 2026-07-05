@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Systém vlhkosti"/>
 
 		<!-- Nastavení -->
-		<text name="setting_moisture_environment" text="Povětrnostní prostředí"/>
-		<text name="setting_moisture_environment_tooltip" text="Nastavuje typ klimatu pro výpočty vlhkosti"/>
-		<text name="setting_moisture_environment_dry" text="SUCHÉ"/>
-		<text name="setting_moisture_environment_normal" text="NORMÁLNÍ"/>
-		<text name="setting_moisture_environment_wet" text="VLHKÉ"/>
+		<text name="setting_moisture_weatherProfile" text="Povětrnostní profil"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Regionální povětrnostní profil. Určuje vzorce srážek, teploty a limity vlhkosti. Změny se projeví v příštím lednu."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Násobitel ztráty vlhkosti"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Řídí rychlost ztráty vlhkosti (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Násobitel získávání vlhkosti"/>
@@ -31,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Násobitel poplatku za sušení při prodeji vlhkých plodin. Vyšší = dražší."/>
 		<text name="setting_moisture_showFieldMoisture" text="Zobrazit vlhkost pole"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Zobrazit aktuální úroveň vlhkosti na vaší pozici v HUD informací o poli."/>
+		<text name="setting_moisture_witheringEnabled" text="Vadnutí plodin"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Povolit realistické vadnutí plodin způsobené silným suchem. Zvadlé oblasti snižují výnosy sklizně. Zakázáním se místo toho použije jednodušší postih minimálního výnosu."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Hlášení vlhkoměru"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Jak vlhkoměr zobrazuje měření."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Blikající upozornění"/>
@@ -54,9 +53,6 @@
 		<text name="ms_drying_stopped" text="Sušení v silu zastaveno"/>
 		<text name="ms_drying_complete" text="Sušení dokončeno - všechny plodiny na ideální vlhkosti"/>
 
-		<!-- Informační dialog -->
-		<text name="ms_info_dryingUpdate" text="Systém vlhkosti nyní zahrnuje sušení obilí. Sklizené plodiny mají hodnotu kvality a úroveň vlhkosti. Musíte sušit obilí v sýpce nebo silu, abyste zabránili ztrátě kvality. Prodej plodin s nadměrnou vlhkostí může znamenat poplatky za sušení. Více informací naleznete v menu nápovědy. Tato zpráva se zobrazí jednou za uložení a bude odstraněna v budoucí aktualizaci."/>
-
 		<!-- Ovládací vazby -->
 		<text name="input_MOISTURE_MENU" text="Otevřít menu vlhkosti"/>
 		<text name="input_MOISTURE_START_DRYING" text="Přepnout sušení v silu"/>
@@ -65,7 +61,6 @@
 		<text name="moistureSystem_fieldInfo" text="Vlhkost pole"/>
 		<text name="moistureSystem_moisture" text="Vlhkost"/>
 		<text name="moistureSystem_quality" text="Kvalita"/>
-		<text name="moistureSystem_range" text="Očekávaný rozsah"/>
 		<text name="moistureSystem_rainExposure" text="Vystavení dešti"/>
 		<text name="moistureSystem_baleStatus" text="Stav"/>
 		<text name="moistureSystem_baleGettingWet" text="Namáčí se"/>
@@ -77,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Hodnoty tříd plodin"/>
 		<text name="moistureSystem_gui_description" text="Níže uvedená data ukazují hodnocení vlhkosti pro každou podporovanou plodinu. Je zobrazen rozsah vlhkosti pro danou třídu a cenový násobitel pro tuto třídu je uveden v závorkách."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Vlhkost na kvalitu"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Vliv vlhkosti"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Zobrazuje hodnotu kvality přiřazenou při sklizni na základě úrovně vlhkosti. Sklízejte v ideálním rozsahu (Třída A) pro maximální kvalitu. Kvalita klesá každou hodinu při skladování nad ideální vlhkostí."/>
+		<text name="moistureSystem_gui_selectCrop" text="Vyberte plodinu ze seznamu pro zobrazení její křivky vlhkosti."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Výnos %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Kvalita %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Riziko vadnutí"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="Pod ideálem"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Ideální rozsah"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Nad ideálem"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Vlhkost při sklizni"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Ideální vlhkost %d%%-%d%%: plný výnos a kvalita"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Sklizeno příliš suché: výnos klesá na %d%%, ale kvalita pouze na %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Sklizeno příliš vlhké: kvalita klesá na %d%%, ale výnos pouze na %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="Pod %d%% vlhkosti hrozí plodině vadnutí na poli"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Kvalita na cenu"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Zobrazuje násobitel prodejní ceny na základě kvality plodiny. Rozsahy kvality se liší podle plodiny - některé jsou odolnější vůči ztrátě kvality než jiné."/>
 		<text name="moistureSystem_gui_cropName" text="Název plodiny"/>
@@ -92,6 +99,22 @@
 		<text name="moistureSystem_gui_currentEnvironment" text="Aktuální prostředí"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Kalendář níže ukazuje očekávaný rozsah vlhkosti pro každý měsíc na základě aktuálního nastavení prostředí. Úrovně vlhkosti jsou ovlivněny srážkami, teplotou a ročním obdobím."/>
 
+		<!-- GUI počasí -->
+		<text name="moistureSystem_gui_weather" text="Počasí"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Předpověď"/>
+		<text name="moistureSystem_gui_weather_history" text="Historie"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Srážky"/>
+		<text name="moistureSystem_gui_weather_sun" text="Slunce"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Oblačno"/>
+		<text name="moistureSystem_gui_weather_noData" text="Žádná data"/>
+		<text name="moistureSystem_gui_weather_season1" text="Jaro"/>
+		<text name="moistureSystem_gui_weather_season2" text="Léto"/>
+		<text name="moistureSystem_gui_weather_season3" text="Podzim"/>
+		<text name="moistureSystem_gui_weather_season4" text="Zima"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Předpovědi jsou odhady. Přesnost klesá pro vzdálenější roční období."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Rok %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Dokončené roky probíhají od března do února, aby byla roční období správně zobrazena."/>
+
 		<!-- Ruční nástroj -->
 		<text name="moistureSystem_moistureMeter" text="Vlhkoměr"/>
 		<text name="moistureSystem_moistureMeterFunction" text="Měření úrovně vlhkosti pole"/>
@@ -103,19 +126,25 @@
 
 		<!-- Stránka přehledu -->
 		<text name="help_moisture_overview_title" text="Přehled"/>
-		<text name="help_moisture_overview_1" text="Mod Systém vlhkosti zavádí dynamické úrovně vlhkosti a sledování kvality plodin, které ovlivňují plodiny, trávu a balíky na celé vaší farmě. Vlhkost se mění v závislosti na nadmořské výšce terénu, povětrnostních podmínkách a denní době. Kvalita je určena při sklizni a klesá v čase, pokud jsou plodiny skladovány příliš vlhké."/>
-		<text name="help_moisture_overview_2" text="To vytváří realističtější farmářský zážitek, kde záleží na načasování sklizně, sušení a řízení skladování. Použijte Menu vlhkosti (Shift+M) k zobrazení tabulek kvalita-cena, grafů vlhkost-kvalita a kalendářů vlhkosti."/>
+		<text name="help_moisture_overview_1" text="Mod Systém vlhkosti zavádí dynamické úrovně vlhkosti, sledování kvality plodin a simulaci počasí, které ovlivňují plodiny, trávu a balíky na celé vaší farmě. Vlhkost se mění v závislosti na nadmořské výšce terénu, povětrnostních podmínkách a denní době. Kvalita i výnos jsou určeny při sklizni a kvalita klesá v čase, pokud jsou plodiny skladovány příliš vlhké."/>
+		<text name="help_moisture_overview_2" text="To vytváří realističtější farmářský zážitek, kde záleží na načasování sklizně, sušení a řízení skladování. Použijte Menu vlhkosti (Shift+M) k zobrazení tabulek kvalita-cena, grafů Vliv vlhkosti a předpovědí a historie počasí."/>
 
 		<!-- Stránka vlhkosti pole -->
 		<text name="help_moisture_field_title" text="Vlhkost pole"/>
 		<text name="help_moisture_field_1" text="Vlhkost pole se na vaší farmě liší na základě několika faktorů: Nadmořská výška terénu (nižší oblasti jsou vlhčí), povětrnostní podmínky (déšť a sníh zvyšují vlhkost), teplota (teplejší počasí urychluje sušení) a denní doba (vlhkost klesá více během dne)."/>
-		<text name="help_moisture_field_2" text="Měsíční rozsahy vlhkosti se mění v průběhu roku na základě vámi zvoleného typu prostředí (Suché/Normální/Vlhké). Použijte ruční vlhkoměr nebo povolte zobrazení HUD v nastavení pro sledování úrovní vlhkosti."/>
+		<text name="help_moisture_field_2" text="Měsíční rozsahy vlhkosti se mění v průběhu roku pod vlivem aktivního profilu počasí. Použijte ruční vlhkoměr nebo povolte zobrazení HUD v nastavení pro sledování úrovní vlhkosti."/>
+
+		<!-- Stránka profilů počasí -->
+		<text name="help_moisture_weather_title" text="Profily počasí"/>
+		<text name="help_moisture_weather_1" text="Systém vlhkosti řídí herní počasí pomocí regionálních profilů počasí. V nastavení vyberte profil odpovídající regionu vaší mapy. Pro mnoho map je automaticky vybrán vhodný výchozí profil. Každý profil pokrývá typické srážky, teplotu a sezónní variaci pro daný region."/>
+		<text name="help_moisture_weather_2" text="Každý profil obsahuje několik scénářů představujících různé typy let — sušší roky, vlhčí roky, průměrné roky. Jednou ročně (každý leden) systém vybere scénář formující vzorce počasí pro celý rok. Očekávejte skutečnou meziroční variabilitu: některé sklizně budou náročnější než jiné."/>
+		<text name="help_moisture_weather_3" text="Záložka Počasí v Menu vlhkosti (Shift+M) zobrazuje sezónní předpověď pro aktuální rok a historii, jak minulé roky srovnávaly s normálem. Využijte to k plánování sklizně, sušení a prodeje."/>
 
 		<!-- Stránka hodnocení plodin -->
-		<text name="help_moisture_grading_title" text="Kvalita a třídění plodin"/>
-		<text name="help_moisture_grading_1" text="Sklizené plodiny obdrží skóre kvality (0-100) na základě jejich vlhkosti při sklizni. Kvalita určuje vaši prodejní cenu prostřednictvím pásem tříd pro každou plodinu (A až D). Každá plodina má různé prahy kvality — některé jsou odolnější vůči nízké kvalitě než jiné."/>
-		<text name="help_moisture_grading_2" text="Kvalita klesá každou hodinu, když jsou plodiny skladovány nad ideální úrovní vlhkosti. Čím více nad ideálem, tím rychleji kvalita klesá. Jakmile je kvalita ztracena, nelze ji obnovit — ale pokles můžete zastavit vysušením plodin na jejich ideální vlhkost."/>
-		<text name="help_moisture_grading_3" text="Prohlédněte si tabulky vlhkost-kvalita a kvalita-cena v Menu vlhkosti (Shift+M). Každá plodina má jedinečný ideální rozsah vlhkosti a jedinečná cenová pásma na základě úrovně kvality."/>
+		<text name="help_moisture_grading_title" text="Kvalita a výnos plodin"/>
+		<text name="help_moisture_grading_1" text="Vlhkost ovlivňuje jak výnos, tak kvalitu při sklizni. Příliš suché plodiny dají špatný výnos; příliš vlhké plodiny dají dobrý výnos, ale sníženou kvalitu. Každá plodina má cílový rozsah vlhkosti, kde jsou výnos i kvalita optimální — to není vždy stejné okno."/>
+		<text name="help_moisture_grading_2" text="Kvalita (0-100) určuje vaši prodejní cenu prostřednictvím pásem tříd pro každou plodinu (A až D). Kvalita klesá každou hodinu, když jsou plodiny skladovány nad ideální úrovní vlhkosti. Jakmile je kvalita ztracena, nelze ji obnovit — ale pokles můžete zastavit vysušením plodin na jejich ideální vlhkost."/>
+		<text name="help_moisture_grading_3" text="Prohlédněte si graf Vliv vlhkosti a tabulky kvalita-cena v Menu vlhkosti (Shift+M). Každá plodina má jedinečný ideální rozsah vlhkosti a jedinečná cenová pásma na základě úrovně kvality."/>
 
 		<!-- Stránka sušení a prodeje -->
 		<text name="help_moisture_drying_title" text="Sušení &amp; Prodej"/>
@@ -147,7 +176,7 @@
 
 		<!-- Stránka nastavení -->
 		<text name="help_moisture_settings_title" text="Konfigurace"/>
-		<text name="help_moisture_settings_1" text="Vyberte z tří klimatických předvoleb v nastavení hry: Suché (nižší úrovně vlhkosti), Normální (vyvážené, výchozí) nebo Vlhké (vyšší úrovně vlhkosti). Každá předvolba ovlivňuje měsíční rozsahy vlhkosti v průběhu roku."/>
+		<text name="help_moisture_settings_1" text="V nastavení vyberte Profil počasí odpovídající regionu vaší mapy. Ten řídí sezónní vzorce vlhkosti a počasí ve vaší hře. Pro mnoho map je automaticky vybrán vhodný výchozí profil, ale kdykoli ho můžete změnit."/>
 		<text name="help_moisture_settings_2" text="Dolaďte chování pomocí nastavitelných parametrů: Násobitele ztráty/získávání vlhkosti řídí rychlost sušení a navlhčování, Snížení vlhkosti obrácením upravuje sušení na průjezd, Rychlost poklesu kvality řídí jak rychle kvalita klesá a Rychlost sušení řídí tempo sušení v silu."/>
 		<text name="help_moisture_settings_3" text="Další nastavení zahrnují Poplatek za sušení při prodeji (náklady při prodeji vlhkých plodin), nastavení Hnití balíků, Přepínač zobrazení vlhkosti pole a Styl hlášení vlhkoměru. Ve hře pro více hráčů hostitel/admin ovládá tato nastavení."/>
 	</texts>

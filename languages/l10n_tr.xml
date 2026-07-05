@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Nem Sistemi"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Hava Durumu Ortamı"/>
-		<text name="setting_moisture_environment_tooltip" text="Nem hesaplamaları için iklim tipini ayarlar"/>
-		<text name="setting_moisture_environment_dry" text="KURU"/>
-		<text name="setting_moisture_environment_normal" text="NORMAL"/>
-		<text name="setting_moisture_environment_wet" text="ISLAK"/>
+		<text name="setting_moisture_weatherProfile" text="Hava Profili"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Bölgesel hava profili. Yağış düzenlerini, sıcaklıkları ve nem aralıklarını belirler. Değişiklikler bir sonraki Ocak ayında geçerli olur."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Nem Kaybı Çarpanı"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Nem kaybı hızını kontrol eder (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Nem Kazanım Çarpanı"/>
@@ -31,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Islak mahsül satarken uygulanan kurutma ücreti çarpanı. Daha yüksek = daha pahalı."/>
 		<text name="setting_moisture_showFieldMoisture" text="Tarla Nemini Göster"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Tarla bilgisi HUD'unda bulunduğunuz konumdaki mevcut nem seviyesini gösterin."/>
+		<text name="setting_moisture_witheringEnabled" text="Mahsul Kuruması"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Şiddetli kuraklıktan kaynaklanan gerçekçi mahsul kurumasını etkinleştirin. Kuruyan alanlar hasat verimini azaltır. Bunun yerine daha basit bir verim taban cezası kullanmak için devre dışı bırakın."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Nem Ölçer Bildirimi"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Nem ölçerin okumaları nasıl gösterdiği."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Yanıp Sönen Uyarı"/>
@@ -54,9 +53,6 @@
 		<text name="ms_drying_stopped" text="Silo kurutma durduruldu"/>
 		<text name="ms_drying_complete" text="Kurutma tamamlandı - tüm mahsuller ideal nemde"/>
 
-		<!-- Bilgi Diyaloğu -->
-		<text name="ms_info_dryingUpdate" text="Nem sistemi artık tahıl kurutmayı içeriyor. Hasat edilen ürünlerin bir kalite değeri ve nem seviyesi vardır. Kalite kaybını önlemek için tahılı bir tahıl deposunda veya siloda kurutmalısınız. Fazla nemli ürün satışı kurutma ücreti gerektirebilir. Daha fazla bilgi için yardım menüsüne bakın. Bu mesaj kayıt başına bir kez gösterilir ve gelecek bir güncellemede kaldırılacaktır."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Nem Menüsünü Aç"/>
 		<text name="input_MOISTURE_START_DRYING" text="Silo Kurutmayı Aç/Kapat"/>
@@ -65,7 +61,6 @@
 		<text name="moistureSystem_fieldInfo" text="Tarla Nemi"/>
 		<text name="moistureSystem_moisture" text="Nem"/>
 		<text name="moistureSystem_quality" text="Kalite"/>
-		<text name="moistureSystem_range" text="Beklenen Aralık"/>
 		<text name="moistureSystem_rainExposure" text="Yağmura Maruz Kalma"/>
 		<text name="moistureSystem_baleStatus" text="Durum"/>
 		<text name="moistureSystem_baleGettingWet" text="Islanıyor"/>
@@ -77,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Mahsul Derece Değerleri"/>
 		<text name="moistureSystem_gui_description" text="Aşağıdaki veriler desteklenen her mahsul için nem derecelendirmesini gösterir. Derece için nem aralığı gösterilir ve o derece için fiyat çarpanı parantez içinde gösterilir."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Nemden Kaliteye"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Nem Etkisi"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Nem seviyesine göre hasatta atanan kalite değerini gösterir. Maksimum kalite için ideal aralıkta (Derece A) hasat yapın. Kalite, ideal nemin üzerinde depolandığında her saat düşer."/>
+		<text name="moistureSystem_gui_selectCrop" text="Nem eğrisini görüntülemek için listeden bir mahsul seçin."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Verim %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Kalite %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Kuruma Riski"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="İdealin Altında"/>
+		<text name="moistureSystem_gui_legendIdeal" text="İdeal Aralık"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="İdealin Üstünde"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Hasattaki nem"/>
+		<text name="moistureSystem_gui_statIdealRange" text="İdeal nem %d%%-%d%%: tam verim ve kalite"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Çok kuru hasat edildi: verim %d%% seviyesine düşer, ancak kalite yalnızca %d%% seviyesine düşer"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Çok nemli hasat edildi: kalite %d%% seviyesine düşer, ancak verim yalnızca %d%% seviyesine düşer"/>
+		<text name="moistureSystem_gui_statWither" text="%d%% nemin altında mahsul tarlada kuruma riski taşır"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Kaliteden Fiyata"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Mahsul kalitesine göre satış fiyatı çarpanını gösterir. Kalite aralıkları mahsule göre değişir - bazıları kalite kaybına karşı daha dayanıklıdır."/>
 		<text name="moistureSystem_gui_cropName" text="Mahsul Adı"/>
@@ -92,6 +99,22 @@
 		<text name="moistureSystem_gui_currentEnvironment" text="Mevcut Ortam"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Aşağıdaki takvim, mevcut ortam ayarınıza göre her ay için beklenen nem aralığını gösterir. Nem seviyeleri yağış, sıcaklık ve mevsimden etkilenir."/>
 
+		<!-- Hava Durumu GUI -->
+		<text name="moistureSystem_gui_weather" text="Hava Durumu"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Tahmin"/>
+		<text name="moistureSystem_gui_weather_history" text="Geçmiş"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Yağış"/>
+		<text name="moistureSystem_gui_weather_sun" text="Güneş"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Bulutlu"/>
+		<text name="moistureSystem_gui_weather_noData" text="Veri Yok"/>
+		<text name="moistureSystem_gui_weather_season1" text="İlkbahar"/>
+		<text name="moistureSystem_gui_weather_season2" text="Yaz"/>
+		<text name="moistureSystem_gui_weather_season3" text="Sonbahar"/>
+		<text name="moistureSystem_gui_weather_season4" text="Kış"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Tahminler yaklaşıktır. Daha uzak mevsimler için doğruluk azalır."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Yıl %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Tamamlanan yıllar, mevsimlerin doğru temsil edilmesi için Mart'tan Şubat'a kadar uzanır."/>
+
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Nem Ölçer"/>
 		<text name="moistureSystem_moistureMeterFunction" text="Tarla nem seviyelerini ölçün"/>
@@ -103,19 +126,25 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Genel Bakış"/>
-		<text name="help_moisture_overview_1" text="Nem Sistemi modu, çiftliğiniz genelinde mahsulleri, çimleri ve balyaları etkileyen dinamik nem seviyeleri ve mahsul kalitesi takibi sunar. Nem, arazi yüksekliğine, hava koşullarına ve günün saatine göre değişir. Kalite hasatta belirlenir ve mahsuller çok nemli depolanırsa zamanla düşer."/>
-		<text name="help_moisture_overview_2" text="Bu, hasat zamanlaması, kurutma ve depolama yönetiminin önemli olduğu daha gerçekçi bir çiftçilik deneyimi yaratır. Kalite-fiyat tablolarını, nem-kalite grafiklerini ve nem takvimlerini görüntülemek için Nem Menüsünü (Shift+M) kullanın."/>
+		<text name="help_moisture_overview_1" text="Nem Sistemi modu, çiftliğiniz genelinde mahsulleri, çimleri ve balyaları etkileyen dinamik nem seviyeleri, mahsul kalitesi takibi ve hava simülasyonu sunar. Nem, arazi yüksekliğine, hava koşullarına ve günün saatine göre değişir. Kalite ve verim hasatta belirlenir; kalite, mahsuller çok nemli depolanırsa zamanla düşer."/>
+		<text name="help_moisture_overview_2" text="Bu, hasat zamanlaması, kurutma ve depolama yönetiminin önemli olduğu daha gerçekçi bir çiftçilik deneyimi yaratır. Kalite-fiyat tablolarını, Nem Etkisi grafiklerini ve hava tahminleri ile geçmişini görüntülemek için Nem Menüsünü (Shift+M) kullanın."/>
 
 		<!-- Field Moisture Page -->
 		<text name="help_moisture_field_title" text="Tarla Nemi"/>
 		<text name="help_moisture_field_1" text="Tarla nemi, çeşitli faktörlere bağlı olarak çiftliğinizde değişiklik gösterir: Arazi yüksekliği (daha alçak alanlar daha ıslaktır), hava koşulları (yağmur ve kar nemi artırır), sıcaklık (daha sıcak hava kurumayı hızlandırır) ve günün saati (nem gündüzleri daha fazla azalır)."/>
-		<text name="help_moisture_field_2" text="Aylık nem aralıkları, seçtiğiniz ortam tipine (Kuru/Normal/Islak) göre yıl boyunca değişir. Nem seviyelerini izlemek için nem ölçer el aletini kullanın veya ayarlardan HUD ekranını etkinleştirin."/>
+		<text name="help_moisture_field_2" text="Aylık nem aralıkları, aktif hava profili tarafından yönlendirilerek yıl boyunca değişir. Nem seviyelerini izlemek için nem ölçer el aletini kullanın veya ayarlardan HUD ekranını etkinleştirin."/>
+
+		<!-- Weather Profiles Page -->
+		<text name="help_moisture_weather_title" text="Hava Profilleri"/>
+		<text name="help_moisture_weather_1" text="Nem Sistemi, bölgesel hava profillerini kullanarak oyunun havasını kontrol eder. Ayarlarda haritanızın bölgesine uyan bir profil seçin. Birçok harita için uygun bir varsayılan profil otomatik olarak seçilir. Her profil, o bölge için tipik yağış, sıcaklık ve mevsimsel değişimi kapsar."/>
+		<text name="help_moisture_weather_2" text="Her profil farklı yıl türlerini temsil eden çeşitli senaryolar içerir — daha kurak yıllar, daha ıslak yıllar, ortalama yıllar. Her yıl (her Ocak) sistem, yıl boyunca hava örüntülerini şekillendiren bir senaryo seçer. Gerçek yıldan yıla değişim bekleyin: bazı hasatlar diğerlerinden daha zor olacak."/>
+		<text name="help_moisture_weather_3" text="Nem Menüsündeki (Shift+M) Hava sekmesi, mevcut yıl için mevsimsel tahmin ve geçmiş yılların normale kıyasla nasıl geçtiğini gösteren bir geçmiş sunar. Ne zaman hasat edeceğinizi, kurutacağınızı ve satacağınızı planlamak için kullanın."/>
 
 		<!-- Crop Grading Page -->
-		<text name="help_moisture_grading_title" text="Mahsul Kalitesi ve Derecelendirme"/>
-		<text name="help_moisture_grading_1" text="Hasat edilen mahsuller, hasattaki nem içeriklerine göre bir kalite puanı (0-100) alır. Kalite, mahsul başına derece bantları (A'dan D'ye) aracılığıyla satış fiyatınızı belirler. Her mahsulün farklı kalite eşikleri vardır — bazıları düşük kaliteye karşı daha dayanıklıdır."/>
-		<text name="help_moisture_grading_2" text="Kalite, mahsuller ideal nem seviyesinin üzerinde depolandığında her saat düşer. İdealin üzerinde ne kadar fazlaysa, kalite o kadar hızlı düşer. Kalite bir kez kaybedildiğinde geri kazanılamaz — ancak mahsulleri ideal nemlerine kurutarak düşüşü durdurabilirsiniz."/>
-		<text name="help_moisture_grading_3" text="Nem Menüsünde (Shift+M) nem-kalite ve kalite-fiyat tablolarını görüntüleyin. Her mahsulün benzersiz bir ideal nem aralığı ve kalite seviyesine dayalı benzersiz fiyat bantları vardır."/>
+		<text name="help_moisture_grading_title" text="Mahsul Kalitesi ve Verimi"/>
+		<text name="help_moisture_grading_1" text="Nem, hasatta hem verimi hem de kaliteyi etkiler. Çok kuru hasat edilen mahsuller düşük verim sağlar; çok nemli hasat edilenler iyi verim sağlar ancak kalite düşük olur. Her mahsulün hem verimin hem de kalitenin optimum olduğu bir hedef nem aralığı vardır — bu her zaman aynı pencere değildir."/>
+		<text name="help_moisture_grading_2" text="Kalite (0-100), mahsul başına derece bantları (A'dan D'ye) aracılığıyla satış fiyatınızı belirler. Kalite, mahsuller ideal nem seviyesinin üzerinde depolandığında her saat düşer. Kalite bir kez kaybedildiğinde geri kazanılamaz — ancak mahsulleri ideal nemlerine kurutarak düşüşü durdurabilirsiniz."/>
+		<text name="help_moisture_grading_3" text="Nem Menüsünde (Shift+M) Nem Etkisi grafiğini ve kalite-fiyat tablolarını görüntüleyin. Her mahsulün benzersiz bir ideal nem aralığı ve kalite seviyesine dayalı benzersiz fiyat bantları vardır."/>
 
 		<!-- Kurutma ve Satış Sayfası -->
 		<text name="help_moisture_drying_title" text="Kurutma &amp; Satış"/>
@@ -147,7 +176,7 @@
 
 		<!-- Settings Page -->
 		<text name="help_moisture_settings_title" text="Yapılandırma"/>
-		<text name="help_moisture_settings_1" text="Oyun ayarlarından üç iklim ön ayarı arasından seçim yapın: Kuru (daha düşük nem seviyeleri), Normal (dengeli, varsayılan) veya Islak (daha yüksek nem seviyeleri). Her ön ayar yıl boyunca aylık nem aralıklarını etkiler."/>
+		<text name="help_moisture_settings_1" text="Ayarlarda haritanızın bölgesine uyan bir Hava Profili seçin. Bu, oyununuzdaki mevsimsel nem ve hava örüntülerini kontrol eder. Birçok harita için uygun bir varsayılan profil otomatik olarak seçilir, ancak istediğiniz zaman değiştirebilirsiniz."/>
 		<text name="help_moisture_settings_2" text="Ayarlanabilir ayarlarla davranışı ince ayarlayın: Nem Kaybı/Kazanım Çarpanları kuruma ve ıslanma hızını kontrol eder, Ot Çevirme Nem Düşüşü geçiş başına kurumayı ayarlar, Kalite Düşüş Hızı kalitenin ne kadar hızlı düştüğünü kontrol eder ve Kurutma Hızı silo kurutma oranını kontrol eder."/>
 		<text name="help_moisture_settings_3" text="Diğer ayarlar arasında Satış Kurutma Ücreti (ıslak mahsul satarken maliyet), Balya Çürümesi ayarları, Tarla Nemi Göstergesi geçişi ve Nem Ölçer Bildirim stili bulunur. Çok oyunculuda, bu ayarları sunucu sahibi/yönetici kontrol eder."/>
 	</texts>

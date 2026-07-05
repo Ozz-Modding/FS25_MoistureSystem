@@ -8,3 +8,7 @@ beta-changelog.md
 .DS_Store
 refs/
 log.txt
+.claude
+maps.json
+planning/
+issues/

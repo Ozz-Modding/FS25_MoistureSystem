@@ -27,7 +27,8 @@ function MSTedderExtension:processDropArea(superFunc, dropArea, fillType, amount
 
     if dropped > 0 then
 
-        -- Don't call addPile here - let updateGrassMoisture handle pile creation/update
+        -- Don't call addPile here - let the tracker's tedded-cell processing
+        -- (processTeddedCells) handle pile creation/update on the next cycle.
         -- But store the pickup moisture so it can be used when recreating the pile
 
         -- Store the pickup moisture for affected grid cells

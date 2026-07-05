@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Система вологості"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Клімат"/>
-		<text name="setting_moisture_environment_tooltip" text="Встановлює тип клімату для розрахунку вологості"/>
-		<text name="setting_moisture_environment_dry" text="СУХО"/>
-		<text name="setting_moisture_environment_normal" text="НОРМАЛЬНО"/>
-		<text name="setting_moisture_environment_wet" text="ВОЛОГО"/>
+		<text name="setting_moisture_weatherProfile" text="Погодний профіль"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Регіональний погодний профіль. Визначає характер опадів, температуру та діапазони вологості. Зміни набувають чинності у наступному січні."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Множник висихання"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Швидкість зменшення вологості (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Множник зволоження"/>
@@ -31,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Множник плати за сушіння при продажу вологих культур. Більше = дорожче."/>
 		<text name="setting_moisture_showFieldMoisture" text="Показувати вологість поля"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Показує рівень вологості у HUD інформації поля."/>
+		<text name="setting_moisture_witheringEnabled" text="Всихання культур"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Увімкнути реалістичне всихання культур від сильної посухи. Всохлі ділянки зменшують урожайність. Вимкніть, щоб натомість використовувати простіший штраф мінімальної урожайності."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Сповіщення вимірювача вологості"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Як відображаються показники вимірювача вологості."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Миготливе попередження"/>
@@ -54,9 +53,6 @@
 		<text name="ms_drying_stopped" text="Сушіння у силосі зупинено"/>
 		<text name="ms_drying_complete" text="Сушіння завершено - всі культури на ідеальній вологості"/>
 
-		<!-- Інформаційний діалог -->
-		<text name="ms_info_dryingUpdate" text="Система вологості тепер включає сушіння зерна. Зібрані культури мають значення якості та рівень вологості. Ви повинні сушити зерно в зерносховищі або силосі, щоб запобігти втраті якості. Продаж культур з надлишковою вологістю може спричинити плату за сушіння. Дивіться меню довідки для деталей. Це повідомлення показується один раз на збереження і буде видалено в майбутньому оновленні."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Відкрити меню вологості"/>
 		<text name="input_MOISTURE_START_DRYING" text="Перемкнути сушіння в силосі"/>
@@ -65,7 +61,6 @@
 		<text name="moistureSystem_fieldInfo" text="Вологість поля"/>
 		<text name="moistureSystem_moisture" text="Вологість"/>
 		<text name="moistureSystem_quality" text="Якість"/>
-		<text name="moistureSystem_range" text="Очікуваний діапазон"/>
 		<text name="moistureSystem_rainExposure" text="Вплив дощу"/>
 		<text name="moistureSystem_baleStatus" text="Стан"/>
 		<text name="moistureSystem_baleGettingWet" text="Намокає"/>
@@ -77,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Якість культур"/>
 		<text name="moistureSystem_gui_description" text="Нижче показано класи вологості для кожної культури та множник ціни."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Вологість до якості"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Вплив вологості"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Показує значення якості, присвоєне при збиранні на основі рівня вологості. Збирайте в ідеальному діапазоні (Клас A) для максимальної якості. Якість падає щогодини при зберіганні вище ідеальної вологості."/>
+		<text name="moistureSystem_gui_selectCrop" text="Оберіть культуру зі списку, щоб переглянути її криву вологості."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Урожайність %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Якість %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Ризик всихання"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="Нижче ідеалу"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Ідеальний діапазон"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Вище ідеалу"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Вологість при збиранні"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Ідеальна вологість %d%%-%d%%: повна урожайність і якість"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Зібрано занадто сухим: урожайність падає до %d%%, але якість лише до %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Зібрано занадто вологим: якість падає до %d%%, але урожайність лише до %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="Нижче %d%% вологості культура ризикує всохнути на полі"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Якість до ціни"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Показує множник ціни продажу на основі якості культури. Діапазони якості відрізняються для різних культур - деякі більш стійкі до втрати якості."/>
 		<text name="moistureSystem_gui_cropName" text="Культура"/>
@@ -92,6 +99,22 @@
 		<text name="moistureSystem_gui_currentEnvironment" text="Поточний клімат"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Очікуваний рівень вологості по місяцях залежно від клімату."/>
 
+		<!-- GUI погоди -->
+		<text name="moistureSystem_gui_weather" text="Погода"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Прогноз"/>
+		<text name="moistureSystem_gui_weather_history" text="Історія"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Опади"/>
+		<text name="moistureSystem_gui_weather_sun" text="Сонце"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Хмарно"/>
+		<text name="moistureSystem_gui_weather_noData" text="Немає даних"/>
+		<text name="moistureSystem_gui_weather_season1" text="Весна"/>
+		<text name="moistureSystem_gui_weather_season2" text="Літо"/>
+		<text name="moistureSystem_gui_weather_season3" text="Осінь"/>
+		<text name="moistureSystem_gui_weather_season4" text="Зима"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Прогнози є приблизними. Точність зменшується для більш віддалених сезонів."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Рік %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Завершені роки охоплюють період з березня по лютий, щоб сезони були правильно представлені."/>
+
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Вимірювач вологості"/>
 		<text name="moistureSystem_moistureMeterFunction" text="Вимірює вологість поля"/>
@@ -103,18 +126,24 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Огляд"/>
-		<text name="help_moisture_overview_1" text="Мод додає динамічну систему вологості та відстеження якості культур, що впливає на культури, траву і тюки по всьому господарству. Вологість змінюється залежно від висоти, погоди та часу доби. Якість визначається при збиранні та падає з часом, якщо культури зберігаються надто вологими."/>
-		<text name="help_moisture_overview_2" text="Це створює реалістичніший досвід фермерства, де час збору, сушіння та управління зберіганням мають значення. Використовуйте меню вологості (Shift+M) для перегляду таблиць якість-ціна, графіків вологість-якість та календарів вологості."/>
+		<text name="help_moisture_overview_1" text="Мод додає динамічну систему вологості, відстеження якості культур та симуляцію погоди, що впливає на культури, траву і тюки по всьому господарству. Вологість змінюється залежно від висоти, погоди та часу доби. Якість і врожайність визначаються при збиранні; якість падає з часом, якщо культури зберігаються надто вологими."/>
+		<text name="help_moisture_overview_2" text="Це створює реалістичніший досвід фермерства, де час збору, сушіння та управління зберіганням мають значення. Використовуйте меню вологості (Shift+M) для перегляду таблиць якість-ціна, графіків Вплив вологості та прогнозів і історії погоди."/>
 		<!-- Field Moisture -->
 		<text name="help_moisture_field_title" text="Вологість поля"/>
 		<text name="help_moisture_field_1" text="Вологість поля змінюється залежно від висоти, погоди, температури та часу доби."/>
-		<text name="help_moisture_field_2" text="Використовуйте вимірювач вологості або HUD для перевірки рівня вологості."/>
+		<text name="help_moisture_field_2" text="Щомісячні діапазони вологості змінюються протягом року відповідно до активного профілю погоди. Використовуйте вимірювач вологості або HUD для перевірки рівня вологості."/>
+
+		<!-- Weather Profiles Page -->
+		<text name="help_moisture_weather_title" text="Профілі Погоди"/>
+		<text name="help_moisture_weather_1" text="Система вологості керує погодою в грі за допомогою регіональних профілів погоди. Виберіть у налаштуваннях профіль, що відповідає регіону вашої карти. Для багатьох карт автоматично обирається відповідний профіль за замовчуванням. Кожен профіль охоплює типові опади, температуру та сезонну мінливість для даного регіону."/>
+		<text name="help_moisture_weather_2" text="Кожен профіль містить декілька сценаріїв, що представляють різні типи років — посушливіші, вологіші, середні. Раз на рік (кожного січня) система обирає сценарій, який формує погодні закономірності на весь рік. Очікуйте справжньої міжрічної мінливості: деякі врожаї будуть складнішими за інші."/>
+		<text name="help_moisture_weather_3" text="Вкладка Погода в меню вологості (Shift+M) показує сезонний прогноз на поточний рік та історію того, як минулі роки порівнювалися з нормою. Використовуйте це для планування збирання, сушіння та продажу."/>
 
 		<!-- Grading -->
-		<text name="help_moisture_grading_title" text="Якість культур"/>
-		<text name="help_moisture_grading_1" text="Зібрані культури отримують оцінку якості (0-100) на основі вмісту вологи при збиранні. Якість визначає ціну продажу через діапазони класів для кожної культури (A-D). Кожна культура має різні пороги якості — деякі більш стійкі до низької якості."/>
-		<text name="help_moisture_grading_2" text="Якість падає щогодини, коли культури зберігаються вище ідеального рівня вологості. Чим більше вище ідеалу, тим швидше падає якість. Втрачену якість неможливо відновити — але можна зупинити падіння, висушивши культури до ідеальної вологості."/>
-		<text name="help_moisture_grading_3" text="Перегляньте таблиці вологість-якість та якість-ціна у меню вологості (Shift+M). Кожна культура має унікальний ідеальний діапазон вологості та унікальні цінові діапазони на основі рівня якості."/>
+		<text name="help_moisture_grading_title" text="Якість та врожайність"/>
+		<text name="help_moisture_grading_1" text="Вологість впливає як на врожайність, так і на якість при збиранні. Надто сухі культури дають низький врожай; надто вологі дають хороший врожай, але знижену якість. Кожна культура має цільовий діапазон вологості, де і врожайність, і якість є оптимальними — це не завжди одне і те саме вікно."/>
+		<text name="help_moisture_grading_2" text="Якість (0-100) визначає ціну продажу через діапазони класів для кожної культури (A-D). Якість падає щогодини, коли культури зберігаються вище ідеального рівня вологості. Втрачену якість неможливо відновити — але можна зупинити падіння, висушивши культури до ідеальної вологості."/>
+		<text name="help_moisture_grading_3" text="Перегляньте графік Вплив вологості та таблиці якість-ціна у меню вологості (Shift+M). Кожна культура має унікальний ідеальний діапазон вологості та унікальні цінові діапазони на основі рівня якості."/>
 
 		<!-- Сушіння та продаж -->
 		<text name="help_moisture_drying_title" text="Сушіння &amp; Продаж"/>
@@ -146,7 +175,7 @@
 
 		<!-- Settings -->
 		<text name="help_moisture_settings_title" text="Налаштування"/>
-		<text name="help_moisture_settings_1" text="Оберіть кліматичний режим."/>
+		<text name="help_moisture_settings_1" text="У налаштуваннях оберіть Профіль Погоди, що відповідає регіону вашої карти. Він керує сезонними закономірностями вологості та погоди у вашій грі. Для багатьох карт відповідний профіль за замовчуванням обирається автоматично, але його можна змінити будь-коли."/>
 		<text name="help_moisture_settings_2" text="Тонке налаштування поведінки: множники втрати/набору вологості контролюють швидкість висихання та зволоження, зменшення вологості при ворушінні регулює сушіння за прохід, швидкість падіння якості контролює темп деградації якості, а швидкість сушіння контролює темп сушіння у силосі."/>
 		<text name="help_moisture_settings_3" text="Інші налаштування включають плату за сушіння при продажу (вартість продажу вологих культур), налаштування гниття тюків, перемикач відображення вологості поля та стиль сповіщень вимірювача вологості. У мультиплеєрі адміністратор контролює ці налаштування."/>
 

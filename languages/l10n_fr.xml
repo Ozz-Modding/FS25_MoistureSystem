@@ -6,11 +6,8 @@
 		<text name="setting_moisture_section" text="Système d'Humidité"/>
 
 		<!-- Settings -->
-		<text name="setting_moisture_environment" text="Environnement Climatique"/>
-		<text name="setting_moisture_environment_tooltip" text="Définit le type de climat pour les calculs d'humidité"/>
-		<text name="setting_moisture_environment_dry" text="SEC"/>
-		<text name="setting_moisture_environment_normal" text="NORMAL"/>
-		<text name="setting_moisture_environment_wet" text="HUMIDE"/>
+		<text name="setting_moisture_weatherProfile" text="Profil Météorologique"/>
+		<text name="setting_moisture_weatherProfile_tooltip" text="Profil météorologique régional. Détermine les modèles de précipitations, les températures et les limites d'humidité. Les modifications prennent effet en janvier prochain."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Multiplicateur de Perte d'Humidité"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Contrôle la vitesse de perte d'humidité (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Multiplicateur de Gain d'Humidité"/>
@@ -31,6 +28,8 @@
 		<text name="setting_moisture_sellDryingChargeRate_tooltip" text="Multiplicateur des frais de séchage appliqué lors de la vente de cultures humides. Plus élevé = plus cher."/>
 		<text name="setting_moisture_showFieldMoisture" text="Afficher l'Humidité du Champ"/>
 		<text name="setting_moisture_showFieldMoisture_tooltip" text="Affiche le niveau d'humidité actuel à votre position dans le HUD d'information du champ."/>
+		<text name="setting_moisture_witheringEnabled" text="Flétrissement des Cultures"/>
+		<text name="setting_moisture_witheringEnabled_tooltip" text="Active le flétrissement réaliste des cultures dû à une sécheresse sévère. Les zones flétries réduisent les rendements de récolte. Désactivez pour utiliser à la place une pénalité de rendement minimal plus simple."/>
 		<text name="setting_moisture_moistureMeterReporting" text="Rapport de l'Humidimètre"/>
 		<text name="setting_moisture_moistureMeterReporting_tooltip" text="Comment l'humidimètre affiche les lectures."/>
 		<text name="setting_moisture_moistureMeterReporting_blinking" text="Alerte Clignotante"/>
@@ -54,9 +53,6 @@
 		<text name="ms_drying_stopped" text="Séchage en silo arrêté"/>
 		<text name="ms_drying_complete" text="Séchage terminé - toutes les cultures à l'humidité idéale"/>
 
-		<!-- Dialogue d'information -->
-		<text name="ms_info_dryingUpdate" text="Le système d'humidité inclut désormais le séchage des céréales. Les cultures récoltées ont une valeur de qualité et un taux d'humidité. Vous devez sécher le grain dans un hangar ou un silo pour éviter la perte de qualité. La vente de cultures trop humides peut entraîner des frais de séchage. Consultez le menu d'aide pour plus de détails. Ce message s'affiche une seule fois par sauvegarde et sera supprimé dans une future mise à jour."/>
-
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Ouvrir le Menu d'Humidité"/>
 		<text name="input_MOISTURE_START_DRYING" text="Activer/Désactiver le séchage"/>
@@ -65,7 +61,6 @@
 		<text name="moistureSystem_fieldInfo" text="Humidité du Champ"/>
 		<text name="moistureSystem_moisture" text="Humidité"/>
 		<text name="moistureSystem_quality" text="Qualité"/>
-		<text name="moistureSystem_range" text="Plage Attendue"/>
 		<text name="moistureSystem_rainExposure" text="Exposition à la Pluie"/>
 		<text name="moistureSystem_baleStatus" text="Statut"/>
 		<text name="moistureSystem_baleGettingWet" text="Se Mouille"/>
@@ -77,8 +72,20 @@
 		<!-- GUI -->
 		<text name="moistureSystem_gui_cropGradeValues" text="Valeurs de Qualité des Cultures"/>
 		<text name="moistureSystem_gui_description" text="Les données ci-dessous montrent la classification d'humidité pour chaque culture prise en charge. La plage d'humidité pour la qualité est indiquée, et le multiplicateur de prix pour cette qualité est indiqué entre parenthèses."/>
-		<text name="moistureSystem_gui_moistureToQuality" text="Humidité vers Qualité"/>
+		<text name="moistureSystem_gui_moistureToQuality" text="Impact de l'Humidité"/>
 		<text name="moistureSystem_gui_moistureToQualityDesc" text="Montre la valeur de qualité attribuée à la récolte en fonction du niveau d'humidité. Récoltez dans la plage idéale (Qualité A) pour une qualité maximale. La qualité se dégrade toutes les heures lorsque stockée au-dessus de l'humidité idéale."/>
+		<text name="moistureSystem_gui_selectCrop" text="Sélectionnez une culture dans la liste pour afficher sa courbe d'humidité."/>
+		<text name="moistureSystem_gui_yieldLabel" text="Rendement %"/>
+		<text name="moistureSystem_gui_qualityLabel" text="Qualité %"/>
+		<text name="moistureSystem_gui_legendWitherRisk" text="Risque de Flétrissement"/>
+		<text name="moistureSystem_gui_legendBelowIdeal" text="En Dessous de l'Idéal"/>
+		<text name="moistureSystem_gui_legendIdeal" text="Plage Idéale"/>
+		<text name="moistureSystem_gui_legendAboveIdeal" text="Au-Dessus de l'Idéal"/>
+		<text name="moistureSystem_gui_moistureAxisTitle" text="Humidité à la récolte"/>
+		<text name="moistureSystem_gui_statIdealRange" text="Humidité idéale %d%%-%d%% : rendement et qualité maximaux"/>
+		<text name="moistureSystem_gui_statYieldCurve" text="Récoltée trop sèche : le rendement chute à %d%%, mais la qualité seulement à %d%%"/>
+		<text name="moistureSystem_gui_statQualityCurve" text="Récoltée trop humide : la qualité chute à %d%%, mais le rendement seulement à %d%%"/>
+		<text name="moistureSystem_gui_statWither" text="En dessous de %d%% d'humidité, la culture risque de flétrir dans le champ"/>
 		<text name="moistureSystem_gui_qualityToPrice" text="Qualité vers Prix"/>
 		<text name="moistureSystem_gui_qualityToPriceDesc" text="Montre le multiplicateur de prix de vente basé sur la qualité de la culture. Les plages de qualité varient selon la culture - certaines sont plus résistantes à la perte de qualité que d'autres."/>
 		<text name="moistureSystem_gui_cropName" text="Nom de la Culture"/>
@@ -92,6 +99,22 @@
 		<text name="moistureSystem_gui_currentEnvironment" text="Environnement Actuel"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Le calendrier ci-dessous montre la plage d'humidité attendue pour chaque mois en fonction de votre paramètre d'environnement actuel. Les niveaux d'humidité sont influencés par les précipitations, la température et la saison."/>
 
+		<!-- GUI Météo -->
+		<text name="moistureSystem_gui_weather" text="Météo"/>
+		<text name="moistureSystem_gui_weather_forecast" text="Prévisions"/>
+		<text name="moistureSystem_gui_weather_history" text="Historique"/>
+		<text name="moistureSystem_gui_weather_precipitation" text="Précipitations"/>
+		<text name="moistureSystem_gui_weather_sun" text="Soleil"/>
+		<text name="moistureSystem_gui_weather_cloudy" text="Nuageux"/>
+		<text name="moistureSystem_gui_weather_noData" text="Aucune Donnée"/>
+		<text name="moistureSystem_gui_weather_season1" text="Printemps"/>
+		<text name="moistureSystem_gui_weather_season2" text="Été"/>
+		<text name="moistureSystem_gui_weather_season3" text="Automne"/>
+		<text name="moistureSystem_gui_weather_season4" text="Hiver"/>
+		<text name="moistureSystem_gui_weather_forecastNote" text="Les prévisions sont des estimations. La précision diminue pour les saisons plus éloignées."/>
+		<text name="moistureSystem_gui_weather_yearLabel" text="Année %d"/>
+		<text name="moistureSystem_gui_weather_historyNote" text="Les années complètes s'étendent de mars à février afin que les saisons soient correctement représentées."/>
+
 		<!-- Hand Tool -->
 		<text name="moistureSystem_moistureMeter" text="Humidimètre"/>
 		<text name="moistureSystem_moistureMeterFunction" text="Mesurer les niveaux d'humidité du champ"/>
@@ -103,19 +126,25 @@
 
 		<!-- Overview Page -->
 		<text name="help_moisture_overview_title" text="Aperçu"/>
-		<text name="help_moisture_overview_1" text="Le mod Système d'Humidité introduit des niveaux d'humidité dynamiques et un suivi de la qualité des cultures qui affectent les cultures, l'herbe et les balles dans toute votre ferme. L'humidité varie en fonction de l'élévation du terrain, des conditions météorologiques et de l'heure de la journée. La qualité est déterminée à la récolte et se dégrade avec le temps si les cultures sont stockées trop humides."/>
-		<text name="help_moisture_overview_2" text="Cela crée une expérience agricole plus réaliste où le moment de la récolte, le séchage et la gestion du stockage comptent. Utilisez le Menu d'Humidité (Shift+M) pour afficher les tableaux qualité-vers-prix, les graphiques humidité-vers-qualité et les calendriers d'humidité."/>
+		<text name="help_moisture_overview_1" text="Le mod Système d'Humidité introduit des niveaux d'humidité dynamiques, un suivi de la qualité des cultures et une simulation météorologique qui affectent les cultures, l'herbe et les balles dans toute votre ferme. L'humidité varie en fonction de l'élévation du terrain, des conditions météorologiques et de l'heure de la journée. La qualité et le rendement sont déterminés à la récolte, et la qualité se dégrade avec le temps si les cultures sont stockées trop humides."/>
+		<text name="help_moisture_overview_2" text="Cela crée une expérience agricole plus réaliste où le moment de la récolte, le séchage et la gestion du stockage comptent. Utilisez le Menu d'Humidité (Shift+M) pour afficher les tableaux qualité-vers-prix, les graphiques Impact de l'Humidité, et les prévisions et l'historique météorologiques."/>
 
 		<!-- Field Moisture Page -->
 		<text name="help_moisture_field_title" text="Humidité du Champ"/>
 		<text name="help_moisture_field_1" text="L'humidité du champ varie dans votre ferme en fonction de plusieurs facteurs : Élévation du terrain (les zones basses sont plus humides), conditions météorologiques (la pluie et la neige augmentent l'humidité), température (les températures plus chaudes accélèrent le séchage) et heure de la journée (l'humidité diminue davantage pendant la journée)."/>
-		<text name="help_moisture_field_2" text="Les plages d'humidité mensuelles changent tout au long de l'année en fonction du type d'environnement choisi (Sec/Normal/Humide). Utilisez l'outil manuel humidimètre ou activez l'affichage HUD dans les paramètres pour surveiller les niveaux d'humidité."/>
+		<text name="help_moisture_field_2" text="Les plages d'humidité mensuelles changent tout au long de l'année, pilotées par votre profil météorologique actif. Utilisez l'outil manuel humidimètre ou activez l'affichage HUD dans les paramètres pour surveiller les niveaux d'humidité."/>
+
+		<!-- Weather Profiles Page -->
+		<text name="help_moisture_weather_title" text="Profils Météorologiques"/>
+		<text name="help_moisture_weather_1" text="Le Système d'Humidité contrôle la météo du jeu à l'aide de profils météorologiques régionaux. Choisissez dans les paramètres un profil correspondant à la région de votre carte. Un profil par défaut approprié est automatiquement sélectionné pour de nombreuses cartes. Chaque profil couvre les précipitations typiques, la température et la variation saisonnière de cette région."/>
+		<text name="help_moisture_weather_2" text="Chaque profil contient plusieurs scénarios représentant différents types d'années — années plus sèches, années plus humides, années moyennes. Une fois par an (chaque janvier) le système choisit un scénario qui façonne les patterns météorologiques pour toute l'année. Attendez-vous à une vraie variation d'une année à l'autre : certaines récoltes seront plus difficiles que d'autres."/>
+		<text name="help_moisture_weather_3" text="L'onglet Météo dans le Menu d'Humidité (Shift+M) affiche une prévision saisonnière pour l'année en cours et un historique de la façon dont les années passées se sont comparées à la normale. Utilisez cela pour planifier quand récolter, sécher et vendre."/>
 
 		<!-- Crop Grading Page -->
-		<text name="help_moisture_grading_title" text="Qualité et Classification des Cultures"/>
-		<text name="help_moisture_grading_1" text="Les cultures récoltées reçoivent un score de qualité (0-100) basé sur leur teneur en humidité à la récolte. La qualité détermine votre prix de vente à travers des bandes de qualité par culture (A à D). Chaque culture a des seuils de qualité différents — certaines sont plus résistantes à une qualité faible que d'autres."/>
-		<text name="help_moisture_grading_2" text="La qualité se dégrade chaque heure lorsque les cultures sont stockées au-dessus de leur niveau d'humidité idéal. Plus l'humidité dépasse l'idéal, plus la qualité diminue rapidement. Une fois la qualité perdue, elle ne peut pas être récupérée — mais vous pouvez arrêter la dégradation en séchant les cultures à leur humidité idéale."/>
-		<text name="help_moisture_grading_3" text="Consultez les tableaux humidité-vers-qualité et qualité-vers-prix dans le Menu d'Humidité (Shift+M). Chaque culture a une plage d'humidité idéale unique et des bandes de prix uniques basées sur le niveau de qualité."/>
+		<text name="help_moisture_grading_title" text="Qualité et Rendement des Cultures"/>
+		<text name="help_moisture_grading_1" text="L'humidité affecte à la fois le rendement et la qualité à la récolte. Les cultures récoltées trop sèches donneront un mauvais rendement ; les cultures récoltées trop humides donneront un bon rendement mais une qualité réduite. Chaque culture a une plage d'humidité cible où le rendement et la qualité sont optimaux — ce n'est pas toujours la même fenêtre."/>
+		<text name="help_moisture_grading_2" text="La qualité (0-100) détermine votre prix de vente à travers des bandes de qualité par culture (A à D). La qualité se dégrade chaque heure lorsque les cultures sont stockées au-dessus de leur niveau d'humidité idéal. Une fois la qualité perdue, elle ne peut pas être récupérée — mais vous pouvez arrêter la dégradation en séchant les cultures à leur humidité idéale."/>
+		<text name="help_moisture_grading_3" text="Consultez le graphique Impact de l'Humidité et les tableaux qualité-vers-prix dans le Menu d'Humidité (Shift+M). Chaque culture a une plage d'humidité idéale unique et des bandes de prix uniques basées sur le niveau de qualité."/>
 
 		<!-- Séchage & Vente -->
 		<text name="help_moisture_drying_title" text="Séchage &amp; Vente"/>
@@ -147,7 +176,7 @@
 
 		<!-- Settings Page -->
 		<text name="help_moisture_settings_title" text="Configuration"/>
-		<text name="help_moisture_settings_1" text="Choisissez parmi trois préréglages climatiques dans les paramètres du jeu : Sec (niveaux d'humidité plus bas), Normal (équilibré, par défaut) ou Humide (niveaux d'humidité plus élevés). Chaque préréglage affecte les plages d'humidité mensuelles tout au long de l'année."/>
+		<text name="help_moisture_settings_1" text="Choisissez un Profil Météorologique dans les paramètres qui correspond à la région de votre carte. Cela contrôle les patterns d'humidité saisonnière et météorologiques de votre jeu. Un profil par défaut approprié est automatiquement sélectionné pour de nombreuses cartes, mais vous pouvez le changer à tout moment."/>
 		<text name="help_moisture_settings_2" text="Ajustez finement le comportement avec des paramètres réglables : Les Multiplicateurs de Perte/Gain d'Humidité contrôlent la vitesse de séchage et d'humidification, la Réduction d'Humidité par Fanage ajuste le séchage par passage, le Taux de Dégradation de la Qualité contrôle la vitesse de perte de qualité, et la Vitesse de Séchage contrôle le taux de séchage en silo."/>
 		<text name="help_moisture_settings_3" text="D'autres paramètres incluent les Frais de Séchage à la Vente (coût lors de la vente de cultures humides), les paramètres de Pourriture des Balles, l'activation de l'Affichage de l'Humidité du Champ et le style de Rapport de l'Humidimètre. En multijoueur, l'hôte/admin contrôle ces paramètres."/>
 	</texts>

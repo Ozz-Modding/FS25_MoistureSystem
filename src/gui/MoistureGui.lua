@@ -23,7 +23,7 @@ function MoistureGui:onGuiSetupFinished()
 
     self.pageGrades:initialize()
     self.pagePrices:initialize()
-    self.pageCalendar:initialize()
+    self.pageWeather:initialize()
 
     self:setupPages()
     self:setupMenuButtonInfo()
@@ -33,7 +33,7 @@ function MoistureGui:setupPages()
     local pages = {
         { self.pageGrades, 'gui.icon_ingameMenu_finances' },
         { self.pagePrices, 'gui.icon_ingameMenu_prices' },
-        { self.pageCalendar, 'gui.icon_ingameMenu_calendar' }
+        { self.pageWeather, 'gui.icon_ingameMenu_calendar' }
     }
 
     for idx, thisPage in ipairs(pages) do

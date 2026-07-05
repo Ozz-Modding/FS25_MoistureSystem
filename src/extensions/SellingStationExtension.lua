@@ -14,7 +14,7 @@ function SellingStationExtension:addFillLevelFromTool(superFunc, farmId, deltaFi
             extraAttributes.priceScale = priceScale
         end
 
-        if dryingCharge and dryingCharge > 0 then
+        if dryingCharge and dryingCharge > 0 and not self:getSkipSell(farmId, fillTypeIndex) then
             SellingStationExtension.dryingChargeAccumulator = SellingStationExtension.dryingChargeAccumulator + dryingCharge
             SellingStationExtension.dryingChargeCountdown = 30
             SellingStationExtension.dryingChargeFarmId = farmId

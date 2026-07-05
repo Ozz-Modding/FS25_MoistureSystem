@@ -12,17 +12,13 @@ function MSInitialClientStateEvent.new()
 end
 
 function MSInitialClientStateEvent:writeStream(streamId, connection)
-    -- Write MoistureSystem data
     g_currentMission.MoistureSystem:writeInitialClientState(streamId, connection)
-
-    -- Subsystem data (pile, object moisture, bale rotting) is loaded on-demand
+    g_currentMission.WeatherProfileSystem:writeClientState(streamId)
 end
 
 function MSInitialClientStateEvent:readStream(streamId, connection)
-    -- Read MoistureSystem data
     g_currentMission.MoistureSystem:readInitialClientState(streamId, connection)
-
-
+    g_currentMission.WeatherProfileSystem:readClientState(streamId)
     self:run(connection)
 end
 

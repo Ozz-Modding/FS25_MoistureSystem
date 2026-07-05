@@ -6,10 +6,11 @@ MoistureSettings.METER_REPORTING_BLINKING = 1
 MoistureSettings.METER_REPORTING_NOTIFICATION = 2
 
 MoistureSettings.menuItems = {
-    'environment',
+    'weatherProfile',
     'moistureLossMultiplier',
     'moistureGainMultiplier',
     'teddingMoistureReduction',
+    'witheringEnabled',
     'baleRotEnabled',
     'baleRotRate',
     'baleExposureDecayRate',
@@ -30,17 +31,30 @@ table.insert(Farm.PERMISSIONS, Farm.PERMISSION.MOISTURE_SETTINGS)
 -- SETTINGS DEFINITIONS
 MoistureSettings.SETTINGS = {}
 
-MoistureSettings.SETTINGS.environment = {
-    ['default'] = 2,  -- NORMAL
+-- weatherProfile values/strings are populated after profiles load (see WeatherProfileSystem:populateSettings)
+MoistureSettings.SETTINGS.weatherProfile = {
+    ['default'] = 1,
     ['serverOnly'] = true,
     ['permission'] = 'moistureSettings',
-    ['values'] = { MoistureClampEnvironments.DRY, MoistureClampEnvironments.NORMAL, MoistureClampEnvironments.WET },
-    ['strings'] = {
-        g_i18n:getText("setting_moisture_environment_dry"),
-        g_i18n:getText("setting_moisture_environment_normal"),
-        g_i18n:getText("setting_moisture_environment_wet")
-    }
+    ['values'] = { "ukwest" },
+    ['strings'] = { "UK West" }
 }
+
+function MoistureSettings.populateWeatherProfileSetting()
+    local wps = g_currentMission and g_currentMission.WeatherProfileSystem
+    if not wps then return end
+    local ids = wps:getProfileIds()
+    if #ids == 0 then return end
+    local strings = wps:getProfileDisplayNames()
+    local activeId = g_currentMission.MoistureSystem.settings.weatherProfile
+    local defaultIdx = 1
+    for i, id in ipairs(ids) do
+        if id == activeId then defaultIdx = i end
+    end
+    MoistureSettings.SETTINGS.weatherProfile.values = ids
+    MoistureSettings.SETTINGS.weatherProfile.strings = strings
+    MoistureSettings.SETTINGS.weatherProfile.default = defaultIdx
+end
 
 MoistureSettings.SETTINGS.moistureLossMultiplier = {
     ['default'] = 3,
@@ -64,6 +78,17 @@ MoistureSettings.SETTINGS.teddingMoistureReduction = {
     ['permission'] = 'moistureSettings',
     ['values'] = { 0.01, 0.02, 0.03, 0.04, 0.05 },
     ['strings'] = { "1%", "2%", "3%", "4%", "5%" }
+}
+
+MoistureSettings.SETTINGS.witheringEnabled = {
+    ['default'] = 2, -- Enabled by default
+    ['serverOnly'] = true,
+    ['permission'] = 'moistureSettings',
+    ['values'] = { false, true },
+    ['strings'] = {
+        g_i18n:getText("setting_setting_off"),
+        g_i18n:getText("setting_setting_on")
+    }
 }
 
 MoistureSettings.SETTINGS.baleRotEnabled = {
@@ -140,7 +165,9 @@ MoistureSettings.SETTINGS.sellDryingChargeRate = {
 }
 
 function MoistureSettings.getStateIndex(id, value)
-    local value = value or g_currentMission.MoistureSystem.settings[id]
+    if value == nil then
+        value = g_currentMission.MoistureSystem.settings[id]
+    end
     local values = MoistureSettings.SETTINGS[id].values
     if type(value) == 'number' then
         local index = MoistureSettings.SETTINGS[id].default
@@ -171,6 +198,10 @@ function MoistureSettingsControls.onMenuOptionChanged(self, state, menuOption)
 
     if value ~= nil then
         g_currentMission.MoistureSystem.settings[id] = value
+        if id == 'weatherProfile' then
+            local wps = g_currentMission.WeatherProfileSystem
+            if wps then wps:setActiveProfile(value) end
+        end
     end
 
     g_client:getServerConnection():sendEvent(MoistureSettingsEvent.new())
@@ -187,6 +218,8 @@ local function updateFocusIds(element)
 end
 
 function MoistureSettings.addSettingsToMenu()
+    MoistureSettings.populateWeatherProfileSetting()
+
     local inGameMenu = g_gui.screenControllers[InGameMenu]
     local settingsPage = inGameMenu.pageSettings
     -- The name is required as otherwise the focus manager would ignore any control which has MoistureSettings as a callback target

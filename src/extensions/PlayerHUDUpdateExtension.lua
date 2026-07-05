@@ -53,7 +53,7 @@ function MSPlayerHUDExtension:getFillLevelInformationAppended(_, display)
             if fillTypeName ~= nil then
                 local infoEntry = objectData[fillTypeName]
                 if infoEntry ~= nil then
-                    local moistureText = MSPlayerHUDExtension.formatMoistureInfoText(data.fillType, infoEntry.moisture, infoEntry.quality)
+                    local moistureText = MSPlayerHUDExtension.formatMoistureInfoText(fillTypeName, infoEntry.moisture, infoEntry.quality)
                     if moistureText ~= nil then
                         if data.infoText ~= nil then
                             data.infoText = moistureText .. " " .. data.infoText
@@ -74,18 +74,33 @@ FillUnit.getFillLevelInformation = Utils.appendedFunction(
 
 ---
 -- Format moisture info text for the fill level HUD (compact format)
--- @param fillTypeIndex: The filltype index
+-- @param fillTypeName: The filltype name string (used for grade lookup)
 -- @param moisture: Moisture value (0-1 scale)
--- @return Formatted string like "12.1% D" or "12.1%" for non-graded types, or nil
+-- @return Formatted string like "12.1% | 74% (Grade B)" or "12.1%" for non-graded types, or nil
 ---
-function MSPlayerHUDExtension.formatMoistureInfoText(_, moisture, quality)
+local GRADE_LABELS = { [1] = "A", [2] = "B", [3] = "C", [4] = "D" }
+
+local function gradeLabel(fillTypeName, quality)
+    if fillTypeName == nil or quality == nil then return nil end
+    local fillTypeIndex = g_fillTypeManager:getFillTypeIndexByName(fillTypeName)
+    if fillTypeIndex == nil then return nil end
+    local grade = CropValueMap.getQualityGrade(fillTypeIndex, quality)
+    return grade and GRADE_LABELS[grade]
+end
+
+function MSPlayerHUDExtension.formatMoistureInfoText(fillTypeName, moisture, quality)
     if moisture == nil then
         return nil
     end
 
     local moistureText = string.format("%.1f%%", moisture * 100)
     if quality ~= nil then
-        moistureText = moistureText .. " | " .. string.format("%d%%", math.floor(quality))
+        local label = gradeLabel(fillTypeName, quality)
+        local qualityStr = string.format("%d%%", math.floor(quality))
+        if label then
+            qualityStr = qualityStr .. "(" .. label .. ")"
+        end
+        moistureText = moistureText .. "/" .. qualityStr
     end
 
     return moistureText
@@ -101,8 +116,12 @@ function MSPlayerHUDExtension.formatMoistureText(moisture)
     return string.format("%.1f%%", moisture * 100)
 end
 
-function MSPlayerHUDExtension.formatQualityText(quality)
+function MSPlayerHUDExtension.formatQualityText(quality, fillTypeName)
     if quality == nil then return nil end
+    local label = gradeLabel(fillTypeName, quality)
+    if label then
+        return string.format("%d%% (%s)", math.floor(quality), label)
+    end
     return string.format("%d%%", math.floor(quality))
 end
 
@@ -111,7 +130,13 @@ end
 -- Appended to PlayerHUDUpdater.showFieldInfo
 ---
 function MSPlayerHUDExtension:showFieldInfo(x, z)
-    -- Initialize box on first use
+    local moistureSystem = g_currentMission.MoistureSystem
+    if moistureSystem == nil then return end
+
+    if self.fieldInfo.groundType == FieldGroundType.NONE then return end
+
+    if not moistureSystem.settings.showFieldMoisture then return end
+
     if self.moistureBox == nil then
         self.moistureBox = g_currentMission.hud.infoDisplay:createBox(InfoDisplayKeyValueBox)
     end
@@ -120,34 +145,13 @@ function MSPlayerHUDExtension:showFieldInfo(x, z)
     if box == nil then return end
 
     box:clear()
-
-    local moistureSystem = g_currentMission.MoistureSystem
-    if moistureSystem == nil then return end
-
-    -- Only show if we're on farmable ground
-    if self.fieldInfo.groundType == FieldGroundType.NONE then return end
-
     box:setTitle(g_i18n:getText("moistureSystem_fieldInfo"))
 
-    -- Get current month for clamp ranges
-    local currentMonth = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local environment = moistureSystem.settings.environment
-    local clamp = MoistureClamp.Environments[environment].Months[currentMonth]
-
-    -- Show expected range for this month/environment
+    local fieldMoisture = moistureSystem:getMoistureAtPosition(x, z)
     box:addLine(
-        g_i18n:getText("moistureSystem_range"),
-        string.format("%.0f%% - %.0f%%", clamp.Min, clamp.Max)
+        g_i18n:getText("moistureSystem_fieldInfo"),
+        string.format("%.1f%%", fieldMoisture * 100)
     )
-
-    -- Show actual field moisture if setting is enabled
-    if moistureSystem.settings.showFieldMoisture then
-        local fieldMoisture = moistureSystem:getMoistureAtPosition(x, z)
-        box:addLine(
-            g_i18n:getText("moistureSystem_fieldInfo"),
-            string.format("%.1f%%", fieldMoisture * 100)
-        )
-    end
 
     box:showNextFrame()
 end
@@ -315,7 +319,7 @@ function MSPlayerHUDExtension:showObjectMoistureInfo()
                 if infoEntry.quality then
                     box:addLine(
                         fillType.title .. " " .. g_i18n:getText("moistureSystem_quality"),
-                        MSPlayerHUDExtension.formatQualityText(infoEntry.quality)
+                        MSPlayerHUDExtension.formatQualityText(infoEntry.quality, fillTypeName)
                     )
                 end
                 hasData = true
@@ -364,7 +368,7 @@ function MSPlayerHUDExtension:showVehicleInfo(vehicle)
                 if infoEntry.quality then
                     box:addLine(
                         fillType.title .. " " .. g_i18n:getText("moistureSystem_quality"),
-                        MSPlayerHUDExtension.formatQualityText(infoEntry.quality)
+                        MSPlayerHUDExtension.formatQualityText(infoEntry.quality, fillTypeName)
                     )
                 end
             end
@@ -413,7 +417,7 @@ function MSPlayerHUDExtension:showPalletInfo(pallet)
                 if infoEntry.quality then
                     box:addLine(
                         fillType.title .. " " .. g_i18n:getText("moistureSystem_quality"),
-                        MSPlayerHUDExtension.formatQualityText(infoEntry.quality)
+                        MSPlayerHUDExtension.formatQualityText(infoEntry.quality, fillTypeName)
                     )
                 end
             end

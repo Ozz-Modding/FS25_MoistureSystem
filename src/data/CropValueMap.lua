@@ -7,283 +7,317 @@ CropValueMap.Grades = {
     D = 4
 }
 
--- Define data using fillType names (strings) to avoid nil references
+-- Per-crop dual-curve data. All moisture values on 0-1 scale.
+-- Dry side: both yield and quality drop, yield is dominant.
+-- Wet side: both yield and quality drop, quality is dominant.
 local dataDefinitions = {
     ["WHEAT"] = {
-        { lower = 0.00, upper = 0.06, grade = CropValueMap.Grades.D, multiplier = 0.55 },
-        { lower = 0.06, upper = 0.08, grade = CropValueMap.Grades.C, multiplier = 0.75 },
-        { lower = 0.08, upper = 0.11, grade = CropValueMap.Grades.B, multiplier = 0.90 },
-        { lower = 0.11, upper = 0.13, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.13, upper = 0.15, grade = CropValueMap.Grades.B, multiplier = 0.90 },
-        { lower = 0.15, upper = 0.18, grade = CropValueMap.Grades.C, multiplier = 0.75 },
-        { lower = 0.18, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.55 }
-    },
-    ["BARLEY"] = {
-        { lower = 0.00, upper = 0.07, grade = CropValueMap.Grades.D, multiplier = 0.65 },
-        { lower = 0.07, upper = 0.09, grade = CropValueMap.Grades.C, multiplier = 0.80 },
-        { lower = 0.09, upper = 0.12, grade = CropValueMap.Grades.B, multiplier = 0.92 },
-        { lower = 0.12, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.17, grade = CropValueMap.Grades.B, multiplier = 0.92 },
-        { lower = 0.17, upper = 0.20, grade = CropValueMap.Grades.C, multiplier = 0.80 },
-        { lower = 0.20, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.65 }
-    },
-    ["WINTERBARLEY"] = {
-        { lower = 0.00, upper = 0.07, grade = CropValueMap.Grades.D, multiplier = 0.65 },
-        { lower = 0.07, upper = 0.09, grade = CropValueMap.Grades.C, multiplier = 0.80 },
-        { lower = 0.09, upper = 0.12, grade = CropValueMap.Grades.B, multiplier = 0.92 },
-        { lower = 0.12, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.17, grade = CropValueMap.Grades.B, multiplier = 0.92 },
-        { lower = 0.17, upper = 0.20, grade = CropValueMap.Grades.C, multiplier = 0.80 },
-        { lower = 0.20, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.65 }
+        idealMin          = 0.11, idealMax          = 0.13,
+        yieldCurveStart   = 0.10, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.45, qualityLossMaxDry = 0.15,
+        qualityCurveStart = 0.14, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.40, yieldLossMaxWet   = 0.12,
+        witherThreshold   = 0.03,
     },
     ["WINTERWHEAT"] = {
-        { lower = 0.00, upper = 0.06, grade = CropValueMap.Grades.D, multiplier = 0.55 },
-        { lower = 0.06, upper = 0.08, grade = CropValueMap.Grades.C, multiplier = 0.75 },
-        { lower = 0.08, upper = 0.11, grade = CropValueMap.Grades.B, multiplier = 0.90 },
-        { lower = 0.11, upper = 0.13, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.13, upper = 0.15, grade = CropValueMap.Grades.B, multiplier = 0.90 },
-        { lower = 0.15, upper = 0.18, grade = CropValueMap.Grades.C, multiplier = 0.75 },
-        { lower = 0.18, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.55 }
+        idealMin          = 0.11, idealMax          = 0.13,
+        yieldCurveStart   = 0.10, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.45, qualityLossMaxDry = 0.15,
+        qualityCurveStart = 0.14, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.40, yieldLossMaxWet   = 0.12,
+        witherThreshold   = 0.03,
     },
+    -- Malting barley: high wet quality penalty (malting spec rejection risk)
+    ["BARLEY"] = {
+        idealMin          = 0.12, idealMax          = 0.14,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.45, qualityLossMaxDry = 0.15,
+        qualityCurveStart = 0.15, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.50, yieldLossMaxWet   = 0.10,
+        witherThreshold   = 0.03,
+    },
+    ["WINTERBARLEY"] = {
+        idealMin          = 0.12, idealMax          = 0.14,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.45, qualityLossMaxDry = 0.15,
+        qualityCurveStart = 0.15, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.50, yieldLossMaxWet   = 0.10,
+        witherThreshold   = 0.03,
+    },
+    -- Canola: steep dry yield cliff at pod-fill; narrow ideal window
+    ["CANOLA"] = {
+        idealMin          = 0.08, idealMax          = 0.10,
+        yieldCurveStart   = 0.07, yieldCurveFloor   = 0.03,
+        yieldLossMaxDry   = 0.55, qualityLossMaxDry = 0.15,
+        qualityCurveStart = 0.11, qualityCurveFloor = 0.18,
+        qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.10,
+        witherThreshold   = 0.02,
+    },
+    -- Maize: harvested wet (18-22% field moisture is optimal); grade A reflects good combine condition, not storage spec
     ["MAIZE"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.65 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.82 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.13, upper = 0.16, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.16, upper = 0.24, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.24, upper = 0.27, grade = CropValueMap.Grades.C, multiplier = 0.82 },
-        { lower = 0.27, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.65 }
+        idealMin          = 0.18, idealMax          = 0.22,
+        yieldCurveStart   = 0.16, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.55, qualityLossMaxDry = 0.12,
+        qualityCurveStart = 0.23, qualityCurveFloor = 0.38,
+        qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.10,
+        witherThreshold   = 0.03,
     },
     ["SILAGEMAIZE"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.65 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.82 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.13, upper = 0.16, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.16, upper = 0.24, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.24, upper = 0.27, grade = CropValueMap.Grades.C, multiplier = 0.82 },
-        { lower = 0.27, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.65 }
+        idealMin          = 0.18, idealMax          = 0.22,
+        yieldCurveStart   = 0.16, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.55, qualityLossMaxDry = 0.12,
+        qualityCurveStart = 0.23, qualityCurveFloor = 0.38,
+        qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.10,
+        witherThreshold   = 0.03,
     },
-    ["OAT"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.68 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.83 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.13, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.16, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.16, upper = 0.19, grade = CropValueMap.Grades.C, multiplier = 0.83 },
-        { lower = 0.19, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.68 }
+    -- Soybean: relatively symmetric; high waterlogging sensitivity
+    ["SOYBEAN"] = {
+        idealMin          = 0.13, idealMax          = 0.16,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.50, qualityLossMaxDry = 0.18,
+        qualityCurveStart = 0.17, qualityCurveFloor = 0.26,
+        qualityLossMaxWet = 0.45, yieldLossMaxWet   = 0.15,
+        witherThreshold   = 0.03,
     },
-    ["RYE"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.62 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.78 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.91 },
-        { lower = 0.13, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.16, grade = CropValueMap.Grades.B, multiplier = 0.91 },
-        { lower = 0.16, upper = 0.19, grade = CropValueMap.Grades.C, multiplier = 0.78 },
-        { lower = 0.19, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.62 }
-    },
-    ["TRITICALE"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.66 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.81 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.92 },
-        { lower = 0.13, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.16, grade = CropValueMap.Grades.B, multiplier = 0.92 },
-        { lower = 0.16, upper = 0.19, grade = CropValueMap.Grades.C, multiplier = 0.81 },
-        { lower = 0.19, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.66 }
-    },
-    ["SPELT"] = {
-        { lower = 0.00, upper = 0.07, grade = CropValueMap.Grades.D, multiplier = 0.58 },
-        { lower = 0.07, upper = 0.09, grade = CropValueMap.Grades.C, multiplier = 0.76 },
-        { lower = 0.09, upper = 0.12, grade = CropValueMap.Grades.B, multiplier = 0.91 },
-        { lower = 0.12, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.17, grade = CropValueMap.Grades.B, multiplier = 0.91 },
-        { lower = 0.17, upper = 0.20, grade = CropValueMap.Grades.C, multiplier = 0.76 },
-        { lower = 0.20, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.58 }
-    },
+    -- Rice: water-dependent; high dry yield loss, low wet quality penalty
     ["RICE"] = {
-        { lower = 0.00, upper = 0.07, grade = CropValueMap.Grades.D, multiplier = 0.52 },
-        { lower = 0.07, upper = 0.09, grade = CropValueMap.Grades.C, multiplier = 0.72 },
-        { lower = 0.09, upper = 0.12, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.12, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.17, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.17, upper = 0.20, grade = CropValueMap.Grades.C, multiplier = 0.72 },
-        { lower = 0.20, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.52 }
+        idealMin          = 0.12, idealMax          = 0.14,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.04,
+        yieldLossMaxDry   = 0.60, qualityLossMaxDry = 0.10,
+        qualityCurveStart = 0.16, qualityCurveFloor = 0.24,
+        qualityLossMaxWet = 0.20, yieldLossMaxWet   = 0.08,
+        witherThreshold   = 0.02,
     },
     ["RICELONGGRAIN"] = {
-        { lower = 0.00, upper = 0.07, grade = CropValueMap.Grades.D, multiplier = 0.52 },
-        { lower = 0.07, upper = 0.09, grade = CropValueMap.Grades.C, multiplier = 0.72 },
-        { lower = 0.09, upper = 0.12, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.12, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.17, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.17, upper = 0.20, grade = CropValueMap.Grades.C, multiplier = 0.72 },
-        { lower = 0.20, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.52 }
+        idealMin          = 0.12, idealMax          = 0.14,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.04,
+        yieldLossMaxDry   = 0.60, qualityLossMaxDry = 0.10,
+        qualityCurveStart = 0.16, qualityCurveFloor = 0.24,
+        qualityLossMaxWet = 0.20, yieldLossMaxWet   = 0.08,
+        witherThreshold   = 0.02,
     },
-    ["SORGHUM"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.67 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.82 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.13, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.16, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.16, upper = 0.19, grade = CropValueMap.Grades.C, multiplier = 0.82 },
-        { lower = 0.19, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.67 }
-    },
-    ["CANOLA"] = {
-        { lower = 0.00, upper = 0.04, grade = CropValueMap.Grades.D, multiplier = 0.50 },
-        { lower = 0.04, upper = 0.06, grade = CropValueMap.Grades.C, multiplier = 0.72 },
-        { lower = 0.06, upper = 0.08, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.10, upper = 0.12, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.12, upper = 0.15, grade = CropValueMap.Grades.C, multiplier = 0.72 },
-        { lower = 0.15, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.50 }
-    },
-    ["SOYBEAN"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.53 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.74 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.89 },
-        { lower = 0.13, upper = 0.16, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.16, upper = 0.24, grade = CropValueMap.Grades.B, multiplier = 0.89 },
-        { lower = 0.24, upper = 0.27, grade = CropValueMap.Grades.C, multiplier = 0.74 },
-        { lower = 0.27, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.53 }
-    },
+    -- Sunflower: moderate dry, low wet quality sensitivity
     ["SUNFLOWER"] = {
-        { lower = 0.00, upper = 0.07, grade = CropValueMap.Grades.D, multiplier = 0.51 },
-        { lower = 0.07, upper = 0.09, grade = CropValueMap.Grades.C, multiplier = 0.73 },
-        { lower = 0.09, upper = 0.11, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.11, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.19, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.19, upper = 0.22, grade = CropValueMap.Grades.C, multiplier = 0.73 },
-        { lower = 0.22, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.51 }
+        idealMin          = 0.11, idealMax          = 0.14,
+        yieldCurveStart   = 0.09, yieldCurveFloor   = 0.04,
+        yieldLossMaxDry   = 0.40, qualityLossMaxDry = 0.12,
+        qualityCurveStart = 0.15, qualityCurveFloor = 0.23,
+        qualityLossMaxWet = 0.25, yieldLossMaxWet   = 0.08,
+        witherThreshold   = 0.02,
     },
-    ["MUSTARD"] = {
-        { lower = 0.00, upper = 0.04, grade = CropValueMap.Grades.D, multiplier = 0.50 },
-        { lower = 0.04, upper = 0.06, grade = CropValueMap.Grades.C, multiplier = 0.72 },
-        { lower = 0.06, upper = 0.08, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.10, upper = 0.12, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.12, upper = 0.15, grade = CropValueMap.Grades.C, multiplier = 0.72 },
-        { lower = 0.15, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.50 }
+    -- Robust cereal archetype: Oat, Rye, Triticale, Spelt
+    -- Moderate sensitivity both sides; dry ~65% as yield loss
+    ["OAT"] = {
+        idealMin          = 0.13, idealMax          = 0.14,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.38, qualityLossMaxDry = 0.20,
+        qualityCurveStart = 0.15, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.19,
+        witherThreshold   = 0.03,
     },
-    ["POPPY"] = {
-        { lower = 0.00, upper = 0.04, grade = CropValueMap.Grades.D, multiplier = 0.50 },
-        { lower = 0.04, upper = 0.06, grade = CropValueMap.Grades.C, multiplier = 0.72 },
-        { lower = 0.06, upper = 0.08, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.10, upper = 0.12, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.12, upper = 0.15, grade = CropValueMap.Grades.C, multiplier = 0.72 },
-        { lower = 0.15, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.50 }
+    ["RYE"] = {
+        idealMin          = 0.13, idealMax          = 0.14,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.35, qualityLossMaxDry = 0.19,
+        qualityCurveStart = 0.15, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.33, yieldLossMaxWet   = 0.18,
+        witherThreshold   = 0.03,
     },
-    ["LINSEED"] = {
-        { lower = 0.00, upper = 0.05, grade = CropValueMap.Grades.D, multiplier = 0.52 },
-        { lower = 0.05, upper = 0.07, grade = CropValueMap.Grades.C, multiplier = 0.73 },
-        { lower = 0.07, upper = 0.09, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.09, upper = 0.11, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.11, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.88 },
-        { lower = 0.13, upper = 0.16, grade = CropValueMap.Grades.C, multiplier = 0.73 },
-        { lower = 0.16, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.52 }
+    ["TRITICALE"] = {
+        idealMin          = 0.13, idealMax          = 0.14,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.36, qualityLossMaxDry = 0.19,
+        qualityCurveStart = 0.15, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.34, yieldLossMaxWet   = 0.18,
+        witherThreshold   = 0.03,
     },
-    ["PEA"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.60 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.77 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.90 },
-        { lower = 0.13, upper = 0.15, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.15, upper = 0.18, grade = CropValueMap.Grades.B, multiplier = 0.90 },
-        { lower = 0.18, upper = 0.21, grade = CropValueMap.Grades.C, multiplier = 0.77 },
-        { lower = 0.21, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.60 }
+    ["SPELT"] = {
+        idealMin          = 0.12, idealMax          = 0.14,
+        yieldCurveStart   = 0.10, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.37, qualityLossMaxDry = 0.20,
+        qualityCurveStart = 0.15, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.19,
+        witherThreshold   = 0.03,
     },
-    ["GREENBEAN"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.60 },
-        { lower = 0.08, upper = 0.11, grade = CropValueMap.Grades.C, multiplier = 0.77 },
-        { lower = 0.11, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.90 },
-        { lower = 0.13, upper = 0.15, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.15, upper = 0.24, grade = CropValueMap.Grades.B, multiplier = 0.90 },
-        { lower = 0.24, upper = 0.27, grade = CropValueMap.Grades.C, multiplier = 0.77 },
-        { lower = 0.27, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.60 }
-    },
-    ["BEANS"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.60 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.77 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.90 },
-        { lower = 0.13, upper = 0.15, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.15, upper = 0.18, grade = CropValueMap.Grades.B, multiplier = 0.90 },
-        { lower = 0.18, upper = 0.21, grade = CropValueMap.Grades.C, multiplier = 0.77 },
-        { lower = 0.21, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.60 }
-    },
-    ["BUCKWHEAT"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.68 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.83 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.13, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.16, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.16, upper = 0.19, grade = CropValueMap.Grades.C, multiplier = 0.83 },
-        { lower = 0.19, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.68 }
+    -- Drought-tolerant grain archetype: Sorghum, Millet, Buckwheat
+    -- Lower dry sensitivity; low witherThreshold (survives drier)
+    -- Sorghum: most tolerant. Buckwheat: most sensitive of the three.
+    ["SORGHUM"] = {
+        idealMin          = 0.13, idealMax          = 0.14,
+        yieldCurveStart   = 0.09, yieldCurveFloor   = 0.04,
+        yieldLossMaxDry   = 0.28, qualityLossMaxDry = 0.19,
+        qualityCurveStart = 0.15, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.32, yieldLossMaxWet   = 0.21,
+        witherThreshold   = 0.02,
     },
     ["MILLET"] = {
-        { lower = 0.00, upper = 0.08, grade = CropValueMap.Grades.D, multiplier = 0.67 },
-        { lower = 0.08, upper = 0.10, grade = CropValueMap.Grades.C, multiplier = 0.82 },
-        { lower = 0.10, upper = 0.13, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.13, upper = 0.14, grade = CropValueMap.Grades.A, multiplier = 1.0 },
-        { lower = 0.14, upper = 0.16, grade = CropValueMap.Grades.B, multiplier = 0.93 },
-        { lower = 0.16, upper = 0.19, grade = CropValueMap.Grades.C, multiplier = 0.82 },
-        { lower = 0.19, upper = 1.00, grade = CropValueMap.Grades.D, multiplier = 0.67 }
-    }
+        idealMin          = 0.13, idealMax          = 0.14,
+        yieldCurveStart   = 0.09, yieldCurveFloor   = 0.04,
+        yieldLossMaxDry   = 0.32, qualityLossMaxDry = 0.21,
+        qualityCurveStart = 0.15, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.21,
+        witherThreshold   = 0.02,
+    },
+    -- Buckwheat: most sensitive in drought-tolerant group (up to 70% loss severe drought)
+    ["BUCKWHEAT"] = {
+        idealMin          = 0.13, idealMax          = 0.14,
+        yieldCurveStart   = 0.10, yieldCurveFloor   = 0.04,
+        yieldLossMaxDry   = 0.45, qualityLossMaxDry = 0.30,
+        qualityCurveStart = 0.15, qualityCurveFloor = 0.22,
+        qualityLossMaxWet = 0.38, yieldLossMaxWet   = 0.25,
+        witherThreshold   = 0.02,
+    },
+    -- Oilseed small archetype: Mustard, Poppy, Linseed
+    -- Moderate both sides; dry ~70% as yield loss
+    ["MUSTARD"] = {
+        idealMin          = 0.08, idealMax          = 0.10,
+        yieldCurveStart   = 0.07, yieldCurveFloor   = 0.03,
+        yieldLossMaxDry   = 0.42, qualityLossMaxDry = 0.18,
+        qualityCurveStart = 0.11, qualityCurveFloor = 0.18,
+        qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.15,
+        witherThreshold   = 0.02,
+    },
+    ["POPPY"] = {
+        idealMin          = 0.08, idealMax          = 0.10,
+        yieldCurveStart   = 0.07, yieldCurveFloor   = 0.03,
+        yieldLossMaxDry   = 0.42, qualityLossMaxDry = 0.18,
+        qualityCurveStart = 0.11, qualityCurveFloor = 0.18,
+        qualityLossMaxWet = 0.35, yieldLossMaxWet   = 0.15,
+        witherThreshold   = 0.02,
+    },
+    ["LINSEED"] = {
+        idealMin          = 0.09, idealMax          = 0.11,
+        yieldCurveStart   = 0.08, yieldCurveFloor   = 0.03,
+        yieldLossMaxDry   = 0.40, qualityLossMaxDry = 0.17,
+        qualityCurveStart = 0.12, qualityCurveFloor = 0.19,
+        qualityLossMaxWet = 0.33, yieldLossMaxWet   = 0.14,
+        witherThreshold   = 0.02,
+    },
+    -- Legumes: PEA, GREENBEAN, BEANS
+    ["PEA"] = {
+        idealMin          = 0.13, idealMax          = 0.15,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.38, qualityLossMaxDry = 0.17,
+        qualityCurveStart = 0.16, qualityCurveFloor = 0.24,
+        qualityLossMaxWet = 0.38, yieldLossMaxWet   = 0.16,
+        witherThreshold   = 0.03,
+    },
+    ["GREENBEAN"] = {
+        idealMin          = 0.13, idealMax          = 0.15,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.38, qualityLossMaxDry = 0.17,
+        qualityCurveStart = 0.16, qualityCurveFloor = 0.24,
+        qualityLossMaxWet = 0.38, yieldLossMaxWet   = 0.16,
+        witherThreshold   = 0.03,
+    },
+    ["BEANS"] = {
+        idealMin          = 0.13, idealMax          = 0.15,
+        yieldCurveStart   = 0.11, yieldCurveFloor   = 0.05,
+        yieldLossMaxDry   = 0.38, qualityLossMaxDry = 0.17,
+        qualityCurveStart = 0.16, qualityCurveFloor = 0.24,
+        qualityLossMaxWet = 0.38, yieldLossMaxWet   = 0.16,
+        witherThreshold   = 0.03,
+    },
 }
 
--- Initialize data by converting fillType names to indices
 function CropValueMap.initialize()
     CropValueMap.Data = {}
 
-    for fillTypeName, ranges in pairs(dataDefinitions) do
+    for fillTypeName, def in pairs(dataDefinitions) do
         local fillTypeIndex = g_fillTypeManager:getFillTypeIndexByName(fillTypeName)
         if fillTypeIndex ~= nil then
-            CropValueMap.Data[fillTypeIndex] = ranges
+            CropValueMap.Data[fillTypeIndex] = def
         end
     end
 end
 
-function CropValueMap.getGrade(fillType, moisture)
-    local ranges = CropValueMap.Data[fillType]
-    if not ranges then return nil end
-
-    for _, range in ipairs(ranges) do
-        if moisture >= range.lower and moisture < range.upper then
-            return range.grade, range.multiplier
-        end
-    end
-    return nil
+-- Smooth linear interpolation between the ideal zone and the curve floor.
+-- Returns a fraction [0, lossMax] of penalty.
+local function curveFraction(moisture, curveStart, curveFloor, lossMax)
+    if curveFloor >= curveStart then return 0 end
+    local t = (curveStart - moisture) / (curveStart - curveFloor)
+    t = math.max(0, math.min(1, t))
+    return t * lossMax
 end
 
+-- Returns yield multiplier in [0, 1].
+-- 1.0 only across the ideal band [idealMin, idealMax] (the source of truth).
+-- Below idealMin: falls toward (1 - yieldLossMaxDry) (dominant dry loss).
+-- Above idealMax: falls toward (1 - yieldLossMaxWet) (minor wet loss).
+function CropValueMap.getYieldMultiplier(fillType, moisture)
+    local def = CropValueMap.Data and CropValueMap.Data[fillType]
+    if not def then return 1.0 end
+
+    if moisture < def.idealMin then
+        local loss = curveFraction(moisture, def.idealMin, def.yieldCurveFloor, def.yieldLossMaxDry)
+        return 1.0 - loss
+    elseif moisture > def.idealMax then
+        local loss = curveFraction(-moisture, -def.idealMax, -def.qualityCurveFloor, def.yieldLossMaxWet)
+        return 1.0 - loss
+    end
+
+    return 1.0
+end
+
+-- Returns quality value in [0, 100].
+-- 100 only across the ideal band [idealMin, idealMax] (the source of truth).
+-- Below idealMin: falls toward 100*(1 - qualityLossMaxDry) (minor dry loss).
+-- Above idealMax: falls toward 100*(1 - qualityLossMaxWet) (dominant wet loss).
+function CropValueMap.getQualityValue(fillType, moisture)
+    local def = CropValueMap.Data and CropValueMap.Data[fillType]
+    if not def then return 100 end
+
+    if moisture < def.idealMin then
+        local loss = curveFraction(moisture, def.idealMin, def.yieldCurveFloor, def.qualityLossMaxDry)
+        return 100 * (1.0 - loss)
+    elseif moisture > def.idealMax then
+        local loss = curveFraction(-moisture, -def.idealMax, -def.qualityCurveFloor, def.qualityLossMaxWet)
+        return 100 * (1.0 - loss)
+    end
+
+    return 100
+end
+
+-- Returns the ideal moisture window [idealMin, idealMax] for a fillType, or nil.
 function CropValueMap.getIdealRange(fillType)
-    local ranges = CropValueMap.Data[fillType]
-    if not ranges then return nil end
+    local def = CropValueMap.Data and CropValueMap.Data[fillType]
+    if not def then return nil end
+    return def.idealMin, def.idealMax
+end
 
-    for _, range in ipairs(ranges) do
-        if range.grade == CropValueMap.Grades.A then
-            return range.lower, range.upper
-        end
-    end
-    return nil
+-- Returns the wither threshold for a fillType, or nil if not tracked.
+function CropValueMap.getWitherThreshold(fillType)
+    local def = CropValueMap.Data and CropValueMap.Data[fillType]
+    if not def then return nil end
+    return def.witherThreshold
+end
+
+-- Returns the full curve definition for a fillType, or nil.
+function CropValueMap.getCropDef(fillType)
+    return CropValueMap.Data and CropValueMap.Data[fillType]
 end
 
 function CropValueMap.initializeQualityBands()
     CropValueMap.QualityBands = {}
 
-    for fillTypeIndex, ranges in pairs(CropValueMap.Data) do
-        local multipliers = {}
-        for _, range in ipairs(ranges) do
-            if multipliers[range.grade] == nil then
-                multipliers[range.grade] = range.multiplier
-            end
-        end
+    -- Grade thresholds derived from the wet-side quality curve shape.
+    -- A: full quality (no wet penalty active), B: up to 20% loss, C: up to 40%, D: below that.
+    local GRADE_A_MIN = 90
+    local GRADE_B_MIN = 70
+    local GRADE_C_MIN = 50
 
-        local aMultiplier = multipliers[CropValueMap.Grades.A] or 1.0
-        local bMultiplier = multipliers[CropValueMap.Grades.B] or 0.90
-        local cMultiplier = multipliers[CropValueMap.Grades.C] or 0.75
-        local dMultiplier = multipliers[CropValueMap.Grades.D] or 0.55
+    for fillTypeIndex, def in pairs(CropValueMap.Data) do
+        -- Price multipliers derived from the old band values, preserved for selling station compatibility.
+        -- The wet-side dominant loss determines the D floor price.
+        local dMultiplier = 1.0 - def.qualityLossMaxWet
+        local cMultiplier = 1.0 - def.qualityLossMaxWet * 0.5
+        local bMultiplier = 1.0 - def.qualityLossMaxWet * 0.2
 
         CropValueMap.QualityBands[fillTypeIndex] = {
-            { minQuality = math.floor(bMultiplier * 100), grade = CropValueMap.Grades.A, priceMultiplier = aMultiplier },
-            { minQuality = math.floor(cMultiplier * 100), grade = CropValueMap.Grades.B, priceMultiplier = bMultiplier },
-            { minQuality = math.floor(dMultiplier * 100), grade = CropValueMap.Grades.C, priceMultiplier = cMultiplier },
-            { minQuality = 0,                             grade = CropValueMap.Grades.D, priceMultiplier = dMultiplier },
+            { minQuality = GRADE_A_MIN, grade = CropValueMap.Grades.A, priceMultiplier = 1.0 },
+            { minQuality = GRADE_B_MIN, grade = CropValueMap.Grades.B, priceMultiplier = bMultiplier },
+            { minQuality = GRADE_C_MIN, grade = CropValueMap.Grades.C, priceMultiplier = cMultiplier },
+            { minQuality = 0,           grade = CropValueMap.Grades.D, priceMultiplier = dMultiplier },
         }
     end
 end

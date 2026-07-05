@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI>
+    <GuiElement profile="uiInGameMenuFrame">
+
+        <GuiElement profile="fs25_menuHeaderPanel">
+            <Bitmap profile="fs25_menuHeaderIconBg">
+                <Bitmap profile="fs25_menuHeaderIcon" imageSliceId="gui.icon_ingameMenu_calendar" />
+            </Bitmap>
+            <Text profile="fs25_menuHeaderTitle" text="$l10n_moistureSystem_gui_weather" />
+        </GuiElement>
+
+<BoxLayout profile="fs25_calendarLegendBox">
+            <Text profile="fs25_calendarLegendText" text="$l10n_moistureSystem_gui_currentEnvironment:"/>
+            <Text profile="msCalendarLegendEnvironment" id="weatherEnvLabel" text="" />
+        </BoxLayout>
+
+        <Text profile="msWeatherSectionHeader" position="20px -55px"
+              text="$l10n_moistureSystem_gui_weather_forecast" />
+        <Text profile="msWeatherNote" position="20px -86px" size="900px 32px"
+              text="$l10n_moistureSystem_gui_weather_forecastNote" />
+
+        <!-- Forecast panels: 3 × 450px + 2 × 20px gap = 1390px -->
+        <BoxLayout profile="msWeatherPanelRow" position="20px -122px" size="1390px 240px">
+
+            <!-- ── Panel 1 ── -->
+            <GuiElement profile="msWeatherPanel" id="forecastPanel1">
+                <!-- Season icon: 4 bitmaps, only active one shown -->
+                <Bitmap profile="fs25_calendarHeaderSeasonSpring" id="fp1Spr" position="0px 0px" size="36px 36px" />
+                <Bitmap profile="fs25_calendarHeaderSeasonSummer" id="fp1Sum" position="0px 0px" size="36px 36px" />
+                <Bitmap profile="fs25_calendarHeaderSeasonFall"   id="fp1Fal" position="0px 0px" size="36px 36px" />
+                <Bitmap profile="fs25_calendarHeaderSeasonWinter" id="fp1Win" position="0px 0px" size="36px 36px" />
+                <!-- Title centred on 36px icon height -->
+                <Text profile="msWeatherPanelTitle" id="fp1Title" position="44px 0px" text="" />
+
+                <!-- Summary row y=-48 -->
+                <Bitmap profile="msWeatherGroupIcon" position="0px -48px"   imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherGroupPct"  id="fp1PrecPct"  position="28px -48px"  text="-" />
+                <Text profile="msWeatherGroupDiff" id="fp1PrecDiff" position="80px -50px"  text="" />
+                <Bitmap profile="msWeatherGroupIcon" position="138px -48px"  imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherGroupPct"  id="fp1SunPct"   position="166px -48px" text="-" />
+                <Text profile="msWeatherGroupDiff" id="fp1SunDiff"  position="218px -50px" text="" />
+                <Bitmap profile="msWeatherGroupIcon" position="276px -48px"  imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherGroupPct"  id="fp1CldPct"   position="304px -48px" text="-" />
+                <Text profile="msWeatherGroupDiff" id="fp1CldDiff"  position="356px -50px" text="" />
+
+                <!-- Month 1  y=-84 -->
+                <Text profile="msWeatherMonthLabel" id="fp1M1Lbl"  position="0px -84px"   text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="74px -86px"   imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherMonthPct"  id="fp1M1Prec"  position="96px -84px"  text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp1M1PrecD" position="140px -84px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="182px -86px"  imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherMonthPct"  id="fp1M1Sun"   position="204px -84px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp1M1SunD"  position="248px -84px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="290px -86px"  imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherMonthPct"  id="fp1M1Cld"   position="312px -84px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp1M1CldD"  position="356px -84px" text="" />
+
+                <!-- Month 2  y=-112 -->
+                <Text profile="msWeatherMonthLabel" id="fp1M2Lbl"  position="0px -112px"   text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="74px -114px"  imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherMonthPct"  id="fp1M2Prec"  position="96px -112px"  text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp1M2PrecD" position="140px -112px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="182px -114px" imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherMonthPct"  id="fp1M2Sun"   position="204px -112px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp1M2SunD"  position="248px -112px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="290px -114px" imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherMonthPct"  id="fp1M2Cld"   position="312px -112px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp1M2CldD"  position="356px -112px" text="" />
+
+                <!-- Month 3  y=-140 -->
+                <Text profile="msWeatherMonthLabel" id="fp1M3Lbl"  position="0px -140px"   text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="74px -142px"  imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherMonthPct"  id="fp1M3Prec"  position="96px -140px"  text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp1M3PrecD" position="140px -140px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="182px -142px" imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherMonthPct"  id="fp1M3Sun"   position="204px -140px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp1M3SunD"  position="248px -140px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="290px -142px" imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherMonthPct"  id="fp1M3Cld"   position="312px -140px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp1M3CldD"  position="356px -140px" text="" />
+            </GuiElement>
+
+            <!-- ── Panel 2 ── -->
+            <GuiElement profile="msWeatherPanel" id="forecastPanel2">
+                <Bitmap profile="fs25_calendarHeaderSeasonSpring" id="fp2Spr" position="0px 0px" size="36px 36px" />
+                <Bitmap profile="fs25_calendarHeaderSeasonSummer" id="fp2Sum" position="0px 0px" size="36px 36px" />
+                <Bitmap profile="fs25_calendarHeaderSeasonFall"   id="fp2Fal" position="0px 0px" size="36px 36px" />
+                <Bitmap profile="fs25_calendarHeaderSeasonWinter" id="fp2Win" position="0px 0px" size="36px 36px" />
+                <Text profile="msWeatherPanelTitle" id="fp2Title" position="44px 0px" text="" />
+
+                <Bitmap profile="msWeatherGroupIcon" position="0px -48px"   imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherGroupPct"  id="fp2PrecPct"  position="28px -48px"  text="-" />
+                <Text profile="msWeatherGroupDiff" id="fp2PrecDiff" position="80px -50px"  text="" />
+                <Bitmap profile="msWeatherGroupIcon" position="138px -48px"  imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherGroupPct"  id="fp2SunPct"   position="166px -48px" text="-" />
+                <Text profile="msWeatherGroupDiff" id="fp2SunDiff"  position="218px -50px" text="" />
+                <Bitmap profile="msWeatherGroupIcon" position="276px -48px"  imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherGroupPct"  id="fp2CldPct"   position="304px -48px" text="-" />
+                <Text profile="msWeatherGroupDiff" id="fp2CldDiff"  position="356px -50px" text="" />
+
+                <Text profile="msWeatherMonthLabel" id="fp2M1Lbl"  position="0px -84px"   text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="74px -86px"   imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherMonthPct"  id="fp2M1Prec"  position="96px -84px"  text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp2M1PrecD" position="140px -84px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="182px -86px"  imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherMonthPct"  id="fp2M1Sun"   position="204px -84px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp2M1SunD"  position="248px -84px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="290px -86px"  imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherMonthPct"  id="fp2M1Cld"   position="312px -84px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp2M1CldD"  position="356px -84px" text="" />
+
+                <Text profile="msWeatherMonthLabel" id="fp2M2Lbl"  position="0px -112px"   text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="74px -114px"  imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherMonthPct"  id="fp2M2Prec"  position="96px -112px"  text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp2M2PrecD" position="140px -112px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="182px -114px" imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherMonthPct"  id="fp2M2Sun"   position="204px -112px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp2M2SunD"  position="248px -112px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="290px -114px" imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherMonthPct"  id="fp2M2Cld"   position="312px -112px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp2M2CldD"  position="356px -112px" text="" />
+
+                <Text profile="msWeatherMonthLabel" id="fp2M3Lbl"  position="0px -140px"   text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="74px -142px"  imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherMonthPct"  id="fp2M3Prec"  position="96px -140px"  text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp2M3PrecD" position="140px -140px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="182px -142px" imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherMonthPct"  id="fp2M3Sun"   position="204px -140px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp2M3SunD"  position="248px -140px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="290px -142px" imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherMonthPct"  id="fp2M3Cld"   position="312px -140px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp2M3CldD"  position="356px -140px" text="" />
+            </GuiElement>
+
+            <!-- ── Panel 3 ── -->
+            <GuiElement profile="msWeatherPanel" id="forecastPanel3">
+                <Bitmap profile="fs25_calendarHeaderSeasonSpring" id="fp3Spr" position="0px 0px" size="36px 36px" />
+                <Bitmap profile="fs25_calendarHeaderSeasonSummer" id="fp3Sum" position="0px 0px" size="36px 36px" />
+                <Bitmap profile="fs25_calendarHeaderSeasonFall"   id="fp3Fal" position="0px 0px" size="36px 36px" />
+                <Bitmap profile="fs25_calendarHeaderSeasonWinter" id="fp3Win" position="0px 0px" size="36px 36px" />
+                <Text profile="msWeatherPanelTitle" id="fp3Title" position="44px 0px" text="" />
+
+                <Bitmap profile="msWeatherGroupIcon" position="0px -48px"   imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherGroupPct"  id="fp3PrecPct"  position="28px -48px"  text="-" />
+                <Text profile="msWeatherGroupDiff" id="fp3PrecDiff" position="80px -50px"  text="" />
+                <Bitmap profile="msWeatherGroupIcon" position="138px -48px"  imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherGroupPct"  id="fp3SunPct"   position="166px -48px" text="-" />
+                <Text profile="msWeatherGroupDiff" id="fp3SunDiff"  position="218px -50px" text="" />
+                <Bitmap profile="msWeatherGroupIcon" position="276px -48px"  imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherGroupPct"  id="fp3CldPct"   position="304px -48px" text="-" />
+                <Text profile="msWeatherGroupDiff" id="fp3CldDiff"  position="356px -50px" text="" />
+
+                <Text profile="msWeatherMonthLabel" id="fp3M1Lbl"  position="0px -84px"   text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="74px -86px"   imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherMonthPct"  id="fp3M1Prec"  position="96px -84px"  text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp3M1PrecD" position="140px -84px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="182px -86px"  imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherMonthPct"  id="fp3M1Sun"   position="204px -84px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp3M1SunD"  position="248px -84px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="290px -86px"  imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherMonthPct"  id="fp3M1Cld"   position="312px -84px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp3M1CldD"  position="356px -84px" text="" />
+
+                <Text profile="msWeatherMonthLabel" id="fp3M2Lbl"  position="0px -112px"   text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="74px -114px"  imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherMonthPct"  id="fp3M2Prec"  position="96px -112px"  text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp3M2PrecD" position="140px -112px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="182px -114px" imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherMonthPct"  id="fp3M2Sun"   position="204px -112px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp3M2SunD"  position="248px -112px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="290px -114px" imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherMonthPct"  id="fp3M2Cld"   position="312px -112px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp3M2CldD"  position="356px -112px" text="" />
+
+                <Text profile="msWeatherMonthLabel" id="fp3M3Lbl"  position="0px -140px"   text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="74px -142px"  imageSliceId="gui.icon_weather_rain" />
+                <Text profile="msWeatherMonthPct"  id="fp3M3Prec"  position="96px -140px"  text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp3M3PrecD" position="140px -140px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="182px -142px" imageSliceId="gui.icon_weather_sun" />
+                <Text profile="msWeatherMonthPct"  id="fp3M3Sun"   position="204px -140px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp3M3SunD"  position="248px -140px" text="" />
+                <Bitmap profile="msWeatherMonthIcon" position="290px -142px" imageSliceId="gui.icon_weather_cloudy" />
+                <Text profile="msWeatherMonthPct"  id="fp3M3Cld"   position="312px -140px" text="-" />
+                <Text profile="msWeatherMonthDiff" id="fp3M3CldD"  position="356px -140px" text="" />
+            </GuiElement>
+
+        </BoxLayout>
+
+        <Text profile="msWeatherSectionHeader" position="20px -372px"
+              text="$l10n_moistureSystem_gui_weather_history" />
+        <Text profile="msWeatherNote" position="20px -403px" size="900px 32px"
+              text="$l10n_moistureSystem_gui_weather_historyNote" />
+
+        <!-- History panels -->
+        <BoxLayout profile="msWeatherPanelRow" position="20px -424px" size="1390px 240px">
+
+            <!-- ── History 1 ── -->
+            <GuiElement profile="msWeatherPanel" id="historyPanel1">
+                <Text profile="msWeatherPanelTitle" id="hp1Year" position="0px -4px" text="" />
+
+                <GuiElement profile="emptyPanel" id="hp1Stats" position="0px -22px" size="420px 200px">
+                    <Bitmap profile="msWeatherGroupIcon" position="0px 0px"    imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherGroupPct"  id="hp1PrecPct"  position="28px 0px"   text="-" />
+                    <Text profile="msWeatherGroupDiff" id="hp1PrecDiff" position="80px -2px"  text="" />
+                    <Bitmap profile="msWeatherGroupIcon" position="138px 0px"   imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherGroupPct"  id="hp1SunPct"   position="166px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff" id="hp1SunDiff"  position="218px -2px" text="" />
+                    <Bitmap profile="msWeatherGroupIcon" position="276px 0px"   imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherGroupPct"  id="hp1CldPct"   position="304px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff" id="hp1CldDiff"  position="356px -2px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp1S1Lbl"  position="0px -38px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -40px"  imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S1Prec"  position="86px -38px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S1PrecD" position="132px -38px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -40px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S1Sun"   position="198px -38px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S1SunD"  position="244px -38px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -40px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S1Cld"   position="310px -38px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S1CldD"  position="356px -38px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp1S2Lbl"  position="0px -66px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -68px"  imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S2Prec"  position="86px -66px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S2PrecD" position="132px -66px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -68px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S2Sun"   position="198px -66px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S2SunD"  position="244px -66px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -68px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S2Cld"   position="310px -66px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S2CldD"  position="356px -66px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp1S3Lbl"  position="0px -94px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -96px"  imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S3Prec"  position="86px -94px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S3PrecD" position="132px -94px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -96px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S3Sun"   position="198px -94px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S3SunD"  position="244px -94px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -96px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S3Cld"   position="310px -94px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S3CldD"  position="356px -94px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp1S4Lbl"  position="0px -122px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -124px" imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S4Prec"  position="86px -122px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S4PrecD" position="132px -122px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -124px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S4Sun"   position="198px -122px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S4SunD"  position="244px -122px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -124px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp1S4Cld"   position="310px -122px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp1S4CldD"  position="356px -122px" text="" />
+                </GuiElement>
+
+                <Text profile="msWeatherNoData" id="hp1NoData" position="0px -22px"
+                      size="420px 180px" text="$l10n_moistureSystem_gui_weather_noData" />
+            </GuiElement>
+
+            <!-- ── History 2 ── -->
+            <GuiElement profile="msWeatherPanel" id="historyPanel2">
+                <Text profile="msWeatherPanelTitle" id="hp2Year" position="0px -4px" text="" />
+
+                <GuiElement profile="emptyPanel" id="hp2Stats" position="0px -22px" size="420px 200px">
+                    <Bitmap profile="msWeatherGroupIcon" position="0px 0px"    imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherGroupPct"  id="hp2PrecPct"  position="28px 0px"   text="-" />
+                    <Text profile="msWeatherGroupDiff" id="hp2PrecDiff" position="80px -2px"  text="" />
+                    <Bitmap profile="msWeatherGroupIcon" position="138px 0px"   imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherGroupPct"  id="hp2SunPct"   position="166px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff" id="hp2SunDiff"  position="218px -2px" text="" />
+                    <Bitmap profile="msWeatherGroupIcon" position="276px 0px"   imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherGroupPct"  id="hp2CldPct"   position="304px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff" id="hp2CldDiff"  position="356px -2px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp2S1Lbl"  position="0px -38px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -40px"  imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S1Prec"  position="86px -38px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S1PrecD" position="132px -38px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -40px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S1Sun"   position="198px -38px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S1SunD"  position="244px -38px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -40px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S1Cld"   position="310px -38px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S1CldD"  position="356px -38px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp2S2Lbl"  position="0px -66px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -68px"  imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S2Prec"  position="86px -66px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S2PrecD" position="132px -66px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -68px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S2Sun"   position="198px -66px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S2SunD"  position="244px -66px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -68px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S2Cld"   position="310px -66px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S2CldD"  position="356px -66px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp2S3Lbl"  position="0px -94px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -96px"  imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S3Prec"  position="86px -94px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S3PrecD" position="132px -94px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -96px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S3Sun"   position="198px -94px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S3SunD"  position="244px -94px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -96px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S3Cld"   position="310px -94px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S3CldD"  position="356px -94px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp2S4Lbl"  position="0px -122px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -124px" imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S4Prec"  position="86px -122px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S4PrecD" position="132px -122px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -124px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S4Sun"   position="198px -122px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S4SunD"  position="244px -122px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -124px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp2S4Cld"   position="310px -122px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp2S4CldD"  position="356px -122px" text="" />
+                </GuiElement>
+
+                <Text profile="msWeatherNoData" id="hp2NoData" position="0px -22px"
+                      size="420px 180px" text="$l10n_moistureSystem_gui_weather_noData" />
+            </GuiElement>
+
+            <!-- ── History 3 ── -->
+            <GuiElement profile="msWeatherPanel" id="historyPanel3">
+                <Text profile="msWeatherPanelTitle" id="hp3Year" position="0px -4px" text="" />
+
+                <GuiElement profile="emptyPanel" id="hp3Stats" position="0px -22px" size="420px 200px">
+                    <Bitmap profile="msWeatherGroupIcon" position="0px 0px"    imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherGroupPct"  id="hp3PrecPct"  position="28px 0px"   text="-" />
+                    <Text profile="msWeatherGroupDiff" id="hp3PrecDiff" position="80px -2px"  text="" />
+                    <Bitmap profile="msWeatherGroupIcon" position="138px 0px"   imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherGroupPct"  id="hp3SunPct"   position="166px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff" id="hp3SunDiff"  position="218px -2px" text="" />
+                    <Bitmap profile="msWeatherGroupIcon" position="276px 0px"   imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherGroupPct"  id="hp3CldPct"   position="304px 0px"  text="-" />
+                    <Text profile="msWeatherGroupDiff" id="hp3CldDiff"  position="356px -2px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp3S1Lbl"  position="0px -38px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -40px"  imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S1Prec"  position="86px -38px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S1PrecD" position="132px -38px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -40px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S1Sun"   position="198px -38px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S1SunD"  position="244px -38px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -40px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S1Cld"   position="310px -38px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S1CldD"  position="356px -38px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp3S2Lbl"  position="0px -66px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -68px"  imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S2Prec"  position="86px -66px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S2PrecD" position="132px -66px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -68px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S2Sun"   position="198px -66px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S2SunD"  position="244px -66px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -68px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S2Cld"   position="310px -66px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S2CldD"  position="356px -66px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp3S3Lbl"  position="0px -94px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -96px"  imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S3Prec"  position="86px -94px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S3PrecD" position="132px -94px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -96px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S3Sun"   position="198px -94px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S3SunD"  position="244px -94px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -96px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S3Cld"   position="310px -94px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S3CldD"  position="356px -94px" text="" />
+
+                    <Text profile="msWeatherMonthLabel" id="hp3S4Lbl"  position="0px -122px"  text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="64px -124px" imageSliceId="gui.icon_weather_rain" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S4Prec"  position="86px -122px"  text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S4PrecD" position="132px -122px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="176px -124px" imageSliceId="gui.icon_weather_sun" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S4Sun"   position="198px -122px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S4SunD"  position="244px -124px" text="" />
+                    <Bitmap profile="msWeatherMonthIcon" position="288px -124px" imageSliceId="gui.icon_weather_cloudy" />
+                    <Text profile="msWeatherMonthPct"  id="hp3S4Cld"   position="310px -122px" text="-" />
+                    <Text profile="msWeatherMonthDiff" id="hp3S4CldD"  position="356px -122px" text="" />
+                </GuiElement>
+
+                <Text profile="msWeatherNoData" id="hp3NoData" position="0px -22px"
+                      size="420px 180px" text="$l10n_moistureSystem_gui_weather_noData" />
+            </GuiElement>
+
+        </BoxLayout>
+
+    </GuiElement>
+</GUI>

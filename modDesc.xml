@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="109">
+<modDesc descVersion="110">
     <author>Ozz</author>
-    <version>1.0.0.7</version>
+    <version>2.0.0.0-alpha1</version>
     <iconFilename>icon_MoistureSystem.dds</iconFilename>
     <title>
         <en>Moisture System</en>
@@ -18,7 +18,8 @@ Experience authentic environmental interactions where moisture levels fluctuate 
 Advanced Crop Quality System: Each harvested load receives a quality rating (0-100) based on its moisture content at harvest. Quality determines your sell price and degrades over time when crops are stored above their ideal moisture level. Sell wet crops and you'll incur drying charges on top of reduced prices. Use the silo drying system to reduce moisture and halt quality loss before selling. Each crop species has unique optimal moisture windows and quality-to-price bands calibrated to real-world agricultural standards. Access quality tables, price grades, and seasonal moisture projections through the in-game menu (Shift+M).
 
 Features:
-- Terrain-aware field moisture simulation with monthly variation patterns across three distinct environment profiles (Dry/Wet/Normal)
+- Regional weather simulation: choose a weather profile matching your region, with realistic seasonal patterns and yearly variation that directly impacts harvest timing and requires forward planning. See the guide on GitHub to create your own.
+- Terrain-aware field moisture simulation driven by the active weather profile, with monthly variation patterns that reflect real regional climates
 - Crop quality system: quality set at harvest, degrades hourly when stored above ideal moisture, drives sell price per crop-specific grade bands
 - Silo drying: walk up to any silo and activate drying to reduce moisture over time. Costs scale with volume and are cheaper than selling wet.
 - Drying charges at point of sale for crops above ideal moisture, shown as a separate finance entry
@@ -29,11 +30,24 @@ Features:
 
 Extensive customization options allow you to calibrate moisture dynamics, quality decay rates, drying speed, tedding efficiency, and decay parameters to match your preferred gameplay experience. Whether you seek hardcore realism or a gentler introduction to moisture management, the system adapts to your vision.
 
-Note: The mod is not compatible with the following mods: NonStopCrop
+Note: The mod is not compatible with the following mods: NonStopCrop, RealisticWeather
 
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
+
+2.0.0.0:
+- The moisture system now controls weather. Choose a Weather Profile that matches your region in game settings. Many maps have appropriate defaults configured within the mod. Weather includes variability that simulates realistic seasonal patterns. This impacts your harvest and requires even more planning than before.
+- Moisture now impacts yield as well as quality. This is not necessarily more punishing - generally crop that is too dry will yield badly and crop that is too wet yield well but with poor quality.
+- You can write your own weather profiles if you like. Visit GitHub and follow the guide.
+- The moisture calendar has been replaced with a Weather information view, showing seasonal forecasts and historical weather data.
+- The moisture to quality UI has been replace with Moisture Impact. This shows the impact of moisture on yield and quality for a given crop.
+- Generally eased material rotting, both for bales and ground piles. Material will take longer to begin to rot, and rot more slowly.
+- Fixed an issue with grain drying not starting in multiplayer games.
+- Vehicles and silos with crop in will now show the current grade of the crop in the HUD. Previously only moisture and quality were shown.
+- Added optimisations on how weather impacts ground piles to improve performance for lower end machines.
+- The impact of weather is now scaled based on the number of days per month.
+- Drying charges are no longer applied when depositing into your own selling station.
 
 1.0.0.7:
 - Fix a freeze when selling certain silos.
@@ -79,7 +93,8 @@ Erleben Sie authentische Umweltinteraktionen, bei denen die Feuchtigkeitsstufen 
 Fortgeschrittenes Kulturqualitätssystem: Jede geerntete Ladung erhält eine Qualitätsbewertung (0-100) basierend auf dem Feuchtigkeitsgehalt bei der Ernte. Die Qualität bestimmt Ihren Verkaufspreis und verschlechtert sich mit der Zeit, wenn Kulturen über ihrem idealen Feuchtigkeitsgehalt gelagert werden. Verkaufen Sie feuchtes Getreide und es fallen zusätzliche Trocknungsgebühren an. Nutzen Sie das Silo-Trocknungssystem, um die Feuchtigkeit zu reduzieren und den Qualitätsverlust vor dem Verkauf zu stoppen. Jede Kulturart verfügt über einzigartige optimale Feuchtigkeitsfenster und kulturspezifische Qualitäts-Preis-Stufen. Greifen Sie auf Qualitätstabellen, Preisstufen und saisonale Feuchtigkeitsprognosen über das In-Game-Menü (Shift+M) zu.
 
 Funktionen:
-- Geländebewusste Feldfeuchtesimulation mit monatlichen Variationsmustern über drei unterschiedliche Umgebungsprofile (Trocken/Nass/Normal)
+- Regionale Wettersimulation: Wählen Sie ein Wetterprofil, das zu Ihrer Region passt, mit realistischen jahreszeitlichen Mustern und jährlicher Variabilität, die den Erntezeitpunkt direkt beeinflusst und vorausschauende Planung erfordert. Weitere Informationen zur Erstellung eigener Profile finden Sie in der Anleitung auf GitHub.
+- Geländebewusste Feldfeuchtesimulation, die vom aktiven Wetterprofil gesteuert wird, mit monatlichen Variationsmustern, die reale regionale Klimata widerspiegeln
 - Qualitätssystem: Qualität wird bei der Ernte festgelegt, verschlechtert sich stündlich bei Lagerung über idealer Feuchtigkeit, bestimmt den Verkaufspreis über kulturspezifische Preisstufen
 - Silo-Trocknung: Gehen Sie zu einem Silo und aktivieren Sie die Trocknung, um die Feuchtigkeit über Zeit zu reduzieren. Kosten skalieren mit dem Volumen und sind günstiger als feuchter Verkauf.
 - Trocknungsgebühren beim Verkauf für Kulturen über idealer Feuchtigkeit, als separater Finanzposten angezeigt
@@ -95,6 +110,19 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop
 
 Änderungsprotokoll:
+
+2.0.0.0:
+- Das Feuchtigkeitssystem steuert jetzt das Wetter. Wählen Sie in den Spieleinstellungen ein Wetterprofil, das zu Ihrer Region passt. Viele Karten haben innerhalb des Mods geeignete Standardeinstellungen konfiguriert. Das Wetter enthält Variabilität, die realistische jahreszeitliche Muster simuliert. Dies beeinflusst Ihre Ernte und erfordert noch mehr Planung als zuvor.
+- Feuchtigkeit beeinflusst jetzt sowohl den Ertrag als auch die Qualität. Das ist nicht unbedingt schwieriger - generell liefert zu trockenes Getreide schlechten Ertrag, während zu feuchtes Getreide guten Ertrag aber schlechte Qualität bringt.
+- Sie können Ihre eigenen Wetterprofile erstellen. Besuchen Sie GitHub und folgen Sie der Anleitung.
+- Der Feuchtigkeitskalender wurde durch eine Wetterinformationsansicht ersetzt, die jahreszeitliche Prognosen und historische Wetterdaten anzeigt.
+- Die Feuchtigkeit-zu-Qualität-Oberfläche wurde durch Feuchtigkeitseinfluss ersetzt. Diese zeigt den Einfluss der Feuchtigkeit auf Ertrag und Qualität für eine bestimmte Kultur.
+- Generell erleichtertes Materialverrotten, sowohl für Ballen als auch für Bodenhaufen. Material braucht länger, um zu verrotten, und verrottet langsamer.
+- Ein Problem behoben, bei dem die Getreidetrocknung im Multiplayer-Modus nicht startete.
+- Fahrzeuge und Silos mit Ernte zeigen jetzt im HUD die aktuelle Qualitätsstufe der Ernte an. Zuvor wurden nur Feuchtigkeit und Qualität angezeigt.
+- Optimierungen hinzugefügt, wie Wetter Bodenhaufen beeinflusst, um die Leistung für leistungsschwächere Maschinen zu verbessern.
+- Der Einfluss des Wetters wird jetzt basierend auf der Anzahl der Tage pro Monat skaliert.
+- Trocknungsgebühren werden nicht mehr berechnet, wenn Ernte in die eigene Verkaufsstation eingelagert wird.
 
 1.0.0.6:
 - Verschiedene Optimierungen zur Verbesserung der Leistung, wenn eine große Anzahl von Bodenobjekten dauerhaft bestehen bleibt.
@@ -136,7 +164,8 @@ Découvrez des interactions environnementales authentiques où les niveaux d'hum
 Système avancé de qualité des cultures : Chaque chargement récolté reçoit une note de qualité (0-100) basée sur sa teneur en humidité à la récolte. La qualité détermine votre prix de vente et se dégrade avec le temps lorsque les cultures sont stockées au-dessus de leur niveau d'humidité idéal. Vendez des cultures humides et vous encourrez des frais de séchage en plus des prix réduits. Utilisez le système de séchage en silo pour réduire l'humidité et stopper la perte de qualité avant la vente. Chaque espèce de culture possède des fenêtres d'humidité optimales uniques et des bandes qualité-prix spécifiques. Accédez aux tables de qualité, aux grades de prix et aux projections d'humidité saisonnières via le menu en jeu (Maj+M).
 
 Caractéristiques :
-- Simulation d'humidité des champs sensible au terrain avec modèles de variation mensuelle sur trois profils environnementaux distincts (Sec/Humide/Normal)
+- Simulation météorologique régionale : choisissez un profil météo correspondant à votre région, avec des schémas saisonniers réalistes et une variabilité annuelle qui impacte directement le timing de récolte et exige une planification anticipée. Consultez le guide sur GitHub pour créer vos propres profils.
+- Simulation d'humidité des champs sensible au terrain, pilotée par le profil météorologique actif, avec des modèles de variation mensuelle reflétant les climats régionaux réels
 - Système de qualité : la qualité est définie à la récolte, se dégrade chaque heure lorsque stockée au-dessus de l'humidité idéale, détermine le prix de vente selon des bandes de prix spécifiques par culture
 - Séchage en silo : approchez-vous d'un silo et activez le séchage pour réduire l'humidité au fil du temps. Les coûts varient selon le volume et sont moins chers que la vente humide.
 - Frais de séchage au point de vente pour les cultures au-dessus de l'humidité idéale, affichés comme une entrée financière séparée
@@ -152,6 +181,19 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop
 
 Journal des modifications :
+
+2.0.0.0 :
+- Le système d'humidité contrôle désormais la météo. Choisissez un profil météorologique correspondant à votre région dans les paramètres du jeu. De nombreuses cartes ont des valeurs par défaut appropriées configurées dans le mod. La météo inclut une variabilité qui simule des schémas saisonniers réalistes. Cela impacte votre récolte et nécessite encore plus de planification qu'auparavant.
+- L'humidité affecte désormais le rendement ainsi que la qualité. Ce n'est pas nécessairement plus punitif - en général, les cultures trop sèches donnent un mauvais rendement tandis que les cultures trop humides donnent un bon rendement mais une mauvaise qualité.
+- Vous pouvez créer vos propres profils météorologiques. Visitez GitHub et suivez le guide.
+- Le calendrier d'humidité a été remplacé par une vue d'informations météorologiques, affichant des prévisions saisonnières et des données météorologiques historiques.
+- L'interface humidité-vers-qualité a été remplacée par Impact de l'Humidité. Cela montre l'impact de l'humidité sur le rendement et la qualité pour une culture donnée.
+- Pourriture des matériaux généralement allégée, aussi bien pour les balles que pour les tas au sol. Les matériaux mettront plus de temps à commencer à pourrir et pourriront plus lentement.
+- Correction d'un problème où le séchage des céréales ne démarrait pas dans les parties multijoueur.
+- Les véhicules et silos contenant des récoltes affichent désormais la qualité actuelle de la récolte dans le HUD. Auparavant, seuls l'humidité et la qualité étaient affichées.
+- Ajout d'optimisations sur la façon dont la météo affecte les tas au sol pour améliorer les performances sur les machines moins puissantes.
+- L'impact de la météo est désormais mis à l'échelle en fonction du nombre de jours par mois.
+- Les frais de séchage ne sont plus appliqués lors du dépôt dans votre propre point de vente.
 
 1.0.0.6 :
 - Optimisations diverses pour améliorer les performances lorsqu'un grand nombre d'objets au sol persistent.
@@ -187,7 +229,8 @@ Journal des modifications :
     </description>
     <extraSourceFiles>
         <sourceFile filename="src/data/CropValueMap.lua"/>
-        <sourceFile filename="src/data/MoistureClamp.lua"/>
+        <sourceFile filename="src/WeatherHistoryCollector.lua"/>
+        <sourceFile filename="src/WeatherProfileSystem.lua"/>
         <sourceFile filename="src/extensions/PlayerHUDUpdateExtension.lua"/>
         <sourceFile filename="src/extensions/PlaceableInfoTriggerExtension.lua"/>
         <sourceFile filename="src/extensions/CutterExtension.lua"/>
@@ -208,11 +251,12 @@ Journal des modifications :
         <sourceFile filename="src/gui/QualityPriceTableRenderer.lua"/>
         <sourceFile filename="src/gui/MoistureGuiGrades.lua"/>
         <sourceFile filename="src/gui/MoistureGuiPrices.lua"/>
-        <sourceFile filename="src/gui/MoistureGuiCalendar.lua"/>
+        <sourceFile filename="src/gui/MoistureGuiWeather.lua"/>
         <sourceFile filename="src/gui/MoistureGui.lua"/>
         <sourceFile filename="src/GroundPropertyTracker.lua"/>
         <sourceFile filename="src/BaleRottingSystem.lua"/>
         <sourceFile filename="src/DryingSystem.lua"/>
+        <sourceFile filename="src/WitheringSystem.lua"/>
         <sourceFile filename="src/events/InitialClientStateEvent.lua"/>
         <sourceFile filename="src/events/MoistureSettingsEvent.lua"/>
         <sourceFile filename="src/events/MoistureUpdateEvent.lua"/>
@@ -225,7 +269,7 @@ Journal des modifications :
         <sourceFile filename="src/events/DryingToggleEvent.lua"/>
         <sourceFile filename="src/MoistureSettings.lua"/>
         <sourceFile filename="src/handTools/MoistureMeterTool.lua"/>
-        <sourceFile filename="src/main.lua"/>
+<sourceFile filename="src/main.lua"/>
     </extraSourceFiles>
     <multiplayer supported="true"/>
     <l10n filenamePrefix="languages/l10n" />
@@ -260,6 +304,17 @@ Journal des modifications :
                 </paragraph>
                 <paragraph>
                     <text text="$l10n_help_moisture_field_2"/>
+                </paragraph>
+            </page>
+            <page title="$l10n_help_moisture_weather_title" iconSliceId="helpline.icon_others">
+                <paragraph>
+                    <text text="$l10n_help_moisture_weather_1"/>
+                </paragraph>
+                <paragraph>
+                    <text text="$l10n_help_moisture_weather_2"/>
+                </paragraph>
+                <paragraph>
+                    <text text="$l10n_help_moisture_weather_3"/>
                 </paragraph>
             </page>
             <page title="$l10n_help_moisture_grading_title" iconSliceId="helpline.icon_yieldBoost">
