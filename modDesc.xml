@@ -269,8 +269,7 @@ Journal des modifications :
         <sourceFile filename="src/events/DryingToggleEvent.lua"/>
         <sourceFile filename="src/MoistureSettings.lua"/>
         <sourceFile filename="src/handTools/MoistureMeterTool.lua"/>
-        <sourceFile filename="src/DebugLogger.lua"/>
-        <sourceFile filename="src/main.lua"/>
+<sourceFile filename="src/main.lua"/>
     </extraSourceFiles>
     <multiplayer supported="true"/>
     <l10n filenamePrefix="languages/l10n" />
