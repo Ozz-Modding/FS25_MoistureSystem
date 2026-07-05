@@ -283,7 +283,7 @@ function DryingSystem:drySilo(placeable, ms, dryingRate, sellChargeRate, complet
             g_i18n:getText("ms_drying_complete"))
     else
         local volumeFactor = math.max(1, totalLiters / 10000)
-        local effectiveDryingRate = dryingRate / volumeFactor
+        local effectiveDryingRate = (dryingRate / volumeFactor) * ms:getScaleFactor()
 
         for _, storage in ipairs(placeable.spec_silo.storages) do
             for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
@@ -358,7 +358,7 @@ function DryingSystem:dryShed(placeable, ms, dryingRate, sellChargeRate, complet
     end
 
     local volumeFactor = math.max(1, totalLiters / 10000)
-    local effectiveDryingRate = dryingRate / volumeFactor
+    local effectiveDryingRate = (dryingRate / volumeFactor) * ms:getScaleFactor()
 
     for _, entry in ipairs(pilesToDry) do
         entry.pile.properties.moisture = math.max(entry.idealMax, entry.pile.properties.moisture - effectiveDryingRate)

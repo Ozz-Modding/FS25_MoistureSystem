@@ -78,9 +78,10 @@ function BaleRottingSystem:updateBaleExposure(uniqueId, timescaledDt, isExposedT
     local currentExposure = baleData and baleData.exposure or 0
     local peakExposure = baleData and baleData.peakExposure or 0
 
+    local scaleFactor = g_currentMission.MoistureSystem:getScaleFactor()
     if isExposedToRain then
         -- Accumulate exposure during rain (cap at 2x fast rot threshold)
-        currentExposure = math.min(currentExposure + timescaledDt, self.FAST_ROT_THRESHOLD * 2)
+        currentExposure = math.min(currentExposure + timescaledDt * scaleFactor, self.FAST_ROT_THRESHOLD * 2)
         -- Track peak exposure
         peakExposure = math.max(peakExposure, currentExposure)
     else
@@ -88,7 +89,7 @@ function BaleRottingSystem:updateBaleExposure(uniqueId, timescaledDt, isExposedT
         -- Once rotting starts, bale cannot dry back
         if currentExposure < self.SLOW_ROT_THRESHOLD then
             local decayRate = self.DECAY_RATE * (g_currentMission.MoistureSystem.settings.baleExposureDecayRate or 1.0)
-            currentExposure = math.max(currentExposure - (timescaledDt * decayRate * sunDryingMultiplier), 0)
+            currentExposure = math.max(currentExposure - (timescaledDt * decayRate * sunDryingMultiplier * scaleFactor), 0)
         end
         -- If already rotting (>= slow rot threshold), exposure stays at current level
     end
@@ -299,7 +300,7 @@ function BaleRottingSystem:calculateRotLoss(bale, rainfall, snowfall, hailfall, 
     -- Apply settings multiplier
     local settingsMultiplier = g_currentMission.MoistureSystem.settings.baleRotRate or 1.0
 
-    return baseLoss * settingsMultiplier
+    return baseLoss * settingsMultiplier * g_currentMission.MoistureSystem:getScaleFactor()
 end
 
 ---

@@ -1127,6 +1127,8 @@ function GroundPropertyTracker:tickRainExposureAndRot(key, pile, rotAccumulators
     local rainExposure = pile.properties.rainExposure or 0
     local peakRainExposure = pile.properties.peakRainExposure or 0
 
+    local scaleFactor = g_currentMission.MoistureSystem:getScaleFactor()
+
     -- Apply accrued rain time (gain) then accrued dry time (decay). If a sweep
     -- window straddles a weather transition both can be > 0 in one visit; we apply
     -- gain-then-decay. This is exact for the common rain->dry case (pile gets wet,
@@ -1135,13 +1137,13 @@ function GroundPropertyTracker:tickRainExposureAndRot(key, pile, rotAccumulators
     -- ~sweep-period window, negligible against the 60-100 min rot thresholds and
     -- non-cumulative (each visit re-reads the true accumulators).
     if rainSince > 0 then
-        rainExposure = rainExposure + rainSince
+        rainExposure = rainExposure + rainSince * scaleFactor
         if rainExposure > peakRainExposure then
             peakRainExposure = rainExposure
         end
     end
     if drySince > 0 then
-        rainExposure = math.max(0, rainExposure - (drySince * GroundPropertyTracker.DRYING_DECAY_RATE))
+        rainExposure = math.max(0, rainExposure - (drySince * GroundPropertyTracker.DRYING_DECAY_RATE * scaleFactor))
 
         -- Once a pile crosses SLOW_ROT_EXPOSURE_TIME its peak stays elevated
         -- forever (rot is permanent). Below that threshold, peak follows the
@@ -1176,7 +1178,7 @@ function GroundPropertyTracker:tickRainExposureAndRot(key, pile, rotAccumulators
                 math.random() * (GroundPropertyTracker.ROT_ACCUMULATION_MAX - GroundPropertyTracker.ROT_ACCUMULATION_MIN)
 
             local rotMultiplier = rotLevel == 2 and 1.4 or 1.0
-            rotAccumulators[key] = rotAccumulators[key] + baseAmount * rotMultiplier * (elapsed / 1000)
+            rotAccumulators[key] = rotAccumulators[key] + baseAmount * rotMultiplier * (elapsed / 1000) * scaleFactor
 
             if rotAccumulators[key] >= GroundPropertyTracker.ROT_REMOVAL_THRESHOLD then
                 return self:removeRottedPileVolume(key, pile, rotAccumulators)
@@ -1591,7 +1593,7 @@ function GroundPropertyTracker:degradeQuality(decayRate, decayMultiplier)
                 local _, idealMax = CropValueMap.getIdealRange(pile.fillType)
                 if idealMax and pile.properties.moisture > idealMax then
                     local overshoot = pile.properties.moisture - idealMax
-                    local degradation = decayRate * overshoot * 100 * decayMultiplier
+                    local degradation = decayRate * overshoot * 100 * decayMultiplier * g_currentMission.MoistureSystem:getScaleFactor()
                     pile.properties.quality = math.max(0, pile.properties.quality - degradation)
                 end
             end

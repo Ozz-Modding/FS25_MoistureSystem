@@ -53,6 +53,12 @@ MoistureSystem.MapProfileDefaults = {
     FS25_Turvo_Map                       = "brazilsouth",
 }
 
+function MoistureSystem:getScaleFactor()
+    local daysPerPeriod = g_currentMission.environment.daysPerPeriod or 1
+    local clamped = math.min(daysPerPeriod, 5)
+    return 1 / (clamped ^ 0.7)
+end
+
 function MoistureSystem:getDefaultProfileForMap()
     local env = g_currentMission and g_currentMission.missionInfo and g_currentMission.missionInfo.customEnvironment
     if env then
@@ -221,9 +227,10 @@ function MoistureSystem:updateMoistureLevel(delta)
     -- Calculate moisture delta
     local moistureDelta = 0
 
+    local scaleFactor = self:getScaleFactor()
     if rainfall > 0 or snowfall > 0 or hailfall > 0 then
         moistureDelta = (rainfall + (snowfall * 0.55) + (hailfall * 0.5)) * 0.009945 * scaledDelta *
-            self.settings.moistureGainMultiplier
+            self.settings.moistureGainMultiplier * scaleFactor
         self:adjustMoisture(moistureDelta)
     else
         -- Lose moisture from temperature (warmer = more loss)
@@ -245,7 +252,7 @@ function MoistureSystem:updateMoistureLevel(delta)
             rateFactor = temperature * 0.00004264
         end
 
-        moistureDelta = moistureDelta - (rateFactor * scaledDelta * sunFactor * self.settings.moistureLossMultiplier)
+        moistureDelta = moistureDelta - (rateFactor * scaledDelta * sunFactor * self.settings.moistureLossMultiplier * scaleFactor)
 
         self:adjustMoisture(moistureDelta)
     end
@@ -791,7 +798,7 @@ function MoistureSystem:onHourChanged()
                 local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
                 if idealMax and info.moisture > idealMax then
                     local overshoot = info.moisture - idealMax
-                    local degradation = self.QUALITY_DECAY_RATE * overshoot * 100 * decayMultiplier
+                    local degradation = self.QUALITY_DECAY_RATE * overshoot * 100 * decayMultiplier * self:getScaleFactor()
                     info.quality = math.max(0, info.quality - degradation)
                 end
             end
