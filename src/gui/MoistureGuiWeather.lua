@@ -39,8 +39,7 @@ function MoistureGuiWeather:updateWeather()
         local profileId   = g_currentMission.MoistureSystem.settings.weatherProfile
         local profile     = wps.profiles[profileId]
         local profileName = profile and profile.displayName or profileId
-        local scenarioId  = wps.activeScenarioId or "normal"
-        envLabel:setText(profileName .. " / " .. scenarioId)
+        envLabel:setText(profileName)
     end
 
     for i = 0, 2 do

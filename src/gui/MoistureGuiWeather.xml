@@ -9,8 +9,7 @@
             <Text profile="fs25_menuHeaderTitle" text="$l10n_moistureSystem_gui_weather" />
         </GuiElement>
 
-        <!-- Environment label (profile / scenario) -->
-        <BoxLayout profile="fs25_calendarLegendBox">
+<BoxLayout profile="fs25_calendarLegendBox">
             <Text profile="fs25_calendarLegendText" text="$l10n_moistureSystem_gui_currentEnvironment:"/>
             <Text profile="msCalendarLegendEnvironment" id="weatherEnvLabel" text="" />
         </BoxLayout>
