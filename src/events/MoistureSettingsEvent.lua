@@ -52,9 +52,10 @@ function MoistureSettingsEvent:run(connection)
         g_server:broadcastEvent(MoistureSettingsEvent.new())
     end
 
-    g_currentMission.MoistureSystem.settings.weatherProfile = self.weatherProfile
     local wps = g_currentMission.WeatherProfileSystem
-    if wps then wps:setActiveProfile(self.weatherProfile) end
+    local profileChanged = self.weatherProfile ~= g_currentMission.MoistureSystem.settings.weatherProfile
+    g_currentMission.MoistureSystem.settings.weatherProfile = self.weatherProfile
+    if wps and profileChanged then wps:setActiveProfile(self.weatherProfile) end
     g_currentMission.MoistureSystem.settings.moistureLossMultiplier = self.moistureLossMultiplier
     g_currentMission.MoistureSystem.settings.moistureGainMultiplier = self.moistureGainMultiplier
     g_currentMission.MoistureSystem.settings.teddingMoistureReduction = self.teddingMoistureReduction
