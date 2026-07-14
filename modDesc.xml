@@ -48,6 +48,7 @@ Changelog:
 - Added optimisations on how weather impacts ground piles to improve performance for lower end machines.
 - The impact of weather is now scaled based on the number of days per month.
 - Drying charges are no longer applied when depositing into your own selling station.
+- Existing crop that pre-dates the moisture mod will now be assigned 100% quality and ideal moisture when first interacted with.
 
 1.0.0.7:
 - Fix a freeze when selling certain silos.
@@ -123,6 +124,7 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop
 - Optimierungen hinzugefügt, wie Wetter Bodenhaufen beeinflusst, um die Leistung für leistungsschwächere Maschinen zu verbessern.
 - Der Einfluss des Wetters wird jetzt basierend auf der Anzahl der Tage pro Monat skaliert.
 - Trocknungsgebühren werden nicht mehr berechnet, wenn Ernte in die eigene Verkaufsstation eingelagert wird.
+- Bestehendes Getreide, das vor dem Feuchtigkeits-Mod angelegt wurde, erhält beim ersten Zugriff 100% Qualität und ideale Feuchtigkeit.
 
 1.0.0.6:
 - Verschiedene Optimierungen zur Verbesserung der Leistung, wenn eine große Anzahl von Bodenobjekten dauerhaft bestehen bleibt.
@@ -194,6 +196,7 @@ Journal des modifications :
 - Ajout d'optimisations sur la façon dont la météo affecte les tas au sol pour améliorer les performances sur les machines moins puissantes.
 - L'impact de la météo est désormais mis à l'échelle en fonction du nombre de jours par mois.
 - Les frais de séchage ne sont plus appliqués lors du dépôt dans votre propre point de vente.
+- Les récoltes existantes antérieures au mod d'humidité se verront attribuer une qualité de 100% et une humidité idéale lors de leur première interaction.
 
 1.0.0.6 :
 - Optimisations diverses pour améliorer les performances lorsqu'un grand nombre d'objets au sol persistent.

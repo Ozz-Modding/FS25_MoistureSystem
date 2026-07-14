@@ -610,8 +610,15 @@ function MoistureSystem:transferObjectInfo(sourceId, targetId, sourceLiters, tar
     local targetQuality = targetInfo and targetInfo.quality or nil
 
     if sourceMoisture == nil and targetMoisture == nil then
-        sourceMoisture = self.currentMoisturePercent
-        sourceQuality = self:deriveQuality(fillType, sourceMoisture)
+        -- Legacy crop with no moisture history (e.g. pre-mod save) — treat as ideal quality
+        local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillType)
+        local idealMin, idealMax = CropValueMap.getIdealRange(fillTypeName)
+        if idealMin and idealMax then
+            sourceMoisture = (idealMin + idealMax) / 2
+        else
+            sourceMoisture = 0.14
+        end
+        sourceQuality = 100
     elseif sourceMoisture == nil then
         return
     end
