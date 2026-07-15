@@ -264,7 +264,7 @@ PlayerHUDUpdater.update = Utils.appendedFunction(PlayerHUDUpdater.update, MSPlay
 ---
 function MSPlayerHUDExtension:showObjectMoistureInfo()
     -- Only show if we have a valid object
-    if self.object == nil or self.object.uniqueId == nil then
+    if self.object == nil or type(self.object) == "number" or self.object.uniqueId == nil then
         return
     end
 
