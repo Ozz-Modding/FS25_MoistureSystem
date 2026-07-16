@@ -1133,6 +1133,7 @@ end
 ---
 function MoistureSystem:writeInitialClientState(streamId, connection)
     streamWriteFloat32(streamId, self.currentMoisturePercent)
+    streamWriteString(streamId, self.settings.weatherProfile or "ukwest")
     streamWriteFloat32(streamId, self.settings.moistureLossMultiplier)
     streamWriteFloat32(streamId, self.settings.moistureGainMultiplier)
     streamWriteFloat32(streamId, self.settings.teddingMoistureReduction)
@@ -1154,6 +1155,9 @@ end
 ---
 function MoistureSystem:readInitialClientState(streamId, connection)
     self.currentMoisturePercent = streamReadFloat32(streamId)
+    local weatherProfile = streamReadString(streamId)
+    local profileChanged = weatherProfile ~= self.settings.weatherProfile
+    self.settings.weatherProfile = weatherProfile
     self.settings.moistureLossMultiplier = streamReadFloat32(streamId)
     self.settings.moistureGainMultiplier = streamReadFloat32(streamId)
     self.settings.teddingMoistureReduction = streamReadFloat32(streamId)
@@ -1166,6 +1170,22 @@ function MoistureSystem:readInitialClientState(streamId, connection)
     self.settings.sellDryingChargeRate = streamReadFloat32(streamId)
     self.settings.showFieldMoisture = streamReadBool(streamId)
     self.settings.moistureMeterReporting = streamReadInt32(streamId)
+
+    local wps = g_currentMission.WeatherProfileSystem
+    if wps and profileChanged then wps:setActiveProfile(weatherProfile) end
+
+    -- Update settings UI controls
+    for _, id in pairs(MoistureSettings.menuItems) do
+        local menuOption = MoistureSettings.CONTROLS[id]
+        if menuOption then
+            local isAdmin = g_currentMission:getIsServer() or g_currentMission.isMasterUser
+            local newState = MoistureSettings.getStateIndex(id)
+            if menuOption:getState() ~= newState then
+                menuOption:setState(newState)
+            end
+            menuOption:setDisabled(not isAdmin)
+        end
+    end
 
     -- Clear moisture cache since we just got new data
     self.moistureCache = {}

@@ -358,8 +358,3 @@ FocusManager.setGui = Utils.appendedFunction(FocusManager.setGui, function(_, gu
     end
 end)
 
--- Send settings to new clients
-FSBaseMission.sendInitialClientState = Utils.appendedFunction(FSBaseMission.sendInitialClientState,
-    function(self, connection, user, farm)
-        g_client:getServerConnection():sendEvent(MoistureSettingsEvent.new())
-    end)
