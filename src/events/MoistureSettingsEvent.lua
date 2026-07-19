@@ -59,7 +59,12 @@ function MoistureSettingsEvent:run(connection)
     g_currentMission.MoistureSystem.settings.moistureLossMultiplier = self.moistureLossMultiplier
     g_currentMission.MoistureSystem.settings.moistureGainMultiplier = self.moistureGainMultiplier
     g_currentMission.MoistureSystem.settings.teddingMoistureReduction = self.teddingMoistureReduction
+
+    local baleRotWasEnabled = g_currentMission.MoistureSystem.settings.baleRotEnabled
     g_currentMission.MoistureSystem.settings.baleRotEnabled = self.baleRotEnabled
+    if baleRotWasEnabled and not self.baleRotEnabled and g_currentMission.baleRottingSystem then
+        g_currentMission.baleRottingSystem:clearAllBaleData()
+    end
     g_currentMission.MoistureSystem.settings.baleRotRate = self.baleRotRate
     g_currentMission.MoistureSystem.settings.baleExposureDecayRate = self.baleExposureDecayRate
     g_currentMission.MoistureSystem.settings.showFieldMoisture = self.showFieldMoisture

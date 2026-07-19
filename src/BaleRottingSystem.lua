@@ -346,6 +346,14 @@ function BaleRottingSystem:isBaleRottable(item)
 end
 
 ---
+-- Clear all bale exposure tracking (called when bale rotting is disabled)
+---
+function BaleRottingSystem:clearAllBaleData()
+    if not self.isServer then return end
+    self.baleRainExposureTimes = {}
+end
+
+---
 -- Remove bale from tracking if it's not in a rotting state
 -- Used when bale is wrapped and shouldn't get wetter
 -- @param uniqueId: Bale unique ID

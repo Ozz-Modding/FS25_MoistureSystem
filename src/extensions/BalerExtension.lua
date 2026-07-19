@@ -201,7 +201,7 @@ function MSBalerExtension:createBale(superFunc, baleFillType, fillLevel, baleSer
             initialExposure = 0.35 * BaleRottingSystem.SLOW_ROT_THRESHOLD
         end
 
-        if initialExposure > 0 then
+        if initialExposure > 0 and g_currentMission.MoistureSystem.settings.baleRotEnabled then
             g_currentMission.baleRottingSystem:setBaleInitialExposure(bale.uniqueId, initialExposure)
         end
     end
