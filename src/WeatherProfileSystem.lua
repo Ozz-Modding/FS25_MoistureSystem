@@ -589,6 +589,7 @@ function WeatherProfileSystem:setActiveProfile(profileId)
         local month = MoistureSystem.periodToMonth(env.currentPeriod)
         self:rollWeightVariation(month)
         env.weather:rebuild()
+        self:applyTemperatureToVariations(env.weather)
     end
 end
 
