@@ -282,8 +282,9 @@ function DryingSystem:drySilo(placeable, ms, dryingRate, sellChargeRate, complet
         g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_OK,
             g_i18n:getText("ms_drying_complete"))
     else
-        local volumeFactor = math.max(1, totalLiters / 10000)
-        local effectiveDryingRate = (dryingRate / volumeFactor) * ms:getScaleFactor()
+        local t = math.min(1, math.max(0, (totalLiters - 10000) / 90000))
+        local volumeMultiplier = 1.4 - 0.8 * t
+        local effectiveDryingRate = dryingRate * volumeMultiplier * ms:getScaleFactor()
 
         for _, storage in ipairs(placeable.spec_silo.storages) do
             for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
@@ -357,8 +358,9 @@ function DryingSystem:dryShed(placeable, ms, dryingRate, sellChargeRate, complet
         return
     end
 
-    local volumeFactor = math.max(1, totalLiters / 10000)
-    local effectiveDryingRate = (dryingRate / volumeFactor) * ms:getScaleFactor()
+    local t = math.min(1, math.max(0, (totalLiters - 10000) / 90000))
+    local volumeMultiplier = 1.4 - 0.8 * t
+    local effectiveDryingRate = dryingRate * volumeMultiplier * ms:getScaleFactor()
 
     for _, entry in ipairs(pilesToDry) do
         entry.pile.properties.moisture = math.max(entry.idealMax, entry.pile.properties.moisture - effectiveDryingRate)
@@ -477,6 +479,10 @@ function DryingActivatable:getIsActivatable()
         self.activateText = g_i18n:getText("ms_action_stopDrying")
     else
         self.activateText = g_i18n:getText("ms_action_startDrying")
+    end
+
+    if self.actionEventId then
+        g_inputBinding:setActionEventText(self.actionEventId, self.activateText)
     end
 
     return true

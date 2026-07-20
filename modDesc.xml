@@ -49,6 +49,7 @@ Changelog:
 - The impact of weather is now scaled based on the number of days per month.
 - Drying charges are no longer applied when depositing into your own selling station.
 - Existing crop that pre-dates the moisture mod will now be assigned 100% quality and ideal moisture when first interacted with.
+- Tightended the rate of crop drying so large volumes of crop do not take forever to dry.
 
 1.0.0.7:
 - Fix a freeze when selling certain silos.
@@ -108,7 +109,7 @@ Umfangreiche Anpassungsoptionen ermöglichen es Ihnen, die Feuchtigkeitsdynamik,
 
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
-Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop
+Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop, RealisticWeather
 
 Änderungsprotokoll:
 
@@ -125,6 +126,7 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop
 - Der Einfluss des Wetters wird jetzt basierend auf der Anzahl der Tage pro Monat skaliert.
 - Trocknungsgebühren werden nicht mehr berechnet, wenn Ernte in die eigene Verkaufsstation eingelagert wird.
 - Bestehendes Getreide, das vor dem Feuchtigkeits-Mod angelegt wurde, erhält beim ersten Zugriff 100% Qualität und ideale Feuchtigkeit.
+- Die Trocknungsrate wurde angepasst, sodass große Erntemengen nicht unverhältnismäßig lange zum Trocknen brauchen.
 
 1.0.0.6:
 - Verschiedene Optimierungen zur Verbesserung der Leistung, wenn eine große Anzahl von Bodenobjekten dauerhaft bestehen bleibt.
@@ -180,7 +182,7 @@ Les options de personnalisation étendues vous permettent de calibrer la dynamiq
 
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
-Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop
+Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop, RealisticWeather
 
 Journal des modifications :
 
@@ -197,6 +199,7 @@ Journal des modifications :
 - L'impact de la météo est désormais mis à l'échelle en fonction du nombre de jours par mois.
 - Les frais de séchage ne sont plus appliqués lors du dépôt dans votre propre point de vente.
 - Les récoltes existantes antérieures au mod d'humidité se verront attribuer une qualité de 100% et une humidité idéale lors de leur première interaction.
+- Le taux de séchage a été ajusté pour que les grands volumes de récolte ne prennent pas un temps excessivement long à sécher.
 
 1.0.0.6 :
 - Optimisations diverses pour améliorer les performances lorsqu'un grand nombre d'objets au sol persistent.
