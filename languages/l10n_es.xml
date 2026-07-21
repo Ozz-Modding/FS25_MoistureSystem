@@ -9,7 +9,7 @@
 		<text name="setting_moisture_weatherProfile" text="Perfil Climático"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Perfil climático regional. Determina los patrones de precipitación, temperaturas y límites de humedad. Los cambios tienen efecto en el próximo enero."/>
 		<text name="setting_moisture_overrideWeather" text="Control del clima"/>
-		<text name="setting_moisture_overrideWeather_tooltip" text="Cuando está ACTIVADO, el sistema de humedad controla la programación del clima y las temperaturas usando el perfil activo. Desactívalo para usar la configuración de clima propia del mapa (p. ej. para mapas personalizados con clima diseñado a mano). El ajuste de humedad sigue usando el escenario Normal del perfil seleccionado."/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="Cuando está ACTIVADO, el sistema de humedad controla la programación del clima y las temperaturas usando el perfil activo. Desactívalo para usar la configuración de clima propia del mapa (p. ej. para mapas personalizados con clima diseñado a mano). Cuando el control del clima está desactivado, el ajuste de humedad usa valores estacionales predeterminados."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Multiplicador de Pérdida de Humedad"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Controla la velocidad de pérdida de humedad (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Multiplicador de Ganancia de Humedad"/>

@@ -9,7 +9,7 @@
 		<text name="setting_moisture_weatherProfile" text="Hava Profili"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Bölgesel hava profili. Yağış düzenlerini, sıcaklıkları ve nem aralıklarını belirler. Değişiklikler bir sonraki Ocak ayında geçerli olur."/>
 		<text name="setting_moisture_overrideWeather" text="Hava Durumu Kontrolü"/>
-		<text name="setting_moisture_overrideWeather_tooltip" text="AÇIK olduğunda, nem sistemi aktif profili kullanarak hava programını ve sıcaklıkları kontrol eder. Haritanın kendi hava ayarlarını kullanmak için KAPALI yapın (örn. elle hazırlanmış hava düzeni olan özel haritalar için). Nem sınırlaması hâlâ seçili profilin Normal senaryosunu kullanır."/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="AÇIK olduğunda, nem sistemi aktif profili kullanarak hava programını ve sıcaklıkları kontrol eder. Haritanın kendi hava ayarlarını kullanmak için KAPALI yapın (örn. elle hazırlanmış hava düzeni olan özel haritalar için). Hava durumu kontrolü kapalıyken nem sınırlaması varsayılan mevsimsel değerleri kullanır."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Nem Kaybı Çarpanı"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Nem kaybı hızını kontrol eder (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Nem Kazanım Çarpanı"/>

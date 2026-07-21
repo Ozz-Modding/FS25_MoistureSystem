@@ -9,7 +9,7 @@
 		<text name="setting_moisture_weatherProfile" text="Wetterprofil"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Regionales Wetterprofil. Bestimmt Niederschlagsmuster, Temperaturen und Feuchtigkeitsgrenzen. Änderungen werden im nächsten Januar wirksam."/>
 		<text name="setting_moisture_overrideWeather" text="Wettersteuerung"/>
-		<text name="setting_moisture_overrideWeather_tooltip" text="Wenn EIN, steuert das Feuchtigkeitssystem die Wetterplanung und Temperaturen anhand des aktiven Profils. AUS schalten, um die eigenen Wettereinstellungen der Karte zu verwenden (z.B. für benutzerdefinierte Karten mit handgefertigtem Wetter). Die Feuchtigkeitsbegrenzung verwendet weiterhin das Normal-Szenario des ausgewählten Profils."/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="Wenn EIN, steuert das Feuchtigkeitssystem die Wetterplanung und Temperaturen anhand des aktiven Profils. AUS schalten, um die eigenen Wettereinstellungen der Karte zu verwenden (z.B. für benutzerdefinierte Karten mit handgefertigtem Wetter). Bei deaktivierter Wettersteuerung verwendet die Feuchtigkeitsbegrenzung saisonale Standardwerte."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Feuchtigkeitsverlust-Multiplikator"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Steuert die Geschwindigkeit des Feuchtigkeitsverlusts (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Feuchtigkeitsgewinn-Multiplikator"/>

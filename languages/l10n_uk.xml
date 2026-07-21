@@ -9,7 +9,7 @@
 		<text name="setting_moisture_weatherProfile" text="Погодний профіль"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Регіональний погодний профіль. Визначає характер опадів, температуру та діапазони вологості. Зміни набувають чинності у наступному січні."/>
 		<text name="setting_moisture_overrideWeather" text="Керування погодою"/>
-		<text name="setting_moisture_overrideWeather_tooltip" text="Коли УВІМКНЕНО, система вологості керує розкладом погоди та температурами за допомогою активного профілю. Вимкніть, щоб використовувати власні налаштування погоди карти (наприклад, для карт із власноруч налаштованою погодою). Обмеження вологості як і раніше використовує сценарій «Нормальний» із вибраного профілю."/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="Коли УВІМКНЕНО, система вологості керує розкладом погоди та температурами за допомогою активного профілю. Вимкніть, щоб використовувати власні налаштування погоди карти (наприклад, для карт із власноруч налаштованою погодою). Коли керування погодою вимкнено, обмеження вологості використовує стандартні сезонні значення."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Множник висихання"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Швидкість зменшення вологості (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Множник зволоження"/>

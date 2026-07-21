@@ -9,7 +9,7 @@
 		<text name="setting_moisture_weatherProfile" text="Povětrnostní profil"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Regionální povětrnostní profil. Určuje vzorce srážek, teploty a limity vlhkosti. Změny se projeví v příštím lednu."/>
 		<text name="setting_moisture_overrideWeather" text="Řízení počasí"/>
-		<text name="setting_moisture_overrideWeather_tooltip" text="Pokud je ZAPNUTO, systém vlhkosti řídí plánování počasí a teploty pomocí aktivního profilu. Vypněte, chcete-li použít vlastní nastavení počasí mapy (např. pro vlastní mapy s ručně vytvořeným počasím). Omezení vlhkosti stále používá Normální scénář z vybraného profilu."/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="Pokud je ZAPNUTO, systém vlhkosti řídí plánování počasí a teploty pomocí aktivního profilu. Vypněte, chcete-li použít vlastní nastavení počasí mapy (např. pro vlastní mapy s ručně vytvořeným počasím). Při vypnutém řízení počasí používá omezení vlhkosti výchozí sezónní hodnoty."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Násobitel ztráty vlhkosti"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Řídí rychlost ztráty vlhkosti (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Násobitel získávání vlhkosti"/>

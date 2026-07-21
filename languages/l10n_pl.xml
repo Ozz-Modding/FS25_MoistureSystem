@@ -9,7 +9,7 @@
 		<text name="setting_moisture_weatherProfile" text="Profil pogodowy"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Regionalny profil pogodowy. Określa wzorce opadów, temperatury i limity wilgotności. Zmiany wejdą w życie w następnym styczniu."/>
 		<text name="setting_moisture_overrideWeather" text="Kontrola pogody"/>
-		<text name="setting_moisture_overrideWeather_tooltip" text="Gdy WŁĄCZONA, system wilgotności kontroluje harmonogram pogody i temperatury przy użyciu aktywnego profilu. Wyłącz, aby korzystać z własnych ustawień pogody mapy (np. dla niestandardowych map z ręcznie skonfigurowaną pogodą). Ograniczenie wilgotności nadal używa scenariusza Normalnego z wybranego profilu."/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="Gdy WŁĄCZONA, system wilgotności kontroluje harmonogram pogody i temperatury przy użyciu aktywnego profilu. Wyłącz, aby korzystać z własnych ustawień pogody mapy (np. dla niestandardowych map z ręcznie skonfigurowaną pogodą). Gdy kontrola pogody jest wyłączona, ograniczenie wilgotności używa domyślnych wartości sezonowych."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Współczynnik utraty wilgotności"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Reguluje tempo utraty wilgotności (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Współczynnik przyrostu wilgotności"/>

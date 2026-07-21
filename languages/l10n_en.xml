@@ -9,7 +9,7 @@
 		<text name="setting_moisture_weatherProfile" text="Weather Profile"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Regional weather profile. Determines rainfall patterns, temperatures and moisture clamps. Changes take effect at next January."/>
 		<text name="setting_moisture_overrideWeather" text="Weather Control"/>
-		<text name="setting_moisture_overrideWeather_tooltip" text="When ON, the moisture system controls weather scheduling and temperatures using the active profile. Turn OFF to use the map's own weather settings (e.g. for custom maps with hand-crafted weather). Moisture clamping still uses the Normal scenario from the selected profile."/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="When ON, the moisture system controls weather scheduling and temperatures using the active profile. Turn OFF to use the map's own weather settings (e.g. for custom maps with hand-crafted weather). Moisture clamping uses seasonal default values when weather control is off."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Moisture Loss Multiplier"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Controls the speed of moisture loss (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Moisture Gain Multiplier"/>
