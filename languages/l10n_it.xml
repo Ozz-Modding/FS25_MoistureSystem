@@ -8,6 +8,8 @@
 		<!-- Settings -->
 		<text name="setting_moisture_weatherProfile" text="Profilo Meteo"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Profilo meteorologico regionale. Determina i modelli di precipitazioni, le temperature e i limiti di umidità. Le modifiche hanno effetto dal prossimo gennaio."/>
+		<text name="setting_moisture_overrideWeather" text="Controllo meteo"/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="Quando è ATTIVO, il sistema di umidità controlla la programmazione meteorologica e le temperature usando il profilo attivo. Disattiva per usare le impostazioni meteo proprie della mappa (es. per mappe personalizzate con meteo artigianale). Il limite di umidità utilizza ancora lo scenario Normale del profilo selezionato."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Moltiplicatore Perdita Umidità"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Controlla la velocità di perdita di umidità (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Moltiplicatore Guadagno Umidità"/>
@@ -112,6 +114,7 @@
 		<text name="moistureSystem_gui_weather_season3" text="Autunno"/>
 		<text name="moistureSystem_gui_weather_season4" text="Inverno"/>
 		<text name="moistureSystem_gui_weather_forecastNote" text="Le previsioni sono stime. La precisione diminuisce per le stagioni più lontane."/>
+		<text name="moistureSystem_gui_weather_forecastDisabled" text="Il controllo meteo è disattivato. Usa il calendario del gioco base per le previsioni del tempo."/>
 		<text name="moistureSystem_gui_weather_yearLabel" text="Anno %d"/>
 		<text name="moistureSystem_gui_weather_historyNote" text="Gli anni completi vanno da marzo a febbraio affinché le stagioni siano correttamente rappresentate."/>
 

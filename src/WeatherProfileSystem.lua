@@ -236,7 +236,7 @@ function WeatherProfileSystem:installWeatherOverrides()
     WeatherObject.activate = Utils.overwrittenFunction(
         WeatherObject.activate,
         function(self, superFunc, instance, changeDuration)
-            if instance and instance.startDay then
+            if instance and instance.startDay and g_currentMission.MoistureSystem.settings.overrideWeather then
                 local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
                 local temps = g_currentMission.WeatherProfileSystem:getTemperatureForMonth(month)
                 local variation = self.variations and self.variations[instance.variationIndex]
@@ -262,6 +262,7 @@ end
 local SEASON_REPR_MONTH = { [1] = 4, [2] = 7, [3] = 10, [4] = 1 }  -- spring/summer/autumn/winter
 
 function WeatherProfileSystem:applyTemperatureToVariations(weather)
+    if not g_currentMission.MoistureSystem.settings.overrideWeather then return end
     local currentSeason = g_currentMission.environment.currentVisualSeason
     local normalScenario = self:getNormalScenario()
     for season, objects in pairs(weather.weatherObjects) do
@@ -332,6 +333,7 @@ end
 
 function WeatherProfileSystem:rebuildWeatherWeights(weather)
     if not g_currentMission:getIsServer() then return end
+    if not g_currentMission.MoistureSystem.settings.overrideWeather then return end
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
     local md = self:getMonthData(month)
     if not md then return end
@@ -539,7 +541,27 @@ function WeatherProfileSystem:getClampForMonth(month)
     }
 end
 
+-- Fallback moisture clamps used when weather override is disabled. Values are intentionally
+-- wider than any individual profile's normal scenario to accommodate map-baked weather variation.
+WeatherProfileSystem.FALLBACK_MOISTURE = {
+    [1]  = { moistureMin = 12, moistureMax = 50 },
+    [2]  = { moistureMin = 12, moistureMax = 48 },
+    [3]  = { moistureMin = 9, moistureMax = 42 },
+    [4]  = { moistureMin =  7, moistureMax = 36 },
+    [5]  = { moistureMin =  5, moistureMax = 32 },
+    [6]  = { moistureMin =  4, moistureMax = 28 },
+    [7]  = { moistureMin =  3, moistureMax = 28 },
+    [8]  = { moistureMin =  3, moistureMax = 26 },
+    [9]  = { moistureMin =  5, moistureMax = 30 },
+    [10] = { moistureMin =  7, moistureMax = 36 },
+    [11] = { moistureMin = 9, moistureMax = 44 },
+    [12] = { moistureMin = 12, moistureMax = 50 },
+}
+
 function WeatherProfileSystem:getMonthData(month)
+    if not g_currentMission.MoistureSystem.settings.overrideWeather then
+        return WeatherProfileSystem.FALLBACK_MOISTURE[month]
+    end
     local scenario = self:getActiveScenario()
     if not scenario then return nil end
     return scenario.months[month]
@@ -590,6 +612,42 @@ function WeatherProfileSystem:setActiveProfile(profileId)
         self:rollWeightVariation(month)
         env.weather:rebuild()
         self:applyTemperatureToVariations(env.weather)
+    end
+end
+
+-- Reload weather objects from the map's XML, discarding all runtime mutations.
+-- Mirrors the engine's gsWeatherReload console command.
+function WeatherProfileSystem:reloadWeatherObjects(weather)
+    local xmlFile = XMLFile.load("weather", weather.owner.xmlFilename)
+    if not xmlFile then return end
+    for _, objects in pairs(weather.weatherObjects) do
+        for _, obj in ipairs(objects) do
+            obj:delete()
+        end
+    end
+    weather.weatherObjects = {}
+    weather.rainUpdater:reset()
+    weather:load(xmlFile, "environment")
+    xmlFile:delete()
+end
+
+-- Apply or remove weather override. Called when the setting is toggled from the UI or via
+-- network event. Rebuilds the weather pool in the appropriate direction and resets the
+-- current forecast so the change takes effect immediately.
+function WeatherProfileSystem:applyWeatherOverride(enabled)
+    if not g_currentMission:getIsServer() then return end
+    local weather = g_currentMission.environment.weather
+    if not weather then return end
+
+    if enabled then
+        self:injectMissingWeatherObjects()
+        local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
+        self:rollWeightVariation(month)
+        weather:rebuild()
+        self:applyTemperatureToVariations(weather)
+    else
+        self:reloadWeatherObjects(weather)
+        weather:updateAvailableWeatherObjects()
     end
 end
 
@@ -840,24 +898,30 @@ end
 
 function WeatherProfileSystem:consoleCommandWeatherDebug()
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
-    local scenario = self:getActiveScenario()
+    local overrideWeather = g_currentMission.MoistureSystem.settings.overrideWeather
     local clamp = self:getClampForMonth(month)
-    local temps = self:getTemperatureForMonth(month)
-    local md = self:getMonthData(month)
-    local weight = scenario and scenario.weight or 0
     local lines = {
-        string.format("Profile:  %s", g_currentMission.MoistureSystem.settings.weatherProfile),
-        string.format("Scenario: %s (weight %.1f)", self.activeScenarioId, weight),
-        string.format("NextYear: %s", self.nextYearScenarioId or "none"),
+        string.format("WeatherControl: %s", overrideWeather and "ON" or "OFF"),
         string.format("Month:    %d", month),
-        string.format("Weights:  rain=%d thunder=%d snow=%d hail=%d sun=%d partCloud=%d cloudy=%d",
-            md and md.rain or 0, md and md.thunder or 0, md and md.snow or 0, md and md.hail or 0,
-            md and md.sun or 0, md and md.partlyCloudy or 0, md and md.cloudy or 0),
-        string.format("Temp: min %s  max %s",
-            temps.tempMin ~= nil and string.format("%.1f°C", temps.tempMin) or "engine",
-            temps.tempMax ~= nil and string.format("%.1f°C", temps.tempMax) or "engine"),
         string.format("Clamp:    min %.0f%%  max %.0f%%", clamp.min, clamp.max),
     }
+    if overrideWeather then
+        local scenario = self:getActiveScenario()
+        local temps = self:getTemperatureForMonth(month)
+        local md = self:getMonthData(month)
+        local weight = scenario and scenario.weight or 0
+        table.insert(lines, 1, string.format("Profile:  %s", g_currentMission.MoistureSystem.settings.weatherProfile))
+        table.insert(lines, 2, string.format("Scenario: %s (weight %.1f)", self.activeScenarioId, weight))
+        table.insert(lines, 3, string.format("NextYear: %s", self.nextYearScenarioId or "none"))
+        table.insert(lines, string.format("Weights:  rain=%d thunder=%d snow=%d hail=%d sun=%d partCloud=%d cloudy=%d",
+            md and md.rain or 0, md and md.thunder or 0, md and md.snow or 0, md and md.hail or 0,
+            md and md.sun or 0, md and md.partlyCloudy or 0, md and md.cloudy or 0))
+        table.insert(lines, string.format("Temp: min %s  max %s",
+            temps.tempMin ~= nil and string.format("%.1f°C", temps.tempMin) or "engine",
+            temps.tempMax ~= nil and string.format("%.1f°C", temps.tempMax) or "engine"))
+    else
+        table.insert(lines, "(clamp from built-in fallback table; profile/scenario inactive)")
+    end
     for _, line in ipairs(lines) do print(line) end
     return table.concat(lines, " | ")
 end

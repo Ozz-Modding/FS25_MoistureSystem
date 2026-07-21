@@ -8,6 +8,8 @@
 		<!-- Settings -->
 		<text name="setting_moisture_weatherProfile" text="Погодний профіль"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Регіональний погодний профіль. Визначає характер опадів, температуру та діапазони вологості. Зміни набувають чинності у наступному січні."/>
+		<text name="setting_moisture_overrideWeather" text="Керування погодою"/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="Коли УВІМКНЕНО, система вологості керує розкладом погоди та температурами за допомогою активного профілю. Вимкніть, щоб використовувати власні налаштування погоди карти (наприклад, для карт із власноруч налаштованою погодою). Обмеження вологості як і раніше використовує сценарій «Нормальний» із вибраного профілю."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Множник висихання"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Швидкість зменшення вологості (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Множник зволоження"/>
@@ -112,6 +114,7 @@
 		<text name="moistureSystem_gui_weather_season3" text="Осінь"/>
 		<text name="moistureSystem_gui_weather_season4" text="Зима"/>
 		<text name="moistureSystem_gui_weather_forecastNote" text="Прогнози є приблизними. Точність зменшується для більш віддалених сезонів."/>
+		<text name="moistureSystem_gui_weather_forecastDisabled" text="Керування погодою вимкнено. Для прогнозу погоди скористайтеся календарем основної гри."/>
 		<text name="moistureSystem_gui_weather_yearLabel" text="Рік %d"/>
 		<text name="moistureSystem_gui_weather_historyNote" text="Завершені роки охоплюють період з березня по лютий, щоб сезони були правильно представлені."/>
 

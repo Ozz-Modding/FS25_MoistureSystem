@@ -8,6 +8,8 @@
 		<!-- Nastavení -->
 		<text name="setting_moisture_weatherProfile" text="Povětrnostní profil"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Regionální povětrnostní profil. Určuje vzorce srážek, teploty a limity vlhkosti. Změny se projeví v příštím lednu."/>
+		<text name="setting_moisture_overrideWeather" text="Řízení počasí"/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="Pokud je ZAPNUTO, systém vlhkosti řídí plánování počasí a teploty pomocí aktivního profilu. Vypněte, chcete-li použít vlastní nastavení počasí mapy (např. pro vlastní mapy s ručně vytvořeným počasím). Omezení vlhkosti stále používá Normální scénář z vybraného profilu."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Násobitel ztráty vlhkosti"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Řídí rychlost ztráty vlhkosti (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Násobitel získávání vlhkosti"/>
@@ -112,6 +114,7 @@
 		<text name="moistureSystem_gui_weather_season3" text="Podzim"/>
 		<text name="moistureSystem_gui_weather_season4" text="Zima"/>
 		<text name="moistureSystem_gui_weather_forecastNote" text="Předpovědi jsou odhady. Přesnost klesá pro vzdálenější roční období."/>
+		<text name="moistureSystem_gui_weather_forecastDisabled" text="Řízení počasí je vypnuto. Pro předpověď počasí použijte kalendář základní hry."/>
 		<text name="moistureSystem_gui_weather_yearLabel" text="Rok %d"/>
 		<text name="moistureSystem_gui_weather_historyNote" text="Dokončené roky probíhají od března do února, aby byla roční období správně zobrazena."/>
 

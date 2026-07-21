@@ -242,4 +242,9 @@
         <textAlignment value="center"/>
         <textVerticalAlignment value="middle"/>
     </Profile>
+    <Profile name="msWeatherDisabledLabel" extends="fs25_textGrey" with="anchorTopLeft">
+        <textSize value="16px"/>
+        <textAlignment value="left"/>
+        <textVerticalAlignment value="top"/>
+    </Profile>
 </GUIProfiles>

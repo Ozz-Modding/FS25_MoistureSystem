@@ -19,6 +19,7 @@ function MoistureSettingsEvent.new()
     self.baleExposureDecayRate = g_currentMission.MoistureSystem.settings.baleExposureDecayRate
     self.showFieldMoisture = g_currentMission.MoistureSystem.settings.showFieldMoisture
     self.moistureMeterReporting = g_currentMission.MoistureSystem.settings.moistureMeterReporting
+    self.overrideWeather = g_currentMission.MoistureSystem.settings.overrideWeather
     return self
 end
 
@@ -32,6 +33,7 @@ function MoistureSettingsEvent:writeStream(streamId, connection)
     streamWriteFloat32(streamId, self.baleExposureDecayRate)
     streamWriteBool(streamId, self.showFieldMoisture)
     streamWriteInt32(streamId, self.moistureMeterReporting)
+    streamWriteBool(streamId, self.overrideWeather)
 end
 
 function MoistureSettingsEvent:readStream(streamId, connection)
@@ -44,6 +46,7 @@ function MoistureSettingsEvent:readStream(streamId, connection)
     self.baleExposureDecayRate = streamReadFloat32(streamId)
     self.showFieldMoisture = streamReadBool(streamId)
     self.moistureMeterReporting = streamReadInt32(streamId)
+    self.overrideWeather = streamReadBool(streamId)
     self:run(connection)
 end
 
@@ -54,8 +57,11 @@ function MoistureSettingsEvent:run(connection)
 
     local wps = g_currentMission.WeatherProfileSystem
     local profileChanged = self.weatherProfile ~= g_currentMission.MoistureSystem.settings.weatherProfile
+    local overrideChanged = self.overrideWeather ~= g_currentMission.MoistureSystem.settings.overrideWeather
     g_currentMission.MoistureSystem.settings.weatherProfile = self.weatherProfile
+    g_currentMission.MoistureSystem.settings.overrideWeather = self.overrideWeather
     if wps and profileChanged then wps:setActiveProfile(self.weatherProfile) end
+    if wps and overrideChanged and not profileChanged then wps:applyWeatherOverride(self.overrideWeather) end
     g_currentMission.MoistureSystem.settings.moistureLossMultiplier = self.moistureLossMultiplier
     g_currentMission.MoistureSystem.settings.moistureGainMultiplier = self.moistureGainMultiplier
     g_currentMission.MoistureSystem.settings.teddingMoistureReduction = self.teddingMoistureReduction

@@ -93,7 +93,8 @@ function MoistureSystem:loadMap()
         dryingSpeed = 0.01,
         sellDryingChargeRate = 1.0,
         showFieldMoisture = false,
-        moistureMeterReporting = MoistureSettings.METER_REPORTING_BLINKING
+        moistureMeterReporting = MoistureSettings.METER_REPORTING_BLINKING,
+        overrideWeather = true
     }
 
     g_currentMission.groundPropertyTracker = GroundPropertyTracker.new()
@@ -910,6 +911,11 @@ function MoistureSystem:loadFromXMLFile()
             self.settings.moistureMeterReporting = moistureMeterReporting
         end
 
+        local overrideWeather = getXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#overrideWeather")
+        if overrideWeather ~= nil then
+            self.settings.overrideWeather = overrideWeather
+        end
+
         if g_currentMission.groundPropertyTracker then
             g_currentMission.groundPropertyTracker:loadFromXMLFile(xmlFile, MoistureSystem.SaveKey)
         end
@@ -1027,6 +1033,7 @@ function MoistureSystem:saveToXmlFile()
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#sellDryingChargeRate", ms.settings.sellDryingChargeRate)
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#showFieldMoisture", ms.settings.showFieldMoisture)
     setXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureMeterReporting", ms.settings.moistureMeterReporting)
+    setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#overrideWeather", ms.settings.overrideWeather)
 
     if g_currentMission.WeatherProfileSystem then
         g_currentMission.WeatherProfileSystem:saveToXMLFile(xmlFile, MoistureSystem.SaveKey)
@@ -1146,6 +1153,7 @@ function MoistureSystem:writeInitialClientState(streamId, connection)
     streamWriteFloat32(streamId, self.settings.sellDryingChargeRate)
     streamWriteBool(streamId, self.settings.showFieldMoisture)
     streamWriteInt32(streamId, self.settings.moistureMeterReporting)
+    streamWriteBool(streamId, self.settings.overrideWeather)
 end
 
 ---
@@ -1170,6 +1178,7 @@ function MoistureSystem:readInitialClientState(streamId, connection)
     self.settings.sellDryingChargeRate = streamReadFloat32(streamId)
     self.settings.showFieldMoisture = streamReadBool(streamId)
     self.settings.moistureMeterReporting = streamReadInt32(streamId)
+    self.settings.overrideWeather = streamReadBool(streamId)
 
     local wps = g_currentMission.WeatherProfileSystem
     if wps and profileChanged then wps:setActiveProfile(weatherProfile) end

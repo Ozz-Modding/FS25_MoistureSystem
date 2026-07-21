@@ -8,6 +8,8 @@
 		<!-- Settings -->
 		<text name="setting_moisture_weatherProfile" text="Wetterprofil"/>
 		<text name="setting_moisture_weatherProfile_tooltip" text="Regionales Wetterprofil. Bestimmt Niederschlagsmuster, Temperaturen und Feuchtigkeitsgrenzen. Änderungen werden im nächsten Januar wirksam."/>
+		<text name="setting_moisture_overrideWeather" text="Wettersteuerung"/>
+		<text name="setting_moisture_overrideWeather_tooltip" text="Wenn EIN, steuert das Feuchtigkeitssystem die Wetterplanung und Temperaturen anhand des aktiven Profils. AUS schalten, um die eigenen Wettereinstellungen der Karte zu verwenden (z.B. für benutzerdefinierte Karten mit handgefertigtem Wetter). Die Feuchtigkeitsbegrenzung verwendet weiterhin das Normal-Szenario des ausgewählten Profils."/>
 		<text name="setting_moisture_moistureLossMultiplier" text="Feuchtigkeitsverlust-Multiplikator"/>
 		<text name="setting_moisture_moistureLossMultiplier_tooltip" text="Steuert die Geschwindigkeit des Feuchtigkeitsverlusts (1-10)"/>
 		<text name="setting_moisture_moistureGainMultiplier" text="Feuchtigkeitsgewinn-Multiplikator"/>
@@ -112,6 +114,7 @@
 		<text name="moistureSystem_gui_weather_season3" text="Herbst"/>
 		<text name="moistureSystem_gui_weather_season4" text="Winter"/>
 		<text name="moistureSystem_gui_weather_forecastNote" text="Vorhersagen sind Schätzungen. Die Genauigkeit nimmt für weiter entfernte Jahreszeiten ab."/>
+		<text name="moistureSystem_gui_weather_forecastDisabled" text="Wettersteuerung ist deaktiviert. Verwenden Sie den Basisspiel-Kalender für die Wettervorhersage."/>
 		<text name="moistureSystem_gui_weather_yearLabel" text="Jahr %d"/>
 		<text name="moistureSystem_gui_weather_historyNote" text="Abgeschlossene Jahre laufen von März bis Februar, damit die Jahreszeiten korrekt dargestellt werden."/>
 

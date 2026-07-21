@@ -7,6 +7,7 @@ MoistureSettings.METER_REPORTING_NOTIFICATION = 2
 
 MoistureSettings.menuItems = {
     'weatherProfile',
+    'overrideWeather',
     'moistureLossMultiplier',
     'moistureGainMultiplier',
     'teddingMoistureReduction',
@@ -55,6 +56,17 @@ function MoistureSettings.populateWeatherProfileSetting()
     MoistureSettings.SETTINGS.weatherProfile.strings = strings
     MoistureSettings.SETTINGS.weatherProfile.default = defaultIdx
 end
+
+MoistureSettings.SETTINGS.overrideWeather = {
+    ['default'] = 2, -- Enabled by default
+    ['serverOnly'] = true,
+    ['permission'] = 'moistureSettings',
+    ['values'] = { false, true },
+    ['strings'] = {
+        g_i18n:getText("setting_setting_off"),
+        g_i18n:getText("setting_setting_on")
+    }
+}
 
 MoistureSettings.SETTINGS.moistureLossMultiplier = {
     ['default'] = 3,
@@ -201,6 +213,9 @@ function MoistureSettingsControls.onMenuOptionChanged(self, state, menuOption)
         if id == 'weatherProfile' then
             local wps = g_currentMission.WeatherProfileSystem
             if wps then wps:setActiveProfile(value) end
+        elseif id == 'overrideWeather' then
+            local wps = g_currentMission.WeatherProfileSystem
+            if wps then wps:applyWeatherOverride(value) end
         end
     end
 

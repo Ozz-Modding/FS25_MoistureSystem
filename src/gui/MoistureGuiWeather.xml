@@ -20,7 +20,7 @@
               text="$l10n_moistureSystem_gui_weather_forecastNote" />
 
         <!-- Forecast panels: 3 × 450px + 2 × 20px gap = 1390px -->
-        <BoxLayout profile="msWeatherPanelRow" position="20px -122px" size="1390px 240px">
+        <BoxLayout profile="msWeatherPanelRow" id="forecastPanelRow" position="20px -122px" size="1390px 240px">
 
             <!-- ── Panel 1 ── -->
             <GuiElement profile="msWeatherPanel" id="forecastPanel1">
@@ -185,6 +185,9 @@
             </GuiElement>
 
         </BoxLayout>
+
+        <Text profile="msWeatherDisabledLabel" id="forecastDisabledLabel" position="20px -122px"
+              size="1390px 240px" text="$l10n_moistureSystem_gui_weather_forecastDisabled" />
 
         <Text profile="msWeatherSectionHeader" position="20px -372px"
               text="$l10n_moistureSystem_gui_weather_history" />

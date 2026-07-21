@@ -42,8 +42,16 @@ function MoistureGuiWeather:updateWeather()
         envLabel:setText(profileName)
     end
 
-    for i = 0, 2 do
-        self:updateForecastPanel(i, wps)
+    local overrideWeather = g_currentMission.MoistureSystem.settings.overrideWeather
+    local panelRow = self["forecastPanelRow"]
+    local disabledLabel = self["forecastDisabledLabel"]
+    if panelRow      then panelRow:setVisible(overrideWeather)      end
+    if disabledLabel then disabledLabel:setVisible(not overrideWeather) end
+
+    if overrideWeather then
+        for i = 0, 2 do
+            self:updateForecastPanel(i, wps)
+        end
     end
     for panelIndex = 1, 3 do
         self:updateHistoryPanel(panelIndex, wps)
