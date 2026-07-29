@@ -134,6 +134,17 @@ end
 
 function WeatherProfileSystem:onStartMission()
     local wps = g_currentMission.WeatherProfileSystem
+
+    -- Inject the missing (winter rain, etc.) weather objects on EVERY peer, including clients.
+    -- The server syncs weather instances by bare objectIndex/variationIndex (WeatherInstance:
+    -- writeStream) with no type/name negotiation, so the weatherObjects pool must have identical
+    -- indices on server and clients. Doing this server-only (as before) meant a client's winter
+    -- pool had no rain object at the server's injected index -- when the server scheduled winter
+    -- rain (e.g. sleeping into December) the client's getWeatherObjectByIndex returned nil and
+    -- crashed on activate(), freezing the HUD. Injection is deterministic (see
+    -- injectMissingWeatherObjects) so all peers arrive at the same indices.
+    wps:injectMissingWeatherObjects()
+
     if g_currentMission:getIsServer() then
         g_messageCenter:subscribe(MessageType.PERIOD_CHANGED, WeatherProfileSystem.onPeriodChanged, wps)
         wps:installWeatherOverrides()
@@ -165,10 +176,21 @@ function WeatherProfileSystem:cloneWeatherObjectInto(weather, season, weatherTyp
     if not objects or not typeMap then return nil end
     if typeMap[weatherType] then return nil end  -- already present
 
+    -- Pick the source deterministically: lowest season number first, then the first object of
+    -- the type in ipairs order. injectMissingWeatherObjects runs on BOTH server and clients, and
+    -- the clone's variations (hence variationIndex space) must be byte-identical on every peer --
+    -- WeatherInstance is synced by bare objectIndex/variationIndex with no name negotiation, so a
+    -- differing source (different variation count) would make getWeatherObjectByIndex/
+    -- getVariationByIndex return nil on the other end and crash on activate(). pairs() order is
+    -- not guaranteed stable across peers, so we must sort.
+    local sortedSeasons = {}
+    for s in pairs(weather.weatherObjects) do table.insert(sortedSeasons, s) end
+    table.sort(sortedSeasons)
+
     local source
-    for s, objs in pairs(weather.weatherObjects) do
+    for _, s in ipairs(sortedSeasons) do
         if s ~= season then
-            for _, obj in ipairs(objs) do
+            for _, obj in ipairs(weather.weatherObjects[s]) do
                 if obj.weatherType == weatherType then source = obj; break end
             end
         end
@@ -212,7 +234,14 @@ function WeatherProfileSystem:injectMissingWeatherObjects()
     local weather = g_currentMission.environment.weather
     if not weather or not weather.weatherObjects then return end
 
-    for season in pairs(weather.weatherObjects) do
+    -- Sort seasons so the clone/append order is identical on server and clients (see
+    -- cloneWeatherObjectInto). Within a season, indices are independent of other seasons, but
+    -- keeping the whole pass deterministic avoids any peer-order surprise.
+    local sortedSeasons = {}
+    for season in pairs(weather.weatherObjects) do table.insert(sortedSeasons, season) end
+    table.sort(sortedSeasons)
+
+    for _, season in ipairs(sortedSeasons) do
         for _, wt in ipairs({ WeatherType.RAIN, WeatherType.HAIL }) do
             self:cloneWeatherObjectInto(weather, season, wt)
         end
