@@ -34,6 +34,7 @@
                  Children are relative: label at 0, bars/axis floor at -128. -->
             <GuiElement id="chartYield" profile="msGradesChart" position="0px -48px">
                 <Text profile="msGradesBarlabel" position="862px -4px" size="200px 22px" text="$l10n_moistureSystem_gui_yieldLabel" />
+                <Text profile="msGradesBarlabelPct" id="hoverYieldValue" position="788px -4px" size="70px 22px" text="" />
                 <Bitmap profile="msGradesBarSeg" id="yb1" position="0px -28px" />
                 <Bitmap profile="msGradesBarSeg" id="yb2" position="20px -28px" />
                 <Bitmap profile="msGradesBarSeg" id="yb3" position="40px -28px" />
@@ -93,6 +94,7 @@
             <!-- ============ QUALITY CHART ============ -->
             <GuiElement id="chartQuality" profile="msGradesChart" position="0px -230px">
                 <Text profile="msGradesBarlabel" position="862px -4px" size="200px 22px" text="$l10n_moistureSystem_gui_qualityLabel" />
+                <Text profile="msGradesBarlabelPct" id="hoverQualityValue" position="788px -4px" size="70px 22px" text="" />
                 <Bitmap profile="msGradesBarSeg" id="qb1" position="0px -28px" />
                 <Bitmap profile="msGradesBarSeg" id="qb2" position="20px -28px" />
                 <Bitmap profile="msGradesBarSeg" id="qb3" position="40px -28px" />
@@ -150,7 +152,11 @@
 
             <!-- ============ SHARED MOISTURE AXIS ============ -->
             <!-- Line sits just below the quality chart floor (-230 - 128 = -358). -->
-            <Bitmap profile="msGradesAxisLine" position="0px -362px" size="1000px 1px" />
+            <Bitmap profile="msGradesAxisLine" id="axisLine" position="0px -362px" size="1000px 1px" />
+
+            <!-- Mouse-hover cursor: repositioned/shown by MoistureGuiGrades:updateHoverFromMouse. -->
+            <Bitmap profile="msGradesHoverLine" id="hoverLine" position="0px -48px" />
+            <Text profile="msGradesHoverAxisLabel" id="hoverMoistureLabel" position="-36px -378px" text="" />
             <!-- Positions below are placeholders only; MoistureGuiGrades:setAxisLabels
                  repositions each label per-crop based on chosen tick step. -->
             <Text profile="msGradesAxisLabel" id="axisLabel1"  position="-28px -378px" text="" />

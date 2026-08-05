@@ -107,9 +107,10 @@
     <Profile name="msGradesBarlabelPct" extends="fs25_textDefault" with="anchorTopLeft">
         <textSize value="15px"/>
         <textBold value="true"/>
-        <textAlignment value="right"/>
+        <textAlignment value="left"/>
         <textColor value="$preset_fs25_colorMainHighlight"/>
         <textVerticalAlignment value="middle"/>
+        <visible value="false"/>
     </Profile>
     <!-- Bar segment: 18px wide (1px gap each side), anchored top-left.
          Height is set dynamically in Lua proportional to yield/quality value.
@@ -141,6 +142,23 @@
         <textSize value="13px"/>
         <textAlignment value="center"/>
         <textVerticalAlignment value="middle"/>
+    </Profile>
+    <!-- Mouse-hover cursor: vertical guide spanning both charts down to the axis
+         line (top -48 to axis -362 = 314px tall), plus the highlighted moisture
+         value shown on the axis label row directly beneath it. -->
+    <Profile name="msGradesHoverLine" extends="baseReference" with="anchorTopLeft">
+        <size value="1px 314px"/>
+        <imageColor value="1 1 1 0.6"/>
+        <visible value="false"/>
+    </Profile>
+    <Profile name="msGradesHoverAxisLabel" extends="fs25_textGrey" with="anchorTopLeft">
+        <size value="72px 22px"/>
+        <textSize value="13px"/>
+        <textBold value="true"/>
+        <textAlignment value="center"/>
+        <textVerticalAlignment value="middle"/>
+        <textColor value="$preset_fs25_colorMainHighlight"/>
+        <visible value="false"/>
     </Profile>
     <Profile name="msGradesAxisTitle" extends="fs25_textGrey" with="anchorTopLeft">
         <textSize value="13px"/>

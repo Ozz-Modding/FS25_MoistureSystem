@@ -9,12 +9,21 @@ local SEG_WIDTH_PX    = 20    -- width of each bar segment in pixels
 local NUM_AXIS_LABELS = 16    -- moisture axis tick label slots (only some used per crop, rest hidden)
 local AXIS_WIDTH_PX   = 1000  -- width of the moisture axis line/bar area
 local AXIS_LABEL_OFFSET_PX = -28  -- matches the text-centering offset baked into axisLabel1's XML position
+local HOVER_LABEL_OFFSET_PX = -36 -- half of msGradesHoverAxisLabel's 72px width, to keep it centred on the cursor line
+local HOVER_VALUE_GAP_PX = 10     -- gap between the cursor line and the yield/quality value text
+local HOVER_VALUE_WIDTH_PX = 70   -- matches hoverYieldValue/hoverQualityValue's authored size
+local HOVER_VALUE_CAPTION_START_PX = 862  -- where the static "YIELD"/"QUALITY" caption begins
 
 -- Bars grow upward from a floor at -128px, RELATIVE TO THEIR CHART CONTAINER
 -- (chartYield / chartQuality in the XML). Both charts share the same relative
 -- geometry; the container position is what places them on screen, so moving a
 -- whole chart is a single XML container-position edit. Bar area: top -28, floor -128.
 local BAR_FLOOR_PX = -128
+
+-- Hover hit-test region, relative to gradesDetailPanel: top of the yield bars
+-- down to the shared moisture axis line.
+local HOVER_TOP_PX    = -48
+local HOVER_BOTTOM_PX = -362
 
 -- Convert a pixel value to a normalised Y coordinate the SAME way FS25 converts
 -- XML `px` values (GuiUtils.getNormalizedValue): px / referenceScreenHeight *
@@ -80,6 +89,98 @@ end
 
 function MoistureGuiGrades:onFrameClose()
     MoistureGuiGrades:superClass().onFrameClose(self)
+    self:hideHover()
+end
+
+-- Mouse hover: show the exact yield/quality values under the cursor as the
+-- user scrubs across the moisture axis, rather than only at the 50 sampled
+-- bar midpoints. Polled from update(dt) (like InGameMenuMapFrame's field-info
+-- box) rather than driven off mouseEvent — mouseEvent on a tabbed-menu frame's
+-- controller only fires when the element tree reports the event as unconsumed,
+-- which is unreliable for passive hover; g_lastMousePosX/Y is refreshed every
+-- frame regardless and uses the same normalised-absolute coordinate space as
+-- GuiElement.absPosition.
+function MoistureGuiGrades:update(dt)
+    MoistureGuiGrades:superClass().update(self, dt)
+    if self:getIsActive() then
+        self:updateHoverFromMouse(g_lastMousePosX, g_lastMousePosY)
+    end
+end
+
+function MoistureGuiGrades:updateHoverFromMouse(posX, posY)
+    if not self.currentDef or not self.hoverLine or not posX or not posY then
+        self:hideHover()
+        return
+    end
+    if not self.axisLine or not self.chartYield then
+        self:hideHover()
+        return
+    end
+
+    -- Read the real, engine-computed bounds from the actual boundary elements
+    -- rather than re-deriving them from raw pixel offsets. We don't assume
+    -- which of absPosition[2]'s directions is "up", nor which corner of a
+    -- sized element absPosition marks (chartYield is 152px tall — its
+    -- absPosition[2] alone only captured one edge, cutting off the yield
+    -- chart's other half). So: take both edges of BOTH boundary elements and
+    -- min/max across all four.
+    local originX        = self.axisLine.absPosition[1]
+    local axisWidthNorm  = self.axisLine.absSize[1]
+    local edgeA1 = self.chartYield.absPosition[2]
+    local edgeA2 = self.chartYield.absPosition[2] + self.chartYield.absSize[2]
+    local edgeB1 = self.axisLine.absPosition[2]
+    local edgeB2 = self.axisLine.absPosition[2] + self.axisLine.absSize[2]
+    local topY    = math.min(edgeA1, edgeA2, edgeB1, edgeB2)
+    local bottomY = math.max(edgeA1, edgeA2, edgeB1, edgeB2)
+
+    if posX < originX or posX > originX + axisWidthNorm or posY < topY or posY > bottomY then
+        self:hideHover()
+        return
+    end
+
+    local frac = (posX - originX) / axisWidthNorm
+    local minM, maxM = self.currentMinM, self.currentMaxM
+    local m = minM + frac * (maxM - minM)
+
+    local yieldVal   = CropValueMap.getYieldMultiplier(self.currentFillTypeIndex, m)
+    local qualityVal = CropValueMap.getQualityValue(self.currentFillTypeIndex, m) / 100.0
+
+    local lineX = pxToNormX(frac * AXIS_WIDTH_PX)
+    self.hoverLine:setPosition(lineX, nil)
+    self.hoverLine:setVisible(true)
+
+    self.hoverMoistureLabel:setPosition(pxToNormX(frac * AXIS_WIDTH_PX + HOVER_LABEL_OFFSET_PX), nil)
+    self.hoverMoistureLabel:setText(string.format("%.2f%%", m * 100))
+    self.hoverMoistureLabel:setVisible(true)
+
+    -- Track the cursor line, offset slightly right — unless that would run
+    -- the label into the static "YIELD"/"QUALITY" caption (starts 862px), in
+    -- which case flip the label to sit just left of the line instead.
+    local linePx = frac * AXIS_WIDTH_PX
+    local valueLabelPx = linePx + HOVER_VALUE_GAP_PX
+    local textAlignment = RenderText.ALIGN_LEFT
+    if valueLabelPx + HOVER_VALUE_WIDTH_PX > HOVER_VALUE_CAPTION_START_PX then
+        -- Flip to the left of the line: right-align so the text itself (not
+        -- just its box) hugs the line, matching the gap on the right-side case.
+        valueLabelPx = linePx - HOVER_VALUE_GAP_PX - HOVER_VALUE_WIDTH_PX
+        textAlignment = RenderText.ALIGN_RIGHT
+    end
+    local valueLabelX = pxToNormX(valueLabelPx)
+    self.hoverYieldValue.textAlignment = textAlignment
+    self.hoverYieldValue:setPosition(valueLabelX, nil)
+    self.hoverYieldValue:setText(string.format("%d%%", pct(yieldVal)))
+    self.hoverYieldValue:setVisible(true)
+    self.hoverQualityValue.textAlignment = textAlignment
+    self.hoverQualityValue:setPosition(valueLabelX, nil)
+    self.hoverQualityValue:setText(string.format("%d%%", pct(qualityVal)))
+    self.hoverQualityValue:setVisible(true)
+end
+
+function MoistureGuiGrades:hideHover()
+    if self.hoverLine          then self.hoverLine:setVisible(false) end
+    if self.hoverMoistureLabel then self.hoverMoistureLabel:setVisible(false) end
+    if self.hoverYieldValue    then self.hoverYieldValue:setVisible(false) end
+    if self.hoverQualityValue  then self.hoverQualityValue:setVisible(false) end
 end
 
 function MoistureGuiGrades:buildCropList()
@@ -123,6 +224,10 @@ end
 -- ── Detail panel ─────────────────────────────────────────────────────────────
 
 function MoistureGuiGrades:hideDetail()
+    self.currentDef = nil
+    self.currentFillTypeIndex = nil
+    self.currentMinM, self.currentMaxM = nil, nil
+    self:hideHover()
     self.noSelectionHint:setVisible(true)
     self.detailCropName:setVisible(false)
     for i = 1, NUM_SEGMENTS do
@@ -165,6 +270,12 @@ function MoistureGuiGrades:showCropDetail(index)
     -- Zoom the moisture axis to this crop's useful range and label the ticks
     local minM, maxM = self:getMoistureRange(def)
     self:setAxisLabels(minM, maxM)
+
+    -- Cache for mouse-hover lookups (updateHoverFromMouse)
+    self.currentDef = def
+    self.currentFillTypeIndex = fillTypeIndex
+    self.currentMinM, self.currentMaxM = minM, maxM
+    self:hideHover()
 
     -- Populate both bars across the zoomed range
     self:populateBar("yb", fillTypeIndex, def, true,  minM, maxM)
