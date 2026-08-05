@@ -39,6 +39,7 @@ Changelog:
 2.0.0.1:
 - Grain drying is now instigated within the Moisture Menu (Shift + M) rather than pressing a key when near the silo. This avoids some issues with some silos, whilst also providing more information.
 - Durations of weather spells is now scaled based on number of days per month. This helps planning field work around weather introduced in v2.
+- The moisture impact charts can now be hovered with the mouse to show specific yield and quality values for a given moisture level.
 
 2.0.0.0:
 - The moisture system now controls weather. Choose a Weather Profile that matches your region in game settings. Many maps have appropriate defaults configured within the mod. Weather includes variability that simulates realistic seasonal patterns. This impacts your harvest and requires even more planning than before.
