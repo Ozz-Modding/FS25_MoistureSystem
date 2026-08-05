@@ -6,7 +6,9 @@ local MoistureGuiGrades_mt = Class(MoistureGuiGrades, TabbedMenuFrameElement)
 local NUM_SEGMENTS    = 50    -- number of bars drawn per curve
 local BAR_HEIGHT_PX   = 100   -- max bar height in pixels (= 100% value)
 local SEG_WIDTH_PX    = 20    -- width of each bar segment in pixels
-local NUM_AXIS_LABELS = 6     -- moisture axis tick labels (set dynamically)
+local NUM_AXIS_LABELS = 16    -- moisture axis tick label slots (only some used per crop, rest hidden)
+local AXIS_WIDTH_PX   = 1000  -- width of the moisture axis line/bar area
+local AXIS_LABEL_OFFSET_PX = -28  -- matches the text-centering offset baked into axisLabel1's XML position
 
 -- Bars grow upward from a floor at -128px, RELATIVE TO THEIR CHART CONTAINER
 -- (chartYield / chartQuality in the XML). Both charts share the same relative
@@ -20,6 +22,10 @@ local BAR_FLOOR_PX = -128
 -- bars mismatch the XML-authored axis gaps at non-reference resolutions.
 local function pxToNormY(px)
     return px / g_referenceScreenHeight * g_aspectScaleY
+end
+
+local function pxToNormX(px)
+    return px / g_referenceScreenWidth * g_aspectScaleX
 end
 
 -- Value → whole percent for stat labels
@@ -256,15 +262,46 @@ function MoistureGuiGrades:populateBar(prefix, fillTypeIndex, def, isYield, minM
     if bot then bot:setText(string.format("%d%%", pct(floorValue))) end
 end
 
--- Set the moisture axis tick labels for the active [minM, maxM] range.
-function MoistureGuiGrades:setAxisLabels(minM, maxM)
-    for i = 1, NUM_AXIS_LABELS do
-        local lbl = self["axisLabel" .. i]
-        if lbl then
-            local frac = (i - 1) / (NUM_AXIS_LABELS - 1)
-            local m = minM + frac * (maxM - minM)
-            lbl:setText(string.format("%d%%", pct(m)))
+-- Nice round tick steps (in whole percent), smallest first. We prefer the
+-- smallest step that still fits within NUM_AXIS_LABELS slots, so most crops
+-- (whose range tops out well under 50%) get 2%-spaced ticks as requested,
+-- while unusually wide ranges fall back to a coarser step instead of
+-- overflowing the available label slots.
+local AXIS_TICK_STEPS = { 2, 5, 10, 20, 25, 50 }
+
+local function chooseAxisTickStep(rangePct)
+    for _, step in ipairs(AXIS_TICK_STEPS) do
+        local tickCount = math.floor(rangePct / step) + 1
+        if tickCount <= NUM_AXIS_LABELS then
+            return step
         end
+    end
+    return AXIS_TICK_STEPS[#AXIS_TICK_STEPS]
+end
+
+-- Set the moisture axis tick labels for the active [minM, maxM] range, at
+-- round-number steps (e.g. 0, 2, 4, 6 ...) rather than evenly dividing the
+-- range into a fixed number of labels. minM is always 0 (see getMoistureRange).
+function MoistureGuiGrades:setAxisLabels(minM, maxM)
+    local rangePct = (maxM - minM) * 100
+    local step = chooseAxisTickStep(rangePct)
+
+    local i = 0
+    local mPct = math.ceil((minM * 100) / step) * step
+    while mPct <= rangePct + minM * 100 + 0.001 do
+        i = i + 1
+        local lbl = self["axisLabel" .. i]
+        if not lbl then break end
+
+        local frac = (mPct / 100 - minM) / (maxM - minM)
+        lbl:setPosition(pxToNormX(frac * AXIS_WIDTH_PX + AXIS_LABEL_OFFSET_PX), nil)
+        lbl:setText(string.format("%d%%", math.floor(mPct + 0.5)))
+
+        mPct = mPct + step
+    end
+    for j = i + 1, NUM_AXIS_LABELS do
+        local lbl = self["axisLabel" .. j]
+        if lbl then lbl:setText("") end
     end
 end
 

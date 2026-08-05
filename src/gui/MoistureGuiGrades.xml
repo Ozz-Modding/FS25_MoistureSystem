@@ -151,12 +151,24 @@
             <!-- ============ SHARED MOISTURE AXIS ============ -->
             <!-- Line sits just below the quality chart floor (-230 - 128 = -358). -->
             <Bitmap profile="msGradesAxisLine" position="0px -362px" size="1000px 1px" />
-            <Text profile="msGradesAxisLabel" id="axisLabel1" position="-28px -378px" text="" />
-            <Text profile="msGradesAxisLabel" id="axisLabel2" position="172px -378px" text="" />
-            <Text profile="msGradesAxisLabel" id="axisLabel3" position="372px -378px" text="" />
-            <Text profile="msGradesAxisLabel" id="axisLabel4" position="572px -378px" text="" />
-            <Text profile="msGradesAxisLabel" id="axisLabel5" position="772px -378px" text="" />
-            <Text profile="msGradesAxisLabel" id="axisLabel6" position="972px -378px" text="" />
+            <!-- Positions below are placeholders only; MoistureGuiGrades:setAxisLabels
+                 repositions each label per-crop based on chosen tick step. -->
+            <Text profile="msGradesAxisLabel" id="axisLabel1"  position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel2"  position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel3"  position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel4"  position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel5"  position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel6"  position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel7"  position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel8"  position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel9"  position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel10" position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel11" position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel12" position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel13" position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel14" position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel15" position="-28px -378px" text="" />
+            <Text profile="msGradesAxisLabel" id="axisLabel16" position="-28px -378px" text="" />
             <Text profile="msGradesAxisTitle" position="0px -404px" size="1000px 22px" text="$l10n_moistureSystem_gui_moistureAxisTitle" />
 
             <!-- Legend row -->
