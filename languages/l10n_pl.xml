@@ -57,7 +57,6 @@
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Otwórz menu systemu wilgotności"/>
-		<text name="input_MOISTURE_START_DRYING" text="Przełącz suszenie w silosie"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Wilgotność gleby"/>
@@ -100,6 +99,21 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Kalendarz wilgotności"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Obecne środowisko"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Poniższy kalendarz przedstawia przewidywany zakres wilgotności dla każdego miesiąca w oparciu o aktualne ustawienia środowiskowe. Na poziom wilgotności wpływają opady deszczu, temperatura i pora roku."/>
+
+		<!-- GUI Suszenia Zboża -->
+		<text name="moistureSystem_gui_drying" text="Suszenie Zboża"/>
+		<text name="moistureSystem_gui_drying_desc" text="Silosy i szopy, które posiadasz. Wybierz jedną z nich, aby rozpocząć lub zatrzymać suszenie. Koszty są naliczane co godzinę, gdy suszenie jest aktywne."/>
+		<text name="moistureSystem_gui_drying_colName" text="Nazwa"/>
+		<text name="moistureSystem_gui_drying_colType" text="Typ"/>
+		<text name="moistureSystem_gui_drying_colState" text="Stan"/>
+		<text name="moistureSystem_gui_drying_colCrops" text="Plony"/>
+		<text name="moistureSystem_gui_drying_colEta" text="ETA (godz.)"/>
+		<text name="moistureSystem_gui_drying_typeSilo" text="Silos"/>
+		<text name="moistureSystem_gui_drying_typeShed" text="Szopa"/>
+		<text name="moistureSystem_gui_drying_stateDrying" text="Suszenie"/>
+		<text name="moistureSystem_gui_drying_stateIdle" text="Bezczynny"/>
+		<text name="moistureSystem_gui_drying_allIdeal" text="Wszystkie plony w idealnej wilgotności"/>
+		<text name="moistureSystem_gui_drying_empty" text="Nie posiadasz jeszcze żadnych silosów ani szop."/>
 
 		<!-- GUI Pogody -->
 		<text name="moistureSystem_gui_weather" text="Pogoda"/>

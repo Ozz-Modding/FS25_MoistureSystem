@@ -57,7 +57,6 @@
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Open Moisture Menu"/>
-		<text name="input_MOISTURE_START_DRYING" text="Toggle Silo Drying"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Field Moisture"/>
@@ -100,6 +99,21 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Moisture Calendar"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Current Environment"/>
 		<text name="moistureSystem_gui_calendarDescription" text="The calendar below shows the expected moisture range for each month based on your current environment setting. Moisture levels are influenced by rainfall, temperature, and season."/>
+
+		<!-- Grain Drying GUI -->
+		<text name="moistureSystem_gui_drying" text="Grain Drying"/>
+		<text name="moistureSystem_gui_drying_desc" text="Silos and sheds you own. Select one, then start or stop drying. Costs are charged hourly while drying is active."/>
+		<text name="moistureSystem_gui_drying_colName" text="Name"/>
+		<text name="moistureSystem_gui_drying_colType" text="Type"/>
+		<text name="moistureSystem_gui_drying_colState" text="State"/>
+		<text name="moistureSystem_gui_drying_colCrops" text="Crops"/>
+		<text name="moistureSystem_gui_drying_colEta" text="ETA (hrs)"/>
+		<text name="moistureSystem_gui_drying_typeSilo" text="Silo"/>
+		<text name="moistureSystem_gui_drying_typeShed" text="Shed"/>
+		<text name="moistureSystem_gui_drying_stateDrying" text="Drying"/>
+		<text name="moistureSystem_gui_drying_stateIdle" text="Idle"/>
+		<text name="moistureSystem_gui_drying_allIdeal" text="All crops at ideal moisture"/>
+		<text name="moistureSystem_gui_drying_empty" text="You don't own any silos or sheds yet."/>
 
 		<!-- Weather GUI -->
 		<text name="moistureSystem_gui_weather" text="Weather"/>

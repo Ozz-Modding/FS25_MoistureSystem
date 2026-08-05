@@ -10,8 +10,35 @@ WeatherProfileSystem.MOISTURE_CLAMP_SCALE = 1.0
 -- with equal durations, a type's share of hours == its share of scheduled events == its
 -- share of pool copies == its weight. Short, uniform spells also give enough events per
 -- (short) month for the ratios to converge. See rebuildWeatherWeights.
+--
+-- These are the FLOOR values, used verbatim on 1-day-per-period saves (24h/month) where
+-- there isn't enough time in the month to afford longer spells without starving the ratio
+-- convergence. On longer-day saves, getSpellHoursForMonth scales these up (see below) so
+-- players get realistic multi-hour-to-day-long weather stints instead of a 2-5h chop that
+-- never leaves a usable window to mow/dry/bale between rain.
 WeatherProfileSystem.SPELL_MIN_HOURS = 2
 WeatherProfileSystem.SPELL_MAX_HOURS = 5
+
+-- Ceiling on scaled-up spell duration (hours). Even on very long months we cap stints here
+-- so a single spell can't swallow most of the month and starve rarer weight categories of
+-- any events at all.
+WeatherProfileSystem.SPELL_MIN_HOURS_CAP = 12
+WeatherProfileSystem.SPELL_MAX_HOURS_CAP = 18
+
+-- Scales spell duration with how many real hours are in the current in-game month
+-- (daysPerPeriod * 24). Most players run 3-5 day months; on those, favour long stints
+-- (12-18h) so weather-dependent tasks (mowing/drying/baling) get a real window. On 1-day
+-- months there's too little time in the month to spend on long spells without losing weight
+-- fidelity, so it falls back to the base 2-5h range. Scales linearly in between and is
+-- clamped to the floor/ceiling either way.
+function WeatherProfileSystem:getSpellHoursForMonth()
+    local daysPerPeriod = (g_currentMission.environment and g_currentMission.environment.daysPerPeriod) or 1
+    local minH = math.max(WeatherProfileSystem.SPELL_MIN_HOURS, math.min(WeatherProfileSystem.SPELL_MIN_HOURS_CAP,
+        WeatherProfileSystem.SPELL_MIN_HOURS * daysPerPeriod))
+    local maxH = math.max(WeatherProfileSystem.SPELL_MAX_HOURS, math.min(WeatherProfileSystem.SPELL_MAX_HOURS_CAP,
+        WeatherProfileSystem.SPELL_MAX_HOURS * daysPerPeriod))
+    return minH, maxH
+end
 
 WeatherProfileSystem.SEASONS = {
     {months = {3, 4, 5}},
@@ -422,8 +449,7 @@ function WeatherProfileSystem:rebuildWeatherWeights(weather)
     -- variation to the same duration range, so avgDuration is identical across types and
     -- cancels out: hours(type) becomes proportional to poolShare(type) == weight(type).
     -- With equal durations, pool copies are just the (redirected) weight.
-    local minH = WeatherProfileSystem.SPELL_MIN_HOURS
-    local maxH = WeatherProfileSystem.SPELL_MAX_HOURS
+    local minH, maxH = self:getSpellHoursForMonth()
 
     for season, baseObjects in pairs(weather.weatherObjects) do
         -- First pass: normalize durations and record which weather types this season can schedule.

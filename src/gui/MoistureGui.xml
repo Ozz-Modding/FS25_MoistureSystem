@@ -5,6 +5,7 @@
     <FrameReference ref="MoistureGuiGrades" name="MoistureGuiGrades" id="pageGrades"/>
     <FrameReference ref="MoistureGuiPrices" name="MoistureGuiPrices" id="pagePrices"/>
     <FrameReference ref="MoistureGuiWeather" name="MoistureGuiWeather" id="pageWeather"/>
+    <FrameReference ref="MoistureGuiDrying" name="MoistureGuiDrying" id="pageDrying"/>
   </Paging>
   <Bitmap profile="fs25_tabListContainer" id="header">
     <MultiTextOption profile="uiInGameMenuHeaderSelector" onClick="onClickPageSelection" id="pageSelector" soundDisabled="true" />
@@ -18,6 +19,9 @@
   </Bitmap>
   <BoxLayout profile="fs25_buttonBox" id="buttonsPanel">
     <Button profile="buttonBack" onClick="onClickBack" id="menuButton[1]">
+      <Bitmap profile="fs25_buttonBoxSeparator" name="separator" />
+    </Button>
+    <Button profile="buttonBack" id="menuButton[2]">
       <Bitmap profile="fs25_buttonBoxSeparator" name="separator" />
     </Button>
   </BoxLayout>

@@ -57,7 +57,6 @@
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Feuchtigkeitsmenü öffnen"/>
-		<text name="input_MOISTURE_START_DRYING" text="Silo-Trocknung umschalten"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Feldfeuchtigkeit"/>
@@ -100,6 +99,21 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Feuchtigkeitskalender"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Aktuelle Umgebung"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Der Kalender unten zeigt den erwarteten Feuchtigkeitsbereich für jeden Monat basierend auf Ihrer aktuellen Umgebungseinstellung. Feuchtigkeitsniveaus werden von Niederschlag, Temperatur und Jahreszeit beeinflusst."/>
+
+		<!-- Getreidetrocknung-GUI -->
+		<text name="moistureSystem_gui_drying" text="Getreidetrocknung"/>
+		<text name="moistureSystem_gui_drying_desc" text="Silos und Schuppen, die Ihnen gehören. Wählen Sie einen aus, um die Trocknung zu starten oder zu stoppen. Die Kosten werden stündlich berechnet, solange die Trocknung aktiv ist."/>
+		<text name="moistureSystem_gui_drying_colName" text="Name"/>
+		<text name="moistureSystem_gui_drying_colType" text="Typ"/>
+		<text name="moistureSystem_gui_drying_colState" text="Status"/>
+		<text name="moistureSystem_gui_drying_colCrops" text="Ernte"/>
+		<text name="moistureSystem_gui_drying_colEta" text="ETA (Std.)"/>
+		<text name="moistureSystem_gui_drying_typeSilo" text="Silo"/>
+		<text name="moistureSystem_gui_drying_typeShed" text="Schuppen"/>
+		<text name="moistureSystem_gui_drying_stateDrying" text="Trocknet"/>
+		<text name="moistureSystem_gui_drying_stateIdle" text="Inaktiv"/>
+		<text name="moistureSystem_gui_drying_allIdeal" text="Alle Ernten auf idealer Feuchtigkeit"/>
+		<text name="moistureSystem_gui_drying_empty" text="Sie besitzen noch keine Silos oder Schuppen."/>
 
 		<!-- Wetter-GUI -->
 		<text name="moistureSystem_gui_weather" text="Wetter"/>

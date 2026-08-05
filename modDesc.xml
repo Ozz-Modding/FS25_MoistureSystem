@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="111">
     <author>Ozz</author>
-    <version>2.0.0.0</version>
+    <version>2.0.0.1</version>
     <iconFilename>icon_MoistureSystem.dds</iconFilename>
     <title>
         <en>Moisture System</en>
@@ -35,6 +35,10 @@ Note: The mod is not compatible with the following mods: NonStopCrop, RealisticW
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
+
+2.0.0.1:
+- Grain drying is now instigated within the Moisture Menu (Shift + M) rather than pressing a key when near the silo. This avoids some issues with some silos, whilst also providing more information.
+- Durations of weather spells is now scaled based on number of days per month. This helps planning field work around weather introduced in v2.
 
 2.0.0.0:
 - The moisture system now controls weather. Choose a Weather Profile that matches your region in game settings. Many maps have appropriate defaults configured within the mod. Weather includes variability that simulates realistic seasonal patterns. This impacts your harvest and requires even more planning than before.
@@ -258,6 +262,7 @@ Journal des modifications :
         <sourceFile filename="src/gui/MoistureGuiGrades.lua"/>
         <sourceFile filename="src/gui/MoistureGuiPrices.lua"/>
         <sourceFile filename="src/gui/MoistureGuiWeather.lua"/>
+        <sourceFile filename="src/gui/MoistureGuiDrying.lua"/>
         <sourceFile filename="src/gui/MoistureGui.lua"/>
         <sourceFile filename="src/GroundPropertyTracker.lua"/>
         <sourceFile filename="src/BaleRottingSystem.lua"/>
@@ -282,15 +287,11 @@ Journal des modifications :
 
     <actions>
         <action name="MOISTURE_MENU" category="SYSTEM" axisType="HALF" ignoreComboMask="false" />
-        <action name="MOISTURE_START_DRYING" category="SYSTEM" axisType="HALF" ignoreComboMask="false" />
     </actions>
 
     <inputBinding>
         <actionBinding action="MOISTURE_MENU">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_m" />
-        </actionBinding>
-        <actionBinding action="MOISTURE_START_DRYING">
-            <binding device="KB_MOUSE_DEFAULT" input="KEY_n" index="1" />
         </actionBinding>
     </inputBinding>
     

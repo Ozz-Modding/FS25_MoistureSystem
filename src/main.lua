@@ -179,6 +179,9 @@ function MoistureSystem:loadGUI()
     local weatherFrame = MoistureGuiWeather.new(g_i18n)
     g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiWeather.xml", "MoistureGuiWeather", weatherFrame, true)
 
+    local dryingFrame = MoistureGuiDrying.new(g_i18n)
+    g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiDrying.xml", "MoistureGuiDrying", dryingFrame, true)
+
     self.moistureGui = MoistureGui:new(g_messageCenter, g_i18n, g_inputBinding)
     g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGui.xml", "MoistureGui", self.moistureGui)
 end
@@ -766,13 +769,6 @@ function MoistureSystem:onStartMission()
         g_messageCenter:subscribe(MessageType.HOUR_CHANGED, MoistureSystem.onHourChanged, ms)
         ms:initializeQualityFromMoisture()
     end
-
-    if g_currentMission.dryingSystem then
-        g_currentMission.dryingSystem.missionStarted = true
-        g_currentMission.dryingSystem:registerActivatables()
-        g_currentMission.dryingSystem:subscribe()
-    end
-
 
     if g_currentMission:getIsServer() then
         -- Initialize mod on new game

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI>
+    <GuiElement profile="uiInGameMenuFrame">
+        <!-- Page header with icon and title -->
+        <GuiElement profile="fs25_menuHeaderPanel">
+            <Bitmap profile="fs25_menuHeaderIconBg">
+                <Bitmap profile="fs25_menuHeaderIcon" imageSliceId="gui.icon_ingameMenu_prices" />
+            </Bitmap>
+            <Text profile="fs25_menuHeaderTitle" text="$l10n_moistureSystem_gui_drying" />
+        </GuiElement>
+
+        <Text profile="msDescriptiveText" text="$l10n_moistureSystem_gui_drying_desc" position="20px -50px" width="1400px" />
+
+        <!-- Table Headers -->
+        <GuiElement profile="fs25_statisticsHeaderBox" position="20px -100px">
+            <Button profile="msTableHeader" position="0px 0px" size="260px 20px" text="$l10n_moistureSystem_gui_drying_colName" handleFocus="false" />
+            <Button profile="msTableHeader" position="260px 0px" size="140px 20px" text="$l10n_moistureSystem_gui_drying_colType" handleFocus="false" />
+            <Button profile="msTableHeader" position="400px 0px" size="140px 20px" text="$l10n_moistureSystem_gui_drying_colState" handleFocus="false" />
+            <Button profile="msTableHeader" position="540px 0px" size="640px 20px" text="$l10n_moistureSystem_gui_drying_colCrops" handleFocus="false" />
+            <Button profile="msTableHeader" position="1180px 0px" size="180px 20px" text="$l10n_moistureSystem_gui_drying_colEta" handleFocus="false" />
+        </GuiElement>
+
+        <!-- Table Content -->
+        <SmoothList id="dryingList" profile="msTable" position="0px -140px" size="1400px 610px">
+            <ListItem profile="msDryingListItem">
+                <Text profile="msRowCellLeft" name="rowName" position="20px 0px" size="260px 42px" />
+                <Text profile="msRowCellLeft" name="rowType" position="280px 0px" size="140px 42px" />
+                <Text profile="msRowCellLeft" name="rowState" position="420px 0px" size="140px 42px" />
+                <Text profile="msDryingCropsCell" name="rowCrops" position="560px 0px" size="640px 42px" />
+                <Text profile="msRowCellLeft" name="rowEta" position="1200px 0px" size="180px 42px" />
+            </ListItem>
+        </SmoothList>
+
+        <!-- Scrollbar -->
+        <ThreePartBitmap profile="msGroupsSliderBox" position="1440px -140px" size="6px 610px">
+            <Slider profile="fs25_listSlider" dataElementId="dryingList" />
+        </ThreePartBitmap>
+
+        <!-- Empty-farm placeholder -->
+        <Text profile="msDescriptiveText" id="emptyHint" position="20px -160px" width="1400px" text="$l10n_moistureSystem_gui_drying_empty" visible="false" />
+    </GuiElement>
+</GUI>

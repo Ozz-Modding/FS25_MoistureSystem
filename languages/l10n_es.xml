@@ -57,7 +57,6 @@
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Abrir Menú de Humedad"/>
-		<text name="input_MOISTURE_START_DRYING" text="Alternar secado en silo"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Humedad del Campo"/>
@@ -100,6 +99,21 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Calendario de Humedad"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Ambiente Actual"/>
 		<text name="moistureSystem_gui_calendarDescription" text="El calendario a continuación muestra el rango de humedad esperado para cada mes según tu configuración de ambiente actual. Los niveles de humedad están influenciados por las precipitaciones, la temperatura y la estación."/>
+
+		<!-- GUI de Secado de Grano -->
+		<text name="moistureSystem_gui_drying" text="Secado de Grano"/>
+		<text name="moistureSystem_gui_drying_desc" text="Silos y cobertizos de su propiedad. Seleccione uno y luego inicie o detenga el secado. Los costos se cobran cada hora mientras el secado está activo."/>
+		<text name="moistureSystem_gui_drying_colName" text="Nombre"/>
+		<text name="moistureSystem_gui_drying_colType" text="Tipo"/>
+		<text name="moistureSystem_gui_drying_colState" text="Estado"/>
+		<text name="moistureSystem_gui_drying_colCrops" text="Cultivos"/>
+		<text name="moistureSystem_gui_drying_colEta" text="ETA (h)"/>
+		<text name="moistureSystem_gui_drying_typeSilo" text="Silo"/>
+		<text name="moistureSystem_gui_drying_typeShed" text="Cobertizo"/>
+		<text name="moistureSystem_gui_drying_stateDrying" text="Secando"/>
+		<text name="moistureSystem_gui_drying_stateIdle" text="Inactivo"/>
+		<text name="moistureSystem_gui_drying_allIdeal" text="Todos los cultivos con humedad ideal"/>
+		<text name="moistureSystem_gui_drying_empty" text="Todavía no posee ningún silo o cobertizo."/>
 
 		<!-- GUI del Clima -->
 		<text name="moistureSystem_gui_weather" text="Clima"/>

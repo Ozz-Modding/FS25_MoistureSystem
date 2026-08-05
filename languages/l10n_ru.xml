@@ -57,7 +57,6 @@
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Открыть Меню Влажности"/>
-		<text name="input_MOISTURE_START_DRYING" text="Переключить сушку в силосе"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Влажность Поля"/>
@@ -100,6 +99,21 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Календарь Влажности"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Текущая Среда"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Календарь ниже показывает ожидаемый диапазон влажности для каждого месяца на основе текущей настройки среды. Уровни влажности зависят от осадков, температуры и сезона."/>
+
+		<!-- GUI Сушки Зерна -->
+		<text name="moistureSystem_gui_drying" text="Сушка Зерна"/>
+		<text name="moistureSystem_gui_drying_desc" text="Силосы и сараи, которыми вы владеете. Выберите один, чтобы начать или остановить сушку. Пока сушка активна, расходы списываются каждый час."/>
+		<text name="moistureSystem_gui_drying_colName" text="Название"/>
+		<text name="moistureSystem_gui_drying_colType" text="Тип"/>
+		<text name="moistureSystem_gui_drying_colState" text="Состояние"/>
+		<text name="moistureSystem_gui_drying_colCrops" text="Культуры"/>
+		<text name="moistureSystem_gui_drying_colEta" text="Время (ч)"/>
+		<text name="moistureSystem_gui_drying_typeSilo" text="Силос"/>
+		<text name="moistureSystem_gui_drying_typeShed" text="Сарай"/>
+		<text name="moistureSystem_gui_drying_stateDrying" text="Сушится"/>
+		<text name="moistureSystem_gui_drying_stateIdle" text="Простаивает"/>
+		<text name="moistureSystem_gui_drying_allIdeal" text="Все культуры имеют идеальную влажность"/>
+		<text name="moistureSystem_gui_drying_empty" text="У вас пока нет силосов или сараев."/>
 
 		<!-- GUI Погоды -->
 		<text name="moistureSystem_gui_weather" text="Погода"/>

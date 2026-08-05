@@ -57,7 +57,6 @@
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Nem Menüsünü Aç"/>
-		<text name="input_MOISTURE_START_DRYING" text="Silo Kurutmayı Aç/Kapat"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Tarla Nemi"/>
@@ -100,6 +99,21 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Nem Takvimi"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Mevcut Ortam"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Aşağıdaki takvim, mevcut ortam ayarınıza göre her ay için beklenen nem aralığını gösterir. Nem seviyeleri yağış, sıcaklık ve mevsimden etkilenir."/>
+
+		<!-- Tahıl Kurutma GUI -->
+		<text name="moistureSystem_gui_drying" text="Tahıl Kurutma"/>
+		<text name="moistureSystem_gui_drying_desc" text="Sahip olduğunuz silolar ve barakalar. Birini seçin, ardından kurutmayı başlatın veya durdurun. Kurutma etkinken maliyetler saatlik olarak tahsil edilir."/>
+		<text name="moistureSystem_gui_drying_colName" text="Ad"/>
+		<text name="moistureSystem_gui_drying_colType" text="Tür"/>
+		<text name="moistureSystem_gui_drying_colState" text="Durum"/>
+		<text name="moistureSystem_gui_drying_colCrops" text="Ürünler"/>
+		<text name="moistureSystem_gui_drying_colEta" text="Tahmini Süre (sa)"/>
+		<text name="moistureSystem_gui_drying_typeSilo" text="Silo"/>
+		<text name="moistureSystem_gui_drying_typeShed" text="Baraka"/>
+		<text name="moistureSystem_gui_drying_stateDrying" text="Kurutuluyor"/>
+		<text name="moistureSystem_gui_drying_stateIdle" text="Boşta"/>
+		<text name="moistureSystem_gui_drying_allIdeal" text="Tüm ürünler ideal nemde"/>
+		<text name="moistureSystem_gui_drying_empty" text="Henüz sahip olduğunuz silo veya baraka yok."/>
 
 		<!-- Hava Durumu GUI -->
 		<text name="moistureSystem_gui_weather" text="Hava Durumu"/>

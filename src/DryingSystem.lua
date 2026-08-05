@@ -3,112 +3,27 @@ local DryingSystem_mt = Class(DryingSystem)
 
 DryingSystem.DEFAULT_DRYING_RATE = 0.01
 DryingSystem.SILO_COST_RATIO = 0.7
-DryingSystem.ACTIVATION_DISTANCE_BUFFER = 5
-
-local PLAYER_CONTEXT = "PLAYER"
 
 function DryingSystem.new()
     local self = setmetatable({}, DryingSystem_mt)
     self.activeDryers = {}
-    self.activatables = {}
     self.shedBounds = {}
-    self.placeableRadii = {}
-    self.missionStarted = false
     return self
 end
 
-function DryingSystem:getPlaceableRadius(placeable)
-    local cached = self.placeableRadii[placeable.uniqueId]
-    if cached then return cached end
-
-    local minX, maxX, minZ, maxZ = math.huge, -math.huge, math.huge, -math.huge
-    local found = false
-
-    local function expandFromParallelogramAreas(areas)
-        for _, area in ipairs(areas) do
-            local startNode = area.start or area.startNode
-            local widthNode = area.width or area.widthNode
-            local heightNode = area.height or area.heightNode
-            if startNode ~= nil and widthNode ~= nil and heightNode ~= nil then
-                local sx, _, sz = localToLocal(startNode, placeable.rootNode, 0, 0, 0)
-                local wx, _, wz = localToLocal(widthNode, placeable.rootNode, 0, 0, 0)
-                local hx, _, hz = localToLocal(heightNode, placeable.rootNode, 0, 0, 0)
-                local corners = { {sx, sz}, {wx, wz}, {hx, hz}, {wx + hx - sx, wz + hz - sz} }
-                for _, c in ipairs(corners) do
-                    minX = math.min(minX, c[1]); maxX = math.max(maxX, c[1])
-                    minZ = math.min(minZ, c[2]); maxZ = math.max(maxZ, c[2])
-                end
-                found = true
-            end
-        end
-    end
-
-    if placeable.spec_clearAreas ~= nil and placeable.spec_clearAreas.areas ~= nil then
-        expandFromParallelogramAreas(placeable.spec_clearAreas.areas)
-    end
-    if placeable.spec_leveling ~= nil and placeable.spec_leveling.levelAreas ~= nil then
-        expandFromParallelogramAreas(placeable.spec_leveling.levelAreas)
-    end
-    if placeable.spec_placement ~= nil and placeable.spec_placement.testAreas ~= nil then
-        for _, area in ipairs(placeable.spec_placement.testAreas) do
-            if area.size ~= nil then
-                local halfX = (area.size.x or 5) * 0.5
-                local halfZ = (area.size.z or 5) * 0.5
-                local cx = area.center ~= nil and area.center.x or 0
-                local cz = area.center ~= nil and area.center.z or 0
-                minX = math.min(minX, cx - halfX); maxX = math.max(maxX, cx + halfX)
-                minZ = math.min(minZ, cz - halfZ); maxZ = math.max(maxZ, cz + halfZ)
-                found = true
-            end
-        end
-    end
-
-    local radius
-    if found then
-        local sizeX = maxX - minX
-        local sizeZ = maxZ - minZ
-        radius = math.sqrt(sizeX * sizeX + sizeZ * sizeZ) * 0.5 + DryingSystem.ACTIVATION_DISTANCE_BUFFER
-    else
-        radius = 15 + DryingSystem.ACTIVATION_DISTANCE_BUFFER
-    end
-
-    self.placeableRadii[placeable.uniqueId] = radius
-    return radius
-end
-
-function DryingSystem:registerActivatables()
-    -- Remove activatables whose placeables no longer exist (e.g. sold silos)
-    local toRemove = {}
-    for placeableId, _ in pairs(self.activatables) do
-        if self:getPlaceableByUniqueId(placeableId) == nil then
-            table.insert(toRemove, placeableId)
-        end
-    end
-    for _, placeableId in ipairs(toRemove) do
-        self:removeActivatable(placeableId)
-        self.activeDryers[placeableId] = nil
-    end
-
+-- Every silo/shed placeable owned by farmId that is eligible for drying.
+function DryingSystem:getOwnedDryables(farmId)
+    local result = {}
     for _, placeable in pairs(g_currentMission.placeableSystem.placeables) do
-        if placeable.spec_silo and placeable.spec_silo.storages then
-            self:addActivatable(placeable)
-        elseif self:isTipOcclusionBuilding(placeable) then
-            self:addActivatable(placeable)
+        if placeable:getOwnerFarmId() == farmId then
+            if placeable.spec_silo and placeable.spec_silo.storages then
+                table.insert(result, placeable)
+            elseif self:isTipOcclusionBuilding(placeable) then
+                table.insert(result, placeable)
+            end
         end
     end
-end
-
-function DryingSystem:subscribe()
-    g_messageCenter:subscribe(MessageType.FARM_PROPERTY_CHANGED, self.onFarmPropertyChanged, self)
-end
-
-function DryingSystem:unsubscribe()
-    g_messageCenter:unsubscribe(MessageType.FARM_PROPERTY_CHANGED, self)
-end
-
-function DryingSystem:onFarmPropertyChanged()
-    if not self.missionStarted then return end
-    self:registerActivatables()
+    return result
 end
 
 function DryingSystem:isTipOcclusionBuilding(placeable)
@@ -144,60 +59,159 @@ function DryingSystem:getShedWorldBounds(placeable)
     return bounds
 end
 
-DryingSystem.SHED_CHECK_INTERVAL = 5000
-
-function DryingSystem:shedHasWetPiles(placeable)
-    local id = placeable.uniqueId
-    local now = g_time or 0
-    local cache = self.shedWetCache
-    if cache == nil then
-        cache = {}
-        self.shedWetCache = cache
+-- Per-crop moisture/idealMax/needsDrying for a silo, plus the silo's total stored liters.
+function DryingSystem:getSiloCropStatus(placeable, ms)
+    local statuses = {}
+    local totalLiters = 0
+    for _, storage in ipairs(placeable.spec_silo.storages) do
+        for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
+            if fillLevel > 0 then
+                totalLiters = totalLiters + fillLevel
+                local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
+                if idealMax then
+                    local info = ms:getObjectInfo(placeable.uniqueId, fillTypeIndex)
+                    if info and info.moisture then
+                        table.insert(statuses, {
+                            fillTypeIndex = fillTypeIndex,
+                            moisture = info.moisture,
+                            idealMax = idealMax,
+                            needsDrying = info.moisture > idealMax,
+                        })
+                    end
+                end
+            end
+        end
     end
-    local entry = cache[id]
-    if entry and (now - entry.time) < DryingSystem.SHED_CHECK_INTERVAL then
-        return entry.result
-    end
-
-    local result = self:checkShedHasWetPiles(placeable)
-    cache[id] = { time = now, result = result }
-    return result
+    return statuses, totalLiters
 end
 
-function DryingSystem:checkShedHasWetPiles(placeable)
+-- Per-crop moisture/idealMax/needsDrying for a shed, aggregated by fillType across all
+-- piles inside its bounds (a shed can have several piles of the same crop across grid
+-- cells; the worst-case pile determines when that crop finishes drying).
+function DryingSystem:getShedCropStatus(placeable)
     local bounds = self:getShedWorldBounds(placeable)
-    if bounds == nil then return false end
+    if bounds == nil then return {}, 0 end
 
     local tracker = g_currentMission.groundPropertyTracker
     local allStorages = { tracker.gridPiles, tracker.grassPiles, tracker.hayPiles, tracker.strawPiles }
+    local byFillType = {}
+    local totalLiters = 0
+
     for _, storage in ipairs(allStorages) do
         for _, pile in pairs(storage) do
             if pile.gridX >= bounds.minX and pile.gridX <= bounds.maxX
                 and pile.gridZ >= bounds.minZ and pile.gridZ <= bounds.maxZ then
                 local _, idealMax = CropValueMap.getIdealRange(pile.fillType)
-                if idealMax and pile.properties.moisture and pile.properties.moisture > idealMax then
-                    return true
+                if idealMax and pile.properties.moisture then
+                    local checkRadius = GroundPropertyTracker.GRID_SIZE / 2
+                    local fillLevel = DensityMapHeightUtil.getFillLevelAtArea(
+                        pile.fillType,
+                        pile.gridX - checkRadius, pile.gridZ - checkRadius,
+                        pile.gridX + checkRadius, pile.gridZ - checkRadius,
+                        pile.gridX - checkRadius, pile.gridZ + checkRadius
+                    )
+                    if fillLevel > 0 then
+                        totalLiters = totalLiters + fillLevel
+                        local existing = byFillType[pile.fillType]
+                        if existing == nil or pile.properties.moisture > existing.moisture then
+                            byFillType[pile.fillType] = {
+                                fillTypeIndex = pile.fillType,
+                                moisture = pile.properties.moisture,
+                                idealMax = idealMax,
+                                needsDrying = pile.properties.moisture > idealMax,
+                            }
+                        end
+                    end
                 end
             end
         end
     end
+
+    local statuses = {}
+    for _, status in pairs(byFillType) do
+        table.insert(statuses, status)
+    end
+    return statuses, totalLiters
+end
+
+function DryingSystem:hasNeedsDrying(cropStatuses)
+    for _, status in ipairs(cropStatuses) do
+        if status.needsDrying then return true end
+    end
     return false
 end
 
-function DryingSystem:addActivatable(placeable)
-    if self.activatables[placeable.uniqueId] then return end
-    local activatable = DryingActivatable.new(self, placeable)
-    self.activatables[placeable.uniqueId] = activatable
-    g_currentMission.activatableObjectsSystem:addActivatable(activatable)
+-- Shared with onHourChanged's actual drying loop so the GUI's ETA matches reality.
+function DryingSystem:calculateEffectiveDryingRate(totalLiters, ms)
+    local dryingRate = ms.settings.dryingSpeed or DryingSystem.DEFAULT_DRYING_RATE
+    local t = math.min(1, math.max(0, (totalLiters - 10000) / 90000))
+    local volumeMultiplier = 1.4 - 0.8 * t
+    return dryingRate * volumeMultiplier * ms:getScaleFactor()
 end
 
-function DryingSystem:removeActivatable(placeableId)
-    local activatable = self.activatables[placeableId]
-    if activatable == nil then return end
-    g_currentMission.activatableObjectsSystem:removeActivatable(activatable)
-    self.activatables[placeableId] = nil
-    self.shedBounds[placeableId] = nil
-    self.placeableRadii[placeableId] = nil
+-- Hours until every crop in cropStatuses reaches its idealMax, at the current rate.
+-- nil if nothing needs drying (rate would never be spent) or the rate is zero.
+function DryingSystem:calculateETA(cropStatuses, totalLiters, ms)
+    local maxOvershoot = 0
+    for _, status in ipairs(cropStatuses) do
+        if status.needsDrying then
+            maxOvershoot = math.max(maxOvershoot, status.moisture - status.idealMax)
+        end
+    end
+    if maxOvershoot <= 0 then return nil end
+
+    local effectiveDryingRate = self:calculateEffectiveDryingRate(totalLiters, ms)
+    if effectiveDryingRate <= 0 then return nil end
+
+    return maxOvershoot / effectiveDryingRate
+end
+
+-- Builds the full Grain Drying tab list: every silo/shed farmId owns that currently
+-- holds at least one CropValueMap-tracked crop (or is already drying), with crop
+-- breakdown, drying state and ETA, computed fresh at call time.
+function DryingSystem:buildDryingListEntries(farmId)
+    local ms = g_currentMission.MoistureSystem
+    local entries = {}
+
+    for _, placeable in ipairs(self:getOwnedDryables(farmId)) do
+        local isSilo = placeable.spec_silo ~= nil
+        local cropStatuses, totalLiters
+        if isSilo then
+            cropStatuses, totalLiters = self:getSiloCropStatus(placeable, ms)
+        else
+            cropStatuses, totalLiters = self:getShedCropStatus(placeable)
+        end
+
+        local isDrying = self:isDrying(placeable.uniqueId)
+
+        -- Skip silos/sheds with no tracked crop in them at all, unless a stray
+        -- activeDryers entry means the player still needs to be able to stop it.
+        if #cropStatuses > 0 or isDrying then
+            table.sort(cropStatuses, function(a, b)
+                local nameA = g_fillTypeManager:getFillTypeNameByIndex(a.fillTypeIndex) or ""
+                local nameB = g_fillTypeManager:getFillTypeNameByIndex(b.fillTypeIndex) or ""
+                return nameA < nameB
+            end)
+
+            local etaHours = nil
+            if isDrying or self:hasNeedsDrying(cropStatuses) then
+                etaHours = self:calculateETA(cropStatuses, totalLiters, ms)
+            end
+
+            table.insert(entries, {
+                placeable = placeable,
+                uniqueId = placeable.uniqueId,
+                name = placeable:getName() or "?",
+                isSilo = isSilo,
+                isDrying = isDrying,
+                cropStatuses = cropStatuses,
+                etaHours = etaHours,
+            })
+        end
+    end
+
+    table.sort(entries, function(a, b) return a.name < b.name end)
+    return entries
 end
 
 function DryingSystem:toggleDrying(placeable)
@@ -282,9 +296,7 @@ function DryingSystem:drySilo(placeable, ms, dryingRate, sellChargeRate, complet
         g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_OK,
             g_i18n:getText("ms_drying_complete"))
     else
-        local t = math.min(1, math.max(0, (totalLiters - 10000) / 90000))
-        local volumeMultiplier = 1.4 - 0.8 * t
-        local effectiveDryingRate = dryingRate * volumeMultiplier * ms:getScaleFactor()
+        local effectiveDryingRate = self:calculateEffectiveDryingRate(totalLiters, ms)
 
         for _, storage in ipairs(placeable.spec_silo.storages) do
             for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
@@ -358,9 +370,7 @@ function DryingSystem:dryShed(placeable, ms, dryingRate, sellChargeRate, complet
         return
     end
 
-    local t = math.min(1, math.max(0, (totalLiters - 10000) / 90000))
-    local volumeMultiplier = 1.4 - 0.8 * t
-    local effectiveDryingRate = dryingRate * volumeMultiplier * ms:getScaleFactor()
+    local effectiveDryingRate = self:calculateEffectiveDryingRate(totalLiters, ms)
 
     for _, entry in ipairs(pilesToDry) do
         entry.pile.properties.moisture = math.max(entry.idealMax, entry.pile.properties.moisture - effectiveDryingRate)
@@ -420,140 +430,4 @@ function DryingSystem:loadFromXMLFile(xmlFile, key)
         end
         i = i + 1
     end
-end
-
--- Activatable class for silo drying interaction
-DryingActivatable = {}
-local DryingActivatable_mt = Class(DryingActivatable)
-
-function DryingActivatable.new(dryingSystem, placeable)
-    local self = setmetatable({}, DryingActivatable_mt)
-    self.dryingSystem = dryingSystem
-    self.placeable = placeable
-    self.activateText = g_i18n:getText("ms_action_startDrying")
-    self.actionEventId = nil
-    return self
-end
-
-function DryingActivatable:delete()
-    self.dryingSystem:removeActivatable(self.placeable.uniqueId)
-end
-
-function DryingActivatable:getIsActivatable()
-    if self.placeable == nil or self.placeable.rootNode == nil then return false end
-    if not entityExists(self.placeable.rootNode) then
-        self:delete()
-        return false
-    end
-    if g_localPlayer == nil or g_localPlayer.rootNode == nil then return false end
-    if g_localPlayer:getCurrentVehicle() ~= nil then return false end
-
-    local px, _, pz = getWorldTranslation(g_localPlayer.rootNode)
-
-    if self.dryingSystem:isTipOcclusionBuilding(self.placeable) then
-        if not self:isPlayerInsideShed(px, pz) then return false end
-        if not self.dryingSystem:isDrying(self.placeable.uniqueId) and not self.dryingSystem:shedHasWetPiles(self.placeable) then return false end
-    else
-        local tx, _, tz = getWorldTranslation(self.placeable.rootNode)
-        if tx == nil then return false end
-        local activationRadius = self.dryingSystem:getPlaceableRadius(self.placeable)
-        if MathUtil.vector2Length(px - tx, pz - tz) > activationRadius then
-            return false
-        end
-
-        local ms = g_currentMission.MoistureSystem
-        local objectData = ms.objectInfo[self.placeable.uniqueId]
-        if not objectData then return false end
-
-        local hasMoisture = false
-        for _, info in pairs(objectData) do
-            if info.moisture then
-                hasMoisture = true
-                break
-            end
-        end
-        if not hasMoisture then return false end
-    end
-
-    if self.dryingSystem:isDrying(self.placeable.uniqueId) then
-        self.activateText = g_i18n:getText("ms_action_stopDrying")
-    else
-        self.activateText = g_i18n:getText("ms_action_startDrying")
-    end
-
-    if self.actionEventId then
-        g_inputBinding:setActionEventText(self.actionEventId, self.activateText)
-    end
-
-    return true
-end
-
-function DryingActivatable:isPlayerInsideShed(px, pz)
-    local bounds = self.dryingSystem:getShedWorldBounds(self.placeable)
-    if bounds == nil then return false end
-    return px >= bounds.minX and px <= bounds.maxX and pz >= bounds.minZ and pz <= bounds.maxZ
-end
-
-function DryingActivatable:getDistance(x, _, z)
-    if self.placeable == nil or self.placeable.rootNode == nil then return math.huge end
-    if not entityExists(self.placeable.rootNode) then
-        self:delete()
-        return math.huge
-    end
-    local tx, _, tz = getWorldTranslation(self.placeable.rootNode)
-    if tx == nil then return math.huge end
-    return MathUtil.vector2Length(x - tx, z - tz)
-end
-
-function DryingActivatable:registerCustomInput(inputContext)
-    if inputContext ~= PLAYER_CONTEXT then
-        return
-    end
-
-    local _, actionEventId = g_inputBinding:registerActionEvent(
-        InputAction.MOISTURE_START_DRYING,
-        self,
-        self.onKeybindPressed,
-        false,
-        true,
-        false,
-        true
-    )
-
-    if actionEventId ~= nil and actionEventId ~= "" then
-        self.actionEventId = actionEventId
-        g_inputBinding:setActionEventText(actionEventId, self.activateText)
-        g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_HIGH)
-        g_inputBinding:setActionEventTextVisibility(actionEventId, true)
-    end
-end
-
-function DryingActivatable:removeCustomInput()
-    g_inputBinding:removeActionEventsByTarget(self)
-    self.actionEventId = nil
-end
-
-function DryingActivatable:onKeybindPressed()
-    if self.placeable == nil then return end
-
-    if g_currentMission:getIsServer() then
-        self.dryingSystem:toggleDrying(self.placeable)
-        if self.actionEventId then
-            if self.dryingSystem:isDrying(self.placeable.uniqueId) then
-                g_inputBinding:setActionEventText(self.actionEventId, g_i18n:getText("ms_action_stopDrying"))
-            else
-                g_inputBinding:setActionEventText(self.actionEventId, g_i18n:getText("ms_action_startDrying"))
-            end
-        end
-    else
-        local objectId = NetworkUtil.getObjectId(self.placeable)
-        if objectId ~= nil then
-            g_client:getServerConnection():sendEvent(DryingToggleEvent.new(objectId))
-        end
-        -- Button text and notification will update when the server broadcasts back via applyRemoteState
-    end
-end
-
-function DryingActivatable:run()
-    self:onKeybindPressed()
 end

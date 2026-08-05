@@ -247,4 +247,13 @@
         <textAlignment value="left"/>
         <textVerticalAlignment value="top"/>
     </Profile>
+
+    <!-- Grain Drying tab -->
+    <Profile name="msDryingListItem" extends="msListItem">
+        <height value="42px"/>
+    </Profile>
+    <Profile name="msDryingCropsCell" extends="msRowCellLeft">
+        <textMaxNumLines value="2"/>
+        <textVerticalAlignment value="middle"/>
+    </Profile>
 </GUIProfiles>

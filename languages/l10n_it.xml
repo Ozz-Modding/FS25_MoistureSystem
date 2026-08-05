@@ -57,7 +57,6 @@
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Apri Menu Umidità"/>
-		<text name="input_MOISTURE_START_DRYING" text="Attiva/Disattiva essiccazione"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Umidità del Campo"/>
@@ -100,6 +99,21 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Calendario dell'Umidità"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Ambiente Corrente"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Il calendario qui sotto mostra l'intervallo di umidità previsto per ogni mese in base all'impostazione dell'ambiente corrente. I livelli di umidità sono influenzati da precipitazioni, temperatura e stagione."/>
+
+		<!-- GUI Essiccazione del Grano -->
+		<text name="moistureSystem_gui_drying" text="Essiccazione del Grano"/>
+		<text name="moistureSystem_gui_drying_desc" text="Silos e capannoni di tua proprietà. Selezionane uno, quindi avvia o interrompi l'essiccazione. I costi vengono addebitati ogni ora mentre l'essiccazione è attiva."/>
+		<text name="moistureSystem_gui_drying_colName" text="Nome"/>
+		<text name="moistureSystem_gui_drying_colType" text="Tipo"/>
+		<text name="moistureSystem_gui_drying_colState" text="Stato"/>
+		<text name="moistureSystem_gui_drying_colCrops" text="Colture"/>
+		<text name="moistureSystem_gui_drying_colEta" text="ETA (h)"/>
+		<text name="moistureSystem_gui_drying_typeSilo" text="Silo"/>
+		<text name="moistureSystem_gui_drying_typeShed" text="Capannone"/>
+		<text name="moistureSystem_gui_drying_stateDrying" text="In essiccazione"/>
+		<text name="moistureSystem_gui_drying_stateIdle" text="Inattivo"/>
+		<text name="moistureSystem_gui_drying_allIdeal" text="Tutte le colture all'umidità ideale"/>
+		<text name="moistureSystem_gui_drying_empty" text="Non possiedi ancora silos o capannoni."/>
 
 		<!-- GUI Meteo -->
 		<text name="moistureSystem_gui_weather" text="Meteo"/>

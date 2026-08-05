@@ -57,7 +57,6 @@
 
 		<!-- Ovládací vazby -->
 		<text name="input_MOISTURE_MENU" text="Otevřít menu vlhkosti"/>
-		<text name="input_MOISTURE_START_DRYING" text="Přepnout sušení v silu"/>
 
 		<!-- Zobrazení HUD -->
 		<text name="moistureSystem_fieldInfo" text="Vlhkost pole"/>
@@ -100,6 +99,21 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Kalendář vlhkosti"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Aktuální prostředí"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Kalendář níže ukazuje očekávaný rozsah vlhkosti pro každý měsíc na základě aktuálního nastavení prostředí. Úrovně vlhkosti jsou ovlivněny srážkami, teplotou a ročním obdobím."/>
+
+		<!-- GUI Sušení Obilí -->
+		<text name="moistureSystem_gui_drying" text="Sušení Obilí"/>
+		<text name="moistureSystem_gui_drying_desc" text="Sila a kůlny, které vlastníte. Vyberte jedno z nich a spusťte nebo zastavte sušení. Náklady jsou účtovány každou hodinu, dokud je sušení aktivní."/>
+		<text name="moistureSystem_gui_drying_colName" text="Název"/>
+		<text name="moistureSystem_gui_drying_colType" text="Typ"/>
+		<text name="moistureSystem_gui_drying_colState" text="Stav"/>
+		<text name="moistureSystem_gui_drying_colCrops" text="Plodiny"/>
+		<text name="moistureSystem_gui_drying_colEta" text="ETA (hod.)"/>
+		<text name="moistureSystem_gui_drying_typeSilo" text="Silo"/>
+		<text name="moistureSystem_gui_drying_typeShed" text="Kůlna"/>
+		<text name="moistureSystem_gui_drying_stateDrying" text="Suší se"/>
+		<text name="moistureSystem_gui_drying_stateIdle" text="Nečinné"/>
+		<text name="moistureSystem_gui_drying_allIdeal" text="Všechny plodiny mají ideální vlhkost"/>
+		<text name="moistureSystem_gui_drying_empty" text="Zatím nevlastníte žádná sila ani kůlny."/>
 
 		<!-- GUI počasí -->
 		<text name="moistureSystem_gui_weather" text="Počasí"/>

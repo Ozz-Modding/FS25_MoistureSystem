@@ -57,7 +57,6 @@
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Відкрити меню вологості"/>
-		<text name="input_MOISTURE_START_DRYING" text="Перемкнути сушіння в силосі"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Вологість поля"/>
@@ -100,6 +99,21 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Календар вологості"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Поточний клімат"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Очікуваний рівень вологості по місяцях залежно від клімату."/>
+
+		<!-- GUI Сушіння Зерна -->
+		<text name="moistureSystem_gui_drying" text="Сушіння Зерна"/>
+		<text name="moistureSystem_gui_drying_desc" text="Силоси та сараї, якими ви володієте. Виберіть один із них, щоб почати або зупинити сушіння. Витрати нараховуються щогодини, поки сушіння активне."/>
+		<text name="moistureSystem_gui_drying_colName" text="Назва"/>
+		<text name="moistureSystem_gui_drying_colType" text="Тип"/>
+		<text name="moistureSystem_gui_drying_colState" text="Стан"/>
+		<text name="moistureSystem_gui_drying_colCrops" text="Культури"/>
+		<text name="moistureSystem_gui_drying_colEta" text="Час (год)"/>
+		<text name="moistureSystem_gui_drying_typeSilo" text="Силос"/>
+		<text name="moistureSystem_gui_drying_typeShed" text="Сарай"/>
+		<text name="moistureSystem_gui_drying_stateDrying" text="Сушиться"/>
+		<text name="moistureSystem_gui_drying_stateIdle" text="Простоює"/>
+		<text name="moistureSystem_gui_drying_allIdeal" text="Усі культури мають ідеальну вологість"/>
+		<text name="moistureSystem_gui_drying_empty" text="У вас поки немає силосів чи сараїв."/>
 
 		<!-- GUI погоди -->
 		<text name="moistureSystem_gui_weather" text="Погода"/>

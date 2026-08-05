@@ -57,7 +57,6 @@
 
 		<!-- Input Bindings -->
 		<text name="input_MOISTURE_MENU" text="Ouvrir le Menu d'Humidité"/>
-		<text name="input_MOISTURE_START_DRYING" text="Activer/Désactiver le séchage"/>
 
 		<!-- HUD Display -->
 		<text name="moistureSystem_fieldInfo" text="Humidité du Champ"/>
@@ -100,6 +99,21 @@
 		<text name="moistureSystem_gui_moistureCalendar" text="Calendrier d'Humidité"/>
 		<text name="moistureSystem_gui_currentEnvironment" text="Environnement Actuel"/>
 		<text name="moistureSystem_gui_calendarDescription" text="Le calendrier ci-dessous montre la plage d'humidité attendue pour chaque mois en fonction de votre paramètre d'environnement actuel. Les niveaux d'humidité sont influencés par les précipitations, la température et la saison."/>
+
+		<!-- GUI Séchage du Grain -->
+		<text name="moistureSystem_gui_drying" text="Séchage du Grain"/>
+		<text name="moistureSystem_gui_drying_desc" text="Silos et hangars que vous possédez. Sélectionnez-en un, puis démarrez ou arrêtez le séchage. Les coûts sont facturés chaque heure tant que le séchage est actif."/>
+		<text name="moistureSystem_gui_drying_colName" text="Nom"/>
+		<text name="moistureSystem_gui_drying_colType" text="Type"/>
+		<text name="moistureSystem_gui_drying_colState" text="État"/>
+		<text name="moistureSystem_gui_drying_colCrops" text="Récoltes"/>
+		<text name="moistureSystem_gui_drying_colEta" text="ETA (h)"/>
+		<text name="moistureSystem_gui_drying_typeSilo" text="Silo"/>
+		<text name="moistureSystem_gui_drying_typeShed" text="Hangar"/>
+		<text name="moistureSystem_gui_drying_stateDrying" text="Séchage"/>
+		<text name="moistureSystem_gui_drying_stateIdle" text="Inactif"/>
+		<text name="moistureSystem_gui_drying_allIdeal" text="Toutes les récoltes à l'humidité idéale"/>
+		<text name="moistureSystem_gui_drying_empty" text="Vous ne possédez aucun silo ou hangar pour le moment."/>
 
 		<!-- GUI Météo -->
 		<text name="moistureSystem_gui_weather" text="Météo"/>
