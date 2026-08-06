@@ -1007,4 +1007,23 @@ end
 
 FSBaseMission.onStartMission = Utils.appendedFunction(FSBaseMission.onStartMission, WeatherProfileSystem.onStartMission)
 
+-- Re-inject immediately after every Weather:load(...) (map-defined base objects, or a later
+-- reloadWeatherObjects() call), not just once from onStartMission. onStartMission fires only
+-- after the whole mission -- including the savegame's persisted weather.forecastItems queue --
+-- has already loaded. Career loads resolve each forecast instance's objectIndex against
+-- whatever the pool contains AT THAT MOMENT; since our injected RAIN/HAIL clones didn't exist
+-- yet, any saved instance pointing at one fails to resolve (observed in logs as "WeatherObject
+-- 'HAIL' not defined for 'environment.weather.forecast.instance(N)'") and gets replaced with a
+-- short regenerated filler -- the "10 minutes left" symptom after every save/load. Hooking
+-- Weather.load directly (installed once, at file scope, before any mission ever loads) instead
+-- of loadMap/onStartMission guarantees the pool is complete the instant it exists, before any
+-- caller -- including forecast resolution -- can act on it. cloneWeatherObjectInto is idempotent
+-- (skips types already present), so repeated calls across reloadWeatherObjects() are harmless.
+Weather.load = Utils.appendedFunction(Weather.load, function(weather)
+    local wps = g_currentMission and g_currentMission.WeatherProfileSystem
+    if wps then
+        wps:injectMissingWeatherObjects()
+    end
+end)
+
 addModEventListener(WeatherProfileSystem)
