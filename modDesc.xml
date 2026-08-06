@@ -118,6 +118,11 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop, Realistic
 
 Änderungsprotokoll:
 
+2.0.0.1:
+- Die Getreidetrocknung wird nun über das Feuchtigkeitsmenü (Umschalt + M) gestartet, anstatt eine Taste in der Nähe des Silos zu drücken. Dies vermeidet einige Probleme mit bestimmten Silos und bietet zudem mehr Informationen.
+- Die Dauer von Wetterphasen wird nun basierend auf der Anzahl der Tage pro Monat skaliert. Dies hilft bei der Planung der Feldarbeit rund um das in v2 eingeführte Wetter.
+- Die Feuchtigkeitseinfluss-Diagramme können nun mit der Maus überfahren werden, um spezifische Ertrags- und Qualitätswerte für einen bestimmten Feuchtigkeitswert anzuzeigen.
+
 2.0.0.0:
 - Das Feuchtigkeitssystem steuert jetzt das Wetter. Wählen Sie in den Spieleinstellungen ein Wetterprofil, das zu Ihrer Region passt. Viele Karten haben innerhalb des Mods geeignete Standardeinstellungen konfiguriert. Das Wetter enthält Variabilität, die realistische jahreszeitliche Muster simuliert. Dies beeinflusst Ihre Ernte und erfordert noch mehr Planung als zuvor.
 - Feuchtigkeit beeinflusst jetzt sowohl den Ertrag als auch die Qualität. Das ist nicht unbedingt schwieriger - generell liefert zu trockenes Getreide schlechten Ertrag, während zu feuchtes Getreide guten Ertrag aber schlechte Qualität bringt.
@@ -190,6 +195,11 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop, RealisticWeather
 
 Journal des modifications :
+
+2.0.0.1 :
+- Le séchage des céréales est désormais lancé depuis le menu Humidité (Maj + M) plutôt qu'en appuyant sur une touche à proximité du silo. Cela évite certains problèmes avec certains silos, tout en fournissant plus d'informations.
+- La durée des phases météorologiques est désormais mise à l'échelle en fonction du nombre de jours par mois. Cela facilite la planification des travaux des champs autour de la météo introduite dans la v2.
+- Les graphiques d'impact de l'humidité peuvent désormais être survolés avec la souris pour afficher les valeurs précises de rendement et de qualité pour un niveau d'humidité donné.
 
 2.0.0.0 :
 - Le système d'humidité contrôle désormais la météo. Choisissez un profil météorologique correspondant à votre région dans les paramètres du jeu. De nombreuses cartes ont des valeurs par défaut appropriées configurées dans le mod. La météo inclut une variabilité qui simule des schémas saisonniers réalistes. Cela impacte votre récolte et nécessite encore plus de planification qu'auparavant.
