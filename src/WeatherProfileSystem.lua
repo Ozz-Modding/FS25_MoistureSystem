@@ -1019,11 +1019,14 @@ FSBaseMission.onStartMission = Utils.appendedFunction(FSBaseMission.onStartMissi
 -- of loadMap/onStartMission guarantees the pool is complete the instant it exists, before any
 -- caller -- including forecast resolution -- can act on it. cloneWeatherObjectInto is idempotent
 -- (skips types already present), so repeated calls across reloadWeatherObjects() are harmless.
+--
+-- Call on the class table itself, not a g_currentMission.WeatherProfileSystem instance: at this
+-- point (Weather.load firing during mission/savegame load) our own mod's loadMap() -- which is
+-- what creates and registers that instance -- has not run yet. injectMissingWeatherObjects and
+-- cloneWeatherObjectInto never read any per-instance field (only g_currentMission.environment.
+-- weather and their own arguments), so the class table works fine as `self`.
 Weather.load = Utils.appendedFunction(Weather.load, function(weather)
-    local wps = g_currentMission and g_currentMission.WeatherProfileSystem
-    if wps then
-        wps:injectMissingWeatherObjects()
-    end
+    WeatherProfileSystem:injectMissingWeatherObjects()
 end)
 
 addModEventListener(WeatherProfileSystem)
