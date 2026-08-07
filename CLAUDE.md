@@ -84,6 +84,43 @@ weight→time fidelity required three engine-level fixes (all in `WeatherProfile
   has no object class), `rebuildWeatherWeights` redirects it to a related available type
   (rain↔snow↔hail, partlyCloudy↔cloudy) so its precipitation/cloud share is preserved.
 
+**`thunder` always becomes extra `rain` — author it as a small flavor value, not a second
+rain budget.** THUNDER has no `WeatherObject` subclass in FS25 at all (unlike RAIN/HAIL, which
+get injected real objects — see above), so its weight is *never* schedulable as its own type.
+Every point of `thunder` weight redirects 100% into `RAIN` for that season (chain:
+`RAIN → SNOW → HAIL`). This means the profile's actual rain frequency for a month is
+`rain + thunder` (plus `hail` too, but only in the rare case a season somehow lacks even the
+injected hail object), not just the `rain` field. A profile authored with `rain=4, thunder=3`
+doesn't read as "mostly rain with occasional thunderstorms" — it plays as `rain=7`, i.e. rain
+~39% of that month instead of the apparent ~22%. This is easy to get wrong because per-month
+values look reasonable in isolation; the inflation only shows up when you sum `rain + thunder`
+against the month's total weight. Keep `thunder` low (normally ≤1, occasionally 2 for a
+short peak-storm season) even in climates with genuinely frequent thunderstorms — the "more
+thunderstorms" character should mostly already be expressed through a higher `rain` value,
+since the engine can't visually distinguish the two. (Fixed 2026-08 in `centraleurope`,
+`brazilcentral`, `brazilsouth`, `usmidwest`, which had `thunder` weights of 2–5 stacking on
+top of already-substantial `rain` values during the crop's harvest window, producing
+"nearly non-stop rain" complaints — `brazilcentral`'s Nov peak hit ~62% effective rain time.)
+
+**What drives simulated field moisture up, in order of leverage:**
+1. **`moistureMin`/`moistureMax` for the month** — the hard clamp `adjustMoisture` settles
+   within (see inner-80% rule below). This is the primary lever; always check it first when a
+   crop can't hit grade A.
+2. **`rain` weight relative to the month's total weight** — determines how much of the month
+   the sim treats as "raining" (see `getRainFallScale() > 0.1` below), which pushes moisture
+   toward `moistureMax` and slows drying between rain events.
+3. **`thunder` weight** — see above; functionally identical to `rain` weight once redirected,
+   so it has the same moisture-raising effect but is easy to under-account for when tuning.
+4. **`hail`/`snow` weight** — also precipitation, but typically much smaller shares and, unlike
+   `thunder`, schedule as their own distinct type (via injection) rather than silently
+   inflating `rain`.
+5. **`tempMin`/`tempMax`** — lower temps slow evaporation/drying between precipitation events,
+   compounding whatever moisture the rain/thunder weights already put in.
+
+When a profile feels too wet, check all five in that order rather than assuming the `rain`
+field alone is the story — `thunder` in particular hides real rain-time increases behind a
+value that looks like a separate, minor weather type.
+
 **Engine season vs. calendar month.** The engine groups the 12 months into 4 visual seasons
 (`weatherObjects`/`weightedWeatherObjects` are keyed by season 1–4, three months each). With
 ~1-day months, each reporting season is a small sample, so single-year scatter is wide
