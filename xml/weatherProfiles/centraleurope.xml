@@ -15,16 +15,16 @@
                 rain="4" thunder="1" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="3"
                 moistureMin="9"  moistureMax="22"/>
             <month id="5"  tempMin="11" tempMax="21"
-                rain="5" thunder="2" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
+                rain="5" thunder="1" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
                 moistureMin="8"  moistureMax="20"/>
             <month id="6"  tempMin="14" tempMax="25"
-                rain="5" thunder="2" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
+                rain="5" thunder="1" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
                 moistureMin="7"  moistureMax="18"/>
             <month id="7"  tempMin="16" tempMax="28"
-                rain="4" thunder="3" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="2"
+                rain="4" thunder="1" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="2"
                 moistureMin="6"  moistureMax="16"/>
             <month id="8"  tempMin="16" tempMax="27"
-                rain="4" thunder="2" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="3"
+                rain="4" thunder="1" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="3"
                 moistureMin="7"  moistureMax="18"/>
             <month id="9"  tempMin="11" tempMax="22"
                 rain="4" thunder="1" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="4"
@@ -91,16 +91,16 @@
                 rain="6" thunder="1" snow="0" hail="1" sun="2" partlyCloudy="3" cloudy="4"
                 moistureMin="14" moistureMax="30"/>
             <month id="5"  tempMin="10" tempMax="19"
-                rain="7" thunder="2" snow="0" hail="1" sun="1" partlyCloudy="3" cloudy="4"
+                rain="7" thunder="1" snow="0" hail="1" sun="1" partlyCloudy="3" cloudy="4"
                 moistureMin="13" moistureMax="28"/>
             <month id="6"  tempMin="13" tempMax="22"
-                rain="7" thunder="2" snow="0" hail="1" sun="1" partlyCloudy="3" cloudy="4"
+                rain="7" thunder="1" snow="0" hail="1" sun="1" partlyCloudy="3" cloudy="4"
                 moistureMin="12" moistureMax="26"/>
             <month id="7"  tempMin="14" tempMax="24"
-                rain="6" thunder="3" snow="0" hail="1" sun="2" partlyCloudy="3" cloudy="3"
+                rain="6" thunder="1" snow="0" hail="1" sun="2" partlyCloudy="3" cloudy="3"
                 moistureMin="11" moistureMax="25"/>
             <month id="8"  tempMin="14" tempMax="23"
-                rain="6" thunder="2" snow="0" hail="1" sun="2" partlyCloudy="3" cloudy="4"
+                rain="6" thunder="1" snow="0" hail="1" sun="2" partlyCloudy="3" cloudy="4"
                 moistureMin="12" moistureMax="26"/>
             <month id="9"  tempMin="10" tempMax="19"
                 rain="6" thunder="1" snow="0" hail="1" sun="1" partlyCloudy="3" cloudy="5"
@@ -129,16 +129,16 @@
                 rain="4" thunder="1" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="3"
                 moistureMin="9"  moistureMax="22"/>
             <month id="5"  tempMin="10" tempMax="20"
-                rain="5" thunder="2" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
+                rain="5" thunder="1" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
                 moistureMin="8"  moistureMax="20"/>
             <month id="6"  tempMin="13" tempMax="24"
-                rain="5" thunder="2" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
+                rain="5" thunder="1" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="3"
                 moistureMin="7"  moistureMax="18"/>
             <month id="7"  tempMin="15" tempMax="27"
-                rain="4" thunder="3" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="2"
+                rain="4" thunder="1" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="2"
                 moistureMin="6"  moistureMax="16"/>
             <month id="8"  tempMin="15" tempMax="26"
-                rain="4" thunder="2" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="3"
+                rain="4" thunder="1" snow="0" hail="1" sun="4" partlyCloudy="4" cloudy="3"
                 moistureMin="7"  moistureMax="18"/>
             <month id="9"  tempMin="10" tempMax="21"
                 rain="4" thunder="1" snow="0" hail="1" sun="3" partlyCloudy="4" cloudy="4"
