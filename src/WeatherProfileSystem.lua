@@ -1029,4 +1029,58 @@ Weather.load = Utils.appendedFunction(Weather.load, function(weather)
     WeatherProfileSystem:injectMissingWeatherObjects()
 end)
 
+-- Vanilla re-rolls forecastItems[1].duration (the currently-active weather instance) for a
+-- resumed career save: by the time the instance is resolved, its duration already differs from
+-- what environment.xml has saved -- confirmed by bracketing WeatherObject.activate, which sees
+-- the already-changed value before its own body even runs (changeDuration passed as false, so
+-- it is not activate() itself doing it -- the value is already wrong going in). MoistureSystem
+-- widens every weather type's variation duration bounds to a full 2-5h band (SPELL_MIN_HOURS/
+-- SPELL_MAX_HOURS, needed so the profile weights map to measured time -- see
+-- rebuildWeatherWeights), which turns a re-roll that vanilla's normally narrower bounds would
+-- make barely noticeable into a swing of tens of minutes on the "time left" HUD after every load.
+--
+-- Fix: read the savegame's environment.xml ourselves right before Environment.loadFromXMLFile's
+-- vanilla body runs (still exactly what the last save wrote), then force each
+-- forecastItems[idx].duration back to that captured value immediately after. Matched by array
+-- position (forecastItems[idx] <-> instance(idx-1) in the XML), which holds reliably now that
+-- injectMissingWeatherObjects keeps every referenced index resolvable and nothing gets dropped.
+local function readSavegameForecastDurations()
+    local savegameDir = g_currentMission and g_currentMission.missionInfo and g_currentMission.missionInfo.savegameDirectory
+    if not savegameDir then return nil end
+    local xmlFile = loadXMLFile("MS_EnvDurationSnapshot", savegameDir .. "/environment.xml")
+    if not xmlFile then return nil end
+
+    local durations = {}
+    local i = 0
+    while true do
+        local instKey = string.format("environment.weather.forecast.instance(%d)", i)
+        if not hasXMLProperty(xmlFile, instKey) then break end
+        durations[i + 1] = getXMLFloat(xmlFile, instKey .. "#duration")
+        i = i + 1
+    end
+    delete(xmlFile)
+    return durations
+end
+
+local function applySavegameForecastDurations(durations)
+    if not durations then return end
+    local weather = g_currentMission and g_currentMission.environment and g_currentMission.environment.weather
+    if not weather or not weather.forecastItems then return end
+    for idx, savedDuration in ipairs(durations) do
+        local inst = weather.forecastItems[idx]
+        if inst and savedDuration and inst.duration ~= savedDuration then
+            inst.duration = savedDuration
+        end
+    end
+end
+
+if Environment.loadFromXMLFile then
+    Environment.loadFromXMLFile = Utils.overwrittenFunction(Environment.loadFromXMLFile, function(self, superFunc, ...)
+        local preDurations = readSavegameForecastDurations()
+        local a, b, c, d = superFunc(self, ...)
+        applySavegameForecastDurations(preDurations)
+        return a, b, c, d
+    end)
+end
+
 addModEventListener(WeatherProfileSystem)
