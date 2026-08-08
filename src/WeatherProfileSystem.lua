@@ -257,8 +257,15 @@ end
 -- The engine permits these objects in any season (isRainAllowed is true during load) -- they
 -- simply aren't authored -- so we clone real RAIN and HAIL objects into every season missing
 -- them. After this, rain/hail schedule genuine weather instead of redirecting to a fallback.
-function WeatherProfileSystem:injectMissingWeatherObjects()
-    local weather = g_currentMission.environment.weather
+-- `weather` is optional: callers that already hold the object (the Weather.load hook) should
+-- pass it, everyone else falls back to the mission's. Callable on the class table -- it reads
+-- no per-instance field -- which matters because the Weather.load hook fires during
+-- BaseMission:loadEnvironment, before our loadMap() has created g_currentMission.WeatherProfileSystem.
+function WeatherProfileSystem:injectMissingWeatherObjects(weather)
+    if WeatherProfileSystem.suppressInjection then return end
+
+    weather = weather or (g_currentMission and g_currentMission.environment
+        and g_currentMission.environment.weather)
     if not weather or not weather.weatherObjects then return end
 
     -- Sort seasons so the clone/append order is identical on server and clients (see
@@ -682,7 +689,16 @@ function WeatherProfileSystem:reloadWeatherObjects(weather)
     end
     weather.weatherObjects = {}
     weather.rainUpdater:reset()
+
+    -- This is the "override OFF" path: the whole point is to restore the map's authored pool.
+    -- Weather.load carries our injection hook (see bottom of file), so without suppressing it
+    -- the RAIN/HAIL clones would be re-added immediately and updateAvailableWeatherObjects()
+    -- would make them schedulable again -- i.e. disabling the override would still give you
+    -- winter rain.
+    WeatherProfileSystem.suppressInjection = true
     weather:load(xmlFile, "environment")
+    WeatherProfileSystem.suppressInjection = false
+
     xmlFile:delete()
 end
 
@@ -1006,5 +1022,27 @@ function WeatherProfileSystem:consoleCommandListScenarios()
 end
 
 FSBaseMission.onStartMission = Utils.appendedFunction(FSBaseMission.onStartMission, WeatherProfileSystem.onStartMission)
+
+-- Inject at Weather:load time, not just from onStartMission, so the pool is complete before the
+-- savegame's forecast queue is resolved.
+--
+-- BaseMission:loadEnvironment runs environment:load() (-> Weather:load) and then, for a career
+-- save, environment:loadFromXMLFile() (-> Weather:loadFromXMLFile) -- both long before
+-- onStartMission fires. Weather:loadFromXMLFile resolves each saved instance by season+typeName
+-- via WeatherInstance:loadFromXMLFile, and on a miss it logs "Failed to load forecast weather
+-- instance. WeatherObject 'HAIL' not defined for '...'" and returns false -- at which point the
+-- vanilla loop BREAKS, discarding the entire remaining saved queue and regenerating it from
+-- scratch. Any save whose forecast referenced one of our injected clones (winter RAIN, non-spring
+-- HAIL) therefore came back with a different forecast and a wrong "time left" countdown after
+-- every single load. Injecting here closes that window.
+--
+-- Called on the class table because our own loadMap() -- which creates and registers
+-- g_currentMission.WeatherProfileSystem -- has not run yet at this point. Injection is idempotent
+-- (cloneWeatherObjectInto skips types already present), so the later onStartMission call is a
+-- harmless no-op; it is kept because it is what guarantees clients inject too (see the comment
+-- there on MP index determinism).
+Weather.load = Utils.appendedFunction(Weather.load, function(weather)
+    WeatherProfileSystem:injectMissingWeatherObjects(weather)
+end)
 
 addModEventListener(WeatherProfileSystem)

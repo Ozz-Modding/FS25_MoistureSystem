@@ -187,6 +187,16 @@ If you want to create a profile for a different region, see the authoring guide:
 
 Big thanks to all of the internal testers. Special mention to Scroft and Mark Thor!
 
+## Contributing
+
+**Pull requests are only accepted for translations** (the files in [`languages/`](languages/)).
+Code, XML, and documentation PRs will be closed without review — the mod is maintained solo
+because its systems are tightly coupled to the game's weather scheduler, savegame load order,
+and multiplayer sync.
+
+Bug reports, feature requests, crop suggestions, and weather profiles for new regions are all
+very welcome as issues. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
 ## Support
 
 For bug reports, feature requests, or questions:

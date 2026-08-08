@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="111">
     <author>Ozz</author>
-    <version>2.0.0.2</version>
+    <version>2.0.0.3</version>
     <iconFilename>icon_MoistureSystem.dds</iconFilename>
     <title>
         <en>Moisture System</en>
@@ -36,7 +36,7 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
 
-2.0.0.2:
+2.0.0.3:
 - Tuned some weather profiles to properly account for how weather like thunder impacts moisture.
 - Grain drying is now instigated within the Moisture Menu (Shift + M) rather than pressing a key when near the silo. This avoids some issues with some silos, whilst also providing more information.
 - Durations of weather spells is now scaled based on number of days per month. This helps planning field work around weather introduced in v2.
