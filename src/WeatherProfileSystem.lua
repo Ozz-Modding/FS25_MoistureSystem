@@ -257,8 +257,15 @@ end
 -- The engine permits these objects in any season (isRainAllowed is true during load) -- they
 -- simply aren't authored -- so we clone real RAIN and HAIL objects into every season missing
 -- them. After this, rain/hail schedule genuine weather instead of redirecting to a fallback.
-function WeatherProfileSystem:injectMissingWeatherObjects()
-    local weather = g_currentMission.environment.weather
+-- `weather` is optional: callers that already hold the object (the Weather.load hook) should
+-- pass it, everyone else falls back to the mission's. Callable on the class table -- it reads
+-- no per-instance field -- which matters because the Weather.load hook fires during
+-- BaseMission:loadEnvironment, before our loadMap() has created g_currentMission.WeatherProfileSystem.
+function WeatherProfileSystem:injectMissingWeatherObjects(weather)
+    if WeatherProfileSystem.suppressInjection then return end
+
+    weather = weather or (g_currentMission and g_currentMission.environment
+        and g_currentMission.environment.weather)
     if not weather or not weather.weatherObjects then return end
 
     -- Sort seasons so the clone/append order is identical on server and clients (see
@@ -682,7 +689,16 @@ function WeatherProfileSystem:reloadWeatherObjects(weather)
     end
     weather.weatherObjects = {}
     weather.rainUpdater:reset()
+
+    -- This is the "override OFF" path: the whole point is to restore the map's authored pool.
+    -- Weather.load carries our injection hook (see bottom of file), so without suppressing it
+    -- the RAIN/HAIL clones would be re-added immediately and updateAvailableWeatherObjects()
+    -- would make them schedulable again -- i.e. disabling the override would still give you
+    -- winter rain.
+    WeatherProfileSystem.suppressInjection = true
     weather:load(xmlFile, "environment")
+    WeatherProfileSystem.suppressInjection = false
+
     xmlFile:delete()
 end
 
@@ -1007,80 +1023,26 @@ end
 
 FSBaseMission.onStartMission = Utils.appendedFunction(FSBaseMission.onStartMission, WeatherProfileSystem.onStartMission)
 
--- Re-inject immediately after every Weather:load(...) (map-defined base objects, or a later
--- reloadWeatherObjects() call), not just once from onStartMission. onStartMission fires only
--- after the whole mission -- including the savegame's persisted weather.forecastItems queue --
--- has already loaded. Career loads resolve each forecast instance's objectIndex against
--- whatever the pool contains AT THAT MOMENT; since our injected RAIN/HAIL clones didn't exist
--- yet, any saved instance pointing at one fails to resolve (observed in logs as "WeatherObject
--- 'HAIL' not defined for 'environment.weather.forecast.instance(N)'") and gets replaced with a
--- short regenerated filler -- the "10 minutes left" symptom after every save/load. Hooking
--- Weather.load directly (installed once, at file scope, before any mission ever loads) instead
--- of loadMap/onStartMission guarantees the pool is complete the instant it exists, before any
--- caller -- including forecast resolution -- can act on it. cloneWeatherObjectInto is idempotent
--- (skips types already present), so repeated calls across reloadWeatherObjects() are harmless.
+-- Inject at Weather:load time, not just from onStartMission, so the pool is complete before the
+-- savegame's forecast queue is resolved.
 --
--- Call on the class table itself, not a g_currentMission.WeatherProfileSystem instance: at this
--- point (Weather.load firing during mission/savegame load) our own mod's loadMap() -- which is
--- what creates and registers that instance -- has not run yet. injectMissingWeatherObjects and
--- cloneWeatherObjectInto never read any per-instance field (only g_currentMission.environment.
--- weather and their own arguments), so the class table works fine as `self`.
+-- BaseMission:loadEnvironment runs environment:load() (-> Weather:load) and then, for a career
+-- save, environment:loadFromXMLFile() (-> Weather:loadFromXMLFile) -- both long before
+-- onStartMission fires. Weather:loadFromXMLFile resolves each saved instance by season+typeName
+-- via WeatherInstance:loadFromXMLFile, and on a miss it logs "Failed to load forecast weather
+-- instance. WeatherObject 'HAIL' not defined for '...'" and returns false -- at which point the
+-- vanilla loop BREAKS, discarding the entire remaining saved queue and regenerating it from
+-- scratch. Any save whose forecast referenced one of our injected clones (winter RAIN, non-spring
+-- HAIL) therefore came back with a different forecast and a wrong "time left" countdown after
+-- every single load. Injecting here closes that window.
+--
+-- Called on the class table because our own loadMap() -- which creates and registers
+-- g_currentMission.WeatherProfileSystem -- has not run yet at this point. Injection is idempotent
+-- (cloneWeatherObjectInto skips types already present), so the later onStartMission call is a
+-- harmless no-op; it is kept because it is what guarantees clients inject too (see the comment
+-- there on MP index determinism).
 Weather.load = Utils.appendedFunction(Weather.load, function(weather)
-    WeatherProfileSystem:injectMissingWeatherObjects()
+    WeatherProfileSystem:injectMissingWeatherObjects(weather)
 end)
-
--- Vanilla re-rolls forecastItems[1].duration (the currently-active weather instance) for a
--- resumed career save: by the time the instance is resolved, its duration already differs from
--- what environment.xml has saved -- confirmed by bracketing WeatherObject.activate, which sees
--- the already-changed value before its own body even runs (changeDuration passed as false, so
--- it is not activate() itself doing it -- the value is already wrong going in). MoistureSystem
--- widens every weather type's variation duration bounds to a full 2-5h band (SPELL_MIN_HOURS/
--- SPELL_MAX_HOURS, needed so the profile weights map to measured time -- see
--- rebuildWeatherWeights), which turns a re-roll that vanilla's normally narrower bounds would
--- make barely noticeable into a swing of tens of minutes on the "time left" HUD after every load.
---
--- Fix: read the savegame's environment.xml ourselves right before Environment.loadFromXMLFile's
--- vanilla body runs (still exactly what the last save wrote), then force each
--- forecastItems[idx].duration back to that captured value immediately after. Matched by array
--- position (forecastItems[idx] <-> instance(idx-1) in the XML), which holds reliably now that
--- injectMissingWeatherObjects keeps every referenced index resolvable and nothing gets dropped.
-local function readSavegameForecastDurations()
-    local savegameDir = g_currentMission and g_currentMission.missionInfo and g_currentMission.missionInfo.savegameDirectory
-    if not savegameDir then return nil end
-    local xmlFile = loadXMLFile("MS_EnvDurationSnapshot", savegameDir .. "/environment.xml")
-    if not xmlFile then return nil end
-
-    local durations = {}
-    local i = 0
-    while true do
-        local instKey = string.format("environment.weather.forecast.instance(%d)", i)
-        if not hasXMLProperty(xmlFile, instKey) then break end
-        durations[i + 1] = getXMLFloat(xmlFile, instKey .. "#duration")
-        i = i + 1
-    end
-    delete(xmlFile)
-    return durations
-end
-
-local function applySavegameForecastDurations(durations)
-    if not durations then return end
-    local weather = g_currentMission and g_currentMission.environment and g_currentMission.environment.weather
-    if not weather or not weather.forecastItems then return end
-    for idx, savedDuration in ipairs(durations) do
-        local inst = weather.forecastItems[idx]
-        if inst and savedDuration and inst.duration ~= savedDuration then
-            inst.duration = savedDuration
-        end
-    end
-end
-
-if Environment.loadFromXMLFile then
-    Environment.loadFromXMLFile = Utils.overwrittenFunction(Environment.loadFromXMLFile, function(self, superFunc, ...)
-        local preDurations = readSavegameForecastDurations()
-        local a, b, c, d = superFunc(self, ...)
-        applySavegameForecastDurations(preDurations)
-        return a, b, c, d
-    end)
-end
 
 addModEventListener(WeatherProfileSystem)
