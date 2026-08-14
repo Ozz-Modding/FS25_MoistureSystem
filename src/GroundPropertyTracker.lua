@@ -5,7 +5,7 @@ GroundPropertyTracker.GRID_SIZE = 2
 GroundPropertyTracker.MIN_GRASS_MOISTURE = 0.05 -- 5% minimum moisture for grass
 GroundPropertyTracker.MAX_GRASS_MOISTURE = 0.40 -- 40% maximum moisture for grass
 GroundPropertyTracker.MIN_HAY_MOISTURE = 0.04   -- 4% minimum moisture for hay
-GroundPropertyTracker.DRY_THRESHOLD = 0.07      -- 7% moisture converts grass to hay / hay to grass
+GroundPropertyTracker.DRY_THRESHOLD = 0.10      -- 10% moisture converts grass to hay / hay to grass
 
 GroundPropertyTracker.TEDDED_COOLDOWN_CYCLES = 10
 GroundPropertyTracker.DELAYED_PROCESSING_CYCLES = 2

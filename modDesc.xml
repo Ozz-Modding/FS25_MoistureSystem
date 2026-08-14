@@ -36,6 +36,11 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
 
+2.0.0.4 [WIP]:
+- Moisture level now moves slightly more quickly both up and down. The goal with this is to more reliably produced intended outcomes in weather scenarios.
+- The threshold for hay is now 10%
+- The default tedding moisture reduction is now 4% and players can adjust this to be between 4-8%
+
 2.0.0.3:
 - Tuned some weather profiles to properly account for how weather like thunder impacts moisture.
 - Grain drying is now instigated within the Moisture Menu (Shift + M) rather than pressing a key when near the silo. This avoids some issues with some silos, whilst also providing more information.

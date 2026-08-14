@@ -53,6 +53,10 @@ MoistureSystem.MapProfileDefaults = {
     FS25_Turvo_Map                       = "brazilsouth",
 }
 
+-- Global rate scalar for field moisture movement (gain and loss alike).
+-- 1.0 = original tuning; raise to make moisture chase the clamp bounds faster.
+MoistureSystem.RATE_SCALE = 1.1
+
 function MoistureSystem:getScaleFactor()
     local daysPerPeriod = g_currentMission.environment.daysPerPeriod or 1
     local clamped = math.min(daysPerPeriod, 5)
@@ -84,7 +88,7 @@ function MoistureSystem:loadMap()
         weatherProfile = MoistureSystem:getDefaultProfileForMap(),
         moistureLossMultiplier = 3.0,
         moistureGainMultiplier = 3.0,
-        teddingMoistureReduction = 0.02,
+        teddingMoistureReduction = 0.04,
         witheringEnabled = true,
         baleRotEnabled = true,
         baleRotRate = 1.0,
@@ -233,30 +237,30 @@ function MoistureSystem:updateMoistureLevel(delta)
 
     local scaleFactor = self:getScaleFactor()
     if rainfall > 0 or snowfall > 0 or hailfall > 0 then
-        moistureDelta = (rainfall + (snowfall * 0.55) + (hailfall * 0.5)) * 0.009945 * scaledDelta *
-            self.settings.moistureGainMultiplier * scaleFactor
+        moistureDelta = (rainfall + (snowfall * 0.55) + (hailfall * 0.5)) * 0.0076526775 * scaledDelta *
+            self.settings.moistureGainMultiplier * scaleFactor * MoistureSystem.RATE_SCALE
         self:adjustMoisture(moistureDelta)
     else
         -- Lose moisture from temperature (warmer = more loss)
         -- Only lose during daytime (6am-8pm) or reduced loss at night
         local daylightStart = 6
         local daylightEnd = 20
-        local sunFactor = (currentHour >= daylightStart and currentHour < daylightEnd) and 1 or 0.33
+        local sunFactor = (currentHour >= daylightStart and currentHour < daylightEnd) and 1 or 0.34
 
         local rateFactor = 0
         if temperature >= 45 then
-            rateFactor = temperature * 0.001024
+            rateFactor = temperature * 0.00107008
         elseif temperature >= 35 then
-            rateFactor = temperature * 0.00075096
+            rateFactor = temperature * 0.0007847532
         elseif temperature >= 25 then
-            rateFactor = temperature * 0.00032424
+            rateFactor = temperature * 0.0003388308
         elseif temperature >= 15 then
-            rateFactor = temperature * 0.0001024
+            rateFactor = temperature * 0.000107008
         else
-            rateFactor = temperature * 0.00004264
+            rateFactor = temperature * 0.0000445588
         end
 
-        moistureDelta = moistureDelta - (rateFactor * scaledDelta * sunFactor * self.settings.moistureLossMultiplier * scaleFactor)
+        moistureDelta = moistureDelta - (rateFactor * scaledDelta * sunFactor * self.settings.moistureLossMultiplier * scaleFactor * MoistureSystem.RATE_SCALE)
 
         self:adjustMoisture(moistureDelta)
     end
@@ -856,8 +860,11 @@ function MoistureSystem:loadFromXMLFile()
             self.settings.moistureGainMultiplier = gainMultiplier
         end
 
+        -- Saves from before the 4-8% range carry values as low as 1%, which no
+        -- longer reaches the hay threshold in a sensible number of passes. Any
+        -- out-of-range value is migrated up to the current default.
         local teddingReduction = getXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#teddingMoistureReduction")
-        if teddingReduction then
+        if teddingReduction and teddingReduction >= 0.04 then
             self.settings.teddingMoistureReduction = teddingReduction
         end
 

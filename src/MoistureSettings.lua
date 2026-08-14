@@ -85,11 +85,11 @@ MoistureSettings.SETTINGS.moistureGainMultiplier = {
 }
 
 MoistureSettings.SETTINGS.teddingMoistureReduction = {
-    ['default'] = 2,
+    ['default'] = 1,
     ['serverOnly'] = true,
     ['permission'] = 'moistureSettings',
-    ['values'] = { 0.01, 0.02, 0.03, 0.04, 0.05 },
-    ['strings'] = { "1%", "2%", "3%", "4%", "5%" }
+    ['values'] = { 0.04, 0.05, 0.06, 0.07, 0.08 },
+    ['strings'] = { "4%", "5%", "6%", "7%", "8%" }
 }
 
 MoistureSettings.SETTINGS.witheringEnabled = {
