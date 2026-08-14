@@ -40,6 +40,7 @@ Changelog:
 - Moisture level now moves slightly more quickly both up and down. The goal with this is to more reliably produced intended outcomes in weather scenarios.
 - The threshold for hay is now 10%
 - The default tedding moisture reduction is now 4% and players can adjust this to be between 4-8%
+- Updated save game hook to reduce mod conflicts.
 
 2.0.0.3:
 - Tuned some weather profiles to properly account for how weather like thunder impacts moisture.

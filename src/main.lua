@@ -1222,9 +1222,31 @@ local function addPlayerActionEvents(self, superFunc, ...)
 end
 
 
+function MoistureSystem.installSaveHook()
+    if MoistureSystem.saveHookInstalled then
+        return
+    end
+
+    -- Mission00.saveSavegame is inherited from FSBaseMission via metatable, so it is
+    -- ALWAYS non-nil even when Mission00 has no override of its own. Checking it directly
+    -- (without rawget) would make us always shadow Mission00, permanently orphaning any
+    -- mod that later hooks FSBaseMission.saveSavegame (the standard convention most mods
+    -- use, e.g. inside FSBaseMission.onStartMission). Only target Mission00 if another mod
+    -- has already put its own property there — otherwise stay on FSBaseMission so we remain
+    -- part of the shared chain.
+    local target = FSBaseMission
+    if Mission00 ~= nil and rawget(Mission00, "saveSavegame") ~= nil then
+        target = Mission00
+    end
+
+    target.saveSavegame = Utils.appendedFunction(target.saveSavegame, MoistureSystem.saveToXmlFile)
+    MoistureSystem.saveHookInstalled = true
+end
+
+
 FSBaseMission.sendInitialClientState = Utils.appendedFunction(FSBaseMission.sendInitialClientState,
     MoistureSystem.sendInitialClientState)
-FSBaseMission.saveSavegame = Utils.appendedFunction(FSBaseMission.saveSavegame, MoistureSystem.saveToXmlFile)
+MoistureSystem.installSaveHook()
 FSBaseMission.onStartMission = Utils.appendedFunction(FSBaseMission.onStartMission, MoistureSystem.onStartMission)
 PlayerInputComponent.registerGlobalPlayerActionEvents = Utils.overwrittenFunction(
     PlayerInputComponent.registerGlobalPlayerActionEvents, addPlayerActionEvents)
