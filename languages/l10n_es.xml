@@ -226,6 +226,7 @@
 		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Solo %dh libres - un trabajo necesita al menos %dh."/>
 		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dh libres cubren menos de %s en %s."/>
 		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Esta parcela ya está en el límite de %s."/>
+		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="Ya hay un contratista reservado para esta parcela. Espera a que termine ese trabajo."/>
 		<text name="moistureSystem_gui_irrigation_limitHours" text="Máx %s este día - limitado por las horas del contratista"/>
 		<text name="moistureSystem_gui_irrigation_limitCap" text="Máx %s este día - limitado por el tope de riego"/>
 		<text name="moistureSystem_gui_irrigation_amount" text="Cantidad"/>

@@ -94,7 +94,8 @@ function MoistureGuiIrrigation:onFrameOpen()
     end
 
     self.timeSinceRefresh = 0
-    self:rebuildFarmlandList()
+    -- refreshAll rebuilds the farmland list itself; the month list is fixed for
+    -- the session, so it only needs building once per open.
     self:rebuildMonthList()
     self:refreshAll()
 end
@@ -181,7 +182,15 @@ function MoistureGuiIrrigation:rebuildFarmlandList()
         if farmlandId == self.selectedFarmlandId then selectedIndex = i end
     end
 
-    self.farmlandSelector:setTexts(texts)
+    -- Rebuilt on every refresh so the per-farmland boost suffix stays current
+    -- and a farmland bought or sold with the tab open appears or disappears.
+    -- Only push the texts when they actually differ, so the once-a-second
+    -- refresh does not fight the player's own arrow presses.
+    local signature = table.concat(texts, "|")
+    if self.farmlandSelectorSignature ~= signature then
+        self.farmlandSelectorSignature = signature
+        self.farmlandSelector:setTexts(texts)
+    end
     self.farmlandSelector:setState(selectedIndex)
     self.selectedFarmlandId = self.farmlandIds[selectedIndex]
 end
@@ -242,6 +251,7 @@ function MoistureGuiIrrigation:refreshAll()
         self.selectedDay = self.monthDays[1]
     end
 
+    self:rebuildFarmlandList()
     self:refreshCurrentBoost()
     self:refreshAmountStepper()
     self:refreshDayCards()
@@ -395,18 +405,28 @@ function MoistureGuiIrrigation:setQuoteLinesVisible(visible)
     self.quoteResult:setVisible(visible)
 end
 
+---
+-- Both unbookable paths route through here. Keeping them together is the point:
+-- when they were separate, the second one left the footer reading
+-- "Book - <price>" and clickable over a quote panel that already said the day
+-- was unbookable, and the click then did nothing at all.
+---
+function MoistureGuiIrrigation:showUnbookable(reason)
+    self:setQuoteLinesVisible(false)
+    self.quoteUnbookable:setVisible(true)
+    self.quoteUnbookable:setText(self:getUnbookableReason(reason))
+    self.btnBook.disabled = true
+    self.btnBook.text = g_i18n:getText("ms_action_irrigationBook")
+    self:setMenuButtonInfoDirty()
+end
+
 function MoistureGuiIrrigation:refreshQuote()
     local irrigation = g_currentMission.irrigationSystem
     local ceiling, reason = self:getCeiling()
 
     if self.selectedFarmlandId == nil or self.selectedDay == nil
         or ceiling < IrrigationSystem.BOOST_STEP_PP then
-        self:setQuoteLinesVisible(false)
-        self.quoteUnbookable:setVisible(true)
-        self.quoteUnbookable:setText(self:getUnbookableReason(reason))
-        self.btnBook.disabled = true
-        self.btnBook.text = g_i18n:getText("ms_action_irrigationBook")
-        self:setMenuButtonInfoDirty()
+        self:showUnbookable(reason)
         return
     end
 
@@ -417,9 +437,7 @@ function MoistureGuiIrrigation:refreshQuote()
     -- screen can be a network hop behind it.
     if quote ~= nil and quote.contractorIndex == nil then quote = nil end
     if quote == nil then
-        self:setQuoteLinesVisible(false)
-        self.quoteUnbookable:setVisible(true)
-        self.quoteUnbookable:setText(self:getUnbookableReason(reason))
+        self:showUnbookable(IrrigationSystem.CEILING_CONTRACTOR_HOURS)
         return
     end
 
@@ -480,6 +498,10 @@ function MoistureGuiIrrigation:getUnbookableReason(reason)
     end
 
     local irrigation = g_currentMission.irrigationSystem
+    if reason == IrrigationSystem.CEILING_JOB_PENDING then
+        return g_i18n:getText("moistureSystem_gui_irrigation_unbookableJobPending")
+    end
+
     if reason == IrrigationSystem.CEILING_BOOST_CAP then
         return string.format(g_i18n:getText("moistureSystem_gui_irrigation_unbookableCap"),
             fmtPp(IrrigationSystem.MAX_BOOST_PP))

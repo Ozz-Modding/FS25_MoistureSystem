@@ -323,9 +323,13 @@ function MoistureSystem:adjustMoisture(delta)
 end
 
 ---
--- Discard every cached position sample. The cache is keyed on position, so an
--- entry can never be served for the wrong place -- staleness across time is the
--- only failure mode, and this is how every writer clears it.
+-- Discard every cached position sample. This is how every writer of
+-- currentMoisturePercent, and IrrigationSystem's hourly sweep, clear it.
+--
+-- Note the cache key rounds position to a 5m grid, so a cell straddling a
+-- farmland boundary can serve a neighbouring parcel's irrigation boost within
+-- 5m of the edge. That is an accepted trade-off (spec section 11): keying on
+-- the farmland id as well would be machinery for a ten-entry cache.
 ---
 function MoistureSystem:invalidateMoistureCache()
     self.moistureCache = {}
@@ -1215,7 +1219,7 @@ function MoistureSystem:ensureObjectMoistureLoaded(object)
 end
 
 function MoistureSystem:sendInitialClientState(connection, user, farm)
-    connection:sendEvent(MSInitialClientStateEvent.new())
+    connection:sendEvent(MSInitialClientStateEvent.new(farm))
 end
 
 ---

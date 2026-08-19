@@ -194,6 +194,25 @@ function IrrigationSystem:saveToXMLFile(xmlFile, key)
         setXMLInt(xmlFile, jobKey .. "#farmId", job.farmId)
         j = j + 1
     end
+
+    -- The booked-hours ledger is saved rather than rebuilt from the job
+    -- records, because a job is DELETED the moment it completes: replaying only
+    -- surviving jobs would hand back every hour a contractor had already
+    -- worked today, which is directly save-scummable and contradicts the
+    -- no-refund rule. Only days still inside the bookable window can ever be
+    -- quoted, so older entries are dropped rather than accumulated forever.
+    local firstBookableDay = self:getBookableDays()[1]
+    local k = 0
+    for ledgerKey, hours in pairs(self.bookedHours) do
+        local day, contractorIndex = ledgerKey:match("^(-?%d+):(%d+)$")
+        if day ~= nil and tonumber(day) >= firstBookableDay then
+            local reservationKey = string.format("%s.reservation(%d)", base, k)
+            setXMLInt(xmlFile, reservationKey .. "#day", tonumber(day))
+            setXMLInt(xmlFile, reservationKey .. "#contractorIndex", tonumber(contractorIndex))
+            setXMLInt(xmlFile, reservationKey .. "#hours", hours)
+            k = k + 1
+        end
+    end
 end
 
 ---
@@ -244,9 +263,33 @@ function IrrigationSystem:loadFromXMLFile(xmlFile, key)
                 farmId = getXMLInt(xmlFile, jobKey .. "#farmId"),
             }
             self.jobs[farmlandId] = job
-            self:reserveHours(job.startDay, job.contractorIndex, job.hours)
         end
         j = j + 1
+    end
+
+    -- The ledger is restored wholesale, so it must NOT also be replayed from
+    -- the job records above or every outstanding job's hours would count twice.
+    local k = 0
+    local hasLedger = hasXMLProperty(xmlFile, base .. ".reservation(0)")
+    if not hasLedger then
+        -- A save with jobs but no ledger predates the ledger being persisted.
+        -- Replaying the surviving jobs is the best that can be reconstructed;
+        -- it under-counts completed work but never double-books a contractor.
+        for _, job in pairs(self.jobs) do
+            self:reserveHours(job.startDay, job.contractorIndex, job.hours)
+        end
+    end
+    while hasLedger do
+        local reservationKey = string.format("%s.reservation(%d)", base, k)
+        if not hasXMLProperty(xmlFile, reservationKey) then break end
+
+        local day = getXMLInt(xmlFile, reservationKey .. "#day")
+        local contractorIndex = getXMLInt(xmlFile, reservationKey .. "#contractorIndex")
+        local hours = getXMLInt(xmlFile, reservationKey .. "#hours")
+        if day ~= nil and contractorIndex ~= nil and hours ~= nil then
+            self:reserveHours(day, contractorIndex, hours)
+        end
+        k = k + 1
     end
 
     self:refreshActiveBoostFlag()
@@ -312,8 +355,17 @@ function IrrigationSystem:decayBoosts()
 
     local pruned = false
     for farmlandId, boost in pairs(self.boosts) do
+        -- A running job holds its farmland at full strength for the whole ramp,
+        -- not just from completion. Without this the boost drains while it is
+        -- still being applied, so the player receives materially less than the
+        -- amount they were quoted and charged for -- around 8% short on a
+        -- four-hour job at 30 degC, worse in hotter months, which are exactly
+        -- the months irrigation is bought for. There are no partial jobs: ask
+        -- for +2.0%, pay for +2.0%, get +2.0%.
+        local job = self.jobs[farmlandId]
+        local isWorking = job ~= nil and job.hoursWorked > 0
         local inGrace = boost.graceUntil ~= nil and now < boost.graceUntil
-        if not inGrace and not isRaining then
+        if not isWorking and not inGrace and not isRaining then
             boost.value = math.max(0, boost.value - drain)
             if boost.value <= IrrigationSystem.PRUNE_THRESHOLD then
                 self.boosts[farmlandId] = nil
@@ -503,6 +555,7 @@ end
 
 IrrigationSystem.CEILING_CONTRACTOR_HOURS = 1
 IrrigationSystem.CEILING_BOOST_CAP        = 2
+IrrigationSystem.CEILING_JOB_PENDING      = 3
 
 ---
 -- The largest boost this day can actually deliver on this farmland, and which
@@ -518,6 +571,14 @@ IrrigationSystem.CEILING_BOOST_CAP        = 2
 -- both, but it must state the reason rather than merely greying the day out.
 ---
 function IrrigationSystem:getBoostCeiling(farmlandId, day)
+    -- One pending job per farmland, so while one is outstanding NO day is
+    -- bookable for it. Reported as its own reason: telling the player "that
+    -- slot has just been taken, pick another day" would send them round every
+    -- day in the month for a block that is not about the day at all.
+    if self.jobs[farmlandId] ~= nil then
+        return 0, IrrigationSystem.CEILING_JOB_PENDING
+    end
+
     local areaHa = self:getFarmlandAreaHa(farmlandId)
     if areaHa == nil or areaHa <= 0 then return 0, IrrigationSystem.CEILING_CONTRACTOR_HOURS end
 
@@ -711,10 +772,13 @@ function IrrigationSystem:onHourChanged()
 
     self:runJobs()
     self:decayBoosts()
-    -- Once for the whole sweep, not once per farmland: cache keys are
-    -- positions, so an entry can never be served for the wrong farmland and
-    -- staleness across time is the only failure mode.
-    self:invalidateMoistureCache()
+    -- Once for the whole sweep, not once per farmland -- and not at all when
+    -- nothing is irrigated, since on such a save the boost changes nothing and
+    -- binning the cache 24 times a game day just makes every field-info query
+    -- redo its terrain-height work for no reason.
+    if self.anyActiveBoosts or next(self.jobs) ~= nil then
+        self:invalidateMoistureCache()
+    end
     self:broadcastBoosts()
 end
 
@@ -900,7 +964,13 @@ end
 -- whole roster's diary for the entire bookable range for free), and booked
 -- hours per day per contractor. Whose farm booked what is not sent.
 ---
-function IrrigationSystem:writeClientState(streamId)
+---
+-- @param farm the joining player's farm, so their own pending jobs can be sent.
+--   Other farms' jobs are never synced: a client needs only its own farm's job
+--   to render its tab, and the diary already says how many hours are free
+--   without saying who took them.
+---
+function IrrigationSystem:writeClientState(streamId, farm)
     local count = 0
     for _ in pairs(self.boosts) do count = count + 1 end
     streamWriteUIntN(streamId, count, 12)
@@ -931,6 +1001,30 @@ function IrrigationSystem:writeClientState(streamId)
         streamWriteUIntN(streamId, r.contractorIndex, 3)
         streamWriteUIntN(streamId, r.hours, 5)
     end
+
+    -- Without this a player who reconnects mid-job comes back to a client that
+    -- has forgotten its own booking: the jobs panel shows nothing pending, and
+    -- the Book button stays live for a farmland the server will always refuse.
+    local farmId = farm ~= nil and farm.farmId or nil
+    local ownJobs = {}
+    if farmId ~= nil then
+        for farmlandId, job in pairs(self.jobs) do
+            if job.farmId == farmId then
+                table.insert(ownJobs, { farmlandId = farmlandId, job = job })
+            end
+        end
+    end
+
+    streamWriteUIntN(streamId, #ownJobs, 12)
+    for _, entry in ipairs(ownJobs) do
+        streamWriteUIntN(streamId, entry.farmlandId, g_farmlandManager.numberOfBits)
+        streamWriteFloat32(streamId, entry.job.targetBoost)
+        streamWriteInt32(streamId, entry.job.startDay)
+        streamWriteUIntN(streamId, entry.job.startHour, 5)
+        streamWriteUIntN(streamId, entry.job.hours, 5)
+        streamWriteUIntN(streamId, entry.job.hoursWorked, 5)
+        streamWriteUIntN(streamId, entry.job.contractorIndex, 3)
+    end
 end
 
 function IrrigationSystem:readClientState(streamId)
@@ -951,6 +1045,23 @@ function IrrigationSystem:readClientState(streamId)
         local contractorIndex = streamReadUIntN(streamId, 3)
         local hours = streamReadUIntN(streamId, 5)
         self:reserveHours(day, contractorIndex, hours)
+    end
+
+    self.jobs = {}
+    local jobCount = streamReadUIntN(streamId, 12)
+    for _ = 1, jobCount do
+        local farmlandId = streamReadUIntN(streamId, g_farmlandManager.numberOfBits)
+        self.jobs[farmlandId] = {
+            targetBoost = streamReadFloat32(streamId),
+            startDay = streamReadInt32(streamId),
+            startHour = streamReadUIntN(streamId, 5),
+            hours = streamReadUIntN(streamId, 5),
+            hoursWorked = streamReadUIntN(streamId, 5),
+            contractorIndex = streamReadUIntN(streamId, 3),
+            price = 0,
+            paid = true,
+            farmId = g_currentMission:getFarmId(),
+        }
     end
 
     self:invalidateMoistureCache()

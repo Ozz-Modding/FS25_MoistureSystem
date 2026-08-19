@@ -226,6 +226,7 @@
 		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Jen %dh volných - zakázka potřebuje alespoň %dh."/>
 		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dh volných pokryje méně než %s na %s."/>
 		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Tento pozemek je už na limitu %s."/>
+		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="Na tento pozemek už je objednán dodavatel. Počkej, až zakázka skončí."/>
 		<text name="moistureSystem_gui_irrigation_limitHours" text="Max %s v tento den - omezeno hodinami dodavatele"/>
 		<text name="moistureSystem_gui_irrigation_limitCap" text="Max %s v tento den - omezeno limitem zavlažení"/>
 		<text name="moistureSystem_gui_irrigation_amount" text="Množství"/>

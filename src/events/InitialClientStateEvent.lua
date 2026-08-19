@@ -7,14 +7,19 @@ function MSInitialClientStateEvent.emptyNew()
     return Event.new(MSInitialClientStateEvent_mt)
 end
 
-function MSInitialClientStateEvent.new()
-    return MSInitialClientStateEvent.emptyNew()
+-- farm is the joining player's farm, forwarded from FSBaseMission's own
+-- sendInitialClientState so irrigation can send that farm's pending jobs and
+-- nobody else's.
+function MSInitialClientStateEvent.new(farm)
+    local self = MSInitialClientStateEvent.emptyNew()
+    self.farm = farm
+    return self
 end
 
 function MSInitialClientStateEvent:writeStream(streamId, connection)
     g_currentMission.MoistureSystem:writeInitialClientState(streamId, connection)
     g_currentMission.WeatherProfileSystem:writeClientState(streamId)
-    g_currentMission.irrigationSystem:writeClientState(streamId)
+    g_currentMission.irrigationSystem:writeClientState(streamId, self.farm)
 end
 
 function MSInitialClientStateEvent:readStream(streamId, connection)
