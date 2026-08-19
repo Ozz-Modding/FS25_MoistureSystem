@@ -25,6 +25,5 @@ end
 
 function MoistureUpdateEvent:run(connection)
     g_currentMission.MoistureSystem.currentMoisturePercent = self.moisturePercent
-    g_currentMission.MoistureSystem.moistureCache = {}
-    g_currentMission.MoistureSystem.moistureCacheOrder = {}
+    g_currentMission.MoistureSystem:invalidateMoistureCache()
 end

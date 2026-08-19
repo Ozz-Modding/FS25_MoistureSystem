@@ -19,7 +19,10 @@ MoistureSettings.menuItems = {
     'dryingSpeed',
     'sellDryingChargeRate',
     'showFieldMoisture',
-    'moistureMeterReporting'
+    'moistureMeterReporting',
+    'irrigationCostMultiplier',
+    'irrigationContractors',
+    'irrigationContractorCapacity'
 }
 
 MoistureSettings.multiplayerPermissions = {
@@ -174,6 +177,38 @@ MoistureSettings.SETTINGS.sellDryingChargeRate = {
     ['permission'] = 'moistureSettings',
     ['values'] = { 0.5, 1.0, 2.0, 4.0 },
     ['strings'] = { "0.5x", "1x", "2x", "4x" }
+}
+
+MoistureSettings.SETTINGS.irrigationCostMultiplier = {
+    ['default'] = 2, -- 1.0x
+    ['serverOnly'] = true,
+    ['permission'] = 'moistureSettings',
+    ['values'] = { 0.5, 1.0, 1.5, 2.0 },
+    ['strings'] = { "0.5x", "1x", "1.5x", "2x" }
+}
+
+MoistureSettings.SETTINGS.irrigationContractors = {
+    ['default'] = 1, -- one contractor
+    ['serverOnly'] = true,
+    ['permission'] = 'moistureSettings',
+    ['values'] = { 1, 2, 3, 4, 5 },
+    ['strings'] = { "1", "2", "3", "4", "5" }
+}
+
+-- Capacity is authored in hectares per day at full strength. The four values are
+-- round in both units (4/8/12/16 ha is 10/20/30/40 acres), so formatArea renders
+-- cleanly for imperial players and no second value set is needed.
+MoistureSettings.SETTINGS.irrigationContractorCapacity = {
+    ['default'] = 2, -- 8 ha/day
+    ['serverOnly'] = true,
+    ['permission'] = 'moistureSettings',
+    ['values'] = { 4, 8, 12, 16 },
+    ['strings'] = {
+        g_i18n:formatArea(4, 0),
+        g_i18n:formatArea(8, 0),
+        g_i18n:formatArea(12, 0),
+        g_i18n:formatArea(16, 0)
+    }
 }
 
 function MoistureSettings.getStateIndex(id, value)

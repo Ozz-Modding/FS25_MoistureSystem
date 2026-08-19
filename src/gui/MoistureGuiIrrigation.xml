@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI>
+    <GuiElement profile="uiInGameMenuFrame">
+
+        <!-- Page header -->
+        <GuiElement profile="fs25_menuHeaderPanel">
+            <Bitmap profile="fs25_menuHeaderIconBg">
+                <Bitmap profile="fs25_menuHeaderIcon" imageSliceId="gui.icon_ingameMenu_prices" />
+            </Bitmap>
+            <Text profile="fs25_menuHeaderTitle" text="$l10n_moistureSystem_gui_irrigation" />
+        </GuiElement>
+
+        <Text profile="msDescriptiveText" text="$l10n_moistureSystem_gui_irrigation_desc" position="20px -50px" width="1360px" />
+
+        <!-- Farmland picker, current boost, month picker -->
+        <Text profile="msIrrSelectorLabel" text="$l10n_moistureSystem_gui_irrigation_farmland" position="20px -92px" />
+        <MultiTextOption profile="msIrrMultiOption" id="farmlandSelector" position="130px -88px" size="440px 34px" onClick="onFarmlandChanged" wrap="false" />
+        <Text profile="msIrrCurrentBoost" id="currentBoostValue" position="590px -92px" />
+
+        <Text profile="msIrrSelectorLabel" text="$l10n_moistureSystem_gui_irrigation_month" position="880px -92px" />
+        <MultiTextOption profile="msIrrMultiOption" id="monthSelector" position="990px -88px" size="390px 34px" onClick="onMonthChanged" wrap="false" />
+
+        <!-- One card per bookable day in the selected month -->
+        <Button profile="msIrrDayCard" id="dayCard1" position="20px -140px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard1Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard1Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard1Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard1BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard1BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard1Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard1Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard1Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard1Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard2" position="250px -140px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard2Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard2Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard2Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard2BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard2BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard2Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard2Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard2Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard2Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard3" position="480px -140px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard3Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard3Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard3Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard3BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard3BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard3Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard3Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard3Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard3Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard4" position="710px -140px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard4Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard4Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard4Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard4BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard4BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard4Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard4Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard4Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard4Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard5" position="940px -140px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard5Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard5Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard5Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard5BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard5BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard5Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard5Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard5Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard5Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard6" position="1170px -140px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard6Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard6Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard6Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard6BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard6BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard6Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard6Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard6Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard6Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard7" position="20px -282px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard7Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard7Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard7Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard7BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard7BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard7Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard7Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard7Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard7Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard8" position="250px -282px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard8Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard8Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard8Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard8BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard8BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard8Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard8Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard8Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard8Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard9" position="480px -282px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard9Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard9Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard9Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard9BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard9BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard9Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard9Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard9Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard9Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard10" position="710px -282px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard10Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard10Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard10Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard10BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard10BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard10Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard10Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard10Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard10Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard11" position="940px -282px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard11Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard11Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard11Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard11BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard11BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard11Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard11Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard11Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard11Premium" position="10px -110px" />
+        </Button>
+        <Button profile="msIrrDayCard" id="dayCard12" position="1170px -282px" onClick="onClickDayCard" handleFocus="true">
+            <Bitmap profile="msIrrDayCardBg" id="dayCard12Bg" position="0px 0px" />
+            <Text profile="msIrrDayLabel" id="dayCard12Label" position="10px -8px" />
+            <Text profile="msIrrDayHours" id="dayCard12Hours" position="10px -26px" />
+            <Bitmap profile="msIrrBarBg" id="dayCard12BarBg" position="10px -58px" />
+            <Bitmap profile="msIrrBarFill" id="dayCard12BarFill" position="10px -58px" />
+            <Text profile="msIrrDayBoost" id="dayCard12Boost" position="10px -68px" />
+            <Text profile="msIrrDayPrice" id="dayCard12Price" position="10px -87px" />
+            <Text profile="msIrrDayNote" id="dayCard12Note" position="10px -68px" />
+            <Text profile="msIrrDayPremium" id="dayCard12Premium" position="10px -110px" />
+        </Button>
+
+        <!-- Amount + quote -->
+        <Bitmap profile="msIrrPanel" id="quotePanel" position="20px -430px" size="880px 306px">
+            <Text profile="msIrrSectionHeader" text="$l10n_moistureSystem_gui_irrigation_amount" position="14px -8px" />
+            <MultiTextOption profile="msIrrMultiOption" id="amountStepper" position="200px -6px" size="240px 34px" onClick="onAmountChanged" wrap="false" />
+            <Text profile="msIrrCeilingNote" id="amountLimitNote" position="460px -12px" />
+
+            <Text profile="msIrrSectionHeader" text="$l10n_moistureSystem_gui_irrigation_quote" position="14px -40px" />
+            <Text profile="msIrrUnbookable" id="quoteUnbookable" position="14px -70px" width="850px" />
+            <Text profile="msIrrQuoteLabel" id="quoteWorkLabel" position="14px -46px" />
+            <Text profile="msIrrQuoteValue" id="quoteWorkValue" position="470px -46px" />
+            <Text profile="msIrrQuoteLabel" id="quoteOnSiteLabel" position="14px -74px" />
+            <Text profile="msIrrQuoteValue" id="quoteOnSiteValue" position="470px -74px" />
+            <Text profile="msIrrQuoteLabel" id="quoteRateLabel" position="14px -102px" />
+            <Text profile="msIrrQuoteValue" id="quoteRateValue" position="470px -102px" />
+            <Text profile="msIrrQuoteLabel" id="quoteShortNoticeLabel" position="14px -130px" />
+            <Text profile="msIrrQuoteValue" id="quoteShortNoticeValue" position="470px -130px" />
+            <Text profile="msIrrQuoteLabel" id="quoteCostSettingLabel" position="14px -158px" />
+            <Text profile="msIrrQuoteValue" id="quoteCostSettingValue" position="470px -158px" />
+            <Text profile="msIrrQuoteTotalLabel" id="quoteTotalLabel" position="14px -186px" />
+            <Text profile="msIrrQuoteTotalValue" id="quoteTotalValue" position="470px -186px" />
+            <Text profile="msIrrQuoteResult" id="quoteResult" position="14px -258px" />
+        </Bitmap>
+
+        <!-- Everything this farm has irrigated or booked -->
+        <Bitmap profile="msIrrPanel" id="jobsPanel" position="920px -430px" size="460px 306px">
+            <Text profile="msIrrSectionHeader" text="$l10n_moistureSystem_gui_irrigation_jobs" position="14px -8px" />
+            <Text profile="msIrrJobsEmpty" id="jobsEmpty" position="14px -46px" />
+            <Text profile="msIrrJobName" id="jobRow1Name" position="14px -46px" />
+            <Text profile="msIrrJobValue" id="jobRow1Value" position="200px -46px" />
+            <Text profile="msIrrJobName" id="jobRow2Name" position="14px -72px" />
+            <Text profile="msIrrJobValue" id="jobRow2Value" position="200px -72px" />
+            <Text profile="msIrrJobName" id="jobRow3Name" position="14px -98px" />
+            <Text profile="msIrrJobValue" id="jobRow3Value" position="200px -98px" />
+            <Text profile="msIrrJobName" id="jobRow4Name" position="14px -124px" />
+            <Text profile="msIrrJobValue" id="jobRow4Value" position="200px -124px" />
+            <Text profile="msIrrJobName" id="jobRow5Name" position="14px -150px" />
+            <Text profile="msIrrJobValue" id="jobRow5Value" position="200px -150px" />
+            <Text profile="msIrrJobName" id="jobRow6Name" position="14px -176px" />
+            <Text profile="msIrrJobValue" id="jobRow6Value" position="200px -176px" />
+            <Text profile="msIrrJobName" id="jobRow7Name" position="14px -202px" />
+            <Text profile="msIrrJobValue" id="jobRow7Value" position="200px -202px" />
+            <Text profile="msIrrJobName" id="jobRow8Name" position="14px -228px" />
+            <Text profile="msIrrJobValue" id="jobRow8Value" position="200px -228px" />
+        </Bitmap>
+
+    </GuiElement>
+</GUI>

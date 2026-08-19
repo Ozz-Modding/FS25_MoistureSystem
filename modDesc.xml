@@ -255,6 +255,7 @@ Journal des modifications :
         <sourceFile filename="src/data/CropValueMap.lua"/>
         <sourceFile filename="src/WeatherHistoryCollector.lua"/>
         <sourceFile filename="src/WeatherProfileSystem.lua"/>
+        <sourceFile filename="src/IrrigationSystem.lua"/>
         <sourceFile filename="src/extensions/PlayerHUDUpdateExtension.lua"/>
         <sourceFile filename="src/extensions/PlaceableInfoTriggerExtension.lua"/>
         <sourceFile filename="src/extensions/CutterExtension.lua"/>
@@ -277,6 +278,7 @@ Journal des modifications :
         <sourceFile filename="src/gui/MoistureGuiPrices.lua"/>
         <sourceFile filename="src/gui/MoistureGuiWeather.lua"/>
         <sourceFile filename="src/gui/MoistureGuiDrying.lua"/>
+        <sourceFile filename="src/gui/MoistureGuiIrrigation.lua"/>
         <sourceFile filename="src/gui/MoistureGui.lua"/>
         <sourceFile filename="src/GroundPropertyTracker.lua"/>
         <sourceFile filename="src/BaleRottingSystem.lua"/>
@@ -292,6 +294,10 @@ Journal des modifications :
         <sourceFile filename="src/events/BaleRottingRequestEvent.lua"/>
         <sourceFile filename="src/events/BaleRottingResponseEvent.lua"/>
         <sourceFile filename="src/events/DryingToggleEvent.lua"/>
+        <sourceFile filename="src/events/IrrigationBookRequestEvent.lua"/>
+        <sourceFile filename="src/events/IrrigationBookResultEvent.lua"/>
+        <sourceFile filename="src/events/IrrigationJobBookedEvent.lua"/>
+        <sourceFile filename="src/events/IrrigationBoostUpdateEvent.lua"/>
         <sourceFile filename="src/MoistureSettings.lua"/>
         <sourceFile filename="src/handTools/MoistureMeterTool.lua"/>
 <sourceFile filename="src/main.lua"/>

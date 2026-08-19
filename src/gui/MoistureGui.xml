@@ -6,6 +6,7 @@
     <FrameReference ref="MoistureGuiPrices" name="MoistureGuiPrices" id="pagePrices"/>
     <FrameReference ref="MoistureGuiWeather" name="MoistureGuiWeather" id="pageWeather"/>
     <FrameReference ref="MoistureGuiDrying" name="MoistureGuiDrying" id="pageDrying"/>
+    <FrameReference ref="MoistureGuiIrrigation" name="MoistureGuiIrrigation" id="pageIrrigation"/>
   </Paging>
   <Bitmap profile="fs25_tabListContainer" id="header">
     <MultiTextOption profile="uiInGameMenuHeaderSelector" onClick="onClickPageSelection" id="pageSelector" soundDisabled="true" />

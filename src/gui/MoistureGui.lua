@@ -25,6 +25,7 @@ function MoistureGui:onGuiSetupFinished()
     self.pagePrices:initialize()
     self.pageWeather:initialize()
     self.pageDrying:initialize()
+    self.pageIrrigation:initialize()
 
     self:setupPages()
     self:setupMenuButtonInfo()
@@ -38,7 +39,10 @@ function MoistureGui:setupPages()
         { self.pageGrades, 'gui.icon_ingameMenu_finances' },
         { self.pagePrices, 'gui.icon_ingameMenu_prices' },
         { self.pageWeather, 'gui.icon_ingameMenu_calendar' },
-        { self.pageDrying, nil, dryingIconFilename, dryingIconUVs }
+        { self.pageDrying, nil, dryingIconFilename, dryingIconUVs },
+        -- Reuses the already-loaded drying icon so the irrigation icon can be
+        -- swapped later by dropping in a file, with no code change.
+        { self.pageIrrigation, nil, dryingIconFilename, dryingIconUVs }
     }
 
     for idx, thisPage in ipairs(pages) do

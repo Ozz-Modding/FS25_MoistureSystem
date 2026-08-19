@@ -196,5 +196,56 @@
 		<text name="help_moisture_settings_1" text="Wählen Sie in den Einstellungen ein Wetterprofil, das zur Region Ihrer Karte passt. Dies steuert die jahreszeitlichen Feuchtigkeits- und Wettermuster für Ihr Spiel. Für viele Karten wird automatisch ein passendes Standardprofil ausgewählt, aber Sie können es jederzeit ändern."/>
 		<text name="help_moisture_settings_2" text="Feineinstellung des Verhaltens mit anpassbaren Einstellungen: Feuchtigkeitsverlust-/Gewinn-Multiplikatoren steuern Trocknungs- und Befeuchtungsgeschwindigkeit, Feuchtigkeitsreduzierung durch Heuen passt die Trocknung pro Durchgang an, Qualitätsverfallsrate steuert wie schnell die Qualität abnimmt, und Trocknungsgeschwindigkeit steuert die Silotrocknungsrate."/>
 		<text name="help_moisture_settings_3" text="Weitere Einstellungen umfassen Verkaufstrocknungsgebühr (Kosten beim Verkauf feuchter Ernten), Ballenfäule-Einstellungen, Feldfeuchtigkeitsanzeige umschalten und Feuchtigkeitsmesser-Berichtsstil. Im Mehrspielermodus steuert der Host/Admin diese Einstellungen."/>
+		<!-- Irrigation -->
+		<text name="setting_moisture_irrigationCostMultiplier" text="Bewässerungskosten"/>
+		<text name="setting_moisture_irrigationCostMultiplier_tooltip" text="Multiplikator für jedes Bewässerungsangebot, einschließlich der Mindestanfahrtspauschale. Bereits gebuchte Aufträge behalten den vereinbarten Preis."/>
+		<text name="setting_moisture_irrigationContractors" text="Bewässerungsunternehmer"/>
+		<text name="setting_moisture_irrigationContractors_tooltip" text="Wie viele Lohnunternehmer auf der Karte arbeiten. Alle Höfe teilen sie sich. Mehr Unternehmer bedeutet mehr gleichzeitige Aufträge und bessere Chancen auf einen freien Termin heute."/>
+		<text name="setting_moisture_irrigationContractorCapacity" text="Unternehmerkapazität"/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Wie viel Fläche ein Unternehmer an einem vollen Tag bei maximaler Stärke schafft. Zusammen mit der Anzahl der Unternehmer ist das der Regler für den Dürre-Schwierigkeitsgrad."/>
+		<text name="ms_ui_irrigation" text="Bewässerung"/>
+		<text name="finance_irrigation" text="Bewässerung"/>
+		<text name="ms_irrigation_started" text="%s: Bewässerung begonnen, +%.1f%% über %dh"/>
+		<text name="ms_irrigation_complete" text="%s: Bewässerung abgeschlossen, +%.1f%% geliefert"/>
+		<text name="moistureSystem_irrigationInfo" text="Bewässerung"/>
+		<text name="ms_action_irrigationBook" text="Buchen"/>
+		<text name="ms_action_irrigationBookPrice" text="Buchen - %s"/>
+		<text name="moistureSystem_gui_irrigation" text="Bewässerung"/>
+		<text name="moistureSystem_gui_irrigation_desc" text="Buche einen Lohnunternehmer, um die Feuchtigkeit eines Grundstücks zu erhöhen. Sein Terminkalender füllt sich, je näher der Tag rückt - buche früh für einen freien Tag und den Listenpreis."/>
+		<text name="moistureSystem_gui_irrigation_farmland" text="Grundstück"/>
+		<text name="moistureSystem_gui_irrigation_month" text="Monat"/>
+		<text name="moistureSystem_gui_irrigation_currentBoost" text="Jetzt %s"/>
+		<text name="moistureSystem_gui_irrigation_noFarmlands" text="Du besitzt noch kein Grundstück mit einem Feld."/>
+		<text name="moistureSystem_gui_irrigation_today" text="Heute"/>
+		<text name="moistureSystem_gui_irrigation_tomorrow" text="Morgen"/>
+		<text name="moistureSystem_gui_irrigation_freeHours" text="%dh frei"/>
+		<text name="moistureSystem_gui_irrigation_upTo" text="bis zu %s"/>
+		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% Eilzuschlag"/>
+		<text name="moistureSystem_gui_irrigation_listPrice" text="Listenpreis"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Nicht genug Zeit für dieses Grundstück"/>
+		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Nur %dh frei - ein Auftrag braucht mindestens %dh."/>
+		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dh frei reichen für weniger als %s auf %s."/>
+		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Dieses Grundstück ist bereits am Limit von %s."/>
+		<text name="moistureSystem_gui_irrigation_limitHours" text="Max. %s an diesem Tag - begrenzt durch Unternehmerstunden"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Max. %s an diesem Tag - begrenzt durch das Bewässerungslimit"/>
+		<text name="moistureSystem_gui_irrigation_amount" text="Menge"/>
+		<text name="moistureSystem_gui_irrigation_quote" text="Angebot"/>
+		<text name="moistureSystem_gui_irrigation_work" text="Arbeit"/>
+		<text name="moistureSystem_gui_irrigation_over" text="auf"/>
+		<text name="moistureSystem_gui_irrigation_onSite" text="Vor Ort"/>
+		<text name="moistureSystem_gui_irrigation_contractorRate" text="Unternehmertarif"/>
+		<text name="moistureSystem_gui_irrigation_minimumCallout" text="Mindestanfahrtspauschale"/>
+		<text name="moistureSystem_gui_irrigation_shortNotice" text="Kurzfristig +%d%%"/>
+		<text name="moistureSystem_gui_irrigation_costSetting" text="Kosteneinstellung %.1fx"/>
+		<text name="moistureSystem_gui_irrigation_total" text="Gesamt"/>
+		<text name="moistureSystem_gui_irrigation_jobs" text="Deine Grundstücke"/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Nichts bewässert."/>
+		<text name="moistureSystem_gui_irrigation_daysLeft" text="noch %.1fT"/>
+		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Dieser Termin wurde gerade vergeben. Wähle einen anderen Tag."/>
+		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Nicht genug Geld für diesen Auftrag."/>
+		<text name="moistureSystem_gui_irrigation_rejectPermission" text="Du hast keine Berechtigung, Lohnunternehmer zu beauftragen."/>
+		<text name="moistureSystem_gui_irrigation_rejectPrice" text="Der Preis hat sich geändert, bevor die Buchung ankam. Prüfe das Angebot erneut."/>
+		<text name="moistureSystem_gui_irrigation_rejectInvalid" text="Diese Buchung ist nicht mehr gültig."/>
+		<!-- /Irrigation -->
 	</texts>
 </l10n>

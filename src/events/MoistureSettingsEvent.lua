@@ -20,6 +20,9 @@ function MoistureSettingsEvent.new()
     self.showFieldMoisture = g_currentMission.MoistureSystem.settings.showFieldMoisture
     self.moistureMeterReporting = g_currentMission.MoistureSystem.settings.moistureMeterReporting
     self.overrideWeather = g_currentMission.MoistureSystem.settings.overrideWeather
+    self.irrigationCostMultiplier = g_currentMission.MoistureSystem.settings.irrigationCostMultiplier
+    self.irrigationContractors = g_currentMission.MoistureSystem.settings.irrigationContractors
+    self.irrigationContractorCapacity = g_currentMission.MoistureSystem.settings.irrigationContractorCapacity
     return self
 end
 
@@ -34,6 +37,9 @@ function MoistureSettingsEvent:writeStream(streamId, connection)
     streamWriteBool(streamId, self.showFieldMoisture)
     streamWriteInt32(streamId, self.moistureMeterReporting)
     streamWriteBool(streamId, self.overrideWeather)
+    streamWriteFloat32(streamId, self.irrigationCostMultiplier)
+    streamWriteInt32(streamId, self.irrigationContractors)
+    streamWriteInt32(streamId, self.irrigationContractorCapacity)
 end
 
 function MoistureSettingsEvent:readStream(streamId, connection)
@@ -47,6 +53,9 @@ function MoistureSettingsEvent:readStream(streamId, connection)
     self.showFieldMoisture = streamReadBool(streamId)
     self.moistureMeterReporting = streamReadInt32(streamId)
     self.overrideWeather = streamReadBool(streamId)
+    self.irrigationCostMultiplier = streamReadFloat32(streamId)
+    self.irrigationContractors = streamReadInt32(streamId)
+    self.irrigationContractorCapacity = streamReadInt32(streamId)
     self:run(connection)
 end
 
@@ -75,6 +84,9 @@ function MoistureSettingsEvent:run(connection)
     g_currentMission.MoistureSystem.settings.baleExposureDecayRate = self.baleExposureDecayRate
     g_currentMission.MoistureSystem.settings.showFieldMoisture = self.showFieldMoisture
     g_currentMission.MoistureSystem.settings.moistureMeterReporting = self.moistureMeterReporting
+    g_currentMission.MoistureSystem.settings.irrigationCostMultiplier = self.irrigationCostMultiplier
+    g_currentMission.MoistureSystem.settings.irrigationContractors = self.irrigationContractors
+    g_currentMission.MoistureSystem.settings.irrigationContractorCapacity = self.irrigationContractorCapacity
 
     if connection:getIsServer() then
         -- Update UI controls if they exist

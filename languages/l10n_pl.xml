@@ -196,5 +196,56 @@
 		<text name="help_moisture_settings_1" text="W ustawieniach wybierz Profil Pogodowy odpowiadający regionowi Twojej mapy. Steruje on sezonowymi wzorcami wilgotności i pogody w Twojej grze. Dla wielu map automatycznie wybierany jest odpowiedni domyślny profil, ale możesz go zmienić w dowolnym momencie."/>
 		<text name="help_moisture_settings_2" text="Precyzyjna regulacja działania dzięki dostosowywanym ustawieniom: mnożniki utraty/przyrostu wilgotności kontrolują tempo suszenia i moknięcia, opcja redukcji wilgotności podczas przewracania pokosów reguluje stopień wysuszenia po każdym przejeździe, tempo spadku jakości kontroluje szybkość degradacji jakości, a prędkość suszenia kontroluje tempo suszenia w silosie."/>
 		<text name="help_moisture_settings_3" text="Inne ustawienia obejmują opłatę za suszenie przy sprzedaży (koszt sprzedaży mokrych plonów), ustawienia gnicia bel, przełącznik wyświetlania wilgotności na polu oraz styl raportowania danych z miernika wilgotności. W trybie wieloosobowym ustawieniami tymi zarządza host/admin."/>
+		<!-- Irrigation -->
+		<text name="setting_moisture_irrigationCostMultiplier" text="Koszt nawadniania"/>
+		<text name="setting_moisture_irrigationCostMultiplier_tooltip" text="Mnożnik stosowany do każdej wyceny nawadniania, łącznie z minimalną opłatą za dojazd. Już zarezerwowane zlecenia zachowują uzgodnioną cenę."/>
+		<text name="setting_moisture_irrigationContractors" text="Wykonawcy nawadniania"/>
+		<text name="setting_moisture_irrigationContractors_tooltip" text="Ilu wykonawców pracuje na mapie. Wszystkie gospodarstwa dzielą ich między siebie. Więcej wykonawców to więcej zleceń naraz i większa szansa na wolny termin dzisiaj."/>
+		<text name="setting_moisture_irrigationContractorCapacity" text="Wydajność wykonawcy"/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Jaką powierzchnię wykonawca obsłuży w pełnym dniu przy maksymalnej intensywności. Razem z liczbą wykonawców to pokrętło trudności suszy."/>
+		<text name="ms_ui_irrigation" text="Nawadnianie"/>
+		<text name="finance_irrigation" text="Nawadnianie"/>
+		<text name="ms_irrigation_started" text="%s: rozpoczęto nawadnianie, +%.1f%% przez %dh"/>
+		<text name="ms_irrigation_complete" text="%s: nawadnianie zakończone, dostarczono +%.1f%%"/>
+		<text name="moistureSystem_irrigationInfo" text="Nawadnianie"/>
+		<text name="ms_action_irrigationBook" text="Zarezerwuj"/>
+		<text name="ms_action_irrigationBookPrice" text="Zarezerwuj - %s"/>
+		<text name="moistureSystem_gui_irrigation" text="Nawadnianie"/>
+		<text name="moistureSystem_gui_irrigation_desc" text="Zarezerwuj wykonawcę, aby podnieść wilgotność gruntu. Jego terminarz zapełnia się w miarę zbliżania się dnia - rezerwuj wcześnie, by trafić na wolny dzień i cenę katalogową."/>
+		<text name="moistureSystem_gui_irrigation_farmland" text="Grunt"/>
+		<text name="moistureSystem_gui_irrigation_month" text="Miesiąc"/>
+		<text name="moistureSystem_gui_irrigation_currentBoost" text="Teraz %s"/>
+		<text name="moistureSystem_gui_irrigation_noFarmlands" text="Nie posiadasz jeszcze żadnego gruntu z polem."/>
+		<text name="moistureSystem_gui_irrigation_today" text="Dziś"/>
+		<text name="moistureSystem_gui_irrigation_tomorrow" text="Jutro"/>
+		<text name="moistureSystem_gui_irrigation_freeHours" text="%dh wolne"/>
+		<text name="moistureSystem_gui_irrigation_upTo" text="do %s"/>
+		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% pilne"/>
+		<text name="moistureSystem_gui_irrigation_listPrice" text="cena katalogowa"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Za mało czasu na ten grunt"/>
+		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Tylko %dh wolne - zlecenie wymaga co najmniej %dh."/>
+		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dh wolnych pokrywa mniej niż %s na %s."/>
+		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Ten grunt jest już na limicie %s."/>
+		<text name="moistureSystem_gui_irrigation_limitHours" text="Maks. %s tego dnia - ogranicza liczba godzin wykonawcy"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Maks. %s tego dnia - ogranicza limit nawodnienia"/>
+		<text name="moistureSystem_gui_irrigation_amount" text="Ilość"/>
+		<text name="moistureSystem_gui_irrigation_quote" text="Wycena"/>
+		<text name="moistureSystem_gui_irrigation_work" text="Praca"/>
+		<text name="moistureSystem_gui_irrigation_over" text="na"/>
+		<text name="moistureSystem_gui_irrigation_onSite" text="Na miejscu"/>
+		<text name="moistureSystem_gui_irrigation_contractorRate" text="Stawka wykonawcy"/>
+		<text name="moistureSystem_gui_irrigation_minimumCallout" text="Minimalna opłata za dojazd"/>
+		<text name="moistureSystem_gui_irrigation_shortNotice" text="Krótki termin +%d%%"/>
+		<text name="moistureSystem_gui_irrigation_costSetting" text="Ustawienie kosztów %.1fx"/>
+		<text name="moistureSystem_gui_irrigation_total" text="Razem"/>
+		<text name="moistureSystem_gui_irrigation_jobs" text="Twoje grunty"/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Nic nie nawodniono."/>
+		<text name="moistureSystem_gui_irrigation_daysLeft" text="zostało %.1fd"/>
+		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Ten termin właśnie został zajęty. Wybierz inny dzień."/>
+		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Za mało pieniędzy na to zlecenie."/>
+		<text name="moistureSystem_gui_irrigation_rejectPermission" text="Nie masz uprawnień do zatrudniania wykonawców."/>
+		<text name="moistureSystem_gui_irrigation_rejectPrice" text="Cena zmieniła się, zanim rezerwacja dotarła. Sprawdź wycenę ponownie."/>
+		<text name="moistureSystem_gui_irrigation_rejectInvalid" text="Ta rezerwacja jest już nieważna."/>
+		<!-- /Irrigation -->
 	</texts>
 </l10n>

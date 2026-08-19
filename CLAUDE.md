@@ -2,6 +2,17 @@
 
 FS25 mod (Lua + XML) that adds moisture simulation, crop quality grading, bale rotting, grass drying, and silo drying to Farming Simulator 25.
 
+## How to talk to me
+
+Write like a person explaining something to a colleague, not like a design document.
+
+- **Plain words.** Say "the price changes" not "a pricing delta is surfaced". Say "who's allowed to book" not "permission gating semantics".
+- **Ask one thing at a time, and say what it means.** When you ask me to choose, describe each option by what actually happens in the game, not by its technical name. I should be able to answer without knowing the code.
+- **Short.** If a question needs three paragraphs of setup, you haven't understood it well enough to ask it yet. Cut the setup, ask the question.
+- **Don't pad.** No restating what I just said, no listing the options you already ruled out, no summarising your own summary.
+- **Recommend, then explain.** Lead with what you think we should do and why in one line. I'll ask if I want the reasoning.
+- **Answer the question I asked.** If I ask "how does X work", don't also tell me about Y.
+
 ## Architecture
 
 `src/main.lua` — core `MoistureSystem` object, registered as a mod event listener. Entry point for field moisture simulation, `adjustMoisture`, and savegame persistence.
@@ -29,6 +40,29 @@ FS25 mod (Lua + XML) that adds moisture simulation, crop quality grading, bale r
 `src/gui/` — tabbed menu frames (Shift+M). `MoistureGuiCalendar` shows monthly clamp ranges from the active scenario. `MoistureGuiWeather` shows the weather Forecast (per-month group %, with per-month forecast error/jitter) and History (per-season group % vs. normal, newest year rightmost) tabs.
 
 `xml/weatherProfiles/` — one XML per region. Loaded at `loadMap()`.
+
+`src/IrrigationSystem.lua` — field irrigation. The player books a contractor, through the
+Irrigation tab, to raise a farmland's moisture by a chosen amount; the boost accrues hour by hour
+while the contractor works, then decays with the weather. Registered as
+`g_currentMission.irrigationSystem`, ticked once per game hour from `MoistureSystem:onHourChanged`.
+Contractor time is the scarce resource, not money. `docs/irrigation-spec.md` is the design document
+and still holds the reasoning behind every number.
+
+Three things about it are load-bearing and easy to break:
+
+- **The contractor diary is generated, never stored.** A day's committed load is a pure function of
+  `diarySeed` and how far away the day is, so it tightens as it approaches and gives the same answer
+  on every peer and after a reload. All day arithmetic uses `Environment.currentMonotonicDay`, never
+  `currentDay` (which is rescaled when the player changes month length).
+- **`hash01` needs its nonlinear fold.** The spec's original two-round LCG was affine end to end, so
+  `hash01(s, n+1)` was always `hash01(s, n)` plus a constant — contractors, who differ only by that
+  `+1`, drew the same jitter shifted (measured Pearson 0.73), collapsing the roster setting into a
+  no-op. The fold breaks that; every product also stays under 2^53 so the result is exact, hence
+  identical on every peer. See the comment on the function.
+- **The boost is injected at one place**, the end of `getMoistureAtPosition`, outside *both* height
+  branches (the flat-map `else` path has no clamp, so "after the clamp" would skip it). It is
+  clamped only to 1.0, never to the month's `moistureMax`. `anyActiveBoosts` keeps the hot path at
+  one boolean read when nobody is irrigating.
 
 ## Weather profiles
 
@@ -145,6 +179,10 @@ type composition; use the scheduled weather type instead (see `WeatherHistoryCol
 | `msWeatherDebug` | Print active profile/scenario and current month clamp |
 | `msSetScenario <id>` | Force-switch scenario mid-game |
 | `msListScenarios` | List available scenarios for the active profile |
+| `msIrrigationDebug [farmlandId]` | Print a farmland's boost, grace and pending job, or every irrigated farmland |
+| `msIrrigationDiary [daysAhead]` | Dump free/committed/booked hours per contractor for that day, plus the seed |
+| `msIrrigationBook <farmlandId> <boostPP> <daysAhead>` | Force-book a job, skipping payment and permission |
+| `msIrrigationSetBoost <farmlandId> <boostPP>` | Set a farmland's boost directly, to test decay |
 
 ## Decompiled FS25 source
 

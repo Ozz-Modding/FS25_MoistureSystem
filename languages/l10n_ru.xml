@@ -196,5 +196,56 @@
 		<text name="help_moisture_settings_1" text="Выберите в настройках Профиль Погоды, соответствующий региону вашей карты. Это управляет сезонными паттернами влажности и погоды в вашей игре. Для многих карт автоматически выбирается подходящий профиль по умолчанию, но вы можете изменить его в любое время."/>
 		<text name="help_moisture_settings_2" text="Точная настройка поведения с регулируемыми параметрами: Множители Потери/Набора Влажности контролируют скорость сушки и увлажнения, Снижение Влажности при Ворошении регулирует сушку за проход, Скорость Падения Качества контролирует как быстро падает качество, а Скорость Сушки контролирует темп сушки в силосе."/>
 		<text name="help_moisture_settings_3" text="Другие настройки включают Плату за Сушку при Продаже (стоимость при продаже влажного урожая), настройки Гниения Тюков, переключение Отображения Влажности Поля и стиль Отчёта Влагомера. В многопользовательской игре хост/администратор контролирует эти настройки."/>
+		<!-- Irrigation -->
+		<text name="setting_moisture_irrigationCostMultiplier" text="Стоимость орошения"/>
+		<text name="setting_moisture_irrigationCostMultiplier_tooltip" text="Множитель для любой сметы на орошение, включая минимальную плату за выезд. Уже заказанные работы сохраняют согласованную цену."/>
+		<text name="setting_moisture_irrigationContractors" text="Подрядчики по орошению"/>
+		<text name="setting_moisture_irrigationContractors_tooltip" text="Сколько подрядчиков работает на карте. Все фермы делят их между собой. Больше подрядчиков - больше одновременных заказов и выше шанс найти свободное окно сегодня."/>
+		<text name="setting_moisture_irrigationContractorCapacity" text="Производительность подрядчика"/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Сколько площади подрядчик обрабатывает за полный день на максимальной интенсивности. Вместе с числом подрядчиков это регулятор сложности засухи."/>
+		<text name="ms_ui_irrigation" text="Орошение"/>
+		<text name="finance_irrigation" text="Орошение"/>
+		<text name="ms_irrigation_started" text="%s: орошение начато, +%.1f%% за %dч"/>
+		<text name="ms_irrigation_complete" text="%s: орошение завершено, подано +%.1f%%"/>
+		<text name="moistureSystem_irrigationInfo" text="Орошение"/>
+		<text name="ms_action_irrigationBook" text="Заказать"/>
+		<text name="ms_action_irrigationBookPrice" text="Заказать - %s"/>
+		<text name="moistureSystem_gui_irrigation" text="Орошение"/>
+		<text name="moistureSystem_gui_irrigation_desc" text="Закажите подрядчика, чтобы поднять влажность участка. Его график заполняется по мере приближения дня - заказывайте заранее ради свободного дня и прайсовой цены."/>
+		<text name="moistureSystem_gui_irrigation_farmland" text="Участок"/>
+		<text name="moistureSystem_gui_irrigation_month" text="Месяц"/>
+		<text name="moistureSystem_gui_irrigation_currentBoost" text="Сейчас %s"/>
+		<text name="moistureSystem_gui_irrigation_noFarmlands" text="У вас пока нет участка с полем."/>
+		<text name="moistureSystem_gui_irrigation_today" text="Сегодня"/>
+		<text name="moistureSystem_gui_irrigation_tomorrow" text="Завтра"/>
+		<text name="moistureSystem_gui_irrigation_freeHours" text="%dч свободно"/>
+		<text name="moistureSystem_gui_irrigation_upTo" text="до %s"/>
+		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% срочность"/>
+		<text name="moistureSystem_gui_irrigation_listPrice" text="прайсовая цена"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Недостаточно времени для этого участка"/>
+		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Свободно только %dч - на заказ нужно минимум %dч."/>
+		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dч свободного времени дают меньше %s на %s."/>
+		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Этот участок уже на пределе %s."/>
+		<text name="moistureSystem_gui_irrigation_limitHours" text="Макс. %s в этот день - ограничено часами подрядчика"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Макс. %s в этот день - ограничено пределом орошения"/>
+		<text name="moistureSystem_gui_irrigation_amount" text="Объём"/>
+		<text name="moistureSystem_gui_irrigation_quote" text="Смета"/>
+		<text name="moistureSystem_gui_irrigation_work" text="Работа"/>
+		<text name="moistureSystem_gui_irrigation_over" text="на"/>
+		<text name="moistureSystem_gui_irrigation_onSite" text="На месте"/>
+		<text name="moistureSystem_gui_irrigation_contractorRate" text="Тариф подрядчика"/>
+		<text name="moistureSystem_gui_irrigation_minimumCallout" text="Минимальная плата за выезд"/>
+		<text name="moistureSystem_gui_irrigation_shortNotice" text="Срочный заказ +%d%%"/>
+		<text name="moistureSystem_gui_irrigation_costSetting" text="Настройка стоимости %.1fx"/>
+		<text name="moistureSystem_gui_irrigation_total" text="Итого"/>
+		<text name="moistureSystem_gui_irrigation_jobs" text="Ваши участки"/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Ничего не орошается."/>
+		<text name="moistureSystem_gui_irrigation_daysLeft" text="осталось %.1fд"/>
+		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Это окно только что заняли. Выберите другой день."/>
+		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Недостаточно денег для этого заказа."/>
+		<text name="moistureSystem_gui_irrigation_rejectPermission" text="У вас нет прав нанимать подрядчиков."/>
+		<text name="moistureSystem_gui_irrigation_rejectPrice" text="Цена изменилась до того, как заказ дошёл. Проверьте смету снова."/>
+		<text name="moistureSystem_gui_irrigation_rejectInvalid" text="Этот заказ больше недействителен."/>
+		<!-- /Irrigation -->
 	</texts>
 </l10n>

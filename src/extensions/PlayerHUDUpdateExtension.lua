@@ -153,6 +153,21 @@ function MSPlayerHUDExtension:showFieldInfo(x, z)
         string.format("%.1f%%", fieldMoisture * 100)
     )
 
+    -- The line above keeps showing the real total. Break out how much of it was
+    -- bought only when this farmland actually has a live boost, so a player who
+    -- never irrigates sees no change at all.
+    local irrigation = g_currentMission.irrigationSystem
+    if irrigation ~= nil and irrigation.anyActiveBoosts then
+        local farmlandId = g_farmlandManager:getFarmlandIdAtWorldPosition(x, z)
+        local boost = irrigation.boosts[farmlandId]
+        if boost ~= nil then
+            box:addLine(
+                g_i18n:getText("moistureSystem_irrigationInfo"),
+                string.format("+%.1f%%", boost.value * 100)
+            )
+        end
+    end
+
     box:showNextFrame()
 end
 

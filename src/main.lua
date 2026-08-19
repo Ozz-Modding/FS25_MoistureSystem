@@ -98,7 +98,10 @@ function MoistureSystem:loadMap()
         sellDryingChargeRate = 1.0,
         showFieldMoisture = false,
         moistureMeterReporting = MoistureSettings.METER_REPORTING_BLINKING,
-        overrideWeather = true
+        overrideWeather = true,
+        irrigationCostMultiplier = 1.0,
+        irrigationContractors = 1,
+        irrigationContractorCapacity = 8
     }
 
     g_currentMission.groundPropertyTracker = GroundPropertyTracker.new()
@@ -108,6 +111,8 @@ function MoistureSystem:loadMap()
     g_currentMission.dryingSystem = DryingSystem.new()
 
     g_currentMission.witheringSystem = WitheringSystem.new()
+
+    g_currentMission.irrigationSystem = IrrigationSystem.new()
 
     -- Drive the ground tracker and bale rotting system off their own engine
     -- update(dt) hooks rather than hand-pumping them from MoistureSystem:update.
@@ -143,6 +148,15 @@ function MoistureSystem:loadMap()
         addConsoleCommand("msListScenarios", "List scenarios for active profile", "consoleCommandListScenarios", wps)
         addConsoleCommand("msSweepDebug", "Report ground drying-sweep throughput", "consoleCommandSweepDebug",
             g_currentMission.groundPropertyTracker)
+        g_currentMission.irrigationSystem:registerConsoleCommands()
+    end
+
+    -- Selling a farmland deletes its boost and its job. Subscribed here rather
+    -- than in onStartMission because ownership is also restored during load;
+    -- IrrigationSystem guards both cases (see its onFarmlandOwnerChanged).
+    if g_currentMission:getIsServer() then
+        g_messageCenter:subscribe(MessageType.FARMLAND_OWNER_CHANGED,
+            IrrigationSystem.onFarmlandOwnerChanged, g_currentMission.irrigationSystem)
     end
 end
 
@@ -154,8 +168,7 @@ function MoistureSystem:consoleCommandSetMoisture(newMoisture)
     end
     newMoistureNum = math.max(1, math.min(100, newMoistureNum)) / 100
     self.currentMoisturePercent = newMoistureNum
-    self.moistureCache = {}
-    self.moistureCacheOrder = {}
+    self:invalidateMoistureCache()
     self.moistureDirty = true
     return string.format("New moisture is %.3f", newMoistureNum)
 end
@@ -167,6 +180,9 @@ function MoistureSystem:delete()
         removeConsoleCommand("msSetScenario")
         removeConsoleCommand("msListScenarios")
         removeConsoleCommand("msSweepDebug")
+    end
+    if g_currentMission ~= nil and g_currentMission.irrigationSystem ~= nil then
+        g_currentMission.irrigationSystem:delete()
     end
 end
 
@@ -185,6 +201,10 @@ function MoistureSystem:loadGUI()
 
     local dryingFrame = MoistureGuiDrying.new(g_i18n)
     g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiDrying.xml", "MoistureGuiDrying", dryingFrame, true)
+
+    local irrigationFrame = MoistureGuiIrrigation.new(g_i18n)
+    g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGuiIrrigation.xml", "MoistureGuiIrrigation",
+        irrigationFrame, true)
 
     self.moistureGui = MoistureGui:new(g_messageCenter, g_i18n, g_inputBinding)
     g_gui:loadGui(MoistureSystem.dir .. "src/gui/MoistureGui.xml", "MoistureGui", self.moistureGui)
@@ -297,10 +317,19 @@ function MoistureSystem:adjustMoisture(delta)
 
     if newMoisture ~= self.currentMoisturePercent then
         self.currentMoisturePercent = newMoisture
-        self.moistureCache = {}
-        self.moistureCacheOrder = {}
+        self:invalidateMoistureCache()
         self.moistureDirty = true
     end
+end
+
+---
+-- Discard every cached position sample. The cache is keyed on position, so an
+-- entry can never be served for the wrong place -- staleness across time is the
+-- only failure mode, and this is how every writer clears it.
+---
+function MoistureSystem:invalidateMoistureCache()
+    self.moistureCache = {}
+    self.moistureCacheOrder = {}
 end
 
 function MoistureSystem:getMoistureAtPosition(x, z)
@@ -344,6 +373,23 @@ function MoistureSystem:getMoistureAtPosition(x, z)
         moistureLevel = math.max(minMoisture, math.min(maxMoisture, moistureLevel))
     else
         moistureLevel = self.currentMoisturePercent
+    end
+
+    -- Irrigation boost. Applied here, outside both height branches, so the
+    -- flat-map path gets it too -- the month clamp above lives inside the
+    -- heightRange branch, so applying it "after the clamp" would silently skip
+    -- flat maps. Deliberately NOT clamped to the month's moistureMax: in a hot
+    -- dry August that ceiling is low, and clamping would eat most of what the
+    -- player bought with no way to tell before booking. The min against 1.0 is
+    -- future-proofing for a raised MAX_BOOST_PP, not something that bites now.
+    -- anyActiveBoosts keeps the cost at one boolean read when nobody irrigates.
+    local irrigation = g_currentMission.irrigationSystem
+    if irrigation ~= nil and irrigation.anyActiveBoosts then
+        local farmlandId = g_farmlandManager:getFarmlandIdAtWorldPosition(x, z)
+        local boost = irrigation.boosts[farmlandId]
+        if boost ~= nil then
+            moistureLevel = math.min(1.0, moistureLevel + boost.value)
+        end
     end
 
     -- Store in cache with LRU eviction
@@ -824,6 +870,10 @@ function MoistureSystem:onHourChanged()
     if g_currentMission.witheringSystem and self.settings.witheringEnabled then
         g_currentMission.witheringSystem:onHourChanged()
     end
+
+    if g_currentMission.irrigationSystem then
+        g_currentMission.irrigationSystem:onHourChanged()
+    end
 end
 
 function MoistureSystem:loadFromXMLFile()
@@ -919,6 +969,24 @@ function MoistureSystem:loadFromXMLFile()
             self.settings.overrideWeather = overrideWeather
         end
 
+        local irrigationCostMultiplier = getXMLFloat(xmlFile,
+            MoistureSystem.SaveKey .. ".settings#irrigationCostMultiplier")
+        if irrigationCostMultiplier then
+            self.settings.irrigationCostMultiplier = irrigationCostMultiplier
+        end
+
+        local irrigationContractors = getXMLInt(xmlFile,
+            MoistureSystem.SaveKey .. ".settings#irrigationContractors")
+        if irrigationContractors then
+            self.settings.irrigationContractors = irrigationContractors
+        end
+
+        local irrigationContractorCapacity = getXMLInt(xmlFile,
+            MoistureSystem.SaveKey .. ".settings#irrigationContractorCapacity")
+        if irrigationContractorCapacity then
+            self.settings.irrigationContractorCapacity = irrigationContractorCapacity
+        end
+
         if g_currentMission.groundPropertyTracker then
             g_currentMission.groundPropertyTracker:loadFromXMLFile(xmlFile, MoistureSystem.SaveKey)
         end
@@ -929,6 +997,10 @@ function MoistureSystem:loadFromXMLFile()
 
         if g_currentMission.dryingSystem then
             g_currentMission.dryingSystem:loadFromXMLFile(xmlFile, MoistureSystem.SaveKey)
+        end
+
+        if g_currentMission.irrigationSystem then
+            g_currentMission.irrigationSystem:loadFromXMLFile(xmlFile, MoistureSystem.SaveKey)
         end
 
         -- Load object info data (moisture + quality)
@@ -1037,6 +1109,12 @@ function MoistureSystem:saveToXmlFile()
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#showFieldMoisture", ms.settings.showFieldMoisture)
     setXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#moistureMeterReporting", ms.settings.moistureMeterReporting)
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#overrideWeather", ms.settings.overrideWeather)
+    setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#irrigationCostMultiplier",
+        ms.settings.irrigationCostMultiplier)
+    setXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#irrigationContractors",
+        ms.settings.irrigationContractors)
+    setXMLInt(xmlFile, MoistureSystem.SaveKey .. ".settings#irrigationContractorCapacity",
+        ms.settings.irrigationContractorCapacity)
 
     if g_currentMission.WeatherProfileSystem then
         g_currentMission.WeatherProfileSystem:saveToXMLFile(xmlFile, MoistureSystem.SaveKey)
@@ -1052,6 +1130,10 @@ function MoistureSystem:saveToXmlFile()
 
     if g_currentMission.dryingSystem then
         g_currentMission.dryingSystem:saveToXMLFile(xmlFile, MoistureSystem.SaveKey)
+    end
+
+    if g_currentMission.irrigationSystem then
+        g_currentMission.irrigationSystem:saveToXMLFile(xmlFile, MoistureSystem.SaveKey)
     end
 
     -- Save storage bale uniqueId mappings (can't save in storage XML due to schema restrictions)
@@ -1157,6 +1239,9 @@ function MoistureSystem:writeInitialClientState(streamId, connection)
     streamWriteBool(streamId, self.settings.showFieldMoisture)
     streamWriteInt32(streamId, self.settings.moistureMeterReporting)
     streamWriteBool(streamId, self.settings.overrideWeather)
+    streamWriteFloat32(streamId, self.settings.irrigationCostMultiplier)
+    streamWriteInt32(streamId, self.settings.irrigationContractors)
+    streamWriteInt32(streamId, self.settings.irrigationContractorCapacity)
 end
 
 ---
@@ -1182,6 +1267,9 @@ function MoistureSystem:readInitialClientState(streamId, connection)
     self.settings.showFieldMoisture = streamReadBool(streamId)
     self.settings.moistureMeterReporting = streamReadInt32(streamId)
     self.settings.overrideWeather = streamReadBool(streamId)
+    self.settings.irrigationCostMultiplier = streamReadFloat32(streamId)
+    self.settings.irrigationContractors = streamReadInt32(streamId)
+    self.settings.irrigationContractorCapacity = streamReadInt32(streamId)
 
     local wps = g_currentMission.WeatherProfileSystem
     if wps and profileChanged then wps:setActiveProfile(weatherProfile) end
@@ -1200,8 +1288,7 @@ function MoistureSystem:readInitialClientState(streamId, connection)
     end
 
     -- Clear moisture cache since we just got new data
-    self.moistureCache = {}
-    self.moistureCacheOrder = {}
+    self:invalidateMoistureCache()
 end
 
 

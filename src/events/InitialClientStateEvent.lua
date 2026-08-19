@@ -14,11 +14,13 @@ end
 function MSInitialClientStateEvent:writeStream(streamId, connection)
     g_currentMission.MoistureSystem:writeInitialClientState(streamId, connection)
     g_currentMission.WeatherProfileSystem:writeClientState(streamId)
+    g_currentMission.irrigationSystem:writeClientState(streamId)
 end
 
 function MSInitialClientStateEvent:readStream(streamId, connection)
     g_currentMission.MoistureSystem:readInitialClientState(streamId, connection)
     g_currentMission.WeatherProfileSystem:readClientState(streamId)
+    g_currentMission.irrigationSystem:readClientState(streamId)
     self:run(connection)
 end
 

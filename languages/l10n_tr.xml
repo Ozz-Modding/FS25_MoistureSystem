@@ -196,5 +196,56 @@
 		<text name="help_moisture_settings_1" text="Ayarlarda haritanızın bölgesine uyan bir Hava Profili seçin. Bu, oyununuzdaki mevsimsel nem ve hava örüntülerini kontrol eder. Birçok harita için uygun bir varsayılan profil otomatik olarak seçilir, ancak istediğiniz zaman değiştirebilirsiniz."/>
 		<text name="help_moisture_settings_2" text="Ayarlanabilir ayarlarla davranışı ince ayarlayın: Nem Kaybı/Kazanım Çarpanları kuruma ve ıslanma hızını kontrol eder, Ot Çevirme Nem Düşüşü geçiş başına kurumayı ayarlar, Kalite Düşüş Hızı kalitenin ne kadar hızlı düştüğünü kontrol eder ve Kurutma Hızı silo kurutma oranını kontrol eder."/>
 		<text name="help_moisture_settings_3" text="Diğer ayarlar arasında Satış Kurutma Ücreti (ıslak mahsul satarken maliyet), Balya Çürümesi ayarları, Tarla Nemi Göstergesi geçişi ve Nem Ölçer Bildirim stili bulunur. Çok oyunculuda, bu ayarları sunucu sahibi/yönetici kontrol eder."/>
+		<!-- Irrigation -->
+		<text name="setting_moisture_irrigationCostMultiplier" text="Sulama Maliyeti"/>
+		<text name="setting_moisture_irrigationCostMultiplier_tooltip" text="Her sulama teklifine uygulanan çarpan, asgari çağrı ücreti dahil. Halihazırda rezerve edilen işler anlaşılan fiyatı korur."/>
+		<text name="setting_moisture_irrigationContractors" text="Sulama Müteahhitleri"/>
+		<text name="setting_moisture_irrigationContractors_tooltip" text="Haritada kaç müteahhit çalışıyor. Tüm çiftlikler onları paylaşır. Daha fazla müteahhit, aynı anda daha fazla iş ve bugün boş bir slot bulma şansının artması demektir."/>
+		<text name="setting_moisture_irrigationContractorCapacity" text="Müteahhit Kapasitesi"/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Bir müteahhidin tam günde azami güçle kapsadığı alan. Müteahhit sayısıyla birlikte kuraklık zorluk ayarıdır."/>
+		<text name="ms_ui_irrigation" text="Sulama"/>
+		<text name="finance_irrigation" text="Sulama"/>
+		<text name="ms_irrigation_started" text="%s: sulama başladı, +%.1f%% (%dsa)"/>
+		<text name="ms_irrigation_complete" text="%s: sulama tamamlandı, +%.1f%% verildi"/>
+		<text name="moistureSystem_irrigationInfo" text="Sulama"/>
+		<text name="ms_action_irrigationBook" text="Rezerve et"/>
+		<text name="ms_action_irrigationBookPrice" text="Rezerve et - %s"/>
+		<text name="moistureSystem_gui_irrigation" text="Sulama"/>
+		<text name="moistureSystem_gui_irrigation_desc" text="Bir arazinin nemini yükseltmek için müteahhit ayarla. Gün yaklaştıkça ajandası dolar - boş bir gün ve liste fiyatı için erken rezerve et."/>
+		<text name="moistureSystem_gui_irrigation_farmland" text="Arazi"/>
+		<text name="moistureSystem_gui_irrigation_month" text="Ay"/>
+		<text name="moistureSystem_gui_irrigation_currentBoost" text="Şu an %s"/>
+		<text name="moistureSystem_gui_irrigation_noFarmlands" text="Henüz tarlası olan bir araziniz yok."/>
+		<text name="moistureSystem_gui_irrigation_today" text="Bugün"/>
+		<text name="moistureSystem_gui_irrigation_tomorrow" text="Yarın"/>
+		<text name="moistureSystem_gui_irrigation_freeHours" text="%dsa boş"/>
+		<text name="moistureSystem_gui_irrigation_upTo" text="%s kadar"/>
+		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% acele"/>
+		<text name="moistureSystem_gui_irrigation_listPrice" text="liste fiyatı"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Bu arazi için yeterli zaman yok"/>
+		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Yalnızca %dsa boş - bir iş en az %dsa gerektirir."/>
+		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dsa boş süre, %s üzerinde %s altında kalıyor."/>
+		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Bu arazi zaten %s sınırında."/>
+		<text name="moistureSystem_gui_irrigation_limitHours" text="Bu gün en fazla %s - müteahhit saatleriyle sınırlı"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Bu gün en fazla %s - sulama üst sınırıyla sınırlı"/>
+		<text name="moistureSystem_gui_irrigation_amount" text="Miktar"/>
+		<text name="moistureSystem_gui_irrigation_quote" text="Teklif"/>
+		<text name="moistureSystem_gui_irrigation_work" text="İş"/>
+		<text name="moistureSystem_gui_irrigation_over" text="üzerinde"/>
+		<text name="moistureSystem_gui_irrigation_onSite" text="Sahada"/>
+		<text name="moistureSystem_gui_irrigation_contractorRate" text="Müteahhit ücreti"/>
+		<text name="moistureSystem_gui_irrigation_minimumCallout" text="Asgari çağrı ücreti"/>
+		<text name="moistureSystem_gui_irrigation_shortNotice" text="Kısa ihbar +%d%%"/>
+		<text name="moistureSystem_gui_irrigation_costSetting" text="Maliyet ayarı %.1fx"/>
+		<text name="moistureSystem_gui_irrigation_total" text="Toplam"/>
+		<text name="moistureSystem_gui_irrigation_jobs" text="Arazileriniz"/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Sulanan bir şey yok."/>
+		<text name="moistureSystem_gui_irrigation_daysLeft" text="%.1fg kaldı"/>
+		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Bu slot az önce doldu. Başka bir gün seç."/>
+		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Bu iş için yeterli para yok."/>
+		<text name="moistureSystem_gui_irrigation_rejectPermission" text="Müteahhit tutma izniniz yok."/>
+		<text name="moistureSystem_gui_irrigation_rejectPrice" text="Rezervasyon ulaşmadan önce fiyat değişti. Teklifi tekrar kontrol et."/>
+		<text name="moistureSystem_gui_irrigation_rejectInvalid" text="Bu rezervasyon artık geçerli değil."/>
+		<!-- /Irrigation -->
 	</texts>
 </l10n>
