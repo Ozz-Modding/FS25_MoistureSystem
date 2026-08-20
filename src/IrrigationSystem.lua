@@ -111,14 +111,24 @@ function IrrigationSystem:getJobOnDay(farmlandId, day)
 end
 
 -- True while a contractor is mid-job on this farmland, which holds its boost at
--- full strength for the whole ramp (see decayBoosts).
+-- full strength for the whole ramp (see decayBoosts). "Mid-job" is by the clock,
+-- not by hoursWorked: the first hour of work is not banked until it has been
+-- done, so a job that has arrived but not yet delivered anything is still on
+-- site and must not have the farmland drying under it.
 function IrrigationSystem:getIsFarmlandWorking(farmlandId)
+    local env = g_currentMission.environment
     for _, job in ipairs(self.jobs) do
-        if job.farmlandId == farmlandId and job.hoursWorked > 0 and job.hoursWorked < job.hours then
+        if job.farmlandId == farmlandId and job.hoursWorked < job.hours
+            and self:getJobHoursElapsed(job, env.currentMonotonicDay, env.currentHour) >= 0 then
             return true
         end
     end
     return false
+end
+
+-- Whole hours since the contractor arrived. Negative before the job starts.
+function IrrigationSystem:getJobHoursElapsed(job, day, hour)
+    return (day - job.startDay) * 24 + (hour - job.startHour)
 end
 
 ---
@@ -777,17 +787,27 @@ function IrrigationSystem:runJobs()
     for i = #self.jobs, 1, -1 do
         local job = self.jobs[i]
         local farmlandId = job.farmlandId
-        local hasStarted = day > job.startDay or (day == job.startDay and hour >= job.startHour)
-        if hasStarted and job.hoursWorked < job.hours then
-            local wasFirstHour = job.hoursWorked == 0
-            local share = job.targetBoost / job.hours
+        local elapsed = self:getJobHoursElapsed(job, day, hour)
+
+        -- The arrival hour itself delivers nothing: an hour of work is banked
+        -- when that hour has been WORKED, so a 2h job starting at 13:00 pays out
+        -- at 14:00 and 15:00. Crediting on arrival instead paid the first hour
+        -- the moment the contractor turned up, so the job landed a full hour
+        -- early and a 2h booking visibly took 1 hour. It also disagreed with the
+        -- quote's own "13:00-15:00 (2h)" line and with the client-side
+        -- completion check in applyBoostUpdate, which both use startHour + hours.
+        if elapsed == 0 then
+            self:notifyJobStarted(farmlandId, job)
+        end
+
+        -- Credited as a span rather than one hour per tick, so a job stays
+        -- correct across a save/load or any hour the sweep does not see.
+        local hoursDue = math.max(0, math.min(job.hours, elapsed))
+        if hoursDue > job.hoursWorked then
+            local share = job.targetBoost * (hoursDue - job.hoursWorked) / job.hours
             self:setBoost(farmlandId, self:getBoost(farmlandId) + share,
                 self.boosts[farmlandId] ~= nil and self.boosts[farmlandId].graceUntil or nil)
-            job.hoursWorked = job.hoursWorked + 1
-
-            if wasFirstHour then
-                self:notifyJobStarted(farmlandId, job)
-            end
+            job.hoursWorked = hoursDue
 
             if job.hoursWorked >= job.hours then
                 -- One graceUntil per farmland, not per job: a top-up restarts

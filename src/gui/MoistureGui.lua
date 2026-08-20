@@ -34,6 +34,8 @@ end
 function MoistureGui:setupPages()
     local dryingIconFilename = Utils.getFilename('grainDrying.dds', MoistureSystem.dir)
     local dryingIconUVs = GuiUtils.getUVs({ 0, 0, 128, 128 }, { 128, 128 })
+    local irrigationIconFilename = Utils.getFilename('irrigation.dds', MoistureSystem.dir)
+    local irrigationIconUVs = GuiUtils.getUVs({ 0, 0, 128, 128 }, { 128, 128 })
 
     local pages = {
         { self.pageGrades, 'gui.icon_ingameMenu_finances' },
@@ -42,7 +44,7 @@ function MoistureGui:setupPages()
         { self.pageDrying, nil, dryingIconFilename, dryingIconUVs },
         -- Reuses the already-loaded drying icon so the irrigation icon can be
         -- swapped later by dropping in a file, with no code change.
-        { self.pageIrrigation, nil, dryingIconFilename, dryingIconUVs }
+        { self.pageIrrigation, nil, irrigationIconFilename, irrigationIconUVs }
     }
 
     for idx, thisPage in ipairs(pages) do
