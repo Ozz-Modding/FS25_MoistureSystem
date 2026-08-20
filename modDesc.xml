@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="111">
     <author>Ozz</author>
-    <version>2.0.0.3</version>
+    <version>2.0.0.4</version>
     <iconFilename>icon_MoistureSystem.dds</iconFilename>
     <title>
         <en>Moisture System</en>
@@ -124,7 +124,14 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop, Realistic
 
 Änderungsprotokoll:
 
-2.0.0.2:
+2.0.0.4:
+- Der Feuchtigkeitswert bewegt sich jetzt etwas schneller, sowohl nach oben als auch nach unten. Ziel ist es, die beabsichtigten Ergebnisse der Wetterszenarien zuverlässiger zu erreichen.
+- Der Schwellenwert für Heu liegt jetzt bei 10 %.
+- Die standardmäßige Feuchtigkeitsreduzierung beim Wenden beträgt jetzt 4 % und kann von den Spielern zwischen 4 und 8 % eingestellt werden.
+- Der Speicherstand-Hook wurde aktualisiert, um Modkonflikte zu reduzieren.
+- Die Hilfetexte wurden aktualisiert, damit sie den neuen Ansatz der Getreidetrocknung korrekt widerspiegeln.
+
+2.0.0.3:
 - Einige Wetterprofile angepasst, um korrekt zu berücksichtigen, wie Wetter wie Gewitter die Feuchtigkeit beeinflusst.
 - Die Getreidetrocknung wird nun über das Feuchtigkeitsmenü (Umschalt + M) gestartet, anstatt eine Taste in der Nähe des Silos zu drücken. Dies vermeidet einige Probleme mit bestimmten Silos und bietet zudem mehr Informationen.
 - Die Dauer von Wetterphasen wird nun basierend auf der Anzahl der Tage pro Monat skaliert. Dies hilft bei der Planung der Feldarbeit rund um das in v2 eingeführte Wetter.
@@ -201,7 +208,14 @@ Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop, Rea
 
 Journal des modifications :
 
-2.0.0.2 :
+2.0.0.4 :
+- Le niveau d'humidité évolue désormais un peu plus rapidement, à la hausse comme à la baisse. L'objectif est de produire plus fidèlement les résultats attendus des scénarios météorologiques.
+- Le seuil pour le foin est désormais de 10 %.
+- La réduction d'humidité par défaut du fanage est désormais de 4 % et les joueurs peuvent la régler entre 4 et 8 %.
+- Mise à jour du hook de sauvegarde pour réduire les conflits entre mods.
+- Mise à jour des textes d'aide pour refléter correctement la nouvelle approche du séchage des céréales.
+
+2.0.0.3 :
 - Ajustement de certains profils météorologiques pour mieux prendre en compte l'impact de phénomènes comme le tonnerre sur l'humidité.
 - Le séchage des céréales est désormais lancé depuis le menu Humidité (Maj + M) plutôt qu'en appuyant sur une touche à proximité du silo. Cela évite certains problèmes avec certains silos, tout en fournissant plus d'informations.
 - La durée des phases météorologiques est désormais mise à l'échelle en fonction du nombre de jours par mois. Cela facilite la planification des travaux des champs autour de la météo introduite dans la v2.
