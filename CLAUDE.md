@@ -52,8 +52,10 @@ Three things about it are load-bearing and easy to break:
 
 - **The contractor diary is generated, never stored.** A day's committed load is a pure function of
   `diarySeed` and how far away the day is, so it tightens as it approaches and gives the same answer
-  on every peer and after a reload. All day arithmetic uses `Environment.currentMonotonicDay`, never
-  `currentDay` (which is rescaled when the player changes month length).
+  on every peer and after a reload. The seed itself is *derived* from the map id and savegame
+  index, not rolled with `math.random`, so it is stable even before the savegame has ever been
+  written with an `<irrigation>` section; a stored seed still wins on load.
+  All day arithmetic uses `Environment.currentMonotonicDay`, never `currentDay` (which is rescaled when the player changes month length).
 - **`hash01` needs its nonlinear fold.** The original two-round LCG was affine end to end, so
   `hash01(s, n+1)` was always `hash01(s, n)` plus a constant — contractors, who differ only by that
   `+1`, drew the same jitter shifted (measured Pearson 0.73), collapsing the roster setting into a

@@ -56,7 +56,7 @@ IrrigationSystem.DIARY_JITTER      = 0.30   -- per-day intrinsic spread, +/- fra
 IrrigationSystem.BOOKABLE_DAYS     = 12     -- days bookable, counting today
 
 -- Decay ----------------------------------------------------------------------
-IrrigationSystem.DECAY_PP_PER_DAY  = 2.5    -- drain at DECAY_TEMP_REF, dry weather
+IrrigationSystem.DECAY_PP_PER_DAY  = 3.125  -- drain at DECAY_TEMP_REF, dry weather
 IrrigationSystem.DECAY_TEMP_REF    = 15     -- degC at which the temp multiplier is 1.0
 IrrigationSystem.DECAY_TEMP_MIN    = 0.5    -- multiplier floor (also covers sub-zero)
 IrrigationSystem.DECAY_TEMP_MAX    = 2.5    -- multiplier ceiling
@@ -225,12 +225,42 @@ end
 
 ---
 -- The diary is generated from this seed, never stored, so the seed must be
--- created once and then survive every save. savegameIndex was rejected because
--- "Save As" moves it and would silently reshuffle the whole diary.
+-- created once and then survive every save.
+--
+-- DERIVED, NOT ROLLED. math.random here looked equivalent -- the seed is saved,
+-- so it only ever gets rolled once -- but it left a hole at the start: until
+-- the player's first save with irrigation in it, there is nothing in the
+-- savegame to load, so every load rolled a fresh seed and the whole diary
+-- reshuffled. Loading a save, reading the tab and quitting without saving
+-- showed different free hours every time, which is exactly the "availability is
+-- state, not a dice roll" promise the generated diary exists to make.
+--
+-- Deriving from the map and savegame index makes the very first load
+-- reproducible too. A stored seed still wins in loadFromXMLFile, so existing
+-- savegames keep the diary they already have, and "Save As" carries the stored
+-- seed into the copy rather than reshuffling it -- which is why the derivation
+-- is allowed to use savegameIndex at all.
 ---
+function IrrigationSystem.deriveDiarySeed()
+    local info = g_currentMission ~= nil and g_currentMission.missionInfo or nil
+    -- mapId ("MapUS", "FS25_Witcombe.MapWitcombe") rather than
+    -- customEnvironment, which is nil on every base-game map.
+    local name = info ~= nil and (info.mapId or info.customEnvironment) or "map"
+    local index = info ~= nil and info.savegameIndex or 1
+
+    -- djb2, kept modulo a prime under 1e6 so the result stays in the same range
+    -- the rolled seed used and still fits streamWriteInt32.
+    local h = 5381
+    for i = 1, #name do
+        h = (h * 33 + name:byte(i)) % 1000003
+    end
+    h = (h * 33 + index) % 1000003
+    return h + 1
+end
+
 function IrrigationSystem:ensureDiarySeed()
     if self.diarySeed == nil then
-        self.diarySeed = math.random(1, 1000000)
+        self.diarySeed = IrrigationSystem.deriveDiarySeed()
     end
     return self.diarySeed
 end
