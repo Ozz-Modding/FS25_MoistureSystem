@@ -126,6 +126,7 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop, Realistic
 Änderungsprotokoll:
 
 2.0.0.4:
+- Sie können Ihre Felder jetzt bewässern, indem Sie Lohnunternehmer beauftragen. Buchen Sie Aufträge über das Feuchtigkeitsmenü. Planen Sie im Voraus, um höhere Preise bei kurzfristiger Buchung zu vermeiden und die Verfügbarkeit der Lohnunternehmer sicherzustellen. Es gibt dafür keine visuellen Effekte!
 - Der Feuchtigkeitswert bewegt sich jetzt etwas schneller, sowohl nach oben als auch nach unten. Ziel ist es, die beabsichtigten Ergebnisse der Wetterszenarien zuverlässiger zu erreichen.
 - Der Schwellenwert für Heu liegt jetzt bei 10 %.
 - Die standardmäßige Feuchtigkeitsreduzierung beim Wenden beträgt jetzt 4 % und kann von den Spielern zwischen 4 und 8 % eingestellt werden.
@@ -210,6 +211,7 @@ Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop, Rea
 Journal des modifications :
 
 2.0.0.4 :
+- Vous pouvez désormais irriguer vos champs en engageant des prestataires. Utilisez le menu Humidité pour réserver des interventions. Anticipez pour éviter les tarifs majorés en cas de réservation de dernière minute et pour vous assurer de la disponibilité des prestataires. Il n'y a aucun effet visuel !
 - Le niveau d'humidité évolue désormais un peu plus rapidement, à la hausse comme à la baisse. L'objectif est de produire plus fidèlement les résultats attendus des scénarios météorologiques.
 - Le seuil pour le foin est désormais de 10 %.
 - La réduction d'humidité par défaut du fanage est désormais de 4 % et les joueurs peuvent la régler entre 4 et 8 %.
