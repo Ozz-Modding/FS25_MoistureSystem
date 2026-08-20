@@ -17,9 +17,9 @@ MoistureGuiIrrigation = {}
 
 local MoistureGuiIrrigation_mt = Class(MoistureGuiIrrigation, TabbedMenuFrameElement)
 
--- Card slots authored in the XML. The bookable window is at most twelve days
--- per month (FS25's longest month), and the month picker means only one month's
--- worth is ever on screen.
+-- Card slots authored in the XML, one per day of the rolling booking window.
+-- Kept equal to IrrigationSystem.BOOKABLE_DAYS: the window is a fixed number of
+-- days at every month length, so the grid never needs paging.
 local NUM_DAY_CARDS = 12
 local NUM_JOB_ROWS = 8
 local BAR_WIDTH_PX = 202
@@ -28,9 +28,13 @@ local BAR_WIDTH_PX = 202
 -- diary stay current without closing and reopening the menu.
 MoistureGuiIrrigation.REFRESH_INTERVAL = 1000
 
-local COLOUR_CARD_IDLE     = { 0.17, 0.18, 0.15, 1 }
-local COLOUR_CARD_SELECTED = { 0.40, 0.60, 0.08, 1 }
-local ALPHA_CARD_DIMMED    = 0.45
+-- The selected card stays dark and is marked by its accent bar instead. Filling
+-- the body with the highlight green put grey labels and a red note on green and
+-- made the whole card unreadable.
+local COLOUR_CARD_IDLE     = { 0.05, 0.055, 0.05, 0.85 }
+local COLOUR_CARD_SELECTED = { 0.10, 0.115, 0.08, 0.95 }
+-- Enough to read as unavailable, not so much that the reason goes unreadable.
+local ALPHA_CARD_DIMMED    = 0.7
 
 -- Convert a pixel width the same way FS25 converts XML `px` values, so a
 -- Lua-sized bar lines up with the XML-authored track at any resolution.
@@ -42,11 +46,10 @@ function MoistureGuiIrrigation.new(l18n)
     local self = TabbedMenuFrameElement.new(nil, MoistureGuiIrrigation_mt)
     self.l18n = l18n
     self.farmlandIds = {}
-    self.monthDays = {}
+    self.days = {}
     self.selectedFarmlandId = nil
     self.selectedDay = nil
     self.selectedBoostPp = IrrigationSystem.BOOST_STEP_PP
-    self.monthOffset = 0
     self.timeSinceRefresh = 0
     return self
 end
@@ -94,9 +97,6 @@ function MoistureGuiIrrigation:onFrameOpen()
     end
 
     self.timeSinceRefresh = 0
-    -- refreshAll rebuilds the farmland list itself; the month list is fixed for
-    -- the session, so it only needs building once per open.
-    self:rebuildMonthList()
     self:refreshAll()
 end
 
@@ -195,27 +195,8 @@ function MoistureGuiIrrigation:rebuildFarmlandList()
     self.selectedFarmlandId = self.farmlandIds[selectedIndex]
 end
 
-function MoistureGuiIrrigation:rebuildMonthList()
-    local env = g_currentMission.environment
-    local texts = {}
-    for offset = 0, IrrigationSystem.BOOKABLE_MONTHS do
-        local period = env.currentPeriod + offset
-        while period > 12 do period = period - 12 end
-        table.insert(texts, g_i18n:formatPeriod(period, false))
-    end
-
-    self.monthSelector:setTexts(texts)
-    self.monthSelector:setState(self.monthOffset + 1)
-end
-
 function MoistureGuiIrrigation:onFarmlandChanged(state)
     self.selectedFarmlandId = self.farmlandIds[state]
-    self:refreshAll()
-end
-
-function MoistureGuiIrrigation:onMonthChanged(state)
-    self.monthOffset = state - 1
-    self.selectedDay = nil
     self:refreshAll()
 end
 
@@ -227,7 +208,7 @@ end
 
 function MoistureGuiIrrigation:onClickDayCard(element)
     local slot = element ~= nil and element.irrigationSlot or nil
-    local day = slot ~= nil and self.monthDays[slot] or nil
+    local day = slot ~= nil and self.days[slot] or nil
     if day == nil then return end
 
     self.selectedDay = day
@@ -240,33 +221,23 @@ function MoistureGuiIrrigation:refreshAll()
     local irrigation = g_currentMission.irrigationSystem
     if irrigation == nil then return end
 
-    self.monthDays = irrigation:getBookableDaysInMonth(self.monthOffset)
+    self.days = irrigation:getBookableDays()
 
-    -- Keep the selection inside the month on show; default to the first day.
+    -- The window rolls forward a day at a time, so yesterday's selection can
+    -- fall off the front while the tab is open. Default back to today.
     local stillVisible = false
-    for _, day in ipairs(self.monthDays) do
+    for _, day in ipairs(self.days) do
         if day == self.selectedDay then stillVisible = true end
     end
     if not stillVisible then
-        self.selectedDay = self.monthDays[1]
+        self.selectedDay = self.days[1]
     end
 
     self:rebuildFarmlandList()
-    self:refreshCurrentBoost()
     self:refreshAmountStepper()
     self:refreshDayCards()
     self:refreshQuote()
     self:refreshJobsPanel()
-end
-
-function MoistureGuiIrrigation:refreshCurrentBoost()
-    local irrigation = g_currentMission.irrigationSystem
-    local boost = 0
-    if self.selectedFarmlandId ~= nil then
-        boost = irrigation:getBoost(self.selectedFarmlandId) * 100
-    end
-    self.currentBoostValue:setText(string.format(
-        g_i18n:getText("moistureSystem_gui_irrigation_currentBoost"), fmtPp(boost)))
 end
 
 function MoistureGuiIrrigation:getCeiling()
@@ -328,7 +299,7 @@ function MoistureGuiIrrigation:refreshDayCards()
     for slot = 1, NUM_DAY_CARDS do
         local card = self.dayCards[slot]
         if card ~= nil then
-            local day = self.monthDays[slot]
+            local day = self.days[slot]
             card:setVisible(day ~= nil)
             if day ~= nil then
                 self:renderDayCard(slot, day, irrigation)
@@ -350,28 +321,35 @@ function MoistureGuiIrrigation:renderDayCard(slot, day, irrigation)
     local fraction = math.min(1, freeHours / IrrigationSystem.DAILY_CAPACITY_H)
     self[prefix .. "BarFill"]:setSize(pxToNormX(math.max(1, BAR_WIDTH_PX * fraction)), nil)
 
-    local ceiling = 0
+    local ceiling, reason = 0, nil
     if self.selectedFarmlandId ~= nil then
-        ceiling = irrigation:getBoostCeiling(self.selectedFarmlandId, day)
+        ceiling, reason = irrigation:getBoostCeiling(self.selectedFarmlandId, day)
     end
     local bookable = ceiling >= IrrigationSystem.BOOST_STEP_PP
 
     self[prefix .. "Boost"]:setVisible(bookable)
-    self[prefix .. "Price"]:setVisible(bookable)
     self[prefix .. "Note"]:setVisible(not bookable)
 
     if bookable then
-        local boostPp = math.min(self.selectedBoostPp, ceiling)
-        if boostPp < IrrigationSystem.BOOST_STEP_PP then boostPp = ceiling end
-        local quote = irrigation:getQuote(self.selectedFarmlandId, boostPp, day)
-
+        -- No price on the card. It can only be quoted for ONE amount, so it
+        -- tracked the stepper and changed under the player the moment they
+        -- touched it -- the card and the quote panel disagreeing about the same
+        -- day. What separates one day from another is hours free and the rush
+        -- premium, both of which are already here; the money belongs to the
+        -- quote panel, where it is quoted for the amount actually selected.
         self[prefix .. "Boost"]:setText(string.format(
             g_i18n:getText("moistureSystem_gui_irrigation_upTo"), fmtPp(ceiling)))
-        self[prefix .. "Price"]:setText(quote ~= nil and fmtMoney(quote.total) or "")
     else
         -- Dimmed, but the real free-hours figure above still shows. Never a
-        -- silent grey-out.
-        self[prefix .. "Note"]:setText(g_i18n:getText("moistureSystem_gui_irrigation_unbookableShort"))
+        -- silent grey-out, and never the wrong reason: a day already booked for
+        -- this farmland is not a contractor-hours problem.
+        local key = "moistureSystem_gui_irrigation_unbookableShort"
+        if reason == IrrigationSystem.CEILING_JOB_PENDING then
+            key = "moistureSystem_gui_irrigation_unbookableShortBooked"
+        elseif reason == IrrigationSystem.CEILING_BOOST_CAP then
+            key = "moistureSystem_gui_irrigation_unbookableShortCap"
+        end
+        self[prefix .. "Note"]:setText(g_i18n:getText(key))
     end
 
     -- Always present, reading "list price" on far days rather than going blank:
@@ -389,8 +367,10 @@ function MoistureGuiIrrigation:renderDayCard(slot, day, irrigation)
     local card = self.dayCards[slot]
     card:setAlpha(bookable and 1.0 or ALPHA_CARD_DIMMED)
 
-    local colour = day == self.selectedDay and COLOUR_CARD_SELECTED or COLOUR_CARD_IDLE
+    local isSelected = day == self.selectedDay
+    local colour = isSelected and COLOUR_CARD_SELECTED or COLOUR_CARD_IDLE
     self[prefix .. "Bg"]:setImageColor(nil, colour[1], colour[2], colour[3], colour[4])
+    self[prefix .. "Sel"]:setVisible(isSelected)
 end
 
 local QUOTE_LINE_IDS = {
@@ -402,7 +382,6 @@ function MoistureGuiIrrigation:setQuoteLinesVisible(visible)
         self[id .. "Label"]:setVisible(visible)
         self[id .. "Value"]:setVisible(visible)
     end
-    self.quoteResult:setVisible(visible)
 end
 
 ---
@@ -483,10 +462,6 @@ function MoistureGuiIrrigation:refreshQuote()
     self.quoteTotalLabel:setText(g_i18n:getText("moistureSystem_gui_irrigation_total"))
     self.quoteTotalValue:setText(fmtMoney(quote.total))
 
-    -- What is actually being bought. No shortfall line: there are no partial jobs.
-    local current = irrigation:getBoost(self.selectedFarmlandId) * 100
-    self.quoteResult:setText(string.format("%s %s %s", fmtPp(current), "->", fmtPp(current + boostPp)))
-
     self.btnBook.disabled = false
     self.btnBook.text = string.format(g_i18n:getText("ms_action_irrigationBookPrice"), fmtMoney(quote.total))
     self:setMenuButtonInfoDirty()
@@ -529,19 +504,33 @@ function MoistureGuiIrrigation:refreshJobsPanel()
     local rows = {}
     for _, farmlandId in ipairs(self.farmlandIds) do
         local farmland = g_farmlandManager:getFarmlandById(farmlandId)
-        local job = irrigation.jobs[farmlandId]
-        local boost = irrigation:getBoost(farmlandId)
-
-        if farmland ~= nil and (job ~= nil or boost > 0) then
-            local value
-            if job ~= nil and job.hoursWorked < job.hours then
-                value = string.format("%s %s", self:getDayLabel(job.startDay), fmtHour(job.startHour))
-            else
-                value = string.format("%s %s %s", fmtPp(boost * 100), "-",
-                    string.format(g_i18n:getText("moistureSystem_gui_irrigation_daysLeft"),
-                        self:getRemainingDays(boost)))
+        if farmland ~= nil then
+            local boost = irrigation:getBoost(farmlandId)
+            if boost > 0 then
+                table.insert(rows, {
+                    name = farmland:getName(),
+                    value = string.format("%s %s %s", fmtPp(boost * 100), "-",
+                        string.format(g_i18n:getText("moistureSystem_gui_irrigation_daysLeft"),
+                            self:getRemainingDays(boost))),
+                })
             end
-            table.insert(rows, { name = farmland:getName(), value = value })
+
+            local pending = {}
+            for _, job in ipairs(irrigation.jobs) do
+                if job.farmlandId == farmlandId and job.hoursWorked < job.hours then
+                    table.insert(pending, job)
+                end
+            end
+            table.sort(pending, function(a, b)
+                if a.startDay ~= b.startDay then return a.startDay < b.startDay end
+                return a.startHour < b.startHour
+            end)
+            for _, job in ipairs(pending) do
+                table.insert(rows, {
+                    name = farmland:getName(),
+                    value = string.format("%s %s", self:getDayLabel(job.startDay), fmtHour(job.startHour)),
+                })
+            end
         end
     end
 

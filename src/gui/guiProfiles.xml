@@ -285,15 +285,13 @@
         <textSize value="15px"/>
         <textVerticalAlignment value="middle"/>
     </Profile>
-    <Profile name="msIrrCurrentBoost" extends="fs25_textDefault" with="anchorTopLeft">
-        <size value="280px 26px"/>
-        <textSize value="16px"/>
-        <textBold value="true"/>
-        <textVerticalAlignment value="middle"/>
-        <textColor value="$preset_fs25_colorMainHighlight"/>
-    </Profile>
-    <Profile name="msIrrPanel" extends="emptyPanel" with="anchorTopLeft">
-        <imageColor value="$preset_fs25_colorGrey"/>
+    <!-- Flat dark panel. Must extend baseReference, NOT emptyPanel: emptyPanel
+         carries the base UI atlas filename with no slice, so a <Bitmap> using it
+         falls back to the default UVs and paints the ENTIRE atlas: a block of
+         icon soup where the panel should be. emptyPanel is safe only on a plain
+         <GuiElement>, which draws nothing. -->
+    <Profile name="msIrrPanel" extends="baseReference" with="anchorTopLeft">
+        <imageColor value="0.045 0.045 0.045 0.7"/>
     </Profile>
     <Profile name="msIrrSectionHeader" extends="fs25_textDefault" with="anchorTopLeft">
         <size value="180px 26px"/>
@@ -307,12 +305,20 @@
     <!-- Day card. One per bookable day in the selected month; the whole card is
          the click target, and its background carries the selection colour. -->
     <Profile name="msIrrDayCard" extends="baseReference" with="anchorTopLeft">
-        <size value="222px 134px"/>
+        <size value="222px 112px"/>
         <imageColor value="0 0 0 0"/>
     </Profile>
     <Profile name="msIrrDayCardBg" extends="baseReference" with="anchorTopLeft">
-        <size value="222px 134px"/>
-        <imageColor value="$preset_fs25_colorGrey"/>
+        <size value="222px 112px"/>
+        <imageColor value="0.05 0.055 0.05 0.85"/>
+    </Profile>
+    <!-- Selection marker. The card body stays dark in both states so the grey
+         label and red note text keep their contrast; flooding the background
+         with the highlight green made every line on the selected card
+         unreadable. -->
+    <Profile name="msIrrDayCardSel" extends="baseReference" with="anchorTopLeft">
+        <size value="222px 4px"/>
+        <imageColor value="$preset_fs25_colorMainHighlight"/>
     </Profile>
     <Profile name="msIrrDayLabel" extends="fs25_textGrey" with="anchorTopLeft">
         <size value="202px 18px"/>
@@ -341,12 +347,6 @@
         <textVerticalAlignment value="middle"/>
         <textColor value="$preset_fs25_colorMainHighlight"/>
     </Profile>
-    <Profile name="msIrrDayPrice" extends="fs25_textDefault" with="anchorTopLeft">
-        <size value="202px 20px"/>
-        <textSize value="16px"/>
-        <textBold value="true"/>
-        <textVerticalAlignment value="middle"/>
-    </Profile>
     <!-- Sits where the boost/price lines do, replacing them on an unbookable day.
          The day still shows its real free-hours figure above. -->
     <Profile name="msIrrDayNote" extends="fs25_textGrey" with="anchorTopLeft">
@@ -368,7 +368,7 @@
         <textVerticalAlignment value="middle"/>
     </Profile>
     <Profile name="msIrrQuoteValue" extends="fs25_textDefault" with="anchorTopLeft">
-        <size value="390px 24px"/>
+        <size value="440px 24px"/>
         <textSize value="15px"/>
         <textAlignment value="right"/>
         <textVerticalAlignment value="middle"/>
@@ -381,16 +381,10 @@
         <textVerticalAlignment value="middle"/>
     </Profile>
     <Profile name="msIrrQuoteTotalValue" extends="fs25_textDefault" with="anchorTopLeft">
-        <size value="390px 26px"/>
+        <size value="440px 26px"/>
         <textSize value="18px"/>
         <textBold value="true"/>
         <textAlignment value="right"/>
-        <textVerticalAlignment value="middle"/>
-        <textColor value="$preset_fs25_colorMainHighlight"/>
-    </Profile>
-    <Profile name="msIrrQuoteResult" extends="fs25_textDefault" with="anchorTopLeft">
-        <size value="850px 26px"/>
-        <textSize value="16px"/>
         <textVerticalAlignment value="middle"/>
         <textColor value="$preset_fs25_colorMainHighlight"/>
     </Profile>
@@ -403,7 +397,7 @@
          always names the cause: a clamped selector with no explanation reads as
          a bug. -->
     <Profile name="msIrrUnbookable" extends="fs25_textGrey" with="anchorTopLeft">
-        <size value="850px 44px"/>
+        <size value="884px 44px"/>
         <textSize value="15px"/>
         <textMaxNumLines value="2"/>
         <textVerticalAlignment value="top"/>
@@ -416,13 +410,13 @@
         <textVerticalAlignment value="middle"/>
     </Profile>
     <Profile name="msIrrJobValue" extends="fs25_textGrey" with="anchorTopLeft">
-        <size value="246px 24px"/>
+        <size value="238px 24px"/>
         <textSize value="15px"/>
         <textAlignment value="right"/>
         <textVerticalAlignment value="middle"/>
     </Profile>
     <Profile name="msIrrJobsEmpty" extends="fs25_textGrey" with="anchorTopLeft">
-        <size value="430px 24px"/>
+        <size value="424px 24px"/>
         <textSize value="15px"/>
         <textVerticalAlignment value="middle"/>
     </Profile>

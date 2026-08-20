@@ -202,7 +202,7 @@
 		<text name="setting_moisture_irrigationContractors" text="Підрядники зі зрошення"/>
 		<text name="setting_moisture_irrigationContractors_tooltip" text="Скільки підрядників працює на карті. Усі ферми ділять їх між собою. Більше підрядників - більше замовлень одночасно і вищий шанс знайти вільне вікно сьогодні."/>
 		<text name="setting_moisture_irrigationContractorCapacity" text="Продуктивність підрядника"/>
-		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Скільки площі підрядник обробляє за повний день на максимальній інтенсивності. Разом із кількістю підрядників це регулятор складності посухи."/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Скільки площі підрядник обробляє за повний день при +5%. Разом із кількістю підрядників це регулятор складності посухи."/>
 		<text name="ms_ui_irrigation" text="Зрошення"/>
 		<text name="finance_irrigation" text="Зрошення"/>
 		<text name="ms_irrigation_started" text="%s: зрошення розпочато, +%.1f%% за %dг"/>
@@ -214,7 +214,6 @@
 		<text name="moistureSystem_gui_irrigation_desc" text="Замовте підрядника, щоб підняти вологість ділянки. Його графік заповнюється в міру наближення дня - замовляйте заздалегідь заради вільного дня та прайсової ціни."/>
 		<text name="moistureSystem_gui_irrigation_farmland" text="Ділянка"/>
 		<text name="moistureSystem_gui_irrigation_month" text="Місяць"/>
-		<text name="moistureSystem_gui_irrigation_currentBoost" text="Зараз %s"/>
 		<text name="moistureSystem_gui_irrigation_noFarmlands" text="У вас поки немає ділянки з полем."/>
 		<text name="moistureSystem_gui_irrigation_today" text="Сьогодні"/>
 		<text name="moistureSystem_gui_irrigation_tomorrow" text="Завтра"/>
@@ -223,12 +222,14 @@
 		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% терміново"/>
 		<text name="moistureSystem_gui_irrigation_listPrice" text="прайсова ціна"/>
 		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Замало часу для цієї ділянки"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortBooked" text="Вже заброньовано на цей день"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortCap" text="Вже на межі зрошення"/>
 		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Вільно лише %dг - на замовлення потрібно щонайменше %dг."/>
 		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dг вільного часу дають менше ніж %s на %s."/>
 		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Ця ділянка вже на межі %s."/>
-		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="На цю ділянку вже викликано підрядника. Дочекайтеся завершення замовлення."/>
+		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="Для цієї ділянки на цей день уже найнято підрядника. Оберіть інший день."/>
 		<text name="moistureSystem_gui_irrigation_limitHours" text="Макс. %s цього дня - обмежено годинами підрядника"/>
-		<text name="moistureSystem_gui_irrigation_limitCap" text="Макс. %s цього дня - обмежено межею зрошення"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Макс. %s"/>
 		<text name="moistureSystem_gui_irrigation_amount" text="Обсяг"/>
 		<text name="moistureSystem_gui_irrigation_quote" text="Кошторис"/>
 		<text name="moistureSystem_gui_irrigation_work" text="Робота"/>
@@ -240,7 +241,7 @@
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Налаштування вартості %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Разом"/>
 		<text name="moistureSystem_gui_irrigation_jobs" text="Ваші ділянки"/>
-		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Нічого не зрошується."/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Немає нещодавнього зрошення."/>
 		<text name="moistureSystem_gui_irrigation_daysLeft" text="лишилось %.1fд"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Це вікно щойно зайняли. Оберіть інший день."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Недостатньо грошей на це замовлення."/>

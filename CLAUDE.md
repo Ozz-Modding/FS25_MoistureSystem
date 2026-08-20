@@ -45,8 +45,8 @@ Write like a person explaining something to a colleague, not like a design docum
 Irrigation tab, to raise a farmland's moisture by a chosen amount; the boost accrues hour by hour
 while the contractor works, then decays with the weather. Registered as
 `g_currentMission.irrigationSystem`, ticked once per game hour from `MoistureSystem:onHourChanged`.
-Contractor time is the scarce resource, not money. `docs/irrigation-spec.md` is the design document
-and still holds the reasoning behind every number.
+Contractor time is the scarce resource, not money; the reasoning behind each tunable lives in the
+comments beside it in the tunables block at the top of the file.
 
 Three things about it are load-bearing and easy to break:
 
@@ -54,7 +54,7 @@ Three things about it are load-bearing and easy to break:
   `diarySeed` and how far away the day is, so it tightens as it approaches and gives the same answer
   on every peer and after a reload. All day arithmetic uses `Environment.currentMonotonicDay`, never
   `currentDay` (which is rescaled when the player changes month length).
-- **`hash01` needs its nonlinear fold.** The spec's original two-round LCG was affine end to end, so
+- **`hash01` needs its nonlinear fold.** The original two-round LCG was affine end to end, so
   `hash01(s, n+1)` was always `hash01(s, n)` plus a constant — contractors, who differ only by that
   `+1`, drew the same jitter shifted (measured Pearson 0.73), collapsing the roster setting into a
   no-op. The fold breaks that; every product also stays under 2^53 so the result is exact, hence

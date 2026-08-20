@@ -202,7 +202,7 @@
 		<text name="setting_moisture_irrigationContractors" text="Irrigation Contractors"/>
 		<text name="setting_moisture_irrigationContractors_tooltip" text="How many contractors work the map. Every farm shares them. More contractors means more jobs can run at once and a better chance of a free slot today."/>
 		<text name="setting_moisture_irrigationContractorCapacity" text="Contractor Capacity"/>
-		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="How much ground one contractor covers in a full day at maximum strength. With the contractor count, this is the drought difficulty dial."/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="How much ground one contractor covers in a full day at +5%. With the contractor count, this is the drought difficulty dial."/>
 		<text name="ms_ui_irrigation" text="Irrigation"/>
 		<text name="finance_irrigation" text="Irrigation"/>
 		<text name="ms_irrigation_started" text="%s: irrigation started, +%.1f%% over %dh"/>
@@ -214,7 +214,6 @@
 		<text name="moistureSystem_gui_irrigation_desc" text="Book a contractor to raise a farmland's moisture. Their diary fills up as a day gets closer, so book early for a clear day and list price."/>
 		<text name="moistureSystem_gui_irrigation_farmland" text="Farmland"/>
 		<text name="moistureSystem_gui_irrigation_month" text="Month"/>
-		<text name="moistureSystem_gui_irrigation_currentBoost" text="Now %s"/>
 		<text name="moistureSystem_gui_irrigation_noFarmlands" text="You don't own any farmland with a field yet."/>
 		<text name="moistureSystem_gui_irrigation_today" text="Today"/>
 		<text name="moistureSystem_gui_irrigation_tomorrow" text="Tomorrow"/>
@@ -223,12 +222,14 @@
 		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% rush"/>
 		<text name="moistureSystem_gui_irrigation_listPrice" text="list price"/>
 		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Not enough time for this farmland"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortBooked" text="Already booked for this day"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortCap" text="Already at the boost cap"/>
 		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Only %dh free - a job needs at least %dh."/>
 		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dh free covers less than %s on %s."/>
 		<text name="moistureSystem_gui_irrigation_unbookableCap" text="This farmland is already at the %s cap."/>
-		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="A contractor is already booked for this farmland. Wait for that job to finish."/>
+		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="This farmland already has a contractor booked for this day. Pick another day."/>
 		<text name="moistureSystem_gui_irrigation_limitHours" text="Max %s on this day - limited by contractor hours"/>
-		<text name="moistureSystem_gui_irrigation_limitCap" text="Max %s on this day - limited by the boost cap"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Max %s"/>
 		<text name="moistureSystem_gui_irrigation_amount" text="Amount"/>
 		<text name="moistureSystem_gui_irrigation_quote" text="Quote"/>
 		<text name="moistureSystem_gui_irrigation_work" text="Work"/>
@@ -240,7 +241,7 @@
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Cost setting %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Total"/>
 		<text name="moistureSystem_gui_irrigation_jobs" text="Your farmland"/>
-		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Nothing irrigated."/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="No recent irrigation."/>
 		<text name="moistureSystem_gui_irrigation_daysLeft" text="%.1fd left"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="That slot has just been taken. Pick another day."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Not enough money for this job."/>

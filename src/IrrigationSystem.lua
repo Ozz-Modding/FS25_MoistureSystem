@@ -9,8 +9,8 @@
 -- Registered as g_currentMission.irrigationSystem and ticked once per game hour
 -- from MoistureSystem:onHourChanged. All simulation is server-side.
 --
--- See docs/irrigation-spec.md for the design and the reasoning behind every
--- number in the tunables block.
+-- Every balance number lives in the tunables block below, each with the
+-- reasoning for its value beside it.
 ---
 
 IrrigationSystem = {}
@@ -23,12 +23,18 @@ local IrrigationSystem_mt = Class(IrrigationSystem)
 -- ============================================================================
 
 -- Boost limits ---------------------------------------------------------------
-IrrigationSystem.MAX_BOOST_PP      = 5.0    -- cap on accumulated boost
+IrrigationSystem.MAX_BOOST_PP      = 8.0    -- cap on accumulated boost
+-- The strength the contractor-capacity SETTING is quoted at, and the only thing
+-- the work rate is derived from. Deliberately not MAX_BOOST_PP: the rate used
+-- to be pinned to the cap, so raising the cap silently made every contractor
+-- proportionally faster and loosened the hours limit on large fields too. Field
+-- size mattering is the point, so the cap moves on its own.
+IrrigationSystem.RATE_STRENGTH_PP  = 5.0
 IrrigationSystem.BOOST_STEP_PP     = 0.5    -- selector increment
 
 -- Pricing --------------------------------------------------------------------
-IrrigationSystem.RATE_PER_HA_PP    = 40     -- currency per hectare per percentage point
-IrrigationSystem.MINIMUM_CALLOUT   = 250    -- currency floor, before multipliers
+IrrigationSystem.RATE_PER_HA_PP    = 110    -- currency per hectare per percentage point
+IrrigationSystem.MINIMUM_CALLOUT   = 500    -- currency floor, before multipliers
 IrrigationSystem.SHORT_NOTICE_MAX  = 1.35   -- multiplier when booked same-day
 IrrigationSystem.SHORT_NOTICE_DAYS = 3      -- lead time at which it reaches 1.0
 
@@ -43,7 +49,11 @@ IrrigationSystem.DIARY_FLOOR       = 0.12   -- committed fraction, far out
 IrrigationSystem.DIARY_SPAN        = 0.73   -- extra committed today (FLOOR+SPAN = today)
 IrrigationSystem.DIARY_TAU_DAYS    = 1.75   -- how fast commitment falls off with lead time
 IrrigationSystem.DIARY_JITTER      = 0.30   -- per-day intrinsic spread, +/- fraction
-IrrigationSystem.BOOKABLE_MONTHS   = 2      -- months bookable beyond the current one
+-- The booking horizon is counted in DAYS, not months. The diary curve is a
+-- day-scale thing (DIARY_TAU_DAYS), and a month-scale horizon collapses to three
+-- bookable days at the default one-day month -- too short for the curve to be
+-- readable, and it left the tab showing a single dead card.
+IrrigationSystem.BOOKABLE_DAYS     = 12     -- days bookable, counting today
 
 -- Decay ----------------------------------------------------------------------
 IrrigationSystem.DECAY_PP_PER_DAY  = 2.5    -- drain at DECAY_TEMP_REF, dry weather
@@ -57,7 +67,7 @@ IrrigationSystem.DECAY_DPP_CAP     = 5      -- daysPerPeriod divisor cap
 -- anyActiveBoosts clears on its own.
 IrrigationSystem.PRUNE_THRESHOLD   = 0.001
 
--- Rejection reason codes, sent back to the requesting client (spec section 12).
+-- Rejection reason codes, sent back to the requesting client.
 IrrigationSystem.REJECT_SLOT_TAKEN         = 1
 IrrigationSystem.REJECT_INSUFFICIENT_FUNDS = 2
 IrrigationSystem.REJECT_NO_PERMISSION      = 3
@@ -69,8 +79,12 @@ function IrrigationSystem.new()
 
     -- [farmlandId] = { value = 0.021, graceUntil = <monotonic hour stamp or nil> }
     self.boosts = {}
-    -- [farmlandId] = { targetBoost, startDay, startHour, hours,
-    --                  hoursWorked, price, paid, contractorIndex }
+    -- A flat list of pending jobs, each { farmlandId, targetBoost, startDay,
+    -- startHour, hours, hoursWorked, price, paid, contractorIndex, farmId }.
+    -- A farmland may hold at most ONE job per day but any number across
+    -- different days: the booking block is a property of the day, not of the
+    -- farmland. Keyed by farmland it could only ever hold one, which read to
+    -- players as "irrigation is broken until this job finishes".
     self.jobs = {}
     -- Hours the player has booked, keyed "day:contractorIndex". Subtracted from
     -- the generated diary so the player's own bookings tighten it too.
@@ -80,6 +94,55 @@ function IrrigationSystem.new()
     self:ensureDiarySeed()
 
     return self
+end
+
+---
+-- The job this farmland already has on this day, if any. Linear scans are fine:
+-- the list holds only jobs still outstanding inside a 12-day window, so it is a
+-- handful of entries even on a large farm.
+---
+function IrrigationSystem:getJobOnDay(farmlandId, day)
+    for _, job in ipairs(self.jobs) do
+        if job.farmlandId == farmlandId and job.startDay == day then
+            return job
+        end
+    end
+    return nil
+end
+
+-- True while a contractor is mid-job on this farmland, which holds its boost at
+-- full strength for the whole ramp (see decayBoosts).
+function IrrigationSystem:getIsFarmlandWorking(farmlandId)
+    for _, job in ipairs(self.jobs) do
+        if job.farmlandId == farmlandId and job.hoursWorked > 0 and job.hoursWorked < job.hours then
+            return true
+        end
+    end
+    return false
+end
+
+---
+-- Boost already bought but not yet delivered, in percentage points. The cap has
+-- to count this: with several days bookable at once, a player could otherwise
+-- book +5% on Monday and +5% on Tuesday and land far past MAX_BOOST_PP, having
+-- passed the per-day check both times.
+---
+function IrrigationSystem:getCommittedBoostPp(farmlandId)
+    local pp = 0
+    for _, job in ipairs(self.jobs) do
+        if job.farmlandId == farmlandId and job.hours > 0 then
+            pp = pp + job.targetBoost * 100 * (1 - job.hoursWorked / job.hours)
+        end
+    end
+    return pp
+end
+
+function IrrigationSystem:removeJobsForFarmland(farmlandId)
+    for i = #self.jobs, 1, -1 do
+        if self.jobs[i].farmlandId == farmlandId then
+            table.remove(self.jobs, i)
+        end
+    end
 end
 
 function IrrigationSystem:delete()
@@ -110,9 +173,9 @@ function IrrigationSystem:getCostMultiplier()
 end
 
 -- Work rate follows the player's capacity setting rather than being authored:
--- a full day at full strength must deliver exactly the capacity in ha*pp.
+-- a full day at RATE_STRENGTH_PP must deliver exactly the capacity in ha*pp.
 function IrrigationSystem:getHaPpPerHour()
-    return (self:getContractorCapacity() * IrrigationSystem.MAX_BOOST_PP) / IrrigationSystem.DAILY_CAPACITY_H
+    return (self:getContractorCapacity() * IrrigationSystem.RATE_STRENGTH_PP) / IrrigationSystem.DAILY_CAPACITY_H
 end
 
 -- ── boosts ───────────────────────────────────────────────────────────────────
@@ -180,9 +243,9 @@ function IrrigationSystem:saveToXMLFile(xmlFile, key)
     end
 
     local j = 0
-    for farmlandId, job in pairs(self.jobs) do
+    for _, job in ipairs(self.jobs) do
         local jobKey = string.format("%s.job(%d)", base, j)
-        setXMLInt(xmlFile, jobKey .. "#farmlandId", farmlandId)
+        setXMLInt(xmlFile, jobKey .. "#farmlandId", job.farmlandId)
         setXMLFloat(xmlFile, jobKey .. "#targetBoost", job.targetBoost)
         setXMLInt(xmlFile, jobKey .. "#startDay", job.startDay)
         setXMLInt(xmlFile, jobKey .. "#startHour", job.startHour)
@@ -252,6 +315,7 @@ function IrrigationSystem:loadFromXMLFile(xmlFile, key)
         local farmlandId = getXMLInt(xmlFile, jobKey .. "#farmlandId")
         if farmlandId ~= nil then
             local job = {
+                farmlandId = farmlandId,
                 targetBoost = getXMLFloat(xmlFile, jobKey .. "#targetBoost") or 0,
                 startDay = getXMLInt(xmlFile, jobKey .. "#startDay") or 0,
                 startHour = getXMLInt(xmlFile, jobKey .. "#startHour") or IrrigationSystem.DAY_START_HOUR,
@@ -262,7 +326,7 @@ function IrrigationSystem:loadFromXMLFile(xmlFile, key)
                 contractorIndex = getXMLInt(xmlFile, jobKey .. "#contractorIndex") or 0,
                 farmId = getXMLInt(xmlFile, jobKey .. "#farmId"),
             }
-            self.jobs[farmlandId] = job
+            table.insert(self.jobs, job)
         end
         j = j + 1
     end
@@ -275,7 +339,7 @@ function IrrigationSystem:loadFromXMLFile(xmlFile, key)
         -- A save with jobs but no ledger predates the ledger being persisted.
         -- Replaying the surviving jobs is the best that can be reconstructed;
         -- it under-counts completed work but never double-books a contractor.
-        for _, job in pairs(self.jobs) do
+        for _, job in ipairs(self.jobs) do
             self:reserveHours(job.startDay, job.contractorIndex, job.hours)
         end
     end
@@ -362,8 +426,7 @@ function IrrigationSystem:decayBoosts()
         -- four-hour job at 30 degC, worse in hotter months, which are exactly
         -- the months irrigation is bought for. There are no partial jobs: ask
         -- for +2.0%, pay for +2.0%, get +2.0%.
-        local job = self.jobs[farmlandId]
-        local isWorking = job ~= nil and job.hoursWorked > 0
+        local isWorking = self:getIsFarmlandWorking(farmlandId)
         local inGrace = boost.graceUntil ~= nil and now < boost.graceUntil
         if not isWorking and not inGrace and not isRaining then
             boost.value = math.max(0, boost.value - drain)
@@ -407,7 +470,7 @@ end
 --    Pearson 0.73 between contractor 0 and 1, which collapses the roster
 --    setting into a no-op on exactly the same-day bookings it exists to help.
 --    The fold below breaks that linearity; correlation measures under 0.006 and
---    the best-of-N table in spec section 7 reproduces.
+--    the measured spread of free hours across the roster is restored.
 --
 -- 2. EVERY PRODUCT STAYS BELOW 2^53. Lua numbers are doubles, so a product
 --    above that silently loses low bits. The multipliers are chosen so the
@@ -482,45 +545,13 @@ function IrrigationSystem:getBestFreeHours(day)
 end
 
 ---
--- The bookable window: the current month plus the next two, with days already
--- past excluded. Variable in days -- 3 at the default one day per month, up to
--- 36 at twelve.
+-- The bookable window: today and the next BOOKABLE_DAYS - 1 days. Fixed in
+-- days, so it is the same window at every month length.
 ---
 function IrrigationSystem:getBookableDays()
-    local env = g_currentMission.environment
-    local daysPerPeriod = env.daysPerPeriod or 1
-    local remainingThisMonth = daysPerPeriod - (env.currentDayInPeriod or 1) + 1
-    local count = remainingThisMonth + IrrigationSystem.BOOKABLE_MONTHS * daysPerPeriod
-
     local today = self:getToday()
     local days = {}
-    for i = 0, count - 1 do
-        table.insert(days, today + i)
-    end
-    return days
-end
-
----
--- The bookable days that fall inside monthOffset months from now (0 = the
--- current month). Drives the tab's month picker.
----
-function IrrigationSystem:getBookableDaysInMonth(monthOffset)
-    local env = g_currentMission.environment
-    local daysPerPeriod = env.daysPerPeriod or 1
-    local dayInPeriod = env.currentDayInPeriod or 1
-    local today = self:getToday()
-
-    local firstOffset, lastOffset
-    if monthOffset <= 0 then
-        firstOffset = 0
-        lastOffset = daysPerPeriod - dayInPeriod
-    else
-        firstOffset = (daysPerPeriod - dayInPeriod + 1) + (monthOffset - 1) * daysPerPeriod
-        lastOffset = firstOffset + daysPerPeriod - 1
-    end
-
-    local days = {}
-    for i = firstOffset, lastOffset do
+    for i = 0, IrrigationSystem.BOOKABLE_DAYS - 1 do
         table.insert(days, today + i)
     end
     return days
@@ -532,8 +563,9 @@ end
 -- Area is the crop polygon, NOT Farmland.areaInHa: that is the purchasable
 -- parcel including verges, tracks and woodland, and can be far larger. Charging
 -- on it would overcharge every ordinary player for ground irrigation cannot
--- help. The whole parcel does get wetted -- see spec section 18, this drift is
--- accepted deliberately and must not be "fixed" into an overcharge.
+-- help. The whole parcel does get wetted, so the player gets slightly more
+-- ground than they paid for. That drift is accepted deliberately and must not
+-- be "fixed" into an overcharge.
 ---
 function IrrigationSystem:getFarmlandAreaHa(farmlandId)
     local farmland = g_farmlandManager:getFarmlandById(farmlandId)
@@ -571,11 +603,10 @@ IrrigationSystem.CEILING_JOB_PENDING      = 3
 -- both, but it must state the reason rather than merely greying the day out.
 ---
 function IrrigationSystem:getBoostCeiling(farmlandId, day)
-    -- One pending job per farmland, so while one is outstanding NO day is
-    -- bookable for it. Reported as its own reason: telling the player "that
-    -- slot has just been taken, pick another day" would send them round every
-    -- day in the month for a block that is not about the day at all.
-    if self.jobs[farmlandId] ~= nil then
+    -- One job per farmland per DAY. A farmland booked for tomorrow is still
+    -- bookable for the day after; only the day already taken is blocked, and it
+    -- says so rather than reporting a contractor-hours problem it does not have.
+    if self:getJobOnDay(farmlandId, day) ~= nil then
         return 0, IrrigationSystem.CEILING_JOB_PENDING
     end
 
@@ -590,6 +621,7 @@ function IrrigationSystem:getBoostCeiling(farmlandId, day)
     end
 
     local byCap = IrrigationSystem.MAX_BOOST_PP - self:getBoost(farmlandId) * 100
+        - self:getCommittedBoostPp(farmlandId)
     byCap = math.floor(byCap / step + 1e-9) * step
 
     if byHours <= byCap then
@@ -666,9 +698,9 @@ end
 -- @return accepted, reasonCode
 ---
 function IrrigationSystem:bookJob(farmlandId, boostPp, day, farmId, skipPayment)
-    if self.jobs[farmlandId] ~= nil then
-        -- One pending job per farmland; the additive top-up rule already lets
-        -- the player re-book once this one finishes.
+    if self:getJobOnDay(farmlandId, day) ~= nil then
+        -- This farmland's slot on this day is already taken. Other days stay
+        -- open, subject to the cap check further down.
         return false, IrrigationSystem.REJECT_SLOT_TAKEN
     end
 
@@ -712,7 +744,8 @@ function IrrigationSystem:bookJob(farmlandId, boostPp, day, farmId, skipPayment)
         paid = true
     end
 
-    self.jobs[farmlandId] = {
+    table.insert(self.jobs, {
+        farmlandId = farmlandId,
         targetBoost = boostPp / 100,
         startDay = day,
         startHour = quote.startHour,
@@ -722,7 +755,7 @@ function IrrigationSystem:bookJob(farmlandId, boostPp, day, farmId, skipPayment)
         paid = paid,
         contractorIndex = quote.contractorIndex,
         farmId = farmId,
-    }
+    })
     self:reserveHours(day, quote.contractorIndex, quote.hours)
 
     return true, nil, quote
@@ -740,7 +773,10 @@ function IrrigationSystem:runJobs()
     local day, hour = env.currentMonotonicDay, env.currentHour
     local now = env:getMonotonicHour()
 
-    for farmlandId, job in pairs(self.jobs) do
+    -- Backwards, because a finished job is removed from the list in place.
+    for i = #self.jobs, 1, -1 do
+        local job = self.jobs[i]
+        local farmlandId = job.farmlandId
         local hasStarted = day > job.startDay or (day == job.startDay and hour >= job.startHour)
         if hasStarted and job.hoursWorked < job.hours then
             local wasFirstHour = job.hoursWorked == 0
@@ -760,7 +796,7 @@ function IrrigationSystem:runJobs()
                 if boost ~= nil then
                     boost.graceUntil = now + IrrigationSystem.GRACE_HOURS
                 end
-                self.jobs[farmlandId] = nil
+                table.remove(self.jobs, i)
                 self:notifyJobFinished(farmlandId, job)
             end
         end
@@ -776,7 +812,7 @@ function IrrigationSystem:onHourChanged()
     -- nothing is irrigated, since on such a save the boost changes nothing and
     -- binning the cache 24 times a game day just makes every field-info query
     -- redo its terrain-height work for no reason.
-    if self.anyActiveBoosts or next(self.jobs) ~= nil then
+    if self.anyActiveBoosts or #self.jobs > 0 then
         self:invalidateMoistureCache()
     end
     self:broadcastBoosts()
@@ -800,7 +836,7 @@ function IrrigationSystem:onFarmlandOwnerChanged(farmlandId, _farmId, loadFromSa
     if ms == nil or not ms.missionStarted then return end
 
     self.boosts[farmlandId] = nil
-    self.jobs[farmlandId] = nil
+    self:removeJobsForFarmland(farmlandId)
     self:refreshActiveBoostFlag()
 end
 
@@ -894,7 +930,7 @@ function IrrigationSystem:handleBookRequest(farmlandId, boostPp, day, farmId, co
         return false, reason
     end
 
-    local job = self.jobs[farmlandId]
+    local job = self:getJobOnDay(farmlandId, day)
     if g_server ~= nil then
         g_server:broadcastEvent(IrrigationJobBookedEvent.new(
             farmlandId, day, job.hours, job.contractorIndex, farmId, job))
@@ -923,7 +959,8 @@ function IrrigationSystem:onJobBooked(farmlandId, day, hours, contractorIndex, f
     self:reserveHours(day, contractorIndex, hours)
 
     if farmId == g_currentMission:getFarmId() then
-        self.jobs[farmlandId] = {
+        table.insert(self.jobs, {
+            farmlandId = farmlandId,
             targetBoost = job.targetBoost,
             startDay = day,
             startHour = job.startHour,
@@ -933,7 +970,7 @@ function IrrigationSystem:onJobBooked(farmlandId, day, hours, contractorIndex, f
             paid = true,
             contractorIndex = contractorIndex,
             farmId = farmId,
-        }
+        })
     end
 end
 
@@ -951,9 +988,10 @@ function IrrigationSystem:applyBoostUpdate(boosts)
     -- carries when it starts and how long it runs, and the server has already
     -- banked everything it delivered into the boost above.
     local now = g_currentMission.environment:getMonotonicHour()
-    for farmlandId, job in pairs(self.jobs) do
+    for i = #self.jobs, 1, -1 do
+        local job = self.jobs[i]
         if now >= job.startDay * 24 + job.startHour + job.hours then
-            self.jobs[farmlandId] = nil
+            table.remove(self.jobs, i)
         end
     end
 end
@@ -1008,9 +1046,9 @@ function IrrigationSystem:writeClientState(streamId, farm)
     local farmId = farm ~= nil and farm.farmId or nil
     local ownJobs = {}
     if farmId ~= nil then
-        for farmlandId, job in pairs(self.jobs) do
+        for _, job in ipairs(self.jobs) do
             if job.farmId == farmId then
-                table.insert(ownJobs, { farmlandId = farmlandId, job = job })
+                table.insert(ownJobs, { farmlandId = job.farmlandId, job = job })
             end
         end
     end
@@ -1051,7 +1089,8 @@ function IrrigationSystem:readClientState(streamId)
     local jobCount = streamReadUIntN(streamId, 12)
     for _ = 1, jobCount do
         local farmlandId = streamReadUIntN(streamId, g_farmlandManager.numberOfBits)
-        self.jobs[farmlandId] = {
+        table.insert(self.jobs, {
+            farmlandId = farmlandId,
             targetBoost = streamReadFloat32(streamId),
             startDay = streamReadInt32(streamId),
             startHour = streamReadUIntN(streamId, 5),
@@ -1061,7 +1100,7 @@ function IrrigationSystem:readClientState(streamId)
             price = 0,
             paid = true,
             farmId = g_currentMission:getFarmId(),
-        }
+        })
     end
 
     self:invalidateMoistureCache()
@@ -1089,7 +1128,6 @@ end
 
 local function describeFarmland(self, farmlandId)
     local boost = self.boosts[farmlandId]
-    local job = self.jobs[farmlandId]
     local farmland = g_farmlandManager:getFarmlandById(farmlandId)
     local name = farmland ~= nil and farmland:getName() or "?"
 
@@ -1100,12 +1138,17 @@ local function describeFarmland(self, farmlandId)
     else
         table.insert(parts, " boost none")
     end
-    if job ~= nil then
-        table.insert(parts, string.format(
-            " job +%.2f%% day %d %02d:00 %dh (%d worked) price %d contractor %d paid %s",
-            job.targetBoost * 100, job.startDay, job.startHour, job.hours,
-            job.hoursWorked, job.price, job.contractorIndex, tostring(job.paid)))
-    else
+    local jobCount = 0
+    for _, job in ipairs(self.jobs) do
+        if job.farmlandId == farmlandId then
+            jobCount = jobCount + 1
+            table.insert(parts, string.format(
+                "\n  job +%.2f%% day %d %02d:00 %dh (%d worked) price %d contractor %d paid %s",
+                job.targetBoost * 100, job.startDay, job.startHour, job.hours,
+                job.hoursWorked, job.price, job.contractorIndex, tostring(job.paid)))
+        end
+    end
+    if jobCount == 0 then
         table.insert(parts, " job none")
     end
     return table.concat(parts)
@@ -1122,7 +1165,7 @@ function IrrigationSystem:consoleCommandIrrigationDebug(farmlandIdArg)
 
     local seen, lines = {}, {}
     for farmlandId in pairs(self.boosts) do seen[farmlandId] = true end
-    for farmlandId in pairs(self.jobs) do seen[farmlandId] = true end
+    for _, job in ipairs(self.jobs) do seen[job.farmlandId] = true end
 
     local ids = {}
     for farmlandId in pairs(seen) do table.insert(ids, farmlandId) end
@@ -1172,7 +1215,7 @@ function IrrigationSystem:consoleCommandIrrigationBook(farmlandIdArg, boostPpArg
         return string.format("Rejected (reason %d)", reason or 0)
     end
 
-    local job = self.jobs[farmlandId]
+    local job = self:getJobOnDay(farmlandId, day)
     return string.format("Booked farmland %d: +%.1f%% on day %d at %02d:00, %dh, contractor %d",
         farmlandId, boostPp, day, job.startHour, job.hours, job.contractorIndex)
 end

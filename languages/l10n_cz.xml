@@ -202,7 +202,7 @@
 		<text name="setting_moisture_irrigationContractors" text="Zavlažovací firmy"/>
 		<text name="setting_moisture_irrigationContractors_tooltip" text="Kolik dodavatelů pracuje na mapě. Sdílejí je všechny farmy. Více dodavatelů znamená více zakázek naráz a větší šanci na volný termín dnes."/>
 		<text name="setting_moisture_irrigationContractorCapacity" text="Kapacita dodavatele"/>
-		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Kolik plochy zvládne jeden dodavatel za celý den na plný výkon. Spolu s počtem dodavatelů je to knoflík obtížnosti sucha."/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Kolik plochy zvládne jeden dodavatel za celý den při +5%. Spolu s počtem dodavatelů je to knoflík obtížnosti sucha."/>
 		<text name="ms_ui_irrigation" text="Zavlažování"/>
 		<text name="finance_irrigation" text="Zavlažování"/>
 		<text name="ms_irrigation_started" text="%s: zavlažování zahájeno, +%.1f%% po dobu %dh"/>
@@ -214,7 +214,6 @@
 		<text name="moistureSystem_gui_irrigation_desc" text="Objednej dodavatele, který zvýší vlhkost pozemku. Jeho diář se plní, jak se den blíží - objednávej s předstihem pro volný den a ceníkovou cenu."/>
 		<text name="moistureSystem_gui_irrigation_farmland" text="Pozemek"/>
 		<text name="moistureSystem_gui_irrigation_month" text="Měsíc"/>
-		<text name="moistureSystem_gui_irrigation_currentBoost" text="Nyní %s"/>
 		<text name="moistureSystem_gui_irrigation_noFarmlands" text="Zatím nevlastníš žádný pozemek s polem."/>
 		<text name="moistureSystem_gui_irrigation_today" text="Dnes"/>
 		<text name="moistureSystem_gui_irrigation_tomorrow" text="Zítra"/>
@@ -223,12 +222,14 @@
 		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% spěch"/>
 		<text name="moistureSystem_gui_irrigation_listPrice" text="ceníková cena"/>
 		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Na tento pozemek není dost času"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortBooked" text="Na tento den již rezervováno"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortCap" text="Již na limitu zavlažování"/>
 		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Jen %dh volných - zakázka potřebuje alespoň %dh."/>
 		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dh volných pokryje méně než %s na %s."/>
 		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Tento pozemek je už na limitu %s."/>
-		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="Na tento pozemek už je objednán dodavatel. Počkej, až zakázka skončí."/>
+		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="Tento pozemek má na tento den již objednaného dodavatele. Vyber jiný den."/>
 		<text name="moistureSystem_gui_irrigation_limitHours" text="Max %s v tento den - omezeno hodinami dodavatele"/>
-		<text name="moistureSystem_gui_irrigation_limitCap" text="Max %s v tento den - omezeno limitem zavlažení"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Max %s"/>
 		<text name="moistureSystem_gui_irrigation_amount" text="Množství"/>
 		<text name="moistureSystem_gui_irrigation_quote" text="Nabídka"/>
 		<text name="moistureSystem_gui_irrigation_work" text="Práce"/>
@@ -240,7 +241,7 @@
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Nastavení nákladů %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Celkem"/>
 		<text name="moistureSystem_gui_irrigation_jobs" text="Tvé pozemky"/>
-		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Nic není zavlaženo."/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Žádné nedávné zavlažování."/>
 		<text name="moistureSystem_gui_irrigation_daysLeft" text="zbývá %.1fd"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Tento termín byl právě obsazen. Vyber jiný den."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Na tuto zakázku není dost peněz."/>

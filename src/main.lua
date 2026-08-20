@@ -328,8 +328,8 @@ end
 --
 -- Note the cache key rounds position to a 5m grid, so a cell straddling a
 -- farmland boundary can serve a neighbouring parcel's irrigation boost within
--- 5m of the edge. That is an accepted trade-off (spec section 11): keying on
--- the farmland id as well would be machinery for a ten-entry cache.
+-- 5m of the edge. That is an accepted trade-off: keying on the farmland id as
+-- well would be machinery for a ten-entry cache.
 ---
 function MoistureSystem:invalidateMoistureCache()
     self.moistureCache = {}

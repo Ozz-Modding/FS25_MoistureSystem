@@ -202,7 +202,7 @@
 		<text name="setting_moisture_irrigationContractors" text="Подрядчики по орошению"/>
 		<text name="setting_moisture_irrigationContractors_tooltip" text="Сколько подрядчиков работает на карте. Все фермы делят их между собой. Больше подрядчиков - больше одновременных заказов и выше шанс найти свободное окно сегодня."/>
 		<text name="setting_moisture_irrigationContractorCapacity" text="Производительность подрядчика"/>
-		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Сколько площади подрядчик обрабатывает за полный день на максимальной интенсивности. Вместе с числом подрядчиков это регулятор сложности засухи."/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Сколько площади подрядчик обрабатывает за полный день при +5%. Вместе с числом подрядчиков это регулятор сложности засухи."/>
 		<text name="ms_ui_irrigation" text="Орошение"/>
 		<text name="finance_irrigation" text="Орошение"/>
 		<text name="ms_irrigation_started" text="%s: орошение начато, +%.1f%% за %dч"/>
@@ -214,7 +214,6 @@
 		<text name="moistureSystem_gui_irrigation_desc" text="Закажите подрядчика, чтобы поднять влажность участка. Его график заполняется по мере приближения дня - заказывайте заранее ради свободного дня и прайсовой цены."/>
 		<text name="moistureSystem_gui_irrigation_farmland" text="Участок"/>
 		<text name="moistureSystem_gui_irrigation_month" text="Месяц"/>
-		<text name="moistureSystem_gui_irrigation_currentBoost" text="Сейчас %s"/>
 		<text name="moistureSystem_gui_irrigation_noFarmlands" text="У вас пока нет участка с полем."/>
 		<text name="moistureSystem_gui_irrigation_today" text="Сегодня"/>
 		<text name="moistureSystem_gui_irrigation_tomorrow" text="Завтра"/>
@@ -223,12 +222,14 @@
 		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% срочность"/>
 		<text name="moistureSystem_gui_irrigation_listPrice" text="прайсовая цена"/>
 		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Недостаточно времени для этого участка"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortBooked" text="Уже забронировано на этот день"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortCap" text="Уже на пределе орошения"/>
 		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Свободно только %dч - на заказ нужно минимум %dч."/>
 		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dч свободного времени дают меньше %s на %s."/>
 		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Этот участок уже на пределе %s."/>
-		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="На этот участок уже вызван подрядчик. Дождитесь окончания заказа."/>
+		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="На этот день для этого участка уже нанят подрядчик. Выберите другой день."/>
 		<text name="moistureSystem_gui_irrigation_limitHours" text="Макс. %s в этот день - ограничено часами подрядчика"/>
-		<text name="moistureSystem_gui_irrigation_limitCap" text="Макс. %s в этот день - ограничено пределом орошения"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Макс. %s"/>
 		<text name="moistureSystem_gui_irrigation_amount" text="Объём"/>
 		<text name="moistureSystem_gui_irrigation_quote" text="Смета"/>
 		<text name="moistureSystem_gui_irrigation_work" text="Работа"/>
@@ -240,7 +241,7 @@
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Настройка стоимости %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Итого"/>
 		<text name="moistureSystem_gui_irrigation_jobs" text="Ваши участки"/>
-		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Ничего не орошается."/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Нет недавнего орошения."/>
 		<text name="moistureSystem_gui_irrigation_daysLeft" text="осталось %.1fд"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Это окно только что заняли. Выберите другой день."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Недостаточно денег для этого заказа."/>

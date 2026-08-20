@@ -202,7 +202,7 @@
 		<text name="setting_moisture_irrigationContractors" text="Wykonawcy nawadniania"/>
 		<text name="setting_moisture_irrigationContractors_tooltip" text="Ilu wykonawców pracuje na mapie. Wszystkie gospodarstwa dzielą ich między siebie. Więcej wykonawców to więcej zleceń naraz i większa szansa na wolny termin dzisiaj."/>
 		<text name="setting_moisture_irrigationContractorCapacity" text="Wydajność wykonawcy"/>
-		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Jaką powierzchnię wykonawca obsłuży w pełnym dniu przy maksymalnej intensywności. Razem z liczbą wykonawców to pokrętło trudności suszy."/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Jaką powierzchnię wykonawca obsłuży w pełnym dniu przy +5%. Razem z liczbą wykonawców to pokrętło trudności suszy."/>
 		<text name="ms_ui_irrigation" text="Nawadnianie"/>
 		<text name="finance_irrigation" text="Nawadnianie"/>
 		<text name="ms_irrigation_started" text="%s: rozpoczęto nawadnianie, +%.1f%% przez %dh"/>
@@ -214,7 +214,6 @@
 		<text name="moistureSystem_gui_irrigation_desc" text="Zarezerwuj wykonawcę, aby podnieść wilgotność gruntu. Jego terminarz zapełnia się w miarę zbliżania się dnia - rezerwuj wcześnie, by trafić na wolny dzień i cenę katalogową."/>
 		<text name="moistureSystem_gui_irrigation_farmland" text="Grunt"/>
 		<text name="moistureSystem_gui_irrigation_month" text="Miesiąc"/>
-		<text name="moistureSystem_gui_irrigation_currentBoost" text="Teraz %s"/>
 		<text name="moistureSystem_gui_irrigation_noFarmlands" text="Nie posiadasz jeszcze żadnego gruntu z polem."/>
 		<text name="moistureSystem_gui_irrigation_today" text="Dziś"/>
 		<text name="moistureSystem_gui_irrigation_tomorrow" text="Jutro"/>
@@ -223,12 +222,14 @@
 		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% pilne"/>
 		<text name="moistureSystem_gui_irrigation_listPrice" text="cena katalogowa"/>
 		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Za mało czasu na ten grunt"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortBooked" text="Już zarezerwowane na ten dzień"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortCap" text="Już przy limicie nawodnienia"/>
 		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Tylko %dh wolne - zlecenie wymaga co najmniej %dh."/>
 		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dh wolnych pokrywa mniej niż %s na %s."/>
 		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Ten grunt jest już na limicie %s."/>
-		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="Na ten grunt jest już zarezerwowany wykonawca. Poczekaj, aż zlecenie się zakończy."/>
+		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="To pole ma już zarezerwowanego wykonawcę na ten dzień. Wybierz inny dzień."/>
 		<text name="moistureSystem_gui_irrigation_limitHours" text="Maks. %s tego dnia - ogranicza liczba godzin wykonawcy"/>
-		<text name="moistureSystem_gui_irrigation_limitCap" text="Maks. %s tego dnia - ogranicza limit nawodnienia"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Maks. %s"/>
 		<text name="moistureSystem_gui_irrigation_amount" text="Ilość"/>
 		<text name="moistureSystem_gui_irrigation_quote" text="Wycena"/>
 		<text name="moistureSystem_gui_irrigation_work" text="Praca"/>
@@ -240,7 +241,7 @@
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Ustawienie kosztów %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Razem"/>
 		<text name="moistureSystem_gui_irrigation_jobs" text="Twoje grunty"/>
-		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Nic nie nawodniono."/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Brak niedawnego nawadniania."/>
 		<text name="moistureSystem_gui_irrigation_daysLeft" text="zostało %.1fd"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Ten termin właśnie został zajęty. Wybierz inny dzień."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Za mało pieniędzy na to zlecenie."/>

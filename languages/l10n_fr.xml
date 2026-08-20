@@ -202,7 +202,7 @@
 		<text name="setting_moisture_irrigationContractors" text="Prestataires d'irrigation"/>
 		<text name="setting_moisture_irrigationContractors_tooltip" text="Nombre de prestataires travaillant sur la carte. Toutes les exploitations se les partagent. Plus de prestataires signifie plus de chantiers simultanés et plus de chances d'avoir un créneau aujourd'hui."/>
 		<text name="setting_moisture_irrigationContractorCapacity" text="Capacité du prestataire"/>
-		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Surface qu'un prestataire couvre en une journée complète à pleine intensité. Avec le nombre de prestataires, c'est le curseur de difficulté face à la sécheresse."/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Surface qu'un prestataire couvre en une journée complète à +5%. Avec le nombre de prestataires, c'est le curseur de difficulté face à la sécheresse."/>
 		<text name="ms_ui_irrigation" text="Irrigation"/>
 		<text name="finance_irrigation" text="Irrigation"/>
 		<text name="ms_irrigation_started" text="%s : irrigation commencée, +%.1f%% sur %dh"/>
@@ -214,7 +214,6 @@
 		<text name="moistureSystem_gui_irrigation_desc" text="Réservez un prestataire pour augmenter l'humidité d'une parcelle. Son agenda se remplit à mesure que le jour approche : réservez tôt pour une journée libre et le prix catalogue."/>
 		<text name="moistureSystem_gui_irrigation_farmland" text="Parcelle"/>
 		<text name="moistureSystem_gui_irrigation_month" text="Mois"/>
-		<text name="moistureSystem_gui_irrigation_currentBoost" text="Actuel %s"/>
 		<text name="moistureSystem_gui_irrigation_noFarmlands" text="Vous ne possédez encore aucune parcelle avec un champ."/>
 		<text name="moistureSystem_gui_irrigation_today" text="Aujourd'hui"/>
 		<text name="moistureSystem_gui_irrigation_tomorrow" text="Demain"/>
@@ -223,12 +222,14 @@
 		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% urgence"/>
 		<text name="moistureSystem_gui_irrigation_listPrice" text="prix catalogue"/>
 		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Pas assez de temps pour cette parcelle"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortBooked" text="Déjà réservé pour ce jour"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortCap" text="Déjà à la limite d'irrigation"/>
 		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Seulement %dh libres - un chantier demande au moins %dh."/>
 		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dh libres couvrent moins de %s sur %s."/>
 		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Cette parcelle est déjà au plafond de %s."/>
-		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="Un prestataire est déjà réservé pour cette parcelle. Attendez la fin de ce chantier."/>
+		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="Cette parcelle a déjà un prestataire réservé ce jour-là. Choisissez un autre jour."/>
 		<text name="moistureSystem_gui_irrigation_limitHours" text="Max %s ce jour - limité par les heures du prestataire"/>
-		<text name="moistureSystem_gui_irrigation_limitCap" text="Max %s ce jour - limité par le plafond d'irrigation"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Max %s"/>
 		<text name="moistureSystem_gui_irrigation_amount" text="Quantité"/>
 		<text name="moistureSystem_gui_irrigation_quote" text="Devis"/>
 		<text name="moistureSystem_gui_irrigation_work" text="Travaux"/>
@@ -240,7 +241,7 @@
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Réglage des coûts %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Total"/>
 		<text name="moistureSystem_gui_irrigation_jobs" text="Vos parcelles"/>
-		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Rien d'irrigué."/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Aucune irrigation récente."/>
 		<text name="moistureSystem_gui_irrigation_daysLeft" text="%.1fj restants"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Ce créneau vient d'être pris. Choisissez un autre jour."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Pas assez d'argent pour ce chantier."/>

@@ -202,7 +202,7 @@
 		<text name="setting_moisture_irrigationContractors" text="Contoterzisti irrigazione"/>
 		<text name="setting_moisture_irrigationContractors_tooltip" text="Quanti contoterzisti lavorano sulla mappa. Tutte le aziende li condividono. Più contoterzisti significa più lavori in parallelo e più probabilità di trovare uno slot libero oggi."/>
 		<text name="setting_moisture_irrigationContractorCapacity" text="Capacità contoterzista"/>
-		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Quanto terreno copre un contoterzista in una giornata piena alla massima intensità. Insieme al numero di contoterzisti è la manopola della difficoltà siccità."/>
+		<text name="setting_moisture_irrigationContractorCapacity_tooltip" text="Quanto terreno copre un contoterzista in una giornata piena al +5%. Insieme al numero di contoterzisti è la manopola della difficoltà siccità."/>
 		<text name="ms_ui_irrigation" text="Irrigazione"/>
 		<text name="finance_irrigation" text="Irrigazione"/>
 		<text name="ms_irrigation_started" text="%s: irrigazione iniziata, +%.1f%% per %dh"/>
@@ -214,7 +214,6 @@
 		<text name="moistureSystem_gui_irrigation_desc" text="Prenota un contoterzista per aumentare l'umidità di un terreno. La sua agenda si riempie con l'avvicinarsi del giorno: prenota in anticipo per una giornata libera e il prezzo di listino."/>
 		<text name="moistureSystem_gui_irrigation_farmland" text="Terreno"/>
 		<text name="moistureSystem_gui_irrigation_month" text="Mese"/>
-		<text name="moistureSystem_gui_irrigation_currentBoost" text="Ora %s"/>
 		<text name="moistureSystem_gui_irrigation_noFarmlands" text="Non possiedi ancora nessun terreno con un campo."/>
 		<text name="moistureSystem_gui_irrigation_today" text="Oggi"/>
 		<text name="moistureSystem_gui_irrigation_tomorrow" text="Domani"/>
@@ -223,12 +222,14 @@
 		<text name="moistureSystem_gui_irrigation_rush" text="+%d%% urgenza"/>
 		<text name="moistureSystem_gui_irrigation_listPrice" text="prezzo di listino"/>
 		<text name="moistureSystem_gui_irrigation_unbookableShort" text="Tempo insufficiente per questo terreno"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortBooked" text="Già prenotato per questo giorno"/>
+		<text name="moistureSystem_gui_irrigation_unbookableShortCap" text="Già al limite di irrigazione"/>
 		<text name="moistureSystem_gui_irrigation_unbookableHours" text="Solo %dh libere - un lavoro richiede almeno %dh."/>
 		<text name="moistureSystem_gui_irrigation_unbookableTooLarge" text="%dh libere coprono meno di %s su %s."/>
 		<text name="moistureSystem_gui_irrigation_unbookableCap" text="Questo terreno è già al limite di %s."/>
-		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="Un contoterzista è già prenotato per questo terreno. Aspetta che finisca il lavoro."/>
+		<text name="moistureSystem_gui_irrigation_unbookableJobPending" text="Questo terreno ha già un contoterzista prenotato per questo giorno. Scegli un altro giorno."/>
 		<text name="moistureSystem_gui_irrigation_limitHours" text="Max %s in questo giorno - limitato dalle ore del contoterzista"/>
-		<text name="moistureSystem_gui_irrigation_limitCap" text="Max %s in questo giorno - limitato dal tetto di irrigazione"/>
+		<text name="moistureSystem_gui_irrigation_limitCap" text="Max %s"/>
 		<text name="moistureSystem_gui_irrigation_amount" text="Quantità"/>
 		<text name="moistureSystem_gui_irrigation_quote" text="Preventivo"/>
 		<text name="moistureSystem_gui_irrigation_work" text="Lavoro"/>
@@ -240,7 +241,7 @@
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Impostazione costi %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Totale"/>
 		<text name="moistureSystem_gui_irrigation_jobs" text="I tuoi terreni"/>
-		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Niente irrigato."/>
+		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Nessuna irrigazione recente."/>
 		<text name="moistureSystem_gui_irrigation_daysLeft" text="%.1fg rimasti"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Quello slot è appena stato preso. Scegli un altro giorno."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Soldi insufficienti per questo lavoro."/>
