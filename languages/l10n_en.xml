@@ -240,9 +240,9 @@
 		<text name="moistureSystem_gui_irrigation_shortNotice" text="Short notice +%d%%"/>
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Cost setting %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Total"/>
-		<text name="moistureSystem_gui_irrigation_jobs" text="Your farmland"/>
+		<text name="moistureSystem_gui_irrigation_jobs" text="Irrigation jobs"/>
 		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="No recent irrigation."/>
-		<text name="moistureSystem_gui_irrigation_daysLeft" text="%.1fd left"/>
+		<text name="moistureSystem_gui_irrigation_working" text="working, %dh left"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="That slot has just been taken. Pick another day."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Not enough money for this job."/>
 		<text name="moistureSystem_gui_irrigation_rejectPermission" text="You don't have permission to hire contractors."/>

@@ -240,9 +240,9 @@
 		<text name="moistureSystem_gui_irrigation_shortNotice" text="Aviso corto +%d%%"/>
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Ajuste de coste %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Total"/>
-		<text name="moistureSystem_gui_irrigation_jobs" text="Tus parcelas"/>
+		<text name="moistureSystem_gui_irrigation_jobs" text="Trabajos de riego"/>
 		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Sin riego reciente."/>
-		<text name="moistureSystem_gui_irrigation_daysLeft" text="quedan %.1fd"/>
+		<text name="moistureSystem_gui_irrigation_working" text="en curso, quedan %dh"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Ese hueco acaba de ocuparse. Elige otro día."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="No hay dinero suficiente para este trabajo."/>
 		<text name="moistureSystem_gui_irrigation_rejectPermission" text="No tienes permiso para contratar contratistas."/>

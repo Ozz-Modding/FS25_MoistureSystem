@@ -240,9 +240,9 @@
 		<text name="moistureSystem_gui_irrigation_shortNotice" text="Срочный заказ +%d%%"/>
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Настройка стоимости %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Итого"/>
-		<text name="moistureSystem_gui_irrigation_jobs" text="Ваши участки"/>
+		<text name="moistureSystem_gui_irrigation_jobs" text="Заказы на орошение"/>
 		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Нет недавнего орошения."/>
-		<text name="moistureSystem_gui_irrigation_daysLeft" text="осталось %.1fд"/>
+		<text name="moistureSystem_gui_irrigation_working" text="идёт, осталось %dч"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Это окно только что заняли. Выберите другой день."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Недостаточно денег для этого заказа."/>
 		<text name="moistureSystem_gui_irrigation_rejectPermission" text="У вас нет прав нанимать подрядчиков."/>

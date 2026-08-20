@@ -240,9 +240,9 @@
 		<text name="moistureSystem_gui_irrigation_shortNotice" text="Krátká lhůta +%d%%"/>
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Nastavení nákladů %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Celkem"/>
-		<text name="moistureSystem_gui_irrigation_jobs" text="Tvé pozemky"/>
+		<text name="moistureSystem_gui_irrigation_jobs" text="Zavlažovací zakázky"/>
 		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Žádné nedávné zavlažování."/>
-		<text name="moistureSystem_gui_irrigation_daysLeft" text="zbývá %.1fd"/>
+		<text name="moistureSystem_gui_irrigation_working" text="probíhá, zbývá %dh"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Tento termín byl právě obsazen. Vyber jiný den."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Na tuto zakázku není dost peněz."/>
 		<text name="moistureSystem_gui_irrigation_rejectPermission" text="Nemáš oprávnění najímat dodavatele."/>

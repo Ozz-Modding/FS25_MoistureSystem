@@ -502,32 +502,57 @@ function MoistureGuiIrrigation:refreshJobsPanel()
     local farmId = g_currentMission:getFarmId()
 
     local rows = {}
+    local farmlandLabel = g_i18n:getText("moistureSystem_gui_irrigation_farmland")
     for _, farmlandId in ipairs(self.farmlandIds) do
         local farmland = g_farmlandManager:getFarmlandById(farmlandId)
         if farmland ~= nil then
-            local boost = irrigation:getBoost(farmlandId)
-            if boost > 0 then
-                table.insert(rows, {
-                    name = farmland:getName(),
-                    value = string.format("%s %s %s", fmtPp(boost * 100), "-",
-                        string.format(g_i18n:getText("moistureSystem_gui_irrigation_daysLeft"),
-                            self:getRemainingDays(boost))),
-                })
-            end
-
+            local rowName = string.format("%s %s", farmlandLabel, farmland:getName())
+            -- A job that has already arrived is shown as ONE row with its
+            -- progress, not as a boost row plus a "booked for today" row: the
+            -- boost it has delivered so far and the contractor still working
+            -- are the same thing, and two rows for one farmland reads as a
+            -- duplicate (which is exactly how it looked after a reload, when
+            -- both halves survive the save).
+            local env = g_currentMission.environment
+            local running = nil
             local pending = {}
             for _, job in ipairs(irrigation.jobs) do
                 if job.farmlandId == farmlandId and job.hoursWorked < job.hours then
-                    table.insert(pending, job)
+                    local elapsed = irrigation:getJobHoursElapsed(job,
+                        env.currentMonotonicDay, env.currentHour)
+                    if elapsed >= 0 then
+                        running = job
+                    else
+                        table.insert(pending, job)
+                    end
                 end
             end
+
+            local boost = irrigation:getBoost(farmlandId)
+            if running ~= nil then
+                table.insert(rows, {
+                    name = rowName,
+                    value = string.format("%s %s %s", fmtPp(boost * 100), "-",
+                        string.format(g_i18n:getText("moistureSystem_gui_irrigation_working"),
+                            running.hours - running.hoursWorked)),
+                })
+            elseif boost > 0 then
+                -- Amount only, no "days left": the drain estimate assumes the
+                -- current temperature holds, and the weather makes a liar of it
+                -- as soon as it rains or cools off.
+                table.insert(rows, {
+                    name = rowName,
+                    value = fmtPp(boost * 100),
+                })
+            end
+
             table.sort(pending, function(a, b)
                 if a.startDay ~= b.startDay then return a.startDay < b.startDay end
                 return a.startHour < b.startHour
             end)
             for _, job in ipairs(pending) do
                 table.insert(rows, {
-                    name = farmland:getName(),
+                    name = rowName,
                     value = string.format("%s %s", self:getDayLabel(job.startDay), fmtHour(job.startHour)),
                 })
             end
@@ -555,15 +580,6 @@ function MoistureGuiIrrigation:refreshJobsPanel()
     if farmId == FarmManager.SPECTATOR_FARM_ID then
         self.jobsEmpty:setVisible(true)
     end
-end
-
-function MoistureGuiIrrigation:getRemainingDays(boostValue)
-    local irrigation = g_currentMission.irrigationSystem
-    local env = g_currentMission.environment
-    local temperature = env.weather.temperatureUpdater.currentTemperature or 20
-    local drainPerHour = irrigation:getDrainPpPerHour(temperature, env.daysPerPeriod or 1)
-    if drainPerHour <= 0 then return 0 end
-    return (boostValue * 100) / drainPerHour / 24
 end
 
 -- ── booking ──────────────────────────────────────────────────────────────────

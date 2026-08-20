@@ -240,9 +240,9 @@
 		<text name="moistureSystem_gui_irrigation_shortNotice" text="Kurzfristig +%d%%"/>
 		<text name="moistureSystem_gui_irrigation_costSetting" text="Kosteneinstellung %.1fx"/>
 		<text name="moistureSystem_gui_irrigation_total" text="Gesamt"/>
-		<text name="moistureSystem_gui_irrigation_jobs" text="Deine Grundstücke"/>
+		<text name="moistureSystem_gui_irrigation_jobs" text="Bewässerungsaufträge"/>
 		<text name="moistureSystem_gui_irrigation_jobsEmpty" text="Keine kürzliche Bewässerung."/>
-		<text name="moistureSystem_gui_irrigation_daysLeft" text="noch %.1fT"/>
+		<text name="moistureSystem_gui_irrigation_working" text="läuft, noch %dh"/>
 		<text name="moistureSystem_gui_irrigation_rejectSlotTaken" text="Dieser Termin wurde gerade vergeben. Wähle einen anderen Tag."/>
 		<text name="moistureSystem_gui_irrigation_rejectFunds" text="Nicht genug Geld für diesen Auftrag."/>
 		<text name="moistureSystem_gui_irrigation_rejectPermission" text="Du hast keine Berechtigung, Lohnunternehmer zu beauftragen."/>
