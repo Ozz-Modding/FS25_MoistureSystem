@@ -165,14 +165,14 @@
 
 		<!-- Trocknung & Verkauf Seite -->
 		<text name="help_moisture_drying_title" text="Trocknung &amp; Verkauf"/>
-		<text name="help_moisture_drying_1" text="Ernten, die über ihrer idealen Feuchtigkeit gelagert werden, verlieren stündlich an Qualität. Um dies zu verhindern, verwenden Sie Silotrocknung: Gehen Sie zu Fuß zu einem Silo und aktivieren Sie die Trocknung. Der Trockner läuft stündlich und reduziert die Feuchtigkeit, bis alle Ernten ihr ideales Niveau erreichen, dann stoppt er automatisch."/>
+		<text name="help_moisture_drying_1" text="Ernten, die über ihrer idealen Feuchtigkeit gelagert werden, verlieren stündlich an Qualität. Um dies zu verhindern, verwenden Sie Silotrocknung: Öffnen Sie das Feuchtigkeitsmenü (Shift+M), wechseln Sie zum Reiter Getreidetrocknung, wählen Sie ein Silo oder eine Halle in Ihrem Besitz und starten Sie die Trocknung. Der Trockner läuft stündlich und reduziert die Feuchtigkeit, bis alle Ernten ihr ideales Niveau erreichen, dann stoppt er automatisch."/>
 		<text name="help_moisture_drying_2" text="Trocknung kostet Geld basierend auf Volumen und entfernter Feuchtigkeit, ist aber deutlich günstiger als die Trocknungsgebühren beim direkten Verkauf feuchter Ernten. Größere Mengen brauchen länger zum Trocknen (die Rate verlangsamt sich bei mehr Material)."/>
 		<text name="help_moisture_drying_3" text="Beim Verkauf von Ernten über idealer Feuchtigkeit an einer Verkaufsstation wird eine separate 'Trocknungsgebühren'-Gebühr zusätzlich zum qualitätsbasierten reduzierten Preis erhoben. Trocknen Sie Ihre Ernten vor dem Verkauf, um diese Gebühren vollständig zu vermeiden."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Gras Heuen &amp; Heu"/>
 		<text name="help_moisture_grass_1" text="Verwalten Sie die Heuproduktion mit realistischen Grastrocknungsmechaniken. Verwenden Sie einen Heuwender, um Gras zu verteilen und zu belüften, wodurch der Feuchtigkeitsgehalt reduziert wird. Sie können mehrmals heuen für schnellere Trocknung! Das Wetter beeinflusst die Trocknung - Sonnenschein beschleunigt sie, während Regen die Feuchtigkeit erhöht."/>
-		<text name="help_moisture_grass_2" text="Wenn Gras ausreichend trocknet (unter 7% Feuchtigkeit), wird es automatisch in Heu umgewandelt. Wenn Heu wieder zu nass wird (über 7% Feuchtigkeit), verwandelt es sich zurück in Gras."/>
+		<text name="help_moisture_grass_2" text="Wenn Gras ausreichend trocknet (unter 10% Feuchtigkeit), wird es automatisch in Heu umgewandelt. Wenn Heu wieder zu nass wird (über 10% Feuchtigkeit), verwandelt es sich zurück in Gras."/>
 		<text name="help_moisture_grass_3" text="Grashaufen sammeln Regenexpositionszeit an, wenn sie bei nassem Wetter auf dem Boden liegen gelassen werden. Nach ausreichender Exposition beginnt Gras zu faulen und verliert allmählich an Volumen. Sammeln oder pressen Sie Ihr Gras rechtzeitig, um Verluste zu vermeiden."/>
 
 		<!-- Ground Rot Page -->

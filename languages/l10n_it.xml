@@ -165,14 +165,14 @@
 
 		<!-- Essiccazione & Vendita -->
 		<text name="help_moisture_drying_title" text="Essiccazione &amp; Vendita"/>
-		<text name="help_moisture_drying_1" text="Le colture stoccate sopra il loro livello di umidità ideale perdono qualità ogni ora. Per prevenire ciò, usa l'essiccazione in silo: avvicinati a qualsiasi silo a piedi e attiva l'essiccazione. L'essiccatore funziona ogni ora, riducendo l'umidità fino a quando tutte le colture raggiungono il loro livello ideale, poi si ferma automaticamente."/>
+		<text name="help_moisture_drying_1" text="Le colture stoccate sopra il loro livello di umidità ideale perdono qualità ogni ora. Per prevenire ciò, usa l'essiccazione in silo: apri il Menu Umidità (Shift+M), vai alla scheda Essiccazione del Grano, scegli un silo o un capannone di tua proprietà e avvia l'essiccazione. L'essiccatore funziona ogni ora, riducendo l'umidità fino a quando tutte le colture raggiungono il loro livello ideale, poi si ferma automaticamente."/>
 		<text name="help_moisture_drying_2" text="L'essiccazione costa denaro in base al volume e all'umidità rimossa, ma è significativamente più economica dei costi di essiccazione sostenuti vendendo direttamente colture umide. I volumi più grandi richiedono più tempo per essiccarsi (il tasso rallenta con più materiale)."/>
 		<text name="help_moisture_drying_3" text="Quando vendi colture sopra l'umidità ideale a un punto di vendita, ti verrà addebitato un costo separato di 'Costi di Essiccazione' oltre al prezzo ridotto basato sulla qualità. Essicca le tue colture prima di vendere per evitare completamente questi costi."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Voltafieno ed Fieno"/>
 		<text name="help_moisture_grass_1" text="Gestisci la produzione di fieno con meccaniche realistiche di asciugatura dell'erba. Usa un voltafieno per spargere e aerare l'erba, riducendo il suo contenuto di umidità. Puoi voltare più volte per un'asciugatura più veloce! Il tempo influisce sull'asciugatura - il sole la accelera mentre la pioggia aumenta l'umidità."/>
-		<text name="help_moisture_grass_2" text="Quando l'erba si asciuga sufficientemente (sotto il 7% di umidità), si converte automaticamente in fieno. Se il fieno si bagna di nuovo troppo (sopra il 7% di umidità), si riconverte in erba."/>
+		<text name="help_moisture_grass_2" text="Quando l'erba si asciuga sufficientemente (sotto il 10% di umidità), si converte automaticamente in fieno. Se il fieno si bagna di nuovo troppo (sopra il 10% di umidità), si riconverte in erba."/>
 		<text name="help_moisture_grass_3" text="I cumuli di erba accumulano tempo di esposizione alla pioggia quando lasciati a terra durante tempo umido. Dopo sufficiente esposizione, l'erba inizia a marcire e perde gradualmente volume. Raccogli o imballa la tua erba prontamente per evitare perdite."/>
 
 		<!-- Ground Rot Page -->

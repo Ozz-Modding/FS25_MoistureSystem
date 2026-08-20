@@ -165,14 +165,14 @@
 
 		<!-- Stránka sušení a prodeje -->
 		<text name="help_moisture_drying_title" text="Sušení &amp; Prodej"/>
-		<text name="help_moisture_drying_1" text="Plodiny skladované nad ideální úrovní vlhkosti ztrácejí kvalitu každou hodinu. Abyste tomu předešli, použijte sušení v silu: přistupte pěšky k libovolnému silu a aktivujte sušení. Sušička běží každou hodinu, snižuje vlhkost, dokud všechny plodiny nedosáhnou ideální úrovně, poté se automaticky zastaví."/>
+		<text name="help_moisture_drying_1" text="Plodiny skladované nad ideální úrovní vlhkosti ztrácejí kvalitu každou hodinu. Abyste tomu předešli, použijte sušení v silu: otevřete Menu vlhkosti (Shift+M), přejděte na kartu Sušení Obilí, vyberte silo nebo halu, kterou vlastníte, a spusťte sušení. Sušička běží každou hodinu, snižuje vlhkost, dokud všechny plodiny nedosáhnou ideální úrovně, poté se automaticky zastaví."/>
 		<text name="help_moisture_drying_2" text="Sušení stojí peníze na základě objemu a odstraněné vlhkosti, ale je výrazně levnější než poplatky za sušení při přímém prodeji vlhkých plodin. Větší objemy trvají déle na vysušení (rychlost se snižuje s větším množstvím materiálu)."/>
 		<text name="help_moisture_drying_3" text="Při prodeji plodin nad ideální vlhkostí na prodejním místě vám bude účtován samostatný poplatek 'Poplatky za sušení' navíc k snížené ceně na základě kvality. Vysušte plodiny před prodejem, abyste se těmto poplatkům zcela vyhnuli."/>
 
 		<!-- Stránka trávy a sena -->
 		<text name="help_moisture_grass_title" text="Obracení trávy a seno"/>
 		<text name="help_moisture_grass_1" text="Spravujte výrobu sena s realistickou mechanikou sušení trávy. Použijte obraceč k rozložení a provzdušnění trávy, což sníží její obsah vlhkosti. Můžete obrátit vícekrát pro rychlejší sušení! Počasí ovlivňuje sušení - slunce ho urychluje, zatímco déšť zvyšuje vlhkost."/>
-		<text name="help_moisture_grass_2" text="Když tráva dostatečně uschne (pod 7% vlhkosti), automaticky se změní na seno. Pokud se seno znovu příliš navlhčí (nad 7% vlhkosti), změní se zpět na trávu."/>
+		<text name="help_moisture_grass_2" text="Když tráva dostatečně uschne (pod 10% vlhkosti), automaticky se změní na seno. Pokud se seno znovu příliš navlhčí (nad 10% vlhkosti), změní se zpět na trávu."/>
 		<text name="help_moisture_grass_3" text="Hromady trávy se vystavují dešti, když jsou ponechány na zemi během vlhkého počasí. Po dostatečném vystavení začne tráva hnít a postupně ztrácet objem. Sbírejte nebo lisujte trávu rychle, abyste předešli ztrátám."/>
 
 		<!-- Stránka hnití na zemi -->

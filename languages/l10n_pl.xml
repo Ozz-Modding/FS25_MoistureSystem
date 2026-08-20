@@ -165,14 +165,14 @@
 
 		<!-- Suszenie i sprzedaż -->
 		<text name="help_moisture_drying_title" text="Suszenie &amp; Sprzedaż"/>
-		<text name="help_moisture_drying_1" text="Plony przechowywane powyżej idealnego poziomu wilgotności tracą jakość co godzinę. Aby temu zapobiec, użyj suszenia w silosie: podejdź pieszo do dowolnego silosu i aktywuj suszenie. Suszarka działa co godzinę, obniżając wilgotność aż wszystkie plony osiągną idealny poziom, a następnie zatrzymuje się automatycznie."/>
+		<text name="help_moisture_drying_1" text="Plony przechowywane powyżej idealnego poziomu wilgotności tracą jakość co godzinę. Aby temu zapobiec, użyj suszenia w silosie: otwórz Menu wilgotności (Shift+M), przejdź do zakładki Suszenie Zboża, wybierz posiadany silos lub halę i rozpocznij suszenie. Suszarka działa co godzinę, obniżając wilgotność aż wszystkie plony osiągną idealny poziom, a następnie zatrzymuje się automatycznie."/>
 		<text name="help_moisture_drying_2" text="Suszenie kosztuje pieniądze w zależności od objętości i usuniętej wilgotności, ale jest znacznie tańsze niż opłaty za suszenie ponoszone przy bezpośredniej sprzedaży mokrych plonów. Większe ilości suszą się dłużej (tempo spada przy większej ilości materiału)."/>
 		<text name="help_moisture_drying_3" text="Przy sprzedaży plonów powyżej idealnej wilgotności w punkcie sprzedaży zostanie naliczona oddzielna opłata za suszenie oprócz obniżonej ceny opartej na jakości. Wysusz plony przed sprzedażą, aby całkowicie uniknąć tych opłat."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Przetrząsanie trawy i siano"/>
 		<text name="help_moisture_grass_1" text="Zarządzaj produkcją siana dzięki realistycznej mechanice suszenia trawy. Użyj przetrząsacza, aby rozrzucić i napowietrzyć trawę, zmniejszając w ten sposób jej wilgotność. Możesz przetrząsać trawę wielokrotnie, aby przyspieszyć suszenie! Warunki pogodowe mają wpływ na suszenie – słońce je przyspiesza, a deszcz zwiększa wilgotność."/>
-		<text name="help_moisture_grass_2" text="Gdy trawa wyschnie w wystarczającym stopniu (wilgotność poniżej 7%), automatycznie zamienia się w siano. Jeśli siano ponownie zbytnio zawilgnie (wilgotność powyżej 7%), zamienia się z powrotem w trawę."/>
+		<text name="help_moisture_grass_2" text="Gdy trawa wyschnie w wystarczającym stopniu (wilgotność poniżej 10%), automatycznie zamienia się w siano. Jeśli siano ponownie zbytnio zawilgnie (wilgotność powyżej 10%), zamienia się z powrotem w trawę."/>
 		<text name="help_moisture_grass_3" text="Pokosy trawy pozostawione na ziemi podczas deszczowej pogody są narażone na działanie deszczu. Po wystarczająco długim czasie trawa zaczyna gnić i stopniowo traci swoją objętość. Należy ją jak najszybciej zebrać lub sprasować w bele, aby uniknąć strat."/>
 
 		<!-- Ground Rot Page -->

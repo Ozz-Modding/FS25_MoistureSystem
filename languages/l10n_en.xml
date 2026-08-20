@@ -165,14 +165,14 @@
 
 		<!-- Drying & Selling Page -->
 		<text name="help_moisture_drying_title" text="Drying &amp; Selling"/>
-		<text name="help_moisture_drying_1" text="Crops stored above their ideal moisture level lose quality every hour. To prevent this, use silo drying: walk up to any silo on foot and activate drying. The dryer runs hourly, reducing moisture until all crops reach their ideal level, then stops automatically."/>
+		<text name="help_moisture_drying_1" text="Crops stored above their ideal moisture level lose quality every hour. To prevent this, use silo drying: open the Moisture Menu (Shift+M), go to the Grain Drying tab, pick a silo or shed you own and start drying. The dryer runs hourly, reducing moisture until all crops reach their ideal level, then stops automatically."/>
 		<text name="help_moisture_drying_2" text="Drying costs money based on volume and moisture removed, but is significantly cheaper than the drying charges incurred when selling wet crops directly. Larger volumes take longer to dry (the rate slows with more material)."/>
 		<text name="help_moisture_drying_3" text="When selling crops above ideal moisture at a selling station, you will be charged a separate 'Drying Charges' fee in addition to the reduced quality-based price. Dry your crops before selling to avoid these charges entirely."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Grass Tedding &amp; Hay"/>
 		<text name="help_moisture_grass_1" text="Manage hay production with realistic grass drying mechanics. Use a tedder to spread and aerate grass, reducing its moisture content. You can ted multiple times for faster drying! Weather affects drying - sunshine accelerates it while rain increases moisture."/>
-		<text name="help_moisture_grass_2" text="When grass dries sufficiently (below 7% moisture), it automatically converts to hay. If hay gets too wet again (above 7% moisture), it converts back to grass."/>
+		<text name="help_moisture_grass_2" text="When grass dries sufficiently (below 10% moisture), it automatically converts to hay. If hay gets too wet again (above 10% moisture), it converts back to grass."/>
 		<text name="help_moisture_grass_3" text="Grass piles accumulate rain exposure time when left on the ground during wet weather. After enough exposure, grass begins to rot and gradually lose volume. Collect or bale your grass promptly to avoid losses."/>
 
 		<!-- Ground Rot Page -->

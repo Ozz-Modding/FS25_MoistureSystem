@@ -165,14 +165,14 @@
 
 		<!-- Séchage & Vente -->
 		<text name="help_moisture_drying_title" text="Séchage &amp; Vente"/>
-		<text name="help_moisture_drying_1" text="Les cultures stockées au-dessus de leur niveau d'humidité idéal perdent de la qualité chaque heure. Pour éviter cela, utilisez le séchage en silo : approchez-vous d'un silo à pied et activez le séchage. Le séchoir fonctionne toutes les heures, réduisant l'humidité jusqu'à ce que toutes les cultures atteignent leur niveau idéal, puis s'arrête automatiquement."/>
+		<text name="help_moisture_drying_1" text="Les cultures stockées au-dessus de leur niveau d'humidité idéal perdent de la qualité chaque heure. Pour éviter cela, utilisez le séchage en silo : ouvrez le Menu d'Humidité (Shift+M), allez dans l'onglet Séchage du Grain, choisissez un silo ou un hangar vous appartenant et lancez le séchage. Le séchoir fonctionne toutes les heures, réduisant l'humidité jusqu'à ce que toutes les cultures atteignent leur niveau idéal, puis s'arrête automatiquement."/>
 		<text name="help_moisture_drying_2" text="Le séchage coûte de l'argent en fonction du volume et de l'humidité retirée, mais est nettement moins cher que les frais de séchage encourus lors de la vente directe de cultures humides. Les plus grands volumes prennent plus de temps à sécher (le taux ralentit avec plus de matériel)."/>
 		<text name="help_moisture_drying_3" text="Lors de la vente de cultures au-dessus de l'humidité idéale à un point de vente, des 'Frais de Séchage' séparés vous seront facturés en plus du prix réduit basé sur la qualité. Séchez vos cultures avant de vendre pour éviter entièrement ces frais."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Fanage et Foin"/>
 		<text name="help_moisture_grass_1" text="Gérez la production de foin avec des mécaniques réalistes de séchage de l'herbe. Utilisez une faneuse pour étaler et aérer l'herbe, réduisant sa teneur en humidité. Vous pouvez faner plusieurs fois pour un séchage plus rapide ! Les conditions météorologiques affectent le séchage - le soleil l'accélère tandis que la pluie augmente l'humidité."/>
-		<text name="help_moisture_grass_2" text="Lorsque l'herbe sèche suffisamment (en dessous de 7% d'humidité), elle se transforme automatiquement en foin. Si le foin se mouille à nouveau (au-dessus de 7% d'humidité), il redevient de l'herbe."/>
+		<text name="help_moisture_grass_2" text="Lorsque l'herbe sèche suffisamment (en dessous de 10% d'humidité), elle se transforme automatiquement en foin. Si le foin se mouille à nouveau (au-dessus de 10% d'humidité), il redevient de l'herbe."/>
 		<text name="help_moisture_grass_3" text="Les tas d'herbe accumulent du temps d'exposition à la pluie lorsqu'ils sont laissés au sol par temps humide. Après une exposition suffisante, l'herbe commence à pourrir et perd progressivement du volume. Ramassez ou emballez votre herbe rapidement pour éviter les pertes."/>
 
 		<!-- Ground Rot Page -->

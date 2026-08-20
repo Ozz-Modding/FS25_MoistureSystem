@@ -165,14 +165,14 @@
 
 		<!-- Secado y Venta -->
 		<text name="help_moisture_drying_title" text="Secado &amp; Venta"/>
-		<text name="help_moisture_drying_1" text="Los cultivos almacenados por encima de su nivel de humedad ideal pierden calidad cada hora. Para evitar esto, usa el secado en silo: acércate a cualquier silo a pie y activa el secado. El secador funciona cada hora, reduciendo la humedad hasta que todos los cultivos alcancen su nivel ideal, luego se detiene automáticamente."/>
+		<text name="help_moisture_drying_1" text="Los cultivos almacenados por encima de su nivel de humedad ideal pierden calidad cada hora. Para evitar esto, usa el secado en silo: abre el Menú de Humedad (Shift+M), ve a la pestaña Secado de Grano, elige un silo o nave de tu propiedad e inicia el secado. El secador funciona cada hora, reduciendo la humedad hasta que todos los cultivos alcancen su nivel ideal, luego se detiene automáticamente."/>
 		<text name="help_moisture_drying_2" text="El secado cuesta dinero basado en el volumen y la humedad eliminada, pero es significativamente más barato que los cargos por secado incurridos al vender cultivos húmedos directamente. Los volúmenes más grandes tardan más en secarse (la tasa disminuye con más material)."/>
 		<text name="help_moisture_drying_3" text="Al vender cultivos por encima de la humedad ideal en un punto de venta, se te cobrará un cargo separado de 'Cargos por Secado' además del precio reducido basado en la calidad. Seca tus cultivos antes de vender para evitar estos cargos por completo."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Henificación y Heno"/>
 		<text name="help_moisture_grass_1" text="Gestiona la producción de heno con mecánicas realistas de secado de pasto. Usa una henificadora para esparcir y airear el pasto, reduciendo su contenido de humedad. ¡Puedes henificar múltiples veces para un secado más rápido! El clima afecta el secado: el sol lo acelera mientras que la lluvia aumenta la humedad."/>
-		<text name="help_moisture_grass_2" text="Cuando el pasto se seca lo suficiente (por debajo del 7% de humedad), se convierte automáticamente en heno. Si el heno se moja demasiado otra vez (por encima del 7% de humedad), se convierte de nuevo en pasto."/>
+		<text name="help_moisture_grass_2" text="Cuando el pasto se seca lo suficiente (por debajo del 10% de humedad), se convierte automáticamente en heno. Si el heno se moja demasiado otra vez (por encima del 10% de humedad), se convierte de nuevo en pasto."/>
 		<text name="help_moisture_grass_3" text="Los montones de pasto acumulan tiempo de exposición a la lluvia cuando se dejan en el suelo durante clima húmedo. Después de suficiente exposición, el pasto comienza a pudrirse y pierde gradualmente volumen. Recoge o empaca tu pasto rápidamente para evitar pérdidas."/>
 
 		<!-- Ground Rot Page -->

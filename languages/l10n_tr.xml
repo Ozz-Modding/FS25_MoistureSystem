@@ -165,14 +165,14 @@
 
 		<!-- Kurutma ve Satış Sayfası -->
 		<text name="help_moisture_drying_title" text="Kurutma &amp; Satış"/>
-		<text name="help_moisture_drying_1" text="İdeal nem seviyesinin üzerinde depolanan mahsuller her saat kalite kaybeder. Bunu önlemek için silo kurutma kullanın: yaya olarak herhangi bir siloya yaklaşın ve kurutmayı etkinleştirin. Kurutucu her saat çalışır, tüm mahsuller ideal seviyeye ulaşana kadar nemi düşürür, ardından otomatik olarak durur."/>
+		<text name="help_moisture_drying_1" text="İdeal nem seviyesinin üzerinde depolanan mahsuller her saat kalite kaybeder. Bunu önlemek için silo kurutma kullanın: Nem Menüsünü açın (Shift+M), Tahıl Kurutma sekmesine gidin, sahip olduğunuz bir siloyu veya hangarı seçin ve kurutmayı başlatın. Kurutucu her saat çalışır, tüm mahsuller ideal seviyeye ulaşana kadar nemi düşürür, ardından otomatik olarak durur."/>
 		<text name="help_moisture_drying_2" text="Kurutma, hacme ve kaldırılan neme göre para harcar, ancak ıslak mahsülleri doğrudan satarken oluşan kurutma ücretlerinden önemli ölçüde daha ucuzdur. Daha büyük hacimler kuruması daha uzun sürer (hız daha fazla malzeme ile yavaşlar)."/>
 		<text name="help_moisture_drying_3" text="İdeal nemin üzerindeki mahsülleri satış noktasında satarken, kaliteye dayalı indirimli fiyata ek olarak ayrı bir 'Kurutma Ücretleri' ücreti alınır. Bu ücretlerden tamamen kaçınmak için mahsüllerinizi satmadan önce kurutun."/>
 
 		<!-- Grass & Hay Page -->
 		<text name="help_moisture_grass_title" text="Ot Çevirme ve Saman"/>
 		<text name="help_moisture_grass_1" text="Gerçekçi ot kurutma mekanikleriyle saman üretimini yönetin. Otu yaymak ve havalandırmak için bir ot çevirici kullanın, böylece nem içeriğini azaltın. Daha hızlı kuruma için birden fazla kez çevirebilirsiniz! Hava durumu kurumayı etkiler - güneş ışığı onu hızlandırırken yağmur nemi artırır."/>
-		<text name="help_moisture_grass_2" text="Ot yeterince kuruduğunda (%7 nemin altı), otomatik olarak samana dönüşür. Saman tekrar çok ıslanırsa (%7 nemin üstü), tekrar ota dönüşür."/>
+		<text name="help_moisture_grass_2" text="Ot yeterince kuruduğunda (%10 nemin altı), otomatik olarak samana dönüşür. Saman tekrar çok ıslanırsa (%10 nemin üstü), tekrar ota dönüşür."/>
 		<text name="help_moisture_grass_3" text="Ot yığınları ıslak havalarda yerde bırakıldığında yağmura maruz kalma süresi biriktirir. Yeterli maruziyetten sonra ot çürümeye başlar ve yavaş yavaş hacim kaybeder. Kayıpları önlemek için otunuzu derhal toplayın veya balyalayın."/>
 
 		<!-- Ground Rot Page -->
