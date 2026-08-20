@@ -37,6 +37,7 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 Changelog:
 
 2.0.0.4:
+- You can now irrigate fields by hiring contractors. Use the Moisture Menu to book jobs. Plan ahead to avoid higher prices for short notice, and to ensure contractor availability. There are no visual effects for this!
 - Moisture level now moves slightly more quickly both up and down. The goal with this is to more reliably produced intended outcomes in weather scenarios.
 - The threshold for hay is now 10%
 - The default tedding moisture reduction is now 4% and players can adjust this to be between 4-8%
