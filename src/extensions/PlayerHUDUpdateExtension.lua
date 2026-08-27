@@ -133,6 +133,11 @@ function MSPlayerHUDExtension:showFieldInfo(x, z)
     local moistureSystem = g_currentMission.MoistureSystem
     if moistureSystem == nil then return end
 
+    -- The HUD runs from the moment the player spawns, which on an MP client is well
+    -- before onStartMission. Until then there is no terrain sample and no synced
+    -- moisture, so show nothing rather than a placeholder number.
+    if not moistureSystem.missionStarted then return end
+
     if self.fieldInfo.groundType == FieldGroundType.NONE then return end
 
     if not moistureSystem.settings.showFieldMoisture then return end

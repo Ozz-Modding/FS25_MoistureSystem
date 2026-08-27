@@ -75,6 +75,11 @@ end
 function MoistureSystem:loadMap()
     g_currentMission.MoistureSystem = self
     self.didLoadFromXML = false
+    -- Seeded flat here, filled in for real by setHeights() at onStartMission. On an MP
+    -- client the player spawns and the HUD starts calling getMoistureAtPosition long
+    -- before the mission actually starts, so these must never be nil (issue #85).
+    self.minHeight = 0
+    self.maxHeight = 0
     self.midHeight = 0
     self.currentMoisturePercent = 0
     self.timeSinceLastUpdate = 0
@@ -440,6 +445,10 @@ function MoistureSystem:setHeights()
         self.maxHeight = 0
         self.midHeight = 0
     end
+
+    -- Anything sampled before now used the flat pre-start heights; drop it so the
+    -- terrain variation applies from the first post-start lookup.
+    self:invalidateMoistureCache()
 end
 
 function MoistureSystem.periodToMonth(period)
