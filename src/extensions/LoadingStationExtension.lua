@@ -52,6 +52,36 @@ function MSLoadingStationExtension:addFillLevelToFillableObject(superFunc, filla
         return actualFilledAmount
     end
 
+    -- A storage heap store (see StorageHeapExtension) keeps its grain on the ground, so
+    -- its moisture lives in GroundPropertyTracker piles and not in objectInfo. Without
+    -- this branch getObjectMoisture below returns nil and transferObjectMoisture falls
+    -- through to its "legacy crop" case, handing the vehicle ideal moisture and quality
+    -- 100 — i.e. wet grain in the grate, perfect grain out of the pipe.
+    if MSStorageHeapExtension.isStorageHeap(self.owningPlaceable) then
+        local stored = MSStorageHeapExtension.getStoredProperties(self.owningPlaceable, fillTypeIndex)
+
+        local moisture, quality
+        if stored ~= nil then
+            moisture, quality = stored.moisture, stored.quality
+        else
+            moisture = moistureSystem:getDefaultMoisture()
+            quality = moistureSystem:deriveQuality(fillTypeIndex, moisture)
+        end
+
+        local currentInfo = moistureSystem:getObjectInfo(targetUniqueId, fillTypeIndex)
+        if currentInfo == nil or targetCurrentLiters <= 0 then
+            moistureSystem:setObjectInfo(targetUniqueId, fillTypeIndex, { moisture = moisture, quality = quality })
+        else
+            local totalLiters = targetCurrentLiters + actualFilledAmount
+            moistureSystem:setObjectInfo(targetUniqueId, fillTypeIndex, {
+                moisture = (targetCurrentLiters * currentInfo.moisture + actualFilledAmount * moisture) / totalLiters,
+                quality = (targetCurrentLiters * (currentInfo.quality or 100) + actualFilledAmount * quality) / totalLiters
+            })
+        end
+
+        return actualFilledAmount
+    end
+
     -- Get moisture from storage (owning placeable)
     local storageMoisture = nil
 

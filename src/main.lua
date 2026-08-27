@@ -831,6 +831,12 @@ function MoistureSystem:onStartMission()
     if g_currentMission:getIsServer() then
         g_messageCenter:subscribe(MessageType.HOUR_CHANGED, MoistureSystem.onHourChanged, ms)
         ms:initializeQualityFromMoisture()
+
+        -- Safety net for the PlaceableSystem:addPlaceable hook: catches any storage heap
+        -- store placed before our hook was installed. attach() is idempotent.
+        for _, placeable in pairs(g_currentMission.placeableSystem.placeables) do
+            MSStorageHeapExtension.attach(placeable)
+        end
     end
 
     if g_currentMission:getIsServer() then

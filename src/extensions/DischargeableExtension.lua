@@ -147,9 +147,9 @@ function MSDischargeableExtension:dischargeToObject(superFunc, dischargeNode, em
     end
 
     local uniqueId = targetObject.uniqueId
+    local targetPlaceable = targetObject.target ~= nil and targetObject.target.owningPlaceable or nil
 
-    if uniqueId == nil and targetObject.target ~= nil and targetObject.target.owningPlaceable ~= nil then
-        local targetPlaceable = targetObject.target.owningPlaceable
+    if uniqueId == nil and targetPlaceable ~= nil then
         uniqueId = targetPlaceable.uniqueId
     end
     local fillType = self:getDischargeFillType(dischargeNode)
@@ -164,8 +164,24 @@ function MSDischargeableExtension:dischargeToObject(superFunc, dischargeNode, em
         targetCurrentLiters = targetObject.target:getFillLevel(fillType, farmId)
     end
 
+    -- A storage heap store (see StorageHeapExtension) keeps its grain as real material
+    -- on the ground, so its moisture lives in GroundPropertyTracker piles rather than in
+    -- objectInfo. Its bays announce arriving liters through a fill-level listener that
+    -- fires inside superFunc below, but that listener is only told the fill type and the
+    -- amount — the bracket tells it whose grain it is.
+    --
+    -- Bracket every discharge, not just those aimed at a storage heap: bays default to
+    -- isExtension=true, so any station within its storageRadius can pull one into its
+    -- target storages and route grain there. The listener only exists on bays, so setting
+    -- this for a discharge that never reaches one costs a single field write.
+    local isStorageHeapTarget = MSStorageHeapExtension.isStorageHeap(targetPlaceable)
+
+    MSStorageHeapExtension.beginDeposit(self.uniqueId)
+
     -- Call original function
     local dischargedLiters = superFunc(self, dischargeNode, emptyLiters, targetObject, targetFillUnitIndex)
+
+    MSStorageHeapExtension.endDeposit()
 
     -- Only track if something was actually discharged
     -- Note: dischargedLiters is negative when discharging (e.g., -7 means 7 liters discharged)
@@ -190,6 +206,15 @@ function MSDischargeableExtension:dischargeToObject(superFunc, dischargeNode, em
     end
 
     if not moistureSystem:shouldTrackFillType(fillType) then
+        return dischargedLiters
+    end
+
+    -- The bay listener has already banked this grain as a ground pile, and the placeable
+    -- holds no objectInfo of its own, so all that is left is emptying the source.
+    if isStorageHeapTarget then
+        if not moistureSystem:hasFillType(self.uniqueId, fillType) then
+            moistureSystem:setObjectMoisture(self.uniqueId, fillType, nil)
+        end
         return dischargedLiters
     end
 

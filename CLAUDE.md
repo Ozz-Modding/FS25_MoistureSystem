@@ -35,6 +35,41 @@ Write like a person explaining something to a colleague, not like a design docum
 
 `src/extensions/` — appended functions on vanilla FS25 specializations (Combine, Baler, Tedder, etc.) to hook moisture tracking into harvest/processing events.
 
+`src/extensions/StorageHeapExtension.lua` — support for the Highlands Fishing Pack's
+`placeableStorageHeap` specialization, used by grain stores like FS25_MultiBayGrainStore.
+These are a hybrid: you tip into a grate or draw from a pipe, but the grain itself sits in
+the bays as **real density-map-height material**.
+
+The load-bearing fact is that `StorageHeap:updateTotalFillLevel` re-reads
+`DensityMapHeightUtil.getFillLevelAtArea` over the bay every update and overwrites its
+`fillLevels` — the material is the source of truth, not the number. The stations only queue
+liters, which `StorageHeap:update` later drains via `tipToGroundAroundLine`. So we track
+these stores as **GroundPropertyTracker piles**, like sheds, not as silos:
+
+- Tipping in from a trailer and scooping out with a loader already work through the normal
+  ground paths (`DischargeableExtension`, `FillVolumeExtension`).
+- The grate and the pipe don't touch the ground directly, so they are bridged here — the
+  grate via `StorageHeap:addFillLevelChangedListeners` (which reports only fill type and
+  liters, hence the `beginDeposit`/`endDeposit` bracket in `DischargeableExtension` to say
+  whose grain arrived), the pipe via `getStoredProperties` in `LoadingStationExtension`.
+  That bracket wraps *every* discharge, not just ones aimed at a storage heap: a bay's
+  `isExtension` defaults to **true** in `StorageHeap:load`, so any station within its
+  `storageRadius` can pull the bay into its target storages and route grain into it.
+  `UnloadingStation:addFillLevelFromTool` then picks a storage by `pairs()` order, so
+  which one receives is arbitrary and can differ between sessions.
+- Drying is free: these placeables already pass `DryingSystem:isTipOcclusionBuilding`
+  because `simplePlaceable` includes the `tipOcclusionAreas` spec.
+- Grain piles are inert in the tracker (`applyDryingToPile` only handles grass/hay/straw),
+  so stored grain holds its moisture and doesn't rot — correct under a roof.
+
+Two traps: a bay with `fillTypeIndexToDrop > 0` has material still in flight, so its cells
+can read as empty while holding a pile we just created — never prune those. And do not call
+`placeable:getIsFillTypeSupported()`; the DLC's implementation calls
+`section:getIsFillTypeSupported` on a plain table and errors.
+
+Decrypted DLC source for reference: `objects/StorageHeap.lua` and
+`placeables/specializations/PlaceableStorageHeap.lua` inside `highlandsFishingPack.dlc`.
+
 `src/events/` — multiplayer network events. All simulation runs server-side only; no new sync events were added for WeatherProfileSystem.
 
 `src/gui/` — tabbed menu frames (Shift+M). `MoistureGuiCalendar` shows monthly clamp ranges from the active scenario. `MoistureGuiWeather` shows the weather Forecast (per-month group %, with per-month forecast error/jitter) and History (per-season group % vs. normal, newest year rightmost) tabs.

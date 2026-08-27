@@ -37,6 +37,7 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 Changelog:
 
 2.0.0.5:
+- Added support for the Bulk Hall silos added in Highlands Fishing DLC. Moisture and quality will now be tracked for crop stored in these silos, and crop can be dried as normal.
 - Fixes a MP lua issue when players join the server.
 
 2.0.0.4:
@@ -128,6 +129,10 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop, Realistic
 
 Änderungsprotokoll:
 
+2.0.0.5:
+- Unterstützung für die mit dem Highlands Fishing DLC hinzugefügten Bulk-Hall-Silos. Feuchtigkeit und Qualität werden jetzt auch für in diesen Silos gelagerte Kulturen verfolgt, und die Kulturen können wie gewohnt getrocknet werden.
+- Behebt ein Lua-Problem im Mehrspielermodus, wenn Spieler dem Server beitreten.
+
 2.0.0.4:
 - Sie können Ihre Felder jetzt bewässern, indem Sie Lohnunternehmer beauftragen. Buchen Sie Aufträge über das Feuchtigkeitsmenü. Planen Sie im Voraus, um höhere Preise bei kurzfristiger Buchung zu vermeiden und die Verfügbarkeit der Lohnunternehmer sicherzustellen. Es gibt dafür keine visuellen Effekte!
 - Der Feuchtigkeitswert bewegt sich jetzt etwas schneller, sowohl nach oben als auch nach unten. Ziel ist es, die beabsichtigten Ergebnisse der Wetterszenarien zuverlässiger zu erreichen.
@@ -213,6 +218,10 @@ Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop, Rea
 
 Journal des modifications :
 
+2.0.0.5 :
+- Ajout de la prise en charge des silos Bulk Hall ajoutés par le DLC Highlands Fishing. L'humidité et la qualité sont désormais suivies pour les cultures stockées dans ces silos, et les cultures peuvent être séchées normalement.
+- Correction d'un problème Lua en multijoueur lors de la connexion des joueurs au serveur.
+
 2.0.0.4 :
 - Vous pouvez désormais irriguer vos champs en engageant des prestataires. Utilisez le menu Humidité pour réserver des interventions. Anticipez pour éviter les tarifs majorés en cas de réservation de dernière minute et pour vous assurer de la disponibilité des prestataires. Il n'y a aucun effet visuel !
 - Le niveau d'humidité évolue désormais un peu plus rapidement, à la hausse comme à la baisse. L'objectif est de produire plus fidèlement les résultats attendus des scénarios météorologiques.
@@ -293,6 +302,7 @@ Journal des modifications :
         <sourceFile filename="src/extensions/I18NExtension.lua"/>
         <sourceFile filename="src/extensions/SellingStationExtension.lua"/>
         <sourceFile filename="src/extensions/LoadingStationExtension.lua"/>
+        <sourceFile filename="src/extensions/StorageHeapExtension.lua"/>
         <sourceFile filename="src/gui/CropGradeTableRenderer.lua"/>
         <sourceFile filename="src/gui/QualityPriceTableRenderer.lua"/>
         <sourceFile filename="src/gui/MoistureGuiGrades.lua"/>

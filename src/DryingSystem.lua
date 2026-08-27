@@ -298,6 +298,11 @@ function DryingSystem:drySilo(placeable, ms, dryingRate, sellChargeRate, complet
     else
         local effectiveDryingRate = self:calculateEffectiveDryingRate(totalLiters, ms)
 
+        -- The largest reduction any crop actually got this hour. On every hour but the
+        -- last this equals effectiveDryingRate; on the last it is whatever was left
+        -- before math.max clipped to idealMax.
+        local appliedRate = 0
+
         for _, storage in ipairs(placeable.spec_silo.storages) do
             for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
                 if fillLevel > 0 then
@@ -305,7 +310,9 @@ function DryingSystem:drySilo(placeable, ms, dryingRate, sellChargeRate, complet
                     if idealMax then
                         local info = ms:getObjectInfo(placeable.uniqueId, fillTypeIndex)
                         if info and info.moisture > idealMax then
-                            info.moisture = math.max(idealMax, info.moisture - effectiveDryingRate)
+                            local newMoisture = math.max(idealMax, info.moisture - effectiveDryingRate)
+                            appliedRate = math.max(appliedRate, info.moisture - newMoisture)
+                            info.moisture = newMoisture
                         end
                     end
                 end
@@ -317,9 +324,15 @@ function DryingSystem:drySilo(placeable, ms, dryingRate, sellChargeRate, complet
             g_server:broadcastEvent(ObjectMoistureResponseEvent.new(objectId, ms.objectInfo[placeable.uniqueId]))
         end
 
-        local hourlyCost = DryingSystem.SILO_COST_RATIO * sellChargeRate * effectiveDryingRate * totalLiters
-        g_currentMission:addMoneyChange(-hourlyCost, farmId, MoneyType.DRYING_CHARGE, true)
-        g_farmManager:getFarmById(farmId):changeBalance(-hourlyCost, MoneyType.DRYING_CHARGE)
+        -- Bill for the moisture actually removed. Charging the nominal rate made the last
+        -- hour of a run cost a full hour for a fraction of a point of drying, which reads
+        -- in game as "it charged me again and the number didn't move" (the GUI rounds to
+        -- whole percent, so 13.4% and 13.0% both show as 13%).
+        local hourlyCost = DryingSystem.SILO_COST_RATIO * sellChargeRate * appliedRate * totalLiters
+        if hourlyCost > 0 then
+            g_currentMission:addMoneyChange(-hourlyCost, farmId, MoneyType.DRYING_CHARGE, true)
+            g_farmManager:getFarmById(farmId):changeBalance(-hourlyCost, MoneyType.DRYING_CHARGE)
+        end
 
         if not self:siloNeedsDrying(placeable, ms) then
             table.insert(completedDryers, placeable.uniqueId)
@@ -372,14 +385,34 @@ function DryingSystem:dryShed(placeable, ms, dryingRate, sellChargeRate, complet
 
     local effectiveDryingRate = self:calculateEffectiveDryingRate(totalLiters, ms)
 
+    -- See drySilo: the largest reduction actually applied, so the final clipped hour is
+    -- not billed as a full one.
+    local appliedRate = 0
     for _, entry in ipairs(pilesToDry) do
-        entry.pile.properties.moisture = math.max(entry.idealMax, entry.pile.properties.moisture - effectiveDryingRate)
+        local newMoisture = math.max(entry.idealMax, entry.pile.properties.moisture - effectiveDryingRate)
+        appliedRate = math.max(appliedRate, entry.pile.properties.moisture - newMoisture)
+        entry.pile.properties.moisture = newMoisture
     end
 
     local farmId = placeable:getOwnerFarmId()
-    local hourlyCost = DryingSystem.SILO_COST_RATIO * sellChargeRate * effectiveDryingRate * totalLiters
-    g_currentMission:addMoneyChange(-hourlyCost, farmId, MoneyType.DRYING_CHARGE, true)
-    g_farmManager:getFarmById(farmId):changeBalance(-hourlyCost, MoneyType.DRYING_CHARGE)
+    local hourlyCost = DryingSystem.SILO_COST_RATIO * sellChargeRate * appliedRate * totalLiters
+    if hourlyCost > 0 then
+        g_currentMission:addMoneyChange(-hourlyCost, farmId, MoneyType.DRYING_CHARGE, true)
+        g_farmManager:getFarmById(farmId):changeBalance(-hourlyCost, MoneyType.DRYING_CHARGE)
+    end
+
+    -- Notice completion in the hour the last pile reaches its ideal, the way drySilo
+    -- already does. Without this the shed burned a further hour before reporting done.
+    -- pilesToDry held every pile above ideal, so re-reading it is enough.
+    for _, entry in ipairs(pilesToDry) do
+        if entry.pile.properties.moisture > entry.idealMax then
+            return
+        end
+    end
+
+    table.insert(completedDryers, placeable.uniqueId)
+    g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_OK,
+        g_i18n:getText("ms_drying_complete"))
 end
 
 function DryingSystem:siloNeedsDrying(placeable, ms)

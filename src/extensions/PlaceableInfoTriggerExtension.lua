@@ -20,6 +20,14 @@ function MSPlaceableInfoTriggerExtension:updateInfo(info)
         return
     end
     
+    -- Storage heap stores hold their grain as ground piles, not objectInfo — see
+    -- StorageHeapExtension. Their own updateInfo already lists the fill levels; we add
+    -- the moisture and quality behind them.
+    if MSStorageHeapExtension.isStorageHeap(self) then
+        MSPlaceableInfoTriggerExtension.appendStorageHeapInfo(self, info)
+        return
+    end
+
     moistureSystem:ensureObjectMoistureLoaded(self)
 
     local objectData = moistureSystem.objectInfo[self.uniqueId]
@@ -45,6 +53,31 @@ function MSPlaceableInfoTriggerExtension:updateInfo(info)
                     })
                 end
             end
+        end
+    end
+end
+
+---
+-- Moisture and quality per crop for a storage heap store, weighted across its bays.
+-- Silently shows nothing on a client until the pile request round-trips.
+---
+function MSPlaceableInfoTriggerExtension.appendStorageHeapInfo(placeable, info)
+    for _, fillTypeIndex in ipairs(MSStorageHeapExtension.getStoredFillTypes(placeable)) do
+        local stored = MSStorageHeapExtension.getStoredProperties(placeable, fillTypeIndex)
+        local fillType = g_fillTypeManager:getFillTypeByIndex(fillTypeIndex)
+
+        if stored ~= nil and fillType ~= nil then
+            table.insert(info, {
+                title = fillType.title .. " " .. g_i18n:getText("moistureSystem_moisture"),
+                text = string.format("%.1f%%", stored.moisture * 100),
+                accentuate = false
+            })
+            table.insert(info, {
+                title = fillType.title .. " " .. g_i18n:getText("moistureSystem_quality"),
+                text = MSPlayerHUDExtension.formatQualityText(stored.quality,
+                    g_fillTypeManager:getFillTypeNameByIndex(fillTypeIndex)),
+                accentuate = false
+            })
         end
     end
 end
