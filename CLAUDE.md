@@ -101,6 +101,33 @@ Three things about it are load-bearing and easy to break:
   clamped only to 1.0, never to the month's `moistureMax`. `anyActiveBoosts` keeps the hot path at
   one boolean read when nobody is irrigating.
 
+## Silo extensions
+
+**Never read `placeable.spec_silo.storages` directly — use `MoistureSystem.getSiloStorages(placeable)`.**
+
+A silo extension is a placeable of its own holding a bare `Storage`. It has no loading or
+unloading station, no pipe and no trigger, so grain can only reach or leave it through the
+*parent* silo's stations. `PlaceableSiloExtension:onFinalizePlacement` registers its storage
+into `unloadingStation.targetStorages` / `loadingStation.sourceStorages` of every compatible
+station in range — but **never** into `spec_silo.storages`, which only ever holds the silo's
+own tanks.
+
+`UnloadingStation:addFillLevelFromTool` then picks a tank by `pairs()` order, so tipped grain
+can land wholly inside an extension. Reading `spec_silo.storages` made that grain invisible:
+`hasFillType` returned false and pruned the moisture record the instant it was written, and
+`DryingSystem` saw the silo as empty so it never appeared in the drying list (issue #87).
+
+Because the stations pool every storage when filling and draining, the player sees silo plus
+extensions as one heap — so we track it as one, keyed on the **parent silo's** `uniqueId`.
+Ingress (`DischargeableExtension`) and egress (`LoadingStationExtension`) already key off
+`owningPlaceable`, which is the parent, so they needed no change. Display paths
+(`PlaceableInfoTriggerExtension`, `PlayerHUDUpdateExtension`) resolve an extension to its
+parent via `MoistureSystem:getParentSiloForExtension` before reading.
+
+Known and accepted: an extension in range of two silos is registered with **both**, so its
+grain counts toward both pools. The error is a blend of two averages, not a lost value; keying
+per-`Storage` instead would need synthetic savegame keys for a rare case.
+
 ## Weather profiles
 
 Nine regional profiles, each with 2–4 weighted scenarios. Scenario selected once per January via `PERIOD_CHANGED`; persists in savegame under `<weatherProfile>` key.

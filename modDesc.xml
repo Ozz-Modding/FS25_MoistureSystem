@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="111">
     <author>Ozz</author>
-    <version>2.0.0.5</version>
+    <version>2.0.0.6</version>
     <iconFilename>icon_MoistureSystem.dds</iconFilename>
     <title>
         <en>Moisture System</en>
@@ -35,6 +35,9 @@ Note: The mod is not compatible with the following mods: NonStopCrop, RealisticW
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
+
+2.0.0.6:
+- Fix an issue with moisture not tracking correctly when using Silo Extensions.
 
 2.0.0.5:
 - Added support for the Bulk Hall silos added in Highlands Fishing DLC. Moisture and quality will now be tracked for crop stored in these silos, and crop can be dried as normal.
@@ -127,6 +130,9 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop, Realistic
 
 Änderungsprotokoll:
 
+2.0.0.6:
+- Behebt ein Problem, bei dem die Feuchtigkeit bei Verwendung von Silo-Erweiterungen nicht korrekt verfolgt wurde.
+
 2.0.0.5:
 - Unterstützung für die mit dem Highlands Fishing DLC hinzugefügten Bulk-Hall-Silos. Feuchtigkeit und Qualität werden jetzt auch für in diesen Silos gelagerte Kulturen verfolgt, und die Kulturen können wie gewohnt getrocknet werden.
 - Behebt ein Lua-Problem im Mehrspielermodus, wenn Spieler dem Server beitreten.
@@ -213,6 +219,9 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop, RealisticWeather
 
 Journal des modifications :
+
+2.0.0.6 :
+- Correction d'un problème d'humidité qui n'était pas suivie correctement lors de l'utilisation des extensions de silo.
 
 2.0.0.5 :
 - Ajout de la prise en charge des silos Bulk Hall ajoutés par le DLC Highlands Fishing. L'humidité et la qualité sont désormais suivies pour les cultures stockées dans ces silos, et les cultures peuvent être séchées normalement.

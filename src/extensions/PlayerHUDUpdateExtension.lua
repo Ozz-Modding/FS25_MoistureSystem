@@ -298,8 +298,12 @@ function MSPlayerHUDExtension:showObjectMoistureInfo()
         return
     end
 
-    moistureSystem:ensureObjectMoistureLoaded(self.object)
-    local objectData = moistureSystem.objectInfo[self.object.uniqueId]
+    -- A silo extension's grain lives in the parent silo's pool, under the parent's
+    -- uniqueId (see MoistureSystem.getSiloStorages), so resolve before reading.
+    local source = moistureSystem:getParentSiloForExtension(self.object) or self.object
+
+    moistureSystem:ensureObjectMoistureLoaded(source)
+    local objectData = moistureSystem.objectInfo[source.uniqueId]
     if objectData == nil then
         return
     end

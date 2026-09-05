@@ -16,8 +16,10 @@ function DryingSystem:getOwnedDryables(farmId)
     local result = {}
     for _, placeable in pairs(g_currentMission.placeableSystem.placeables) do
         if placeable:getOwnerFarmId() == farmId then
-            if placeable.spec_silo and placeable.spec_silo.storages then
+            if placeable.spec_silo then
                 table.insert(result, placeable)
+            elseif placeable.spec_siloExtension then
+                -- Extensions are part of their parent silo's pool, never dryable alone.
             elseif self:isTipOcclusionBuilding(placeable) then
                 table.insert(result, placeable)
             end
@@ -27,7 +29,7 @@ function DryingSystem:getOwnedDryables(farmId)
 end
 
 function DryingSystem:isTipOcclusionBuilding(placeable)
-    if placeable.spec_silo then return false end
+    if placeable.spec_silo or placeable.spec_siloExtension then return false end
     local spec = placeable.spec_tipOcclusionAreas
     if spec == nil or spec.areas == nil or #spec.areas == 0 then return false end
     return true
@@ -59,26 +61,41 @@ function DryingSystem:getShedWorldBounds(placeable)
     return bounds
 end
 
+-- Liters per fill type across the silo and its extensions, plus the pooled total.
+--
+-- Aggregated, not per storage: the same crop can sit in several tanks, and moisture is
+-- tracked once for the whole pool. Iterating storages directly listed a crop once per tank
+-- in the drying menu ("Wheat 16%, Wheat 16%") and, worse, let drySilo apply the hourly
+-- reduction once per tank.
+function DryingSystem:getSiloFillLevels(placeable)
+    local byFillType = {}
+    local totalLiters = 0
+    for _, storage in ipairs(MoistureSystem.getSiloStorages(placeable)) do
+        for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
+            if fillLevel > 0 then
+                byFillType[fillTypeIndex] = (byFillType[fillTypeIndex] or 0) + fillLevel
+                totalLiters = totalLiters + fillLevel
+            end
+        end
+    end
+    return byFillType, totalLiters
+end
+
 -- Per-crop moisture/idealMax/needsDrying for a silo, plus the silo's total stored liters.
 function DryingSystem:getSiloCropStatus(placeable, ms)
     local statuses = {}
-    local totalLiters = 0
-    for _, storage in ipairs(placeable.spec_silo.storages) do
-        for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
-            if fillLevel > 0 then
-                totalLiters = totalLiters + fillLevel
-                local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
-                if idealMax then
-                    local info = ms:getObjectInfo(placeable.uniqueId, fillTypeIndex)
-                    if info and info.moisture then
-                        table.insert(statuses, {
-                            fillTypeIndex = fillTypeIndex,
-                            moisture = info.moisture,
-                            idealMax = idealMax,
-                            needsDrying = info.moisture > idealMax,
-                        })
-                    end
-                end
+    local byFillType, totalLiters = self:getSiloFillLevels(placeable)
+    for fillTypeIndex, _ in pairs(byFillType) do
+        local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
+        if idealMax then
+            local info = ms:getObjectInfo(placeable.uniqueId, fillTypeIndex)
+            if info and info.moisture then
+                table.insert(statuses, {
+                    fillTypeIndex = fillTypeIndex,
+                    moisture = info.moisture,
+                    idealMax = idealMax,
+                    needsDrying = info.moisture > idealMax,
+                })
             end
         end
     end
@@ -282,14 +299,7 @@ end
 function DryingSystem:drySilo(placeable, ms, dryingRate, sellChargeRate, completedDryers)
     local farmId = placeable:getOwnerFarmId()
 
-    local totalLiters = 0
-    for _, storage in ipairs(placeable.spec_silo.storages) do
-        for _, fillLevel in pairs(storage.fillLevels) do
-            if fillLevel > 0 then
-                totalLiters = totalLiters + fillLevel
-            end
-        end
-    end
+    local byFillType, totalLiters = self:getSiloFillLevels(placeable)
 
     if not self:siloNeedsDrying(placeable, ms) then
         table.insert(completedDryers, placeable.uniqueId)
@@ -303,18 +313,14 @@ function DryingSystem:drySilo(placeable, ms, dryingRate, sellChargeRate, complet
         -- before math.max clipped to idealMax.
         local appliedRate = 0
 
-        for _, storage in ipairs(placeable.spec_silo.storages) do
-            for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
-                if fillLevel > 0 then
-                    local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
-                    if idealMax then
-                        local info = ms:getObjectInfo(placeable.uniqueId, fillTypeIndex)
-                        if info and info.moisture > idealMax then
-                            local newMoisture = math.max(idealMax, info.moisture - effectiveDryingRate)
-                            appliedRate = math.max(appliedRate, info.moisture - newMoisture)
-                            info.moisture = newMoisture
-                        end
-                    end
+        for fillTypeIndex, _ in pairs(byFillType) do
+            local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
+            if idealMax then
+                local info = ms:getObjectInfo(placeable.uniqueId, fillTypeIndex)
+                if info and info.moisture > idealMax then
+                    local newMoisture = math.max(idealMax, info.moisture - effectiveDryingRate)
+                    appliedRate = math.max(appliedRate, info.moisture - newMoisture)
+                    info.moisture = newMoisture
                 end
             end
         end
@@ -416,16 +422,12 @@ function DryingSystem:dryShed(placeable, ms, dryingRate, sellChargeRate, complet
 end
 
 function DryingSystem:siloNeedsDrying(placeable, ms)
-    for _, storage in ipairs(placeable.spec_silo.storages) do
-        for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
-            if fillLevel > 0 then
-                local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
-                if idealMax then
-                    local info = ms:getObjectInfo(placeable.uniqueId, fillTypeIndex)
-                    if info and info.moisture > idealMax then
-                        return true
-                    end
-                end
+    for fillTypeIndex, _ in pairs(self:getSiloFillLevels(placeable)) do
+        local _, idealMax = CropValueMap.getIdealRange(fillTypeIndex)
+        if idealMax then
+            local info = ms:getObjectInfo(placeable.uniqueId, fillTypeIndex)
+            if info and info.moisture > idealMax then
+                return true
             end
         end
     end

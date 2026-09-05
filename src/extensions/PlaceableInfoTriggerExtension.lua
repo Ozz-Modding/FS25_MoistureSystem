@@ -28,9 +28,14 @@ function MSPlaceableInfoTriggerExtension:updateInfo(info)
         return
     end
 
-    moistureSystem:ensureObjectMoistureLoaded(self)
+    -- A silo extension holds no moisture of its own: its grain is part of the parent
+    -- silo's pool and is recorded under the parent's uniqueId (see getSiloStorages).
+    -- Show the pool's figures so the extension doesn't read as empty when looked at.
+    local source = moistureSystem:getParentSiloForExtension(self) or self
 
-    local objectData = moistureSystem.objectInfo[self.uniqueId]
+    moistureSystem:ensureObjectMoistureLoaded(source)
+
+    local objectData = moistureSystem.objectInfo[source.uniqueId]
     if objectData == nil then
         return
     end

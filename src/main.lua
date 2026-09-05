@@ -498,6 +498,113 @@ function MoistureSystem:getObjectQuality(uniqueId, fillType)
 end
 
 ---
+-- Every Storage a silo placeable can actually draw from or fill.
+--
+-- A silo extension is a placeable of its own holding a bare Storage: it has no loading or
+-- unloading station, no pipe and no trigger, so the only way grain reaches or leaves it is
+-- through the parent silo's stations. PlaceableSiloExtension:onFinalizePlacement registers
+-- its storage into every compatible station in range, but never into spec_silo.storages --
+-- that list only ever holds the silo's own tanks. Reading spec_silo.storages therefore
+-- misses extension grain entirely, which made a silo whose canola happened to land in an
+-- extension look empty: the moisture record was pruned by hasFillType the moment it was
+-- written, and the silo never appeared in the drying list (issue #87).
+--
+-- The stations pool all of their storages when filling and draining, so the player sees
+-- silo plus extensions as one heap. We track it as one too, keyed on the parent silo.
+--
+-- Note an extension in range of two silos is registered with both, so its grain counts
+-- toward both pools. Accepted: the error is a blend of two averages, not a lost value.
+-- @return array of Storage, deduplicated
+---
+function MoistureSystem.getSiloStorages(placeable)
+    local spec = placeable ~= nil and placeable.spec_silo or nil
+    if spec == nil then
+        return {}
+    end
+
+    local result = {}
+    local seen = {}
+
+    local function add(storage)
+        if storage ~= nil and not seen[storage] then
+            seen[storage] = true
+            table.insert(result, storage)
+        end
+    end
+
+    if spec.storages ~= nil then
+        for _, storage in ipairs(spec.storages) do
+            add(storage)
+        end
+    end
+    if spec.unloadingStation ~= nil and spec.unloadingStation.targetStorages ~= nil then
+        for _, storage in pairs(spec.unloadingStation.targetStorages) do
+            add(storage)
+        end
+    end
+    if spec.loadingStation ~= nil and spec.loadingStation.sourceStorages ~= nil then
+        for _, storage in pairs(spec.loadingStation.sourceStorages) do
+            add(storage)
+        end
+    end
+
+    return result
+end
+
+---
+-- The silo placeable whose pool a silo extension belongs to, or nil if it is not an
+-- extension (or is somehow orphaned). Moisture is keyed on the parent, so anything that
+-- wants to read or display an extension's grain has to resolve it first.
+--
+-- Cached per extension uniqueId and revalidated on every hit -- placement changes are rare
+-- but selling the parent silo must not leave a stale answer behind, and the check is one
+-- table lookup.
+---
+function MoistureSystem:getParentSiloForExtension(placeable)
+    if placeable == nil or placeable.spec_siloExtension == nil then
+        return nil
+    end
+
+    local storage = placeable.spec_siloExtension.storage
+    if storage == nil then
+        return nil
+    end
+
+    self.siloExtensionParents = self.siloExtensionParents or {}
+
+    local function holdsStorage(silo)
+        if silo == nil or silo.spec_silo == nil or silo.rootNode == nil then
+            return false
+        end
+        local spec = silo.spec_silo
+        if spec.unloadingStation ~= nil and spec.unloadingStation.targetStorages ~= nil
+            and spec.unloadingStation.targetStorages[storage] ~= nil then
+            return true
+        end
+        if spec.loadingStation ~= nil and spec.loadingStation.sourceStorages ~= nil
+            and spec.loadingStation.sourceStorages[storage] ~= nil then
+            return true
+        end
+        return false
+    end
+
+    local cached = self.siloExtensionParents[placeable.uniqueId]
+    if holdsStorage(cached) then
+        return cached
+    end
+
+    for _, candidate in pairs(g_currentMission.placeableSystem.placeables) do
+        if holdsStorage(candidate) then
+            self.siloExtensionParents[placeable.uniqueId] = candidate
+            return candidate
+        end
+    end
+
+    self.siloExtensionParents[placeable.uniqueId] = nil
+    return nil
+end
+
+---
 -- Check if an object still has any of a specific fillType
 -- @param uniqueId: The uniqueId of the object
 -- @param fillType: FillType index to check
@@ -517,13 +624,12 @@ function MoistureSystem:hasFillType(uniqueId, fillType)
         return false
     end
 
+    -- Silo plus its extensions, not just spec_silo.storages -- see getSiloStorages.
     if object.spec_silo then
-        if object.spec_silo.storages then
-            for _, storage in ipairs(object.spec_silo.storages) do
-                local fillLevel = storage:getFillLevel(fillType)
-                if fillLevel and fillLevel > 0 then
-                    return true
-                end
+        for _, storage in ipairs(MoistureSystem.getSiloStorages(object)) do
+            local fillLevel = storage:getFillLevel(fillType)
+            if fillLevel and fillLevel > 0 then
+                return true
             end
         end
         return false
