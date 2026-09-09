@@ -282,6 +282,142 @@ function WeatherProfileSystem:injectMissingWeatherObjects(weather)
     end
 end
 
+-- Per weather type: {center, width}, both fractions of the month's tempMin..tempMax envelope
+-- (0 = tempMin, 1 = tempMax). `width` is that type's typical day/night swing; `center` is the
+-- midpoint the (jittered) swing is built around. These are NOT symmetric in what they model:
+-- overcast/rain/snow types get a NARROW swing (cloud cover holds heat in overnight and blocks
+-- it during the day, so night and day stay close together), while sun gets a WIDE swing (a
+-- clear sky lets the ground radiate heat away overnight -- coldest nights happen under clear
+-- skies -- then lets the sun heat it hard by afternoon -- hottest days also happen under clear
+-- skies). Getting this backwards (shifting a fixed-width swing up for "warm" types instead of
+-- widening it) makes a sunny morning read as warm as its own afternoon, which is wrong: see
+-- the TemperatureUpdater note below for why the coldest hour of a sunny day should be well
+-- below its hottest hour, not close to it.
+--
+-- Every width leaves enough margin against its center for TEMP_JITTER_FRACTION's typical roll
+-- to land inside the envelope most days -- tuned against a 3000-day simulation so an
+-- edge-leaning type (sun's high side, snow/hail's low side) touches its side of the envelope
+-- roughly 5-10% of days and an interior type (partly cloudy, cloudy, rain) almost never does.
+-- Don't shrink a center's margin to its nearest bound without re-checking that simulation --
+-- see getDailyTemperatureRange's comment on why an insufficient margin breaks "rare".
+WeatherProfileSystem.TEMP_RANGE_BY_TYPE = {
+    [WeatherType.SUN]              = { center = 0.52, width = 0.80 },
+    [WeatherType.PARTIALLY_CLOUDY] = { center = 0.52, width = 0.48 },
+    [WeatherType.CLOUDY]           = { center = 0.48, width = 0.27 },
+    [WeatherType.RAIN]             = { center = 0.36, width = 0.24 },
+    [WeatherType.THUNDER]          = { center = 0.38, width = 0.26 },
+    [WeatherType.HAIL]             = { center = 0.24, width = 0.28 },
+    [WeatherType.SNOW]             = { center = 0.22, width = 0.24 },
+    [WeatherType.TWISTER]          = { center = 0.50, width = 0.40 },
+}
+WeatherProfileSystem.TEMP_RANGE_DEFAULT = { center = 0.5, width = 0.30 }
+
+-- Day-to-day bell-curve wobble of the center around its weather-type anchor, as a fraction of
+-- the envelope range. See getDailyTemperatureRange. Tuned together with TEMP_RANGE_BY_TYPE
+-- above against the same simulation.
+WeatherProfileSystem.TEMP_JITTER_FRACTION = 0.16
+
+local TEMP_HASH_M = 2147483647
+
+-- Deterministic hash, not math.random: must give the identical value on every peer and across
+-- a reload for the same (seed, n). Same two-round-LCG-with-nonlinear-fold technique as
+-- IrrigationSystem.hash01 -- see that function's comment for why the fold is required (an
+-- affine hash would correlate adjacent n's) and why every intermediate product is kept under
+-- 2^53 (so the result is bit-identical on every peer).
+local function tempHash01(seed, n)
+    local h = (seed * 2654435761 + n * 40503) % TEMP_HASH_M
+    h = (h * 48271) % TEMP_HASH_M
+    h = (h * (h % 4093 + 1) + 12345) % TEMP_HASH_M
+    h = (h * 48271) % TEMP_HASH_M
+    return h / TEMP_HASH_M
+end
+
+-- Stable per-savegame seed, derived fresh (not stored) the same way on every peer -- see
+-- IrrigationSystem.deriveDiarySeed for the identical technique.
+function WeatherProfileSystem.deriveTempSeed()
+    local info = g_currentMission ~= nil and g_currentMission.missionInfo or nil
+    local name = info ~= nil and (info.mapId or info.customEnvironment) or "map"
+    local index = info ~= nil and info.savegameIndex or 1
+    local h = 7919
+    for i = 1, #name do
+        h = (h * 33 + name:byte(i)) % 1000003
+    end
+    h = (h * 33 + index) % 1000003
+    return h + 1
+end
+
+function WeatherProfileSystem:getTempSeed()
+    if self.tempSeed == nil then
+        self.tempSeed = WeatherProfileSystem.deriveTempSeed()
+    end
+    return self.tempSeed
+end
+
+-- Build a widthFraction * range wide window centered as close to `center` as possible while
+-- staying entirely inside [tempMin, tempMax]. Sliding the whole window (rather than
+-- independently clamping each endpoint) matters: clamping the endpoints separately lets a
+-- window overhang the boundary before any jitter is even applied, pinning it to the exact
+-- envelope edge on almost every day instead of only unlucky ones.
+local function centerToRange(center, tempMin, tempMax, range, widthFraction)
+    local halfSwing = math.min(range, widthFraction * range) / 2
+    local lowBound = tempMin + halfSwing
+    local highBound = tempMax - halfSwing
+    local clampedCenter = math.clamp(center, lowBound, highBound)
+    return clampedCenter - halfSwing, clampedCenter + halfSwing
+end
+
+-- Representative min/max for a weather type with no day-to-day jitter -- used only to keep
+-- not-yet-activated forecast pool objects showing a sane baseline (see
+-- applyTemperatureToVariations). The exact, jittered per-day value is computed by
+-- getDailyTemperatureRange when a spell actually activates.
+function WeatherProfileSystem:getTypicalTemperatureRange(weatherType, tempMin, tempMax)
+    if tempMin == nil or tempMax == nil then return tempMin, tempMax end
+    local range = tempMax - tempMin
+    if range <= 0 then return tempMin, tempMax end
+    local r = WeatherProfileSystem.TEMP_RANGE_BY_TYPE[weatherType] or WeatherProfileSystem.TEMP_RANGE_DEFAULT
+    return centerToRange(tempMin + r.center * range, tempMin, tempMax, range, r.width)
+end
+
+-- The actual min/max for TODAY's spell of this weather type: the type's center point, nudged
+-- by a bell-curve day roll, expanded into that type's own daily swing width, everything
+-- clamped to [tempMin, tempMax]. tempMin/tempMax stay the rare outer envelope, not the
+-- everyday value -- see issue #90, where a profile authoring tempMin/tempMax as seasonal
+-- record extremes ended up hitting them literally every single day because the old code
+-- stamped them unmodified onto every variation.
+--
+-- The swing WIDTH varies by type, not just its position (TEMP_RANGE_BY_TYPE) -- a fixed width
+-- merely shifted warmer/colder would drag an overcast/sunny day's *overnight low* up together
+-- with its daytime high, which is backwards: real clear-sky (sunny) days have the coldest
+-- nights (nothing traps the ground's radiated heat) as well as the hottest afternoons, while
+-- overcast/rain days stay milder through the whole cycle. TemperatureUpdater:getTemperatureAtTime
+-- puts the daily low around dayTime ~0.148*dayLength (~3:30am) and the high around ~0.648
+-- (~3:30pm) regardless of weather -- widening sun's window instead of shifting it is what
+-- makes its early-morning reading come out cool rather than already-warm.
+--
+-- Only margin, not width, keeps a type's edge "rare": a center too close to its own window's
+-- bound (relative to TEMP_JITTER_FRACTION) gets pinned there on a large fraction of days
+-- regardless of width -- re-run the simulation mentioned on TEMP_RANGE_BY_TYPE before
+-- narrowing any center's margin.
+function WeatherProfileSystem:getDailyTemperatureRange(weatherType, tempMin, tempMax)
+    if tempMin == nil or tempMax == nil then return tempMin, tempMax end
+    local range = tempMax - tempMin
+    if range <= 0 then return tempMin, tempMax end
+
+    local r = WeatherProfileSystem.TEMP_RANGE_BY_TYPE[weatherType] or WeatherProfileSystem.TEMP_RANGE_DEFAULT
+    local anchorTemp = tempMin + r.center * range
+
+    local seed = self:getTempSeed()
+    local day = g_currentMission.environment.currentMonotonicDay
+    local n = (day * 16 + (weatherType or 0)) * 3
+    -- Irwin-Hall(3): sum of three independent draws is bell-shaped (mass concentrated near the
+    -- middle) rather than flat like a single draw, so most days land near the anchor and only a
+    -- rare roll approaches either tail.
+    local bell = (tempHash01(seed, n) + tempHash01(seed, n + 1) + tempHash01(seed, n + 2) - 1.5) / 1.5
+    local center = anchorTemp + bell * WeatherProfileSystem.TEMP_JITTER_FRACTION * range
+
+    return centerToRange(center, tempMin, tempMax, range, r.width)
+end
+
 function WeatherProfileSystem:installWeatherOverrides()
     local weather = g_currentMission.environment.weather
 
@@ -304,8 +440,10 @@ function WeatherProfileSystem:installWeatherOverrides()
                 local temps = g_currentMission.WeatherProfileSystem:getTemperatureForMonth(month)
                 local variation = self.variations and self.variations[instance.variationIndex]
                 if temps and variation then
-                    if temps.tempMin ~= nil then variation.minTemperature = temps.tempMin end
-                    if temps.tempMax ~= nil then variation.maxTemperature = temps.tempMax end
+                    local dayMin, dayMax = g_currentMission.WeatherProfileSystem:getDailyTemperatureRange(
+                        self.weatherType, temps.tempMin, temps.tempMax)
+                    if dayMin ~= nil then variation.minTemperature = dayMin end
+                    if dayMax ~= nil then variation.maxTemperature = dayMax end
                 end
             end
             superFunc(self, instance, changeDuration)
@@ -340,9 +478,10 @@ function WeatherProfileSystem:applyTemperatureToVariations(weather)
             end
             if temps and (temps.tempMin ~= nil or temps.tempMax ~= nil) then
                 for _, obj in ipairs(objects) do
+                    local dayMin, dayMax = self:getTypicalTemperatureRange(obj.weatherType, temps.tempMin, temps.tempMax)
                     for _, variation in ipairs(obj.variations or {}) do
-                        if temps.tempMin ~= nil then variation.minTemperature = temps.tempMin end
-                        if temps.tempMax ~= nil then variation.maxTemperature = temps.tempMax end
+                        if dayMin ~= nil then variation.minTemperature = dayMin end
+                        if dayMax ~= nil then variation.maxTemperature = dayMax end
                     end
                 end
             end

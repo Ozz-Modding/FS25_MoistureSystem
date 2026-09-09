@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="111">
     <author>Ozz</author>
-    <version>2.0.0.6</version>
+    <version>2.0.0.7</version>
     <iconFilename>icon_MoistureSystem.dds</iconFilename>
     <title>
         <en>Moisture System</en>
@@ -35,6 +35,9 @@ Note: The mod is not compatible with the following mods: NonStopCrop, RealisticW
 Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
+
+2.0.0.7:
+- Improved how min/max weather profile temperatures are applied throughout the day.
 
 2.0.0.6:
 - Fix an issue with moisture not tracking correctly when using Silo Extensions.

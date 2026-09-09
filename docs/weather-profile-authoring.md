@@ -49,10 +49,10 @@ All 12 months (`id="1"` through `id="12"`, January–December) **must be defined
 
 | Attribute  | Type    | Unit | Description                                                        |
 |------------|---------|------|--------------------------------------------------------------------|
-| `tempMin`  | integer | °C   | Absolute daily minimum temperature for this month                  |
-| `tempMax`  | integer | °C   | Absolute daily maximum temperature for this month                  |
+| `tempMin`  | integer | °C   | Coldest this month gets (rare, not a nightly low)                  |
+| `tempMax`  | integer | °C   | Hottest this month gets (rare, not a daily high)                   |
 
-These values replace the engine's built-in variation temperatures for the duration of the month. Both attributes are optional — if omitted, the engine's baked-in temperatures for the active weather variation are used unchanged.
+**These are the outer envelope for the month, not the everyday value.** The actual day's low/high sits somewhere inside `[tempMin, tempMax]` — closer to the middle on most days, leaning toward the warm end on sunny days and the cold end on snow/rain/hail days. The full `tempMin`/`tempMax` only gets hit on an unlucky day for weather that's already leaning that direction (e.g. the coldest snowy night of the month), not on a typical day. So set these to the seasonal extreme, not the temperature you want to see most days — a 5-7°C spread (like the minimal example below) covers a realistic *typical* day's swing; `tempMin`/`tempMax` should bracket the whole month's range around that, not equal it. Both attributes are optional — if omitted, the engine's baked-in temperatures for the active weather variation are used unchanged.
 
 Values must be integers. The engine enforces a hard ceiling of 63°C; there is no enforced floor but sub-zero values work correctly. Vary these between scenarios to represent warmer dry years, cooler wet years, etc.
 
