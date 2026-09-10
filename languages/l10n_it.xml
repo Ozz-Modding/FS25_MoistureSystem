@@ -16,6 +16,8 @@
 		<text name="setting_moisture_moistureGainMultiplier_tooltip" text="Controlla la velocità di guadagno di umidità dalla pioggia (1-10)"/>
 		<text name="setting_moisture_teddingMoistureReduction" text="Riduzione Umidità per Voltafieno"/>
 		<text name="setting_moisture_teddingMoistureReduction_tooltip" text="Quantità di umidità ridotta per passaggio di voltafieno (1-5%)"/>
+		<text name="setting_moisture_hayConversionThreshold" text="Soglia di Conversione in Fieno"/>
+		<text name="setting_moisture_hayConversionThreshold_tooltip" text="Livello di umidità sotto il quale l'erba si trasforma in fieno (4-12%)"/>
 		<text name="setting_moisture_baleRotEnabled" text="Marciume delle Balle"/>
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Abilita il marciume delle balle durante pioggia/neve. Le balle avvolte e le balle sotto copertura sono protette."/>
 		<text name="setting_moisture_baleRotRate" text="Velocità Marciume Balle"/>

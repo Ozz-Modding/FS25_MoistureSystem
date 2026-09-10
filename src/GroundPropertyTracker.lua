@@ -5,7 +5,8 @@ GroundPropertyTracker.GRID_SIZE = 2
 GroundPropertyTracker.MIN_GRASS_MOISTURE = 0.05 -- 5% minimum moisture for grass
 GroundPropertyTracker.MAX_GRASS_MOISTURE = 0.40 -- 40% maximum moisture for grass
 GroundPropertyTracker.MIN_HAY_MOISTURE = 0.04   -- 4% minimum moisture for hay
-GroundPropertyTracker.DRY_THRESHOLD = 0.10      -- 10% moisture converts grass to hay / hay to grass
+-- Moisture threshold that converts grass to hay / hay to grass is the hayConversionThreshold
+-- setting (MoistureSettings.lua), read at each conversion check.
 
 GroundPropertyTracker.TEDDED_COOLDOWN_CYCLES = 10
 GroundPropertyTracker.DELAYED_PROCESSING_CYCLES = 2
@@ -714,7 +715,7 @@ function GroundPropertyTracker:runCycleWork()
     -- pile count during rain).
 
     -- Hay -> grass conversion bookkeeping (grassCells set is populated by the
-    -- drying sweep when a hay pile rises back above DRY_THRESHOLD).
+    -- drying sweep when a hay pile rises back above the hayConversionThreshold setting).
     self:processGrassConversions(converter)
 
     self:processWindrowerPendingDrops()
@@ -948,7 +949,7 @@ function GroundPropertyTracker:applyDryingToPile(key, pile, kind, acc)
             newMoisture = math.max(GroundPropertyTracker.MIN_GRASS_MOISTURE,
                 math.min(GroundPropertyTracker.MAX_GRASS_MOISTURE, newMoisture))
 
-            if newMoisture <= GroundPropertyTracker.DRY_THRESHOLD then
+            if newMoisture <= g_currentMission.MoistureSystem.settings.hayConversionThreshold then
                 self.hayCells[gridKey] = 10
             end
 
@@ -964,7 +965,7 @@ function GroundPropertyTracker:applyDryingToPile(key, pile, kind, acc)
         if applied ~= 0 then
             local newMoisture = math.max(GroundPropertyTracker.MIN_HAY_MOISTURE, moisture + applied)
 
-            if newMoisture > GroundPropertyTracker.DRY_THRESHOLD then
+            if newMoisture > g_currentMission.MoistureSystem.settings.hayConversionThreshold then
                 local gridKey = self:getSimpleGridKey(pile.gridX, pile.gridZ)
                 self.grassCells[gridKey] = 10
             end
@@ -1000,6 +1001,7 @@ end
 -- tedded cells × converter entries — not with total pile count.
 function GroundPropertyTracker:applyTeddingToExistingPiles(teddedCellsThisCycle, processedThisCycle, converter)
     local reduction = g_currentMission.MoistureSystem.settings.teddingMoistureReduction
+    local dryThreshold = g_currentMission.MoistureSystem.settings.hayConversionThreshold
 
     for gridKey, _ in pairs(teddedCellsThisCycle) do
         if not self.recentMowedCells[gridKey] and not processedThisCycle[gridKey] then
@@ -1020,7 +1022,7 @@ function GroundPropertyTracker:applyTeddingToExistingPiles(teddedCellsThisCycle,
                         self.teddedGridCellsCooldown[gridKey] = GroundPropertyTracker.TEDDED_COOLDOWN_CYCLES
                         self.teddedGridCells[gridKey] = nil
 
-                        if newMoisture <= GroundPropertyTracker.DRY_THRESHOLD then
+                        if newMoisture <= dryThreshold then
                             self.hayCells[gridKey] = 10
                         end
 
@@ -1337,7 +1339,7 @@ function GroundPropertyTracker:processWindrowerPendingDrops()
 end
 
 -- Process hay -> grass conversion for cells the drying sweep flagged (grassCells
--- is populated when a hay pile's moisture rises back above DRY_THRESHOLD).
+-- is populated when a hay pile's moisture rises back above the hayConversionThreshold setting).
 -- Hay/grass moisture itself is now applied by the drying sweep; this only handles
 -- the density-map fill type conversion and its cooldown decrement.
 function GroundPropertyTracker:processGrassConversions(converter)

@@ -16,6 +16,8 @@
 		<text name="setting_moisture_moistureGainMultiplier_tooltip" text="Řídí rychlost získávání vlhkosti z deště (1-10)"/>
 		<text name="setting_moisture_teddingMoistureReduction" text="Snížení vlhkosti obrácením"/>
 		<text name="setting_moisture_teddingMoistureReduction_tooltip" text="Množství vlhkosti snížené při jednom průjezdu obracečem (1-5%)"/>
+		<text name="setting_moisture_hayConversionThreshold" text="Prahová Hodnota Přeměny na Seno"/>
+		<text name="setting_moisture_hayConversionThreshold_tooltip" text="Úroveň vlhkosti, pod kterou se tráva přemění na seno (4-12%)"/>
 		<text name="setting_moisture_baleRotEnabled" text="Hnití balíků"/>
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Povolit hnití balíků při dešti/sněhu. Obalené balíky a balíky pod přístřeškem jsou chráněny."/>
 		<text name="setting_moisture_baleRotRate" text="Rychlost hnití balíků"/>

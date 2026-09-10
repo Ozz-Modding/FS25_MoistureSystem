@@ -16,6 +16,8 @@
 		<text name="setting_moisture_moistureGainMultiplier_tooltip" text="Швидкість збільшення вологості від дощу (1-10)"/>
 		<text name="setting_moisture_teddingMoistureReduction" text="Зменшення вологості при ворушінні"/>
 		<text name="setting_moisture_teddingMoistureReduction_tooltip" text="Зменшення вологості за один прохід ворушилки (1-5%)"/>
+		<text name="setting_moisture_hayConversionThreshold" text="Порог Перетворення на Сіно"/>
+		<text name="setting_moisture_hayConversionThreshold_tooltip" text="Рівень вологості, нижче якого трава перетворюється на сіно (4-12%)"/>
 		<text name="setting_moisture_baleRotEnabled" text="Гниття тюків"/>
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Увімкнути гниття тюків під дощем/снігом. Обгорнуті тюки та тюки під навісом захищені."/>
 		<text name="setting_moisture_baleRotRate" text="Швидкість гниття тюків"/>

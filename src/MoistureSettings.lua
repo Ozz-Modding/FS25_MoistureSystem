@@ -11,6 +11,7 @@ MoistureSettings.menuItems = {
     'moistureLossMultiplier',
     'moistureGainMultiplier',
     'teddingMoistureReduction',
+    'hayConversionThreshold',
     'witheringEnabled',
     'baleRotEnabled',
     'baleRotRate',
@@ -93,6 +94,14 @@ MoistureSettings.SETTINGS.teddingMoistureReduction = {
     ['permission'] = 'moistureSettings',
     ['values'] = { 0.04, 0.05, 0.06, 0.07, 0.08 },
     ['strings'] = { "4%", "5%", "6%", "7%", "8%" }
+}
+
+MoistureSettings.SETTINGS.hayConversionThreshold = {
+    ['default'] = 3, -- 8%
+    ['serverOnly'] = true,
+    ['permission'] = 'moistureSettings',
+    ['values'] = { 0.04, 0.06, 0.08, 0.10, 0.12 },
+    ['strings'] = { "4%", "6%", "8%", "10%", "12%" }
 }
 
 MoistureSettings.SETTINGS.witheringEnabled = {

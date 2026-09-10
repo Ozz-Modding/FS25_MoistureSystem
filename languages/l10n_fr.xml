@@ -16,6 +16,8 @@
 		<text name="setting_moisture_moistureGainMultiplier_tooltip" text="Contrôle la vitesse de gain d'humidité par la pluie (1-10)"/>
 		<text name="setting_moisture_teddingMoistureReduction" text="Réduction d'Humidité par Fanage"/>
 		<text name="setting_moisture_teddingMoistureReduction_tooltip" text="Quantité d'humidité réduite par passage de fanage (1-5%)"/>
+		<text name="setting_moisture_hayConversionThreshold" text="Seuil de Conversion en Foin"/>
+		<text name="setting_moisture_hayConversionThreshold_tooltip" text="Niveau d'humidité sous lequel l'herbe se transforme en foin (4-12%)"/>
 		<text name="setting_moisture_baleRotEnabled" text="Pourriture des Balles"/>
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Active la pourriture des balles pendant la pluie/neige. Les balles enrubannées et sous abri sont protégées."/>
 		<text name="setting_moisture_baleRotRate" text="Vitesse de Pourriture des Balles"/>

@@ -94,6 +94,7 @@ function MoistureSystem:loadMap()
         moistureLossMultiplier = 3.0,
         moistureGainMultiplier = 3.0,
         teddingMoistureReduction = 0.04,
+        hayConversionThreshold = 0.08,
         witheringEnabled = true,
         baleRotEnabled = true,
         baleRotRate = 1.0,
@@ -1043,6 +1044,12 @@ function MoistureSystem:loadFromXMLFile()
             self.settings.teddingMoistureReduction = teddingReduction
         end
 
+        local hayConversionThreshold = getXMLFloat(xmlFile,
+            MoistureSystem.SaveKey .. ".settings#hayConversionThreshold")
+        if hayConversionThreshold then
+            self.settings.hayConversionThreshold = hayConversionThreshold
+        end
+
         local witheringEnabled = getXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#witheringEnabled")
         if witheringEnabled ~= nil then
             self.settings.witheringEnabled = witheringEnabled
@@ -1224,6 +1231,7 @@ function MoistureSystem:saveToXmlFile()
         .moistureGainMultiplier)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#teddingMoistureReduction", ms.settings
         .teddingMoistureReduction)
+    setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#hayConversionThreshold", ms.settings.hayConversionThreshold)
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#witheringEnabled", ms.settings.witheringEnabled)
     setXMLBool(xmlFile, MoistureSystem.SaveKey .. ".settings#baleRotEnabled", ms.settings.baleRotEnabled)
     setXMLFloat(xmlFile, MoistureSystem.SaveKey .. ".settings#baleRotRate", ms.settings.baleRotRate)
@@ -1354,6 +1362,7 @@ function MoistureSystem:writeInitialClientState(streamId, connection)
     streamWriteFloat32(streamId, self.settings.moistureLossMultiplier)
     streamWriteFloat32(streamId, self.settings.moistureGainMultiplier)
     streamWriteFloat32(streamId, self.settings.teddingMoistureReduction)
+    streamWriteFloat32(streamId, self.settings.hayConversionThreshold)
     streamWriteBool(streamId, self.settings.witheringEnabled)
     streamWriteBool(streamId, self.settings.baleRotEnabled)
     streamWriteFloat32(streamId, self.settings.baleRotRate)
@@ -1382,6 +1391,7 @@ function MoistureSystem:readInitialClientState(streamId, connection)
     self.settings.moistureLossMultiplier = streamReadFloat32(streamId)
     self.settings.moistureGainMultiplier = streamReadFloat32(streamId)
     self.settings.teddingMoistureReduction = streamReadFloat32(streamId)
+    self.settings.hayConversionThreshold = streamReadFloat32(streamId)
     self.settings.witheringEnabled = streamReadBool(streamId)
     self.settings.baleRotEnabled = streamReadBool(streamId)
     self.settings.baleRotRate = streamReadFloat32(streamId)

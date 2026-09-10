@@ -16,6 +16,8 @@
 		<text name="setting_moisture_moistureGainMultiplier_tooltip" text="Reguluje tempo wchłaniania wilgotności z deszczu (1-10)"/>
 		<text name="setting_moisture_teddingMoistureReduction" text="Redukcja wilgotności podczas przetrząsania"/>
 		<text name="setting_moisture_teddingMoistureReduction_tooltip" text="Ilość wilgotności usuniętej podczas jednego przetrząsania (1-5%)"/>
+		<text name="setting_moisture_hayConversionThreshold" text="Próg Konwersji na Siano"/>
+		<text name="setting_moisture_hayConversionThreshold_tooltip" text="Poziom wilgotności, poniżej którego trawa zmienia się w siano (4-12%)"/>
 		<text name="setting_moisture_baleRotEnabled" text="Gnicie bel"/>
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Włącz proces gnicia bel podczas opadów deszczu lub śniegu. Bele owinięte folią oraz bele przechowywane pod zadaszeniem są chronione."/>
 		<text name="setting_moisture_baleRotRate" text="Współczynnik gnicia bel"/>

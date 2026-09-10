@@ -16,6 +16,8 @@
 		<text name="setting_moisture_moistureGainMultiplier_tooltip" text="Controla la velocidad de ganancia de humedad por lluvia (1-10)"/>
 		<text name="setting_moisture_teddingMoistureReduction" text="Reducción de Humedad por Henificación"/>
 		<text name="setting_moisture_teddingMoistureReduction_tooltip" text="Cantidad de humedad reducida por pasada de henificación (1-5%)"/>
+		<text name="setting_moisture_hayConversionThreshold" text="Umbral de Conversión a Heno"/>
+		<text name="setting_moisture_hayConversionThreshold_tooltip" text="Nivel de humedad por debajo del cual la hierba se convierte en heno (4-12%)"/>
 		<text name="setting_moisture_baleRotEnabled" text="Pudrición de Pacas"/>
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Habilitar la pudrición de pacas durante lluvia/nieve. Las pacas envueltas y bajo techo están protegidas."/>
 		<text name="setting_moisture_baleRotRate" text="Velocidad de Pudrición de Pacas"/>

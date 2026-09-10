@@ -16,6 +16,8 @@
 		<text name="setting_moisture_moistureGainMultiplier_tooltip" text="Yağmurdan kaynaklanan nem kazanımı hızını kontrol eder (1-10)"/>
 		<text name="setting_moisture_teddingMoistureReduction" text="Ot Çevirme Nem Düşüşü"/>
 		<text name="setting_moisture_teddingMoistureReduction_tooltip" text="Her ot çevirme geçişinde düşen nem miktarı (%1-5)"/>
+		<text name="setting_moisture_hayConversionThreshold" text="Kuru Ot Dönüşüm Eşiği"/>
+		<text name="setting_moisture_hayConversionThreshold_tooltip" text="Çimin kuru ota dönüştüğü nem seviyesinin altı (%4-12)"/>
 		<text name="setting_moisture_baleRotEnabled" text="Balya Çürümesi"/>
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Yağmur/kar sırasında balya çürümesini etkinleştirin. Sarılmış balyalar ve barınak altındaki balyalar korunur."/>
 		<text name="setting_moisture_baleRotRate" text="Balya Çürüme Hızı"/>

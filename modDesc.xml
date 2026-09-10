@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="111">
     <author>Ozz</author>
-    <version>2.0.0.7</version>
+    <version>2.0.0.8</version>
     <iconFilename>icon_MoistureSystem.dds</iconFilename>
     <title>
         <en>Moisture System</en>
@@ -36,10 +36,9 @@ Github: https://github.com/sprkem/FS25_MoistureSystem
 
 Changelog:
 
-2.0.0.7:
+2.0.0.8:
+- Hay conversion threshold (the moisture level below which grass becomes hay) is now a setting, with options 4/6/8/10/12%. Defaults to 8%.
 - Improved how min/max weather profile temperatures are applied throughout the day.
-
-2.0.0.6:
 - Fix an issue with moisture not tracking correctly when using Silo Extensions.
 
 2.0.0.5:
@@ -133,7 +132,9 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop, Realistic
 
 Änderungsprotokoll:
 
-2.0.0.6:
+2.0.0.8:
+- Der Heu-Schwellenwert (die Feuchtigkeit, unter der Gras zu Heu wird) ist jetzt einstellbar, mit Optionen von 4/6/8/10/12 %. Standard ist 8 %.
+- Verbessert, wie die Min-/Max-Temperaturen des Wetterprofils über den Tagesverlauf angewendet werden.
 - Behebt ein Problem, bei dem die Feuchtigkeit bei Verwendung von Silo-Erweiterungen nicht korrekt verfolgt wurde.
 
 2.0.0.5:
@@ -223,7 +224,9 @@ Remarque : Le mod n'est pas compatible avec les mods suivants : NonStopCrop, Rea
 
 Journal des modifications :
 
-2.0.0.6 :
+2.0.0.8 :
+- Le seuil de conversion en foin (le niveau d'humidité sous lequel l'herbe devient foin) est désormais réglable, avec des options de 4/6/8/10/12 %. Par défaut : 8 %.
+- Amélioration de l'application des températures min/max du profil météo au cours de la journée.
 - Correction d'un problème d'humidité qui n'était pas suivie correctement lors de l'utilisation des extensions de silo.
 
 2.0.0.5 :

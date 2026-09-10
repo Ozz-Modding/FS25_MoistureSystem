@@ -14,6 +14,7 @@ function MoistureSettingsEvent.new()
     self.moistureLossMultiplier = g_currentMission.MoistureSystem.settings.moistureLossMultiplier
     self.moistureGainMultiplier = g_currentMission.MoistureSystem.settings.moistureGainMultiplier
     self.teddingMoistureReduction = g_currentMission.MoistureSystem.settings.teddingMoistureReduction
+    self.hayConversionThreshold = g_currentMission.MoistureSystem.settings.hayConversionThreshold
     self.baleRotEnabled = g_currentMission.MoistureSystem.settings.baleRotEnabled
     self.baleRotRate = g_currentMission.MoistureSystem.settings.baleRotRate
     self.baleExposureDecayRate = g_currentMission.MoistureSystem.settings.baleExposureDecayRate
@@ -31,6 +32,7 @@ function MoistureSettingsEvent:writeStream(streamId, connection)
     streamWriteFloat32(streamId, self.moistureLossMultiplier)
     streamWriteFloat32(streamId, self.moistureGainMultiplier)
     streamWriteFloat32(streamId, self.teddingMoistureReduction)
+    streamWriteFloat32(streamId, self.hayConversionThreshold)
     streamWriteBool(streamId, self.baleRotEnabled)
     streamWriteFloat32(streamId, self.baleRotRate)
     streamWriteFloat32(streamId, self.baleExposureDecayRate)
@@ -47,6 +49,7 @@ function MoistureSettingsEvent:readStream(streamId, connection)
     self.moistureLossMultiplier = streamReadFloat32(streamId)
     self.moistureGainMultiplier = streamReadFloat32(streamId)
     self.teddingMoistureReduction = streamReadFloat32(streamId)
+    self.hayConversionThreshold = streamReadFloat32(streamId)
     self.baleRotEnabled = streamReadBool(streamId)
     self.baleRotRate = streamReadFloat32(streamId)
     self.baleExposureDecayRate = streamReadFloat32(streamId)
@@ -74,6 +77,7 @@ function MoistureSettingsEvent:run(connection)
     g_currentMission.MoistureSystem.settings.moistureLossMultiplier = self.moistureLossMultiplier
     g_currentMission.MoistureSystem.settings.moistureGainMultiplier = self.moistureGainMultiplier
     g_currentMission.MoistureSystem.settings.teddingMoistureReduction = self.teddingMoistureReduction
+    g_currentMission.MoistureSystem.settings.hayConversionThreshold = self.hayConversionThreshold
 
     local baleRotWasEnabled = g_currentMission.MoistureSystem.settings.baleRotEnabled
     g_currentMission.MoistureSystem.settings.baleRotEnabled = self.baleRotEnabled

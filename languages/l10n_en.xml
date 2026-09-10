@@ -16,6 +16,8 @@
 		<text name="setting_moisture_moistureGainMultiplier_tooltip" text="Controls the speed of moisture gain from rain (1-10)"/>
 		<text name="setting_moisture_teddingMoistureReduction" text="Tedding Moisture Reduction"/>
 		<text name="setting_moisture_teddingMoistureReduction_tooltip" text="Amount of moisture reduced per tedding pass (1-5%)"/>
+		<text name="setting_moisture_hayConversionThreshold" text="Hay Conversion Threshold"/>
+		<text name="setting_moisture_hayConversionThreshold_tooltip" text="Moisture level below which grass converts to hay (4-12%)"/>
 		<text name="setting_moisture_baleRotEnabled" text="Bale Rotting"/>
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Enable bale rotting during rain/snow. Wrapped bales and bales under shelter are protected."/>
 		<text name="setting_moisture_baleRotRate" text="Bale Rot Rate"/>

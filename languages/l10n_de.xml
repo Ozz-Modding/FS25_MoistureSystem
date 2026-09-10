@@ -16,6 +16,8 @@
 		<text name="setting_moisture_moistureGainMultiplier_tooltip" text="Steuert die Geschwindigkeit des Feuchtigkeitsgewinns durch Regen (1-10)"/>
 		<text name="setting_moisture_teddingMoistureReduction" text="Feuchtigkeitsreduzierung durch Heuen"/>
 		<text name="setting_moisture_teddingMoistureReduction_tooltip" text="Menge der reduzierten Feuchtigkeit pro Heudurchgang (1-5%)"/>
+		<text name="setting_moisture_hayConversionThreshold" text="Heu-Umwandlungsschwelle"/>
+		<text name="setting_moisture_hayConversionThreshold_tooltip" text="Feuchtigkeitswert, unter dem Gras zu Heu wird (4-12%)"/>
 		<text name="setting_moisture_baleRotEnabled" text="Ballenfäule"/>
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Ballenfäule bei Regen/Schnee aktivieren. Wickelballen und Ballen unter Dach sind geschützt."/>
 		<text name="setting_moisture_baleRotRate" text="Ballenfäule-Rate"/>

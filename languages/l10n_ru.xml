@@ -16,6 +16,8 @@
 		<text name="setting_moisture_moistureGainMultiplier_tooltip" text="Контролирует скорость набора влажности от дождя (1-10)"/>
 		<text name="setting_moisture_teddingMoistureReduction" text="Снижение Влажности при Ворошении"/>
 		<text name="setting_moisture_teddingMoistureReduction_tooltip" text="Количество влажности, снижаемое за проход ворошилки (1-5%)"/>
+		<text name="setting_moisture_hayConversionThreshold" text="Порог Превращения в Сено"/>
+		<text name="setting_moisture_hayConversionThreshold_tooltip" text="Уровень влажности, ниже которого трава превращается в сено (4-12%)"/>
 		<text name="setting_moisture_baleRotEnabled" text="Гниение Тюков"/>
 		<text name="setting_moisture_baleRotEnabled_tooltip" text="Включить гниение тюков во время дождя/снега. Обмотанные тюки и тюки под навесом защищены."/>
 		<text name="setting_moisture_baleRotRate" text="Скорость Гниения Тюков"/>
