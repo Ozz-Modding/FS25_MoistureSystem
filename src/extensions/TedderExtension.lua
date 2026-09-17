@@ -10,7 +10,8 @@ end
 
 function MSTedderExtension:processDropArea(superFunc, dropArea, fillType, amount)
     local tracker = g_currentMission.groundPropertyTracker
-    if not g_currentMission.MoistureSystem:isGrassOnGroundFillType(fillType) then
+    if not g_currentMission.MoistureSystem:isGrassOnGroundFillType(fillType)
+        and not MaizePlusGrassDrying.isChainFillTypeIndex(fillType) then
         return superFunc(self, dropArea, fillType, amount)
     end
 
@@ -80,11 +81,7 @@ function MSTedderExtension:processTedderArea(_, workArea, dt)
 
     -- Check for existing grass pile moisture at this location
     local converter = g_fillTypeManager:getConverterDataByName("TEDDER")
-    for fromFillType, to in pairs(converter) do
-        if fromFillType == to.targetFillTypeIndex then
-            continue
-        end
-
+    for _, fromFillType in ipairs(tracker:getGrassSourceFillTypes(converter)) do
         local existingProps = tracker:getPropertiesAtLocation(centerX, centerZ, fromFillType)
         if existingProps and existingProps.moisture then
             positionMoisture = existingProps.moisture
@@ -95,7 +92,26 @@ function MSTedderExtension:processTedderArea(_, workArea, dt)
     local lsx, lsy, lsz, lex, ley, lez, lineRadius = DensityMapHeightUtil.getLineByAreaDimensions(sx, sy, sz, wx, wy, wz,
         hx, hy, hz, true)
 
-    for targetFillType, inputFillTypes in pairs(spec.fillTypeConvertersReverse) do
+    -- With MaizePlus active, the player's tedder-stage selection (spec.fillTypeConvertersReverse,
+    -- whichever of TEDDER/STEP1-4 they last picked) must not decide chain fill type conversion -
+    -- MoistureSystem owns that entirely (see chat notes). So any MaizePlus chain fill type is
+    -- pulled out of whatever target bucket the current mode grouped it under and re-bucketed under
+    -- itself: a ted pass always just respreads it in place, regardless of tedder stage selected.
+    -- Non-chain fill types (or MaizePlus absent) keep the vehicle's own converter untouched.
+    local fillTypeConvertersReverse = spec.fillTypeConvertersReverse
+    if MaizePlusGrassDrying.isActive() then
+        local rebuilt = {}
+        for targetFillType, inputFillTypes in pairs(spec.fillTypeConvertersReverse) do
+            for _, inputFillType in ipairs(inputFillTypes) do
+                local bucket = MaizePlusGrassDrying.isChainFillTypeIndex(inputFillType) and inputFillType or targetFillType
+                rebuilt[bucket] = rebuilt[bucket] or {}
+                table.insert(rebuilt[bucket], inputFillType)
+            end
+        end
+        fillTypeConvertersReverse = rebuilt
+    end
+
+    for targetFillType, inputFillTypes in pairs(fillTypeConvertersReverse) do
         local pickedUpLiters = 0
         local pickedUpHay = 0
         for _, inputFillType in ipairs(inputFillTypes) do
@@ -119,11 +135,7 @@ function MSTedderExtension:processTedderArea(_, workArea, dt)
         if pickedUpLiters ~= 0 and g_currentMission.MoistureSystem:isHayFillType(targetFillType) then
             for _, cell in pairs(gridCells) do
                 -- Check all grass types for cleanup
-                for fromFillType, to in pairs(converter) do
-                    if fromFillType == to.targetFillTypeIndex then
-                        continue
-                    end
-
+                for _, fromFillType in ipairs(tracker:getGrassSourceFillTypes(converter)) do
                     tracker:checkPileHasContent(cell.gridX, cell.gridZ, fromFillType)
                 end
             end

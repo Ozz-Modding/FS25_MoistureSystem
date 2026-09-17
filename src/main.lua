@@ -898,6 +898,10 @@ function MoistureSystem:shouldTrackFillType(fillType)
         return true
     end
 
+    if MaizePlusGrassDrying.isChainFillTypeIndex(fillType) then
+        return true
+    end
+
     return false
 end
 

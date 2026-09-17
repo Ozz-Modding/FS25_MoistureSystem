@@ -48,6 +48,13 @@ function MSMowerExtension:processDropArea(superFunc, dropArea, dt)
         moisture = moistureSystem.currentMoisturePercent
     end
 
+    -- Conditioning crimps the stem so moisture escapes faster right away, on top of the
+    -- conditioned fill type skipping the "wet" chain stage entirely (MaizePlus only).
+    if MaizePlusGrassDrying.isConditionedStage(dropArea.fillType) then
+        moisture = math.max(GroundPropertyTracker.MIN_GRASS_MOISTURE,
+            moisture - MaizePlusGrassDrying.getConditioningMoistureReduction())
+    end
+
     local quality = moistureSystem:deriveQuality(dropArea.fillType, moisture)
     tracker:addPile(sx, sz, wx, wz, hx, hz, dropArea.fillType, dropped, {
         moisture = moisture,

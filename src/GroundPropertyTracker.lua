@@ -201,6 +201,12 @@ function GroundPropertyTracker:getStorageKindForFillType(fillType)
         kind = "hay"
     elseif moistureSystem:isStrawFillType(fillType) then
         kind = "straw"
+    elseif MaizePlusGrassDrying.isChainFillTypeIndex(fillType) then
+        -- Middle stages of a MaizePlus chain (e.g. WETGRASS_WINDOW, SEMIDRYGRASS_WINDOW)
+        -- aren't covered by the game's TEDDER converter, which only knows the 2-state
+        -- vanilla-compatible mapping - so isGrassOnGroundFillType misses them. They dry
+        -- with the same physics as base-game grass, just walking a longer chain.
+        kind = "grass"
     else
         kind = "grid"
     end
@@ -949,13 +955,13 @@ function GroundPropertyTracker:applyDryingToPile(key, pile, kind, acc)
             newMoisture = math.max(GroundPropertyTracker.MIN_GRASS_MOISTURE,
                 math.min(GroundPropertyTracker.MAX_GRASS_MOISTURE, newMoisture))
 
-            if newMoisture <= g_currentMission.MoistureSystem.settings.hayConversionThreshold then
-                self.hayCells[gridKey] = 10
-            end
-
             if newMoisture ~= moisture then
                 pile.properties.moisture = newMoisture
             end
+
+            -- Moisture is already updated on the pile before this call, so if it advances a
+            -- stage, the new pile carries the correct (already-reduced) moisture forward.
+            self:checkGrassStageAdvance(pile.gridX, pile.gridZ, pile.fillType, newMoisture)
         end
 
         return self:tickRainExposureAndRot(key, pile, self.grassRotAccumulators)
@@ -992,6 +998,100 @@ function GroundPropertyTracker:applyDryingToPile(key, pile, kind, acc)
     return true
 end
 
+-- Decide whether a grass-kind pile whose moisture just crossed newMoisture should advance to the
+-- next state: a MaizePlus chain stage, converted immediately, when fillType is part of a chain;
+-- otherwise the vanilla straight-to-hay threshold (hayCells, unchanged - still deferred to
+-- processHayConversions next cycle). Shared by the drying sweep and the tedding reduction so both
+-- trigger advancement the same way. Caller must update the pile's moisture to newMoisture before
+-- calling this, so a converted pile carries the correct (already-reduced) moisture forward.
+--
+-- MaizePlus does NOT defer through a queue/cell-set the way hayCells does. Hay is a stable end
+-- state, so hayCells can safely sit for up to 10 cycles and get retried - a stale retry after
+-- success just finds no more grass there and does nothing. A chain stage is not a stable end
+-- state: a deferred, broadly-rescanned retry can find the cell's *own just-created* next-stage
+-- material on a later retry and advance it again, cascading through several stages from one
+-- threshold crossing. Converting immediately - right here, with the exact fillType already known
+-- - removes the whole class of bug: there's nothing to defer, nothing to retry, and nothing to
+-- cascade. If the density-map volume genuinely isn't there yet at this exact instant (a rare
+-- timing edge, not routine), this is simply a no-op; moisture stays below threshold, so the very
+-- next time this pile is visited (sweep or tedding both revisit continuously) it tries again
+-- naturally, with no extra bookkeeping required.
+function GroundPropertyTracker:checkGrassStageAdvance(gridX, gridZ, fillType, newMoisture)
+    local exitMoisture, nextFillType = MaizePlusGrassDrying.getNextStage(fillType)
+    if exitMoisture ~= nil then
+        if newMoisture <= exitMoisture then
+            self:convertMaizePlusStage(gridX, gridZ, fillType, nextFillType)
+        end
+    elseif newMoisture <= g_currentMission.MoistureSystem.settings.hayConversionThreshold then
+        self.hayCells[self:getSimpleGridKey(gridX, gridZ)] = 10
+    end
+end
+
+-- Grass-kind fill types eligible for tedding-driven moisture reduction / pile discovery.
+-- Combines the game's TEDDER converter "from" types with any MaizePlus drying-chain stages:
+-- MaizePlus's own TEDDER converter only declares a 2-state vanilla-compatible mapping (for
+-- players without MoistureSystem), so it alone would miss the 2-3 middle stages of each
+-- chain. Duplicates (e.g. GRASS_WINDOW is both a TEDDER "from" type and a chain stage) are
+-- harmless - callers just re-check a pile/cell that's already up to date.
+function GroundPropertyTracker:getGrassSourceFillTypes(converter)
+    local seen = {}
+    local types = {}
+    for fromFillType, to in pairs(converter) do
+        if fromFillType ~= to.targetFillTypeIndex and not seen[fromFillType] then
+            seen[fromFillType] = true
+            table.insert(types, fromFillType)
+        end
+    end
+    for _, fillType in ipairs(MaizePlusGrassDrying.getAdvanceableFillTypes()) do
+        if not seen[fillType] then
+            seen[fillType] = true
+            table.insert(types, fillType)
+        end
+    end
+    return types
+end
+
+-- Convert a single cell's MaizePlus chain stage forward (e.g. SEMIDRYGRASS_WINDOW ->
+-- NEARLYDRYGRASS_WINDOW). Both stages live in the "grass" storage kind, so unlike
+-- convertGrassToHayInCell this never moves buckets - just changes the density-map fill type and
+-- re-keys the pile. Called directly by checkGrassStageAdvance the instant a stage's exit
+-- moisture is crossed - no queue, no retry bookkeeping. If the cell has no volume of
+-- fromFillType yet (a rare timing edge), this is simply a no-op; see checkGrassStageAdvance for
+-- why that's fine.
+function GroundPropertyTracker:convertMaizePlusStage(gridX, gridZ, fromFillType, toFillType)
+    local checkRadius = GroundPropertyTracker.GRID_SIZE / 2
+
+    local volume = DensityMapHeightUtil.getFillLevelAtArea(
+        fromFillType,
+        gridX - checkRadius, gridZ - checkRadius,
+        gridX + checkRadius, gridZ - checkRadius,
+        gridX - checkRadius, gridZ + checkRadius
+    )
+
+    if volume <= 0 then return end
+
+    local fromKey = self:getGridKey(gridX, gridZ, fromFillType)
+    local moisture = self.grassPiles[fromKey] and self.grassPiles[fromKey].properties.moisture
+
+    local halfSize = GroundPropertyTracker.GRID_SIZE / 2
+    local buffer = halfSize * 0.2
+    local sx = gridX - halfSize - buffer
+    local sz = gridZ - halfSize - buffer
+    local wx = gridX + halfSize + buffer
+    local wz = gridZ - halfSize - buffer
+    local hx = gridX - halfSize - buffer
+    local hz = gridZ + halfSize + buffer
+
+    DensityMapHeightUtil.changeFillTypeAtArea(sx, sz, wx, wz, hx, hz, fromFillType, toFillType)
+
+    if moisture then
+        local toKey = self:getGridKey(gridX, gridZ, toFillType)
+        self:queuePileUpdate(toKey, { moisture = moisture }, toFillType, gridX, gridZ)
+    end
+
+    self:checkPileHasContent(gridX, gridZ, fromFillType)
+end
+
 -- One-time tedding moisture reduction applied to existing grass piles whose cell
 -- was tedded this cycle (split out of the former applyMoistureToGrassPiles loop;
 -- drying itself is now handled by the accumulator sweep).
@@ -1001,7 +1101,7 @@ end
 -- tedded cells × converter entries — not with total pile count.
 function GroundPropertyTracker:applyTeddingToExistingPiles(teddedCellsThisCycle, processedThisCycle, converter)
     local reduction = g_currentMission.MoistureSystem.settings.teddingMoistureReduction
-    local dryThreshold = g_currentMission.MoistureSystem.settings.hayConversionThreshold
+    local sourceFillTypes = self:getGrassSourceFillTypes(converter)
 
     for gridKey, _ in pairs(teddedCellsThisCycle) do
         if not self.recentMowedCells[gridKey] and not processedThisCycle[gridKey] then
@@ -1009,25 +1109,31 @@ function GroundPropertyTracker:applyTeddingToExistingPiles(teddedCellsThisCycle,
             gridX = tonumber(gridX)
             gridZ = tonumber(gridZ)
 
-            for fromFillType, to in pairs(converter) do
-                if fromFillType ~= to.targetFillTypeIndex then
-                    local key = self:getGridKey(gridX, gridZ, fromFillType)
-                    local pile = self.grassPiles[key]
+            -- A cell can only ever hold one grass-kind fill type at a time, so sourceFillTypes
+            -- (which lists every possible chain stage, since we don't know in advance which one
+            -- is actually present) should only ever match once per cell. Stop as soon as a pile
+            -- is found and processed: checkGrassStageAdvance converts in place, and without this
+            -- break the loop would keep going and immediately find the pile it just created at
+            -- the next fillType's key, reducing and advancing it again in the same pass -
+            -- cascading several stages from one tedder pass instead of the one step it should be.
+            for _, fromFillType in ipairs(sourceFillTypes) do
+                local key = self:getGridKey(gridX, gridZ, fromFillType)
+                local pile = self.grassPiles[key]
 
-                    if pile and pile.properties.moisture then
-                        local newMoisture = pile.properties.moisture - reduction
-                        newMoisture = math.max(GroundPropertyTracker.MIN_GRASS_MOISTURE,
-                            math.min(GroundPropertyTracker.MAX_GRASS_MOISTURE, newMoisture))
+                if pile and pile.properties.moisture then
+                    local newMoisture = pile.properties.moisture - reduction
+                    newMoisture = math.max(GroundPropertyTracker.MIN_GRASS_MOISTURE,
+                        math.min(GroundPropertyTracker.MAX_GRASS_MOISTURE, newMoisture))
 
-                        self.teddedGridCellsCooldown[gridKey] = GroundPropertyTracker.TEDDED_COOLDOWN_CYCLES
-                        self.teddedGridCells[gridKey] = nil
+                    self.teddedGridCellsCooldown[gridKey] = GroundPropertyTracker.TEDDED_COOLDOWN_CYCLES
+                    self.teddedGridCells[gridKey] = nil
 
-                        if newMoisture <= dryThreshold then
-                            self.hayCells[gridKey] = 10
-                        end
+                    pile.properties.moisture = newMoisture
 
-                        pile.properties.moisture = newMoisture
-                    end
+                    -- Moisture is already updated on the pile above, so if it advances a stage,
+                    -- the new pile carries the correct (already-reduced) moisture forward.
+                    self:checkGrassStageAdvance(gridX, gridZ, fromFillType, newMoisture)
+                    break
                 end
             end
         end
@@ -1052,9 +1158,19 @@ function GroundPropertyTracker:processHayConversions(converter)
     end
 end
 
--- Handle tedded cells and create grass piles
+-- Handle tedded cells and create grass piles.
+--
+-- A cell can only ever hold one grass-kind fill type: MoistureSystem is the only thing that ever
+-- changes fill type at all (MaizePlus's own tedder never converts while MoistureSystem is active
+-- - see TedderExtension.lua's self-mapping - and without MoistureSystem loaded a cell never
+-- diverges, confirmed by testing). So if a padded conversion write has bled a second fill type's
+-- material into a cell that already has an established one, that's stray material to fold back
+-- into the cell's real fill type, never a second independent pile. Establishing "canonical"
+-- first (prefer an already-tracked pile; otherwise the first fill type found with volume) and
+-- merging every other match into it enforces that invariant at the point of discovery.
 function GroundPropertyTracker:processTeddedCells(teddedCellsThisCycle, processedThisCycle, moistureSystem, converter)
     local checkRadius = GroundPropertyTracker.GRID_SIZE / 2
+    local sourceFillTypes = self:getGrassSourceFillTypes(converter)
 
     for gridKey, _ in pairs(teddedCellsThisCycle) do
         local gridX, gridZ = gridKey:match("([^_]+)_([^_]+)")
@@ -1065,24 +1181,38 @@ function GroundPropertyTracker:processTeddedCells(teddedCellsThisCycle, processe
             continue
         end
 
-        for fromFillType, to in pairs(converter) do
-            local targetFillType = to.targetFillTypeIndex
-            if fromFillType == targetFillType then
-                continue
+        local canonicalFillType = nil
+        for _, fromFillType in ipairs(sourceFillTypes) do
+            if self.grassPiles[self:getGridKey(gridX, gridZ, fromFillType)] then
+                canonicalFillType = fromFillType
+                break
             end
-            if fromFillType then
-                local key = self:getGridKey(gridX, gridZ, fromFillType)
-                local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fromFillType)
+        end
 
-                if not self.grassPiles[key] then
-                    local existingVolume = DensityMapHeightUtil.getFillLevelAtArea(
-                        fromFillType,
-                        gridX - checkRadius, gridZ - checkRadius,
-                        gridX + checkRadius, gridZ - checkRadius,
-                        gridX - checkRadius, gridZ + checkRadius
-                    )
+        for _, fromFillType in ipairs(sourceFillTypes) do
+            local key = self:getGridKey(gridX, gridZ, fromFillType)
 
-                    if existingVolume > 0 then
+            if not self.grassPiles[key] then
+                local existingVolume = DensityMapHeightUtil.getFillLevelAtArea(
+                    fromFillType,
+                    gridX - checkRadius, gridZ - checkRadius,
+                    gridX + checkRadius, gridZ - checkRadius,
+                    gridX - checkRadius, gridZ + checkRadius
+                )
+
+                if existingVolume > 0 then
+                    if canonicalFillType ~= nil then
+                        -- This cell already has an established fill type (or one was just
+                        -- claimed by an earlier fromFillType this same pass) - fold this stray
+                        -- material into it rather than tracking a second independent pile.
+                        DensityMapHeightUtil.changeFillTypeAtArea(
+                            gridX - checkRadius, gridZ - checkRadius,
+                            gridX + checkRadius, gridZ - checkRadius,
+                            gridX - checkRadius, gridZ + checkRadius,
+                            fromFillType, canonicalFillType)
+                    else
+                        canonicalFillType = fromFillType
+
                         local baseMoisture
                         if self.teddedGrassMoisture[gridKey] then
                             baseMoisture = self.teddedGrassMoisture[gridKey]
