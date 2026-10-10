@@ -59,8 +59,15 @@ these stores as **GroundPropertyTracker piles**, like sheds, not as silos:
   which one receives is arbitrary and can differ between sessions.
 - Drying is free: these placeables already pass `DryingSystem:isTipOcclusionBuilding`
   because `simplePlaceable` includes the `tipOcclusionAreas` spec.
-- Grain piles are inert in the tracker (`applyDryingToPile` only handles grass/hay/straw),
-  so stored grain holds its moisture and doesn't rot — correct under a roof.
+- Grain piles are inert in the tracker (`applyDryingToPile` only handles grass/hay/straw,
+  plus swather swaths — see below), so stored grain holds its moisture and doesn't rot —
+  correct under a roof.
+
+**Swaths (MacDon etc.)** are the one grain exception. Swath fill types (from the
+`COMBINE_MOWER` converter, `MoistureSystem:isSwathFillType`) get their own `swath` pile group:
+the crop isn't harvested yet, so it follows field moisture, rots in long rain like straw, and
+its quality is re-derived from moisture each time it changes. The combine reads both at pickup
+(issue #93 — before this they sat in the inert group, frozen at cut-time values).
 
 Two traps: a bay with `fillTypeIndexToDrop > 0` has material still in flight, so its cells
 can read as empty while holding a pile we just created — never prune those. And do not call
@@ -178,6 +185,11 @@ weight→time fidelity required three engine-level fixes (all in `WeatherProfile
   and HAIL objects into every season that lacks them (cloning via the source's own class so
   `WeatherObjectHail` behavior is preserved, and deep-copying variations so our per-instance
   temperature mutation stays isolated). This is why winter rain works.
+  The clones are injected even with Weather Control **OFF** — at `Weather.load` our settings
+  aren't read yet, and MP peers need identical indices. OFF instead keeps them out of the
+  scheduling pool (`removeInjectedFromPool`, tagged by `isMoistureInjected`), and
+  `purgeInjectedFromForecastIfOff` rebuilds the forecast at mission start if the save's queue
+  already holds clone entries (issue #100).
 - **Fallback chains.** As a safety net for any still-unschedulable weight (e.g. THUNDER, which
   has no object class), `rebuildWeatherWeights` redirects it to a related available type
   (rain↔snow↔hail, partlyCloudy↔cloudy) so its precipitation/cloud share is preserved.

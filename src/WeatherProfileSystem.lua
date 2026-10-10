@@ -177,6 +177,27 @@ function WeatherProfileSystem:onStartMission()
         wps:installWeatherOverrides()
         wps.historyCollector:install()
         wps:applyTemperatureToVariations(g_currentMission.environment.weather)
+        wps:purgeInjectedFromForecastIfOff()
+    end
+end
+
+-- Weather Control OFF must leave the map's own weather alone (issue #100). The clones still have
+-- to exist -- they are injected at Weather.load, before our settings are read, and every MP peer
+-- needs the same object indices -- so OFF instead keeps them out of the scheduling pool (see
+-- rebuildWeatherWeights). But the savegame's forecast queue is resolved and topped up during
+-- load, before our hook is installed, so it can already hold clone entries. If it does, rebuild
+-- the forecast now that the pool excludes them.
+function WeatherProfileSystem:purgeInjectedFromForecastIfOff()
+    if g_currentMission.MoistureSystem.settings.overrideWeather then return end
+    local weather = g_currentMission.environment.weather
+    if not weather or not weather.forecastItems then return end
+
+    for _, instance in ipairs(weather.forecastItems) do
+        local obj = weather:getWeatherObjectByIndex(instance.season, instance.objectIndex)
+        if obj and obj.isMoistureInjected then
+            weather:rebuild()
+            return
+        end
     end
 end
 
@@ -247,6 +268,7 @@ function WeatherProfileSystem:cloneWeatherObjectInto(weather, season, weatherTyp
     table.insert(objects, newObj)
     newObj.index = #objects
     newObj.season = season
+    newObj.isMoistureInjected = true
     typeMap[weatherType] = newObj
     return newObj
 end
@@ -535,7 +557,10 @@ end
 
 function WeatherProfileSystem:rebuildWeatherWeights(weather)
     if not g_currentMission:getIsServer() then return end
-    if not g_currentMission.MoistureSystem.settings.overrideWeather then return end
+    if not g_currentMission.MoistureSystem.settings.overrideWeather then
+        self:removeInjectedFromPool(weather)
+        return
+    end
     local month = MoistureSystem.periodToMonth(g_currentMission.environment.currentPeriod)
     local md = self:getMonthData(month)
     if not md then return end
@@ -641,6 +666,25 @@ function WeatherProfileSystem:rebuildWeatherWeights(weather)
         -- base game's weighting for this season if every type resolved to weight 0.
         if #newWeighted > 0 then
             weather.weightedWeatherObjects[season] = newWeighted
+        end
+    end
+end
+
+-- With Weather Control OFF the injected clones stay in the object list (indices must not move)
+-- but must never be scheduled, so strip them from the vanilla-built weighted pool. A season left
+-- with nothing schedulable keeps its pool as-is rather than crashing math.random on an empty list.
+function WeatherProfileSystem:removeInjectedFromPool(weather)
+    for season, pool in pairs(weather.weightedWeatherObjects) do
+        local objects = weather.weatherObjects[season]
+        local kept = {}
+        for _, index in ipairs(pool) do
+            local obj = objects and objects[index]
+            if not (obj and obj.isMoistureInjected) then
+                table.insert(kept, index)
+            end
+        end
+        if #kept > 0 then
+            weather.weightedWeatherObjects[season] = kept
         end
     end
 end
@@ -1183,5 +1227,24 @@ FSBaseMission.onStartMission = Utils.appendedFunction(FSBaseMission.onStartMissi
 Weather.load = Utils.appendedFunction(Weather.load, function(weather)
     WeatherProfileSystem:injectMissingWeatherObjects(weather)
 end)
+
+-- A hail spell whose instance never got a perlinPercentage (issue #100: a winter hail clone, on
+-- a newer game build than our decompiled reference, so the exact path is unconfirmed) passes nil
+-- to FSDensityMapUtil.updateDisasterArea. That errors before WeatherObjectHail:update advances
+-- nextDestructionTime, so it errors again every frame and the game hangs. Fill the value in the
+-- way WeatherObjectHail.initInstanceData would, falling back to the engine's own load default.
+WeatherObjectHail.activate = Utils.overwrittenFunction(WeatherObjectHail.activate,
+    function(self, superFunc, weatherInstance, blendDuration, isSavegameInit)
+        if weatherInstance ~= nil and weatherInstance.perlinPercentage == nil then
+            local variation = self.variations and self.variations[weatherInstance.variationIndex]
+            if variation and variation.minPerlinPercentage and variation.maxPerlinPercentage then
+                weatherInstance.perlinPercentage = math.random(variation.minPerlinPercentage, variation.maxPerlinPercentage)
+            else
+                weatherInstance.perlinPercentage = 1500
+            end
+        end
+        superFunc(self, weatherInstance, blendDuration, isSavegameInit)
+    end
+)
 
 addModEventListener(WeatherProfileSystem)

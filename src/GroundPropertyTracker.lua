@@ -36,6 +36,10 @@ function GroundPropertyTracker.new()
 
     self.strawPiles = {}
 
+    -- Grain swaths laid by a swather (MacDon). Unlike other grain on the ground
+    -- these are still "in the field": they follow the weather until combined.
+    self.swathPiles = {}
+
     -- Buffer for tedded grid cells
     -- Value is number of update cycles remaining before moving to teddedGridCells
     self.teddedGridCellsBuffer = {}
@@ -70,6 +74,10 @@ function GroundPropertyTracker.new()
     -- Track straw rotting accumulators
     -- Key: "gridX_gridZ_fillType", Value: accumulated liters waiting for removal
     self.strawRotAccumulators = {}
+
+    -- Track swath rotting accumulators
+    -- Key: "gridX_gridZ_fillType", Value: accumulated liters waiting for removal
+    self.swathRotAccumulators = {}
 
     -- Track pending windrower drops with volume-weighted moisture
     -- Key: getGridKey(gridX, gridZ, fillType), Value: { gridX, gridZ, fillType, volume, moistureSum, cyclesRemaining }
@@ -181,6 +189,8 @@ function GroundPropertyTracker:getStorageByKind(kind)
         return self.hayPiles
     elseif kind == "straw" then
         return self.strawPiles
+    elseif kind == "swath" then
+        return self.swathPiles
     end
     return self.gridPiles
 end
@@ -201,6 +211,8 @@ function GroundPropertyTracker:getStorageKindForFillType(fillType)
         kind = "hay"
     elseif moistureSystem:isStrawFillType(fillType) then
         kind = "straw"
+    elseif moistureSystem:isSwathFillType(fillType) then
+        kind = "swath"
     else
         kind = "grid"
     end
@@ -219,8 +231,10 @@ function GroundPropertyTracker:delete()
     self.grassPiles = {}
     self.hayPiles = {}
     self.strawPiles = {}
+    self.swathPiles = {}
     self.grassRotAccumulators = {}
     self.strawRotAccumulators = {}
+    self.swathRotAccumulators = {}
     self.sweepKeys = {}
     self.sweepKinds = {}
     self.inSweep = {}
@@ -263,7 +277,7 @@ function GroundPropertyTracker:queuePileUpdate(key, properties, fillTypeIndex, g
             storage[key].properties[propKey] = propValue
         end
 
-        -- Add to the drying sweep snapshot incrementally (only the four swept
+        -- Add to the drying sweep snapshot incrementally (only the swept
         -- storage kinds; gridPiles are not dried so they stay out of the sweep).
         local kind = self:getStorageKindForFillType(fillTypeIndex)
         if kind ~= "grid" then
@@ -824,8 +838,9 @@ function GroundPropertyTracker:consoleCommandSweepDebug()
     local grass = count(self.grassPiles)
     local hay = count(self.hayPiles)
     local straw = count(self.strawPiles)
+    local swath = count(self.swathPiles)
     local grid = count(self.gridPiles)
-    local total = grass + hay + straw + grid
+    local total = grass + hay + straw + swath + grid
 
     -- Wet piles: those carrying rain exposure (rainExposure or peakRainExposure
     -- > 0), counted on demand. Rain exposure + rotting are now handled inside the
@@ -842,6 +857,7 @@ function GroundPropertyTracker:consoleCommandSweepDebug()
     end
     local wetGrass = countWet(self.grassPiles)
     local wetStraw = countWet(self.strawPiles)
+    local wetSwath = countWet(self.swathPiles)
 
     local weather = g_currentMission.environment.weather
     local isRaining = weather:getRainFallScale() > 0.1
@@ -854,12 +870,12 @@ function GroundPropertyTracker:consoleCommandSweepDebug()
     local avgPerFrame = lastPeriodFrames > 0 and (lastPeriodPiles / lastPeriodFrames) or 0
 
     local lines = {
-        string.format("Piles:     total=%d (grass=%d hay=%d straw=%d grid=%d)",
-            total, grass, hay, straw, grid),
+        string.format("Piles:     total=%d (grass=%d hay=%d straw=%d swath=%d grid=%d)",
+            total, grass, hay, straw, swath, grid),
         string.format("Snapshot:  len=%d pos=%d budget=%d peak=%d",
             self.sweepLen, self.sweepPos, GroundPropertyTracker.SWEEP_BUDGET, stats.peakSnapshotLen),
-        string.format("WetPiles:  grass=%d straw=%d (raining=%s) -- folded into bounded sweep",
-            wetGrass, wetStraw, tostring(isRaining)),
+        string.format("WetPiles:  grass=%d straw=%d swath=%d (raining=%s) -- folded into bounded sweep",
+            wetGrass, wetStraw, wetSwath, tostring(isRaining)),
         string.format("ExpoAcc:   rain=%.0f dry=%.0f", self.rainTimeAcc, self.dryTimeAcc),
         string.format("LastSweep: %d piles over %d frames (%.1f piles/frame avg)",
             lastPeriodPiles, lastPeriodFrames, avgPerFrame),
@@ -900,6 +916,12 @@ function GroundPropertyTracker:rebuildSweepSnapshot()
         n = n + 1
         keys[n] = key
         kinds[n] = "straw"
+        inSweep[key] = true
+    end
+    for key in pairs(self.swathPiles) do
+        n = n + 1
+        keys[n] = key
+        kinds[n] = "swath"
         inSweep[key] = true
     end
 
@@ -987,6 +1009,20 @@ function GroundPropertyTracker:applyDryingToPile(key, pile, kind, acc)
         end
 
         return self:tickRainExposureAndRot(key, pile, self.strawRotAccumulators)
+    elseif kind == "swath" then
+        -- A swath isn't harvested yet, so it follows the field's moisture and
+        -- its grade follows with it; the combine reads both at pickup.
+        local applied = acc - (pile.lastAcc or acc)
+        pile.lastAcc = acc
+        if applied ~= 0 then
+            local newMoisture = math.max(0, math.min(1, moisture + applied))
+            if newMoisture ~= moisture then
+                pile.properties.moisture = newMoisture
+                pile.properties.quality = g_currentMission.MoistureSystem:deriveQuality(pile.fillType, newMoisture)
+            end
+        end
+
+        return self:tickRainExposureAndRot(key, pile, self.swathRotAccumulators)
     end
 
     return true
@@ -1111,14 +1147,14 @@ function GroundPropertyTracker:processTeddedCells(teddedCellsThisCycle, processe
 end
 
 -- Per-pile rain exposure update + rot tick, called from the drying sweep for
--- grass and straw piles. Drains the global rain/dry time accumulators since this
+-- grass, straw and swath piles. Drains the global rain/dry time accumulators since this
 -- pile was last visited and applies the net exposure change in one step:
 --   exposure += (rainTimeAcc - lastRainAcc)              -- time spent raining
 --   exposure -= (dryTimeAcc  - lastDryAcc) * DECAY_RATE  -- time spent dry
 -- This is equivalent to the old per-cycle tick (which added/decayed a fixed
 -- updateDelta each 500ms while iterating the whole wet set), but folds into the
 -- same bounded per-frame sweep visit as drying, so there is no uncapped walk.
--- @param rotAccumulators: self.grassRotAccumulators or self.strawRotAccumulators
+-- @param rotAccumulators: self.grassRotAccumulators, self.strawRotAccumulators or self.swathRotAccumulators
 -- @return false if the pile was fully removed (rotted away), true otherwise.
 function GroundPropertyTracker:tickRainExposureAndRot(key, pile, rotAccumulators)
     local rainSince = self.rainTimeAcc - (pile.lastRainAcc or self.rainTimeAcc)
@@ -1194,7 +1230,7 @@ function GroundPropertyTracker:tickRainExposureAndRot(key, pile, rotAccumulators
 end
 
 -- Remove ROT_REMOVAL_THRESHOLD liters from a rotting pile's density-map area.
--- Shared by grass and straw rot. Returns false if the pile is now empty (caller
+-- Shared by grass, straw and swath rot. Returns false if the pile is now empty (caller
 -- should drop it from the sweep), true otherwise.
 function GroundPropertyTracker:removeRottedPileVolume(key, pile, rotAccumulators)
     local gridX = pile.gridX
@@ -1472,11 +1508,22 @@ function GroundPropertyTracker:convertGridCells(fromSize, toSize)
         })
     end
 
+    for key, pile in pairs(self.swathPiles) do
+        table.insert(oldPiles, {
+            gridX = pile.gridX,
+            gridZ = pile.gridZ,
+            fillType = pile.fillType,
+            properties = pile.properties,
+            isSwath = true
+        })
+    end
+
     -- Clear existing storage
     self.gridPiles = {}
     self.grassPiles = {}
     self.hayPiles = {}
     self.strawPiles = {}
+    self.swathPiles = {}
 
     -- Process each old pile
     for _, oldPile in ipairs(oldPiles) do
@@ -1519,6 +1566,7 @@ function GroundPropertyTracker:convertGridCells(fromSize, toSize)
                             isGrass = oldPile.isGrass,
                             isHay = oldPile.isHay,
                             isStraw = oldPile.isStraw,
+                            isSwath = oldPile.isSwath,
                             contributions = {}
                         }
                     end
@@ -1542,6 +1590,8 @@ function GroundPropertyTracker:convertGridCells(fromSize, toSize)
             storage = self.hayPiles
         elseif cell.isStraw then
             storage = self.strawPiles
+        elseif cell.isSwath then
+            storage = self.swathPiles
         else
             storage = self.gridPiles
         end
@@ -1621,6 +1671,9 @@ function GroundPropertyTracker:saveToXMLFile(xmlFile, key)
         table.insert(candidatePiles, pile)
     end
     for _, pile in pairs(self.strawPiles) do
+        table.insert(candidatePiles, pile)
+    end
+    for _, pile in pairs(self.swathPiles) do
         table.insert(candidatePiles, pile)
     end
 
@@ -1761,6 +1814,7 @@ function GroundPropertyTracker:writeInitialClientState(streamId, connection)
     writePiles(self.grassPiles)
     writePiles(self.hayPiles)
     writePiles(self.strawPiles)
+    writePiles(self.swathPiles)
 end
 
 ---
@@ -1797,9 +1851,11 @@ function GroundPropertyTracker:readInitialClientState(streamId, connection)
     self.grassPiles = {}
     self.hayPiles = {}
     self.strawPiles = {}
+    self.swathPiles = {}
 
     readPiles(self.gridPiles)
     readPiles(self.grassPiles)
     readPiles(self.hayPiles)
     readPiles(self.strawPiles)
+    readPiles(self.swathPiles)
 end

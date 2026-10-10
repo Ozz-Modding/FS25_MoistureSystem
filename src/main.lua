@@ -718,7 +718,8 @@ function MoistureSystem:initializeQualityFromMoisture()
             g_currentMission.groundPropertyTracker.gridPiles,
             g_currentMission.groundPropertyTracker.grassPiles,
             g_currentMission.groundPropertyTracker.hayPiles,
-            g_currentMission.groundPropertyTracker.strawPiles
+            g_currentMission.groundPropertyTracker.strawPiles,
+            g_currentMission.groundPropertyTracker.swathPiles
         }
         for _, storage in ipairs(allStorages) do
             for _, pile in pairs(storage) do
@@ -761,7 +762,7 @@ function MoistureSystem:deriveQuality(fillType, moisture)
 end
 
 function MoistureSystem:getBaseCropFillType(fillType)
-    if self.swathFillTypes == nil then return nil end
+    self:ensureSwathFillTypes()
     return self.swathFillTypes[fillType]
 end
 
@@ -902,7 +903,16 @@ function MoistureSystem:shouldTrackFillType(fillType)
 end
 
 function MoistureSystem:isSwathFillType(fillType)
-    return self.swathFillTypes ~= nil and self.swathFillTypes[fillType] ~= nil
+    self:ensureSwathFillTypes()
+    return self.swathFillTypes[fillType] ~= nil
+end
+
+-- Lazy so it works during savegame load (before onStartMission), where the
+-- ground tracker files loaded piles by fill type.
+function MoistureSystem:ensureSwathFillTypes()
+    if self.swathFillTypes == nil then
+        self:initializeSwathFillTypes()
+    end
 end
 
 ---

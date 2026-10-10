@@ -110,7 +110,7 @@ function DryingSystem:getShedCropStatus(placeable)
     if bounds == nil then return {}, 0 end
 
     local tracker = g_currentMission.groundPropertyTracker
-    local allStorages = { tracker.gridPiles, tracker.grassPiles, tracker.hayPiles, tracker.strawPiles }
+    local allStorages = { tracker.gridPiles, tracker.grassPiles, tracker.hayPiles, tracker.strawPiles, tracker.swathPiles }
     local byFillType = {}
     local totalLiters = 0
 
@@ -359,7 +359,7 @@ function DryingSystem:dryShed(placeable, ms, dryingRate, sellChargeRate, complet
     local totalLiters = 0
     local pilesToDry = {}
 
-    local allStorages = { tracker.gridPiles, tracker.grassPiles, tracker.hayPiles, tracker.strawPiles }
+    local allStorages = { tracker.gridPiles, tracker.grassPiles, tracker.hayPiles, tracker.strawPiles, tracker.swathPiles }
     for _, storage in ipairs(allStorages) do
         for _, pile in pairs(storage) do
             if pile.gridX >= bounds.minX and pile.gridX <= bounds.maxX
