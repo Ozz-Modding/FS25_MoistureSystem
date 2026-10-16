@@ -205,6 +205,6 @@ For bug reports, feature requests, or questions:
 
 ## Discord
 
-[![Discord](https://img.shields.io/discord/1415966930799693847?logo=discord)](https://discord.gg/eGyACAan)
+[![Discord](https://img.shields.io/discord/1415966930799693847?logo=discord)](https://discord.gg/9pVhkV9KRQ)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M41K5NPV)
