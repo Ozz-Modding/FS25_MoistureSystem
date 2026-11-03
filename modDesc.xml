@@ -38,8 +38,6 @@ Changelog:
 
 2.0.0.10:
 - Fix a Lua error when unloading via an auger/conveyor onto a silo.
-
-2.0.0.9:
 - Fix a game freeze when a hail spell started without a hail strength set, most often seen with winter hail on maps that don't have hail in winter.
 - Weather Control OFF now properly uses only the map's own weather. Previously, extra winter rain and hail could still appear in the forecast after loading a save.
 - MacDon grain swaths now follow the weather until they are combined: they dry out in dry weather, get wetter in rain, and slowly rot if left out in the rain too long. Previously they kept their cut-time moisture and quality forever.
@@ -142,8 +140,6 @@ Hinweis: Der Mod ist nicht kompatibel mit folgenden Mods: NonStopCrop, Realistic
 
 2.0.0.10:
 - Behebt einen Lua-Fehler beim Entladen über eine Förderschnecke oder ein Förderband in ein Silo.
-
-2.0.0.9:
 - Behebt ein Einfrieren des Spiels, wenn ein Hagelschauer ohne festgelegte Hagelstärke begann – meist bei Winterhagel auf Karten, die im Winter keinen Hagel haben.
 - Bei ausgeschalteter Wettersteuerung wird jetzt nur noch das eigene Wetter der Karte verwendet. Zuvor konnten nach dem Laden eines Spielstands weiterhin zusätzlicher Winterregen und Hagel in der Vorhersage erscheinen.
 - MacDon-Getreideschwaden reagieren jetzt bis zum Dreschen auf das Wetter: Sie trocknen bei trockenem Wetter, werden bei Regen feuchter und verrotten langsam, wenn sie zu lange im Regen liegen. Zuvor behielten sie dauerhaft die Feuchtigkeit und Qualität vom Zeitpunkt des Schnitts.
@@ -242,8 +238,6 @@ Journal des modifications :
 
 2.0.0.10 :
 - Correction d'une erreur Lua lors du déchargement dans un silo via une vis sans fin ou un convoyeur.
-
-2.0.0.9 :
 - Correction d'un gel du jeu lorsqu'une averse de grêle commençait sans intensité de grêle définie, le plus souvent avec la grêle hivernale sur les cartes qui n'ont pas de grêle en hiver.
 - Lorsque le contrôle météo est désactivé, seule la météo propre à la carte est désormais utilisée. Auparavant, de la pluie et de la grêle hivernales supplémentaires pouvaient encore apparaître dans les prévisions après le chargement d'une sauvegarde.
 - Les andains de céréales MacDon suivent désormais la météo jusqu'à leur battage : ils sèchent par temps sec, s'humidifient sous la pluie et pourrissent lentement s'ils restent trop longtemps sous la pluie. Auparavant, ils conservaient indéfiniment l'humidité et la qualité du moment de la coupe.
