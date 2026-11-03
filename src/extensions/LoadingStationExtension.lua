@@ -32,18 +32,14 @@ function MSLoadingStationExtension:addFillLevelToFillableObject(superFunc, filla
         return superFunc(self, fillableObject, fillUnitIndex, fillTypeIndex, fillDelta, fillInfo, toolType)
     end
 
-    -- Get target's current fill level and moisture before loading
+    -- Get target's current fill level before loading. This weights the blend into the
+    -- target's own moisture record, so it must be the target's own liters. Do NOT follow
+    -- getConveyorBeltTargetObject to whatever a conveyor/auger is discharging into: the
+    -- moisture lands on the conveyor (DischargeableExtension carries it onward later), and
+    -- that downstream object may be an UnloadTrigger with no getFillUnitFillLevel (issue #102).
     local targetCurrentLiters = 0
     if fillableObject.getFillUnitFillLevel ~= nil then
         targetCurrentLiters = fillableObject:getFillUnitFillLevel(fillUnitIndex)
-    end
-
-    -- Handle conveyor belt targets (special case for vehicles loading into other vehicles)
-    if fillableObject.getConveyorBeltTargetObject ~= nil then
-        local conveyorTarget, conveyorFillUnitIndex = fillableObject:getConveyorBeltTargetObject()
-        if conveyorTarget ~= nil then
-            targetCurrentLiters = conveyorTarget:getFillUnitFillLevel(conveyorFillUnitIndex)
-        end
     end
 
     local actualFilledAmount = superFunc(self, fillableObject, fillUnitIndex, fillTypeIndex, fillDelta, fillInfo, toolType)
