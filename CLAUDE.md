@@ -69,7 +69,12 @@ the crop isn't harvested yet, so it follows field moisture, rots in long rain li
 its quality is re-derived from moisture each time it changes. The combine reads both at pickup
 (issue #93 — before this they sat in the inert group, frozen at cut-time values).
 
-Two traps: a bay with `fillTypeIndexToDrop > 0` has material still in flight, so its cells
+Never read `spec_placeableStorageHeap` directly — use `MSStorageHeapExtension.getSpec(placeable)`.
+Since the late-2026 game update the DLC no longer aliases its spec to that plain name; only
+`spec_pdlc_highlandsFishingPack.placeableStorageHeap` exists, and missing it silently disables
+all heap support (Kinlaig bulk hall report).
+
+Two more traps: a bay with `fillTypeIndexToDrop > 0` has material still in flight, so its cells
 can read as empty while holding a pile we just created — never prune those. And do not call
 `placeable:getIsFillTypeSupported()`; the DLC's implementation calls
 `section:getIsFillTypeSupported` on a plain table and errors.

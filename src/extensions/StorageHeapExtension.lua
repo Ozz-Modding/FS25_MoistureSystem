@@ -39,11 +39,21 @@ MSStorageHeapExtension = {}
 MSStorageHeapExtension.depositSourceUniqueId = nil
 
 ---
--- PlaceableStorageHeap:onLoad aliases the namespaced spec table to this plain name,
--- so we never have to spell out "spec_pdlc_highlandsFishingPack.placeableStorageHeap".
+-- The placeable's storage heap spec, or nil. Older DLC versions aliased the namespaced
+-- spec table to the plain `spec_placeableStorageHeap` in onLoad; since the late-2026
+-- game update only the namespaced key exists, so try both. Always go through this —
+-- never read either key directly.
 ---
+MSStorageHeapExtension.NAMESPACED_SPEC_KEY = "spec_pdlc_highlandsFishingPack.placeableStorageHeap"
+
+function MSStorageHeapExtension.getSpec(placeable)
+    if placeable == nil then return nil end
+    return placeable.spec_placeableStorageHeap
+        or placeable[MSStorageHeapExtension.NAMESPACED_SPEC_KEY]
+end
+
 function MSStorageHeapExtension.isStorageHeap(placeable)
-    return placeable ~= nil and placeable.spec_placeableStorageHeap ~= nil
+    return MSStorageHeapExtension.getSpec(placeable) ~= nil
 end
 
 ---
@@ -52,7 +62,7 @@ end
 -- without area nodes never puts material on the ground, so both are skipped.
 ---
 function MSStorageHeapExtension.getBays(placeable)
-    local spec = placeable.spec_placeableStorageHeap
+    local spec = MSStorageHeapExtension.getSpec(placeable)
     if spec == nil then return nil end
 
     if spec.msBays == nil then
@@ -88,7 +98,7 @@ function MSStorageHeapExtension.attach(placeable)
     if not MSStorageHeapExtension.isStorageHeap(placeable) then return end
     if g_currentMission == nil or not g_currentMission:getIsServer() then return end
 
-    local spec = placeable.spec_placeableStorageHeap
+    local spec = MSStorageHeapExtension.getSpec(placeable)
     if spec.msListenersAttached then return end
     spec.msListenersAttached = true
 
@@ -146,7 +156,7 @@ function MSStorageHeapExtension.onBayFillLevelChanged(placeable, heap, fillTypeI
     local sx, sz, wx, wz, hx, hz = MSStorageHeapExtension.getBayAreaCorners(heap)
     tracker:addPile(sx, sz, wx, wz, hx, hz, fillTypeIndex, delta, { moisture = moisture, quality = quality })
 
-    placeable.spec_placeableStorageHeap.msPropertyCache = nil
+    MSStorageHeapExtension.getSpec(placeable).msPropertyCache = nil
 end
 
 ---
@@ -190,7 +200,7 @@ function MSStorageHeapExtension.getStoredProperties(placeable, fillType)
 
     -- The pipe calls this every frame it runs, and a four-bay store is ~80 cells, each
     -- costing a density map read. Hold the answer briefly; a deposit clears it early.
-    local spec = placeable.spec_placeableStorageHeap
+    local spec = MSStorageHeapExtension.getSpec(placeable)
     local cached = spec.msPropertyCache
     if cached ~= nil and cached.fillType == fillType and g_time - cached.timestamp < 500 then
         return cached.properties, cached.liters
